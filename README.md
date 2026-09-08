@@ -1,206 +1,102 @@
-# Estimation Gym (app)
+# Estimation Gym
 
 [![app installs](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fabacus.jasoncameron.dev%2Fget%2Festimation-gym%2Fapp-installs&query=%24.value&label=app%20installs&color=blue&style=flat-square)](https://sidathpeiris.github.io/estimation-gym-app/)
 
-The daily Fermi-estimation puzzle from the
-[Omarchy bar widget](https://github.com/SidathPeiris/estimation-gym-omarchy),
-as an installable web app for the phone.
+**A daily Fermi-estimation puzzle. One question a day, scored on how close you
+get in powers of ten.**
 
-Same question every calendar day, same order-of-magnitude scoring, same streak
-rules — because it runs the **same code**. `core/` is copied verbatim from the
-plugin repo and never edited here.
+### ▶ [Play it](https://sidathpeiris.github.io/estimation-gym-app/)
 
-## Status
+Every calendar day everyone gets the same question — a real-world quantity you
+have to estimate, like *"how many piano tuners work in Chicago?"* You are scored
+on **order-of-magnitude closeness**, not the exact value, because getting within
+a factor of ten of a hard question is a genuinely useful skill and getting the
+number exactly right is not the point.
 
-Working single screen: today's puzzle, guess entry, an optional hint, scored
-result with points, and collapsible history and lifetime stats panels. Ships a web manifest, icons and a
-cache-first service worker, so it installs to the home screen and plays offline.
+No account. No sign-up. Works offline.
 
-Live at <https://sidathpeiris.github.io/estimation-gym-app/>. Offline play is
-confirmed on a real device (installed to the home screen, airplane mode, reload).
+## Install it on your phone
 
-Note that `CacheStorage` cannot be exercised in headless Chrome — every call
-fails there with `UnknownError: Unexpected internal error` regardless of
-headless mode or sandbox flags. Offline changes therefore have to be checked on
-a real browser; an automated headless test will report a false failure.
+- **iPhone / Safari:** open the link above, then Share → **Add to Home Screen**.
+  iOS never shows an install prompt, so this has to be done by hand.
+- **Android / Chrome:** open the link above, then **Install app** from the menu.
+
+Once installed it plays fully offline — the questions travel with the app.
+
+## How scoring works
+
+| Band | How close | Points |
+| --- | --- | --- |
+| **Bullseye** | within ~2× | 100 |
+| **Close** | within 10× | 70 |
+| **Ballpark** | within 100× | 40 |
+| **Off** | more than 100× out | 10 |
+
+Anything better than **Off** extends your streak. An **Off** resets it to zero.
+Your best streak is kept alongside your current one.
+
+Scientific notation works for big numbers — type `3e12` rather than counting
+zeroes.
 
 ## Hints
 
-Stuck on a question, **Hint** names the *shape* of the problem and how to
-attack it — "stock equals flow times lifetime", "people times per-person rate",
-"mass to moles to molecules" — without saying anything about the answer, so you
-still have to do the estimating.
+Stuck? **Hint** tells you how to attack that *shape* of problem — "stock equals
+flow times lifetime", "people times per-person rate", "mass to moles to
+molecules" — without saying anything about the answer, so you still do the
+estimating.
 
-Every question carries one of fifteen reasoning archetypes, and the guidance is
-written once per archetype in `Model.js` rather than once per question. That is
-both less to keep correct and more useful to learn: recognising that a problem
-is population-times-rate helps with every such problem, not just today's.
+Taking it:
 
-Taking the hint:
-
-- **halves the day's points**, and the result and share text both say `· hint`
-  so a shared score stays honest;
-- **excludes the day from calibration**, since a hinted guess measures the hint
+- **halves that day's points**, and the result is marked `· hint`;
+- **leaves it out of your calibration**, since a hinted guess measures the hint
   as much as it measures you;
-- **does not touch your streak.** The streak measures showing up daily, and
-  charging someone for wanting to learn the method would be exactly the wrong
-  incentive.
+- **does not break your streak.** The streak is for showing up, and charging
+  you for wanting to learn the method would be the wrong incentive.
 
-The archetype is named on the result afterwards either way, hint or no hint.
+## Stats
 
-## The Omarchy plugin
+Expand **Stats** for lifetime totals: how your guesses are distributed across
+the bands, days played, best streak, median distance off, and — once you have
+played ten days — which way you lean, e.g. *"You tend to guess low, by about
+3.8×"*. Knowing your direction of error is the part you can actually correct.
 
-This started life as a bar widget for the [Omarchy](https://omarchy.org) shell,
-which is still where the logic and the question bank are maintained:
+**History** lists your past days, newest first.
 
-- **Repo:** <https://github.com/SidathPeiris/estimation-gym-omarchy>
-- **Marketplace listing:** <https://plugins.omarchy.org/plugin.html?id=sidath.estimation-gym>
+## Updates
+
+The app updates itself. A new version is fetched in the background and takes
+effect the next time you open it, so if something looks stale, close it and
+reopen once. Your history and streak are never touched by an update.
+
+## Privacy
+
+Your play history — guesses, scores, streaks, answers — **never leaves your
+device**. It lives in your browser's local storage. There is no account, no
+server storing your results, and no way for anyone to see how you are doing.
+
+The one exception is a single anonymous request when the app is installed,
+which increments the counter at the top of this page. It carries no identifier
+and nothing about you or your play. That is the entire extent of it.
+
+## Also for the Omarchy desktop bar
+
+The same puzzle runs as a widget in the [Omarchy](https://omarchy.org) shell
+bar, which is where the question bank is maintained:
+
+**<https://github.com/SidathPeiris/estimation-gym-omarchy>**
 
 ```bash
 omarchy plugin add https://github.com/SidathPeiris/estimation-gym-omarchy.git --enable
 ```
 
-## How it relates to the widget
-
-| | Widget (Omarchy) | App (this repo) |
-| --- | --- | --- |
-| Scoring, streaks, day selection | `Model.js` | **same file**, vendored into `core/` |
-| Question bank | `content/questions.js` | **same file**, vendored into `core/` |
-| UI | `Widget.qml` (Quickshell) | `index.html` + `app.js` |
-| Storage | `~/.local/state/estimation-gym/state.json` | `localStorage` |
-
-The two installs keep **independent streaks** by design — no account and no
-server. The stored JSON shape is identical to the widget's `state.json`, so a
-history blob can be moved across by hand if you ever want to.
-
-Your play history never leaves the device on either surface. The widget makes
-no network calls at all; this app makes one anonymous request when it is
-installed, described below, which feeds the counter badge at the top.
-
-## Layout
-
-```
-core/            # vendored from the plugin repo - do not edit here
-  Model.js         scoring, streaks, day selection, stats
-  Model.test.js
-  questions.js     the question bank
-presenter.js     # pure state -> view model, shared with a future native build
-storage.js       # localStorage adapter behind a two-method interface
-index.html
-app.css
-app.js           # thin DOM renderer
-scripts/
-  serve.mjs        local dev server
-  sync-core.mjs    re-copy core/ from the plugin repo, then run the tests
-```
-
-`presenter.js` exists so the "what goes on screen" decisions are testable and
-reusable: a React Native view can consume the same view model without any of
-this repo's DOM code.
-
-### Debug resets
-
-Two query parameters make the pre-answer screen reachable again without
-clearing site data by hand:
-
-| URL | Effect |
-| --- | --- |
-| `?reset=today` | Un-answers today only. Earlier days, and `bestStreak`, survive; the current streak is rebuilt around the gap. |
-| `?reset=all` | Wipes history, streak and all, back to a first run. |
-
-Both apply before the first render and then strip themselves from the address
-bar, so a reload — or a URL that got bookmarked — cannot silently wipe again.
-Any other value is ignored.
-
-An installed copy opens at `start_url` with no query string, so use these from
-a normal browser tab rather than from the home screen:
-
-```
-https://sidathpeiris.github.io/estimation-gym-app/?reset=today
-```
-
-## Install counter
-
-Nothing about play is collected — not scores, not streaks, not answers — and
-there is no way to see who has the app or on what device.
-
-There is one exception: an anonymous count of installs, which is what the badge
-at the top of this README shows. It is a plain integer held by
-[Abacus](https://abacus.jasoncameron.dev), a no-account hit counter, and read
-back into a shields.io badge:
-
-```js
-var INSTALL_PING_URL = "https://abacus.jasoncameron.dev/hit/estimation-gym/app-installs"
-```
-
-Setting `INSTALL_PING_URL` back to `""` disables it completely — with an empty
-endpoint the app makes no outbound request whatsoever.
-
-What it sends is a bare GET to that URL plus a cache-buster. No identifier, no
-history, no score, no query about the player at all. The only fact conveyed is
-that one more install exists.
-
-It fires at most once per browser profile, guarded by a `localStorage` flag, on
-whichever of two triggers comes first:
-
-- the browser's `appinstalled` event, on Chrome and the desktop browsers;
-- the first launch in standalone display mode, which is how iOS is caught,
-  since Safari has never fired `appinstalled`.
-
-Counting the first standalone *launch* is the better measure anyway: it counts
-installs somebody actually opened rather than ones added and forgotten.
-
-Two things it cannot tell you. It counts **browser profiles, not people or
-devices** — one person with a phone and a laptop is two. And offline play never
-reports, which is rather the point of the app.
-
-Two caveats on the number itself, since it is displayed publicly. The counter
-has no authentication, so anyone who finds the endpoint can inflate it by
-requesting the URL; it is a marketing figure, not an audited one. And an Abacus
-key expires after roughly six months without traffic, so a long quiet spell
-would reset the badge to zero rather than hold the total.
-
-The admin key issued when the counter was created — which can reset or set the
-value — is deliberately **not** in this repo. It is in the project notes.
-
-## Develop
-
-```bash
-npm test          # core, presenter and storage tests
-npm run serve     # http://127.0.0.1:8123
-```
-
-Use a real origin rather than opening `index.html` from disk — `localStorage` is
-unreliable on `file://` URLs and service workers will not register there at all.
-
-## Install on a phone
-
-- **Android / Chrome:** open the hosted URL, then "Install app" from the menu.
-- **iOS / Safari:** open the hosted URL, then Share → Add to Home Screen. iOS
-  gives no install prompt, so it has to be done by hand.
-
-There are deliberately **no notifications**. A daily reminder needs reliable
-scheduled local notifications, which iOS web apps do not provide — that is the
-reason to wrap this in a native shell later, not something to fake here.
-
-## Updating the app after deploy
-
-The service worker is cache-first, so a returning visitor is served the cached
-build until a new worker takes over. Bump `CACHE` in `sw.js` whenever any asset
-changes, or people keep the old version indefinitely. The cache holds code only
-— play history lives in `localStorage` and is never touched by a version bump.
-
-## Updating the question bank
-
-Edit questions in the **plugin repo**, then:
-
-```bash
-npm run sync-core ../estimation-gym-omarchy
-```
-
-That re-copies `Model.js`, `Model.test.js` and `questions.js`, reports the new
-bank size, and runs every test before it will leave the tree changed.
+Both show the same question on the same day and score it identically, but
+**streaks are kept separately on each device** — nothing syncs between them, and
+the desktop widget makes no network connection whatsoever.
 
 ## License
 
 MIT
+
+---
+
+*Working on the app itself? See [DEVELOPING.md](DEVELOPING.md).*
