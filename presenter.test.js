@@ -72,6 +72,26 @@ assert.ok(Math.abs(bullseye.fraction - 1 / 3) < 1e-9, "fraction is share of days
 assert.equal(vm.stats.bars.find((b) => b.band === "Ballpark").fraction, 0, "unused bands render an empty bar")
 assert.equal(vm.stats.summary, "3 played · 180 pts")
 
+// --- asOf year ---
+assert.equal(before.asOfLabel, null, "a timeless question carries no year")
+const datedQuestion = Object.assign({}, question, { asOf: 2025 })
+assert.equal(P.viewModel(Model, fresh, datedQuestion, 981).asOfLabel, "as of 2025")
+
+// Every dated question in the shipped bank must render its year, and no
+// timeless one may invent a year it does not have.
+for (const q of QUESTIONS) {
+  const rendered = P.viewModel(Model, Model.emptyState(), q, 1)
+  if ("asOf" in q) assert.equal(rendered.asOfLabel, "as of " + q.asOf, `${q.id}: shows its year`)
+  else assert.equal(rendered.asOfLabel, null, `${q.id}: timeless, no year shown`)
+}
+
+// --- calibration surfaces through the view model ---
+assert.equal(vm.stats.calibration, null, "three days is not enough to report a lean")
+let leaning = Model.emptyState()
+for (let d = 1; d <= Model.CALIBRATION_MIN_PLAYS; d++) leaning = Model.recordAnswer(leaning, d, 10, 100)
+const leaningVm = P.viewModel(Model, leaning, question, Model.CALIBRATION_MIN_PLAYS)
+assert.ok(leaningVm.stats.calibration.includes("low"), "a consistent low lean is reported once earned")
+
 // --- a missing question must not throw (empty or failed bank load) ---
 const noQuestion = P.viewModel(Model, Model.emptyState(), null, 7)
 assert.equal(noQuestion.prompt, "No question available")

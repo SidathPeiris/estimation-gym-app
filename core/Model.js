@@ -63,6 +63,15 @@ function log10Distance(guess, answerValue) {
   return Math.abs(Math.log10(guess) - Math.log10(answerValue))
 }
 
+// Signed counterpart to log10Distance: negative means the guess was too low,
+// positive too high. Averaged over many days this exposes a systematic lean,
+// which is the part of estimating that can actually be corrected - the
+// unsigned distance can only ever say "you were off".
+function signedLog10Error(guess, answerValue) {
+  if (!(guess > 0) || !(answerValue > 0)) return null
+  return Math.log10(guess) - Math.log10(answerValue)
+}
+
 function bandForDistance(distanceDecades) {
   if (distanceDecades === null) return "Off"
   if (distanceDecades <= 0.3) return "Bullseye"
@@ -141,6 +150,7 @@ function computeStats(state) {
   var played = 0
   var totalPoints = 0
   var distances = []
+  var signedErrors = []
 
   for (var key in history) {
     var entry = history[key]
@@ -151,6 +161,10 @@ function computeStats(state) {
     if (typeof entry.distanceDecades === "number" && isFinite(entry.distanceDecades)) {
       distances.push(entry.distanceDecades)
     }
+    // Recomputed from the stored guess and answer rather than persisted, so
+    // history written before calibration existed still contributes.
+    var signed = signedLog10Error(entry.guess, entry.answerValue)
+    if (signed !== null) signedErrors.push(signed)
   }
 
   return {
@@ -158,9 +172,32 @@ function computeStats(state) {
     counts: counts,
     totalPoints: totalPoints,
     medianDecades: medianOf(distances),
+    // Median rather than mean: one wild guess can sit ten decades out and
+    // would otherwise swamp an honest read of which way someone leans.
+    biasDecades: medianOf(signedErrors),
+    calibrationSample: signedErrors.length,
     streak: (state && state.streak) || 0,
     bestStreak: (state && state.bestStreak) || 0
   }
+}
+
+// A lean is only worth reporting once there are enough days behind it -
+// below this a couple of unlucky guesses read as a personality trait.
+var CALIBRATION_MIN_PLAYS = 10
+
+// Shared by the bar widget and the web app so both describe a lean in the
+// same words rather than drifting apart.
+function calibrationLabel(stats) {
+  if (!stats || stats.biasDecades === null || stats.biasDecades === undefined) return null
+  if (stats.calibrationSample < CALIBRATION_MIN_PLAYS) return null
+
+  var bias = stats.biasDecades
+  if (Math.abs(bias) < 0.15) return "Well calibrated - no consistent lean"
+
+  var factor = Math.pow(10, Math.abs(bias))
+  return bias < 0
+    ? "You tend to guess low, by about " + factor.toFixed(1) + "×"
+    : "You tend to guess high, by about " + factor.toFixed(1) + "×"
 }
 
 // Compact display like "1.2 × 10^18" for large/small numbers, plain for
@@ -188,6 +225,7 @@ if (typeof module !== "undefined") {
     pickQuestionIndex: pickQuestionIndex,
     questionForDay: questionForDay,
     log10Distance: log10Distance,
+    signedLog10Error: signedLog10Error,
     bandForDistance: bandForDistance,
     scoreGuess: scoreGuess,
     pointsForBand: pointsForBand,
@@ -195,6 +233,8 @@ if (typeof module !== "undefined") {
     recordAnswer: recordAnswer,
     hasAnsweredDay: hasAnsweredDay,
     computeStats: computeStats,
+    calibrationLabel: calibrationLabel,
+    CALIBRATION_MIN_PLAYS: CALIBRATION_MIN_PLAYS,
     formatCompact: formatCompact,
     BANDS: BANDS,
     BAND_POINTS: BAND_POINTS

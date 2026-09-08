@@ -55,6 +55,9 @@ function statsView(Model, stats) {
     summary: stats.played + " played · " + Model.formatCompact(stats.totalPoints) + " pts",
     footer: "Best streak " + stats.bestStreak + " · median " +
       (stats.medianDecades !== null ? stats.medianDecades.toFixed(2) : "–") + " decades off",
+    // Wording comes from the Model so the app and the Omarchy widget describe
+    // a lean identically. Null until there are enough days to mean anything.
+    calibration: Model.calibrationLabel(stats),
     bars: bars
   }
 }
@@ -67,6 +70,9 @@ function viewModel(Model, state, question, day) {
   return {
     puzzleLabel: "Puzzle #" + day,
     streakLabel: "Streak " + state.streak + " · Best " + state.bestStreak,
+    // Present only on questions whose answer drifts with time; timeless ones
+    // (physical constants and the like) carry no year.
+    asOfLabel: question && question.asOf !== undefined ? "as of " + question.asOf : null,
     prompt: question ? question.prompt : "No question available",
     unit: question ? question.unit : "",
     placeholder: question ? "Guess (" + question.unit + ")" : "",

@@ -59,6 +59,15 @@ body {
 .streak { font-size: .8125rem; color: var(--dim); margin-top: 6px }
 
 /* ---------- question ---------- */
+.asof {
+  font-size: .75rem;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-top: 24px;
+}
+.asof + .prompt { margin-top: 6px }
+
 .prompt {
   font-size: 1.1875rem;
   line-height: 1.45;
@@ -171,6 +180,16 @@ body {
 .bar-tally { font-size: .8125rem; color: var(--dim); text-align: right }
 
 .stats-footer { font-size: .8125rem; color: var(--dim); margin-top: 16px }
+
+.calibration {
+  font-size: .8125rem;
+  color: var(--fg);
+  margin-top: 8px;
+  padding: 10px 12px;
+  border-left: 2px solid var(--accent);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  border-radius: 0 6px 6px 0;
+}
 
 .export {
   margin-top: 16px;

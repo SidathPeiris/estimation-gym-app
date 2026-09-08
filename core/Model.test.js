@@ -78,6 +78,14 @@ assert.equal(Model.pointsForBand("nonsense"), 0, "unknown band scores nothing ra
 assert.equal(Model.scoreGuess(100, 100).points, 100)
 assert.equal(Model.scoreGuess(1e9, 1).points, 10)
 
+// --- signed error (calibration direction) ---
+assert.equal(Model.signedLog10Error(100, 100), 0)
+assert.equal(Model.signedLog10Error(10, 100), -1, "guessing low is negative")
+assert.equal(Model.signedLog10Error(1000, 100), 1, "guessing high is positive")
+assert.equal(Model.signedLog10Error(0, 100), null)
+assert.equal(Model.signedLog10Error(100, 0), null)
+assert.equal(Model.signedLog10Error(-5, 100), null)
+
 // --- computeStats ---
 const emptyStats = Model.computeStats(Model.emptyState())
 assert.equal(emptyStats.played, 0)
@@ -97,6 +105,58 @@ assert.equal(stats.counts.Off, 1)
 assert.equal(stats.totalPoints, 100 + 70 + 10)
 assert.equal(stats.medianDecades, 1, "median of 0, 1 and 4 decades is 1")
 assert.equal(stats.bestStreak, statState.bestStreak)
+
+// --- calibration bias ---
+assert.equal(emptyStats.biasDecades, null, "no plays means no lean to report")
+assert.equal(emptyStats.calibrationSample, 0)
+
+// Someone who guesses low every single day should read as underestimating.
+let lowState = Model.emptyState()
+lowState = Model.recordAnswer(lowState, 1, 10, 100)    // -1 decade
+lowState = Model.recordAnswer(lowState, 2, 20, 100)    // ~-0.7
+lowState = Model.recordAnswer(lowState, 3, 5, 100)     // ~-1.3
+const lowStats = Model.computeStats(lowState)
+assert.ok(lowStats.biasDecades < 0, "consistently low guesses give a negative bias")
+assert.equal(lowStats.biasDecades, -1, "median of -1.3, -1 and -0.7 is -1")
+assert.equal(lowStats.calibrationSample, 3)
+
+let highState = Model.emptyState()
+highState = Model.recordAnswer(highState, 1, 1000, 100)
+highState = Model.recordAnswer(highState, 2, 10000, 100)
+assert.ok(Model.computeStats(highState).biasDecades > 0, "consistently high guesses give a positive bias")
+
+// A single wild outlier must not flip the read of someone otherwise accurate,
+// which is the whole reason this is a median and not a mean.
+let outlierState = Model.emptyState()
+outlierState = Model.recordAnswer(outlierState, 1, 100, 100)
+outlierState = Model.recordAnswer(outlierState, 2, 100, 100)
+outlierState = Model.recordAnswer(outlierState, 3, 100, 100)
+outlierState = Model.recordAnswer(outlierState, 4, 1e12, 100) // ten decades high
+const outlierStats = Model.computeStats(outlierState)
+assert.ok(Math.abs(outlierStats.biasDecades) < 0.6,
+  "one absurd guess does not swamp an otherwise well-calibrated record")
+
+// --- calibration wording (shared by the widget and the web app) ---
+function playedDays(count, guess, answer) {
+  let s = Model.emptyState()
+  for (let d = 1; d <= count; d++) s = Model.recordAnswer(s, d, guess, answer)
+  return Model.computeStats(s)
+}
+
+assert.equal(Model.calibrationLabel(Model.computeStats(Model.emptyState())), null,
+  "nothing to say with no history")
+assert.equal(Model.calibrationLabel(playedDays(Model.CALIBRATION_MIN_PLAYS - 1, 10, 100)), null,
+  "a lean is withheld until there are enough days to mean anything")
+
+const leanLow = Model.calibrationLabel(playedDays(Model.CALIBRATION_MIN_PLAYS, 10, 100))
+assert.ok(leanLow.includes("low"), "guessing 10x under reads as leaning low")
+assert.ok(leanLow.includes("10.0"), "the lean is expressed as a linear factor, not just decades")
+
+const leanHigh = Model.calibrationLabel(playedDays(Model.CALIBRATION_MIN_PLAYS, 1000, 100))
+assert.ok(leanHigh.includes("high"))
+
+const accurate = Model.calibrationLabel(playedDays(Model.CALIBRATION_MIN_PLAYS, 100, 100))
+assert.ok(accurate.includes("Well calibrated"), "exact guesses report no lean")
 
 // Stats must survive a hand-edited or partially corrupted state file.
 const corrupted = { history: { "1": null, "2": { band: "Bogus" }, "3": { band: "Close" } }, streak: 1, bestStreak: 4 }

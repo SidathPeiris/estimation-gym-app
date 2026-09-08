@@ -11,17 +11,34 @@
     hasAnsweredDay: hasAnsweredDay,
     recordAnswer: recordAnswer,
     computeStats: computeStats,
+    calibrationLabel: calibrationLabel,
     formatCompact: formatCompact,
     pointsForBand: pointsForBand,
     emptyState: emptyState,
-    BANDS: BANDS
+    BANDS: BANDS,
+    CALIBRATION_MIN_PLAYS: CALIBRATION_MIN_PLAYS
+  }
+
+  // This facade is assembled by hand, so a function added to Model.js but
+  // forgotten here throws mid-render and leaves a blank page with the failure
+  // buried in the console. Check it up front and say so on screen instead.
+  var missing = ["dayIndex", "questionForDay", "hasAnsweredDay", "recordAnswer",
+                 "computeStats", "calibrationLabel", "formatCompact",
+                 "pointsForBand", "emptyState", "BANDS"]
+    .filter(function (name) { return Model[name] === undefined })
+
+  if (missing.length) {
+    document.getElementById("prompt").textContent =
+      "Setup error: Model is missing " + missing.join(", ")
+    return
   }
 
   var el = {}
-  var ids = ["puzzle", "streak", "prompt", "guess-form", "guess-input", "guess-go",
+  var ids = ["puzzle", "streak", "asof", "prompt", "guess-form", "guess-input", "guess-go",
              "error", "result", "band", "points", "guess-line", "actual-line",
              "decades-line", "hint", "source", "stats", "stats-toggle", "chev",
-             "stats-summary", "stats-body", "bars", "stats-footer", "export"]
+             "stats-summary", "stats-body", "bars", "stats-footer", "calibration",
+             "export"]
   ids.forEach(function (id) { el[id] = document.getElementById(id) })
 
   var today = Model.dayIndex(new Date())
@@ -68,6 +85,8 @@
 
     setText(el.puzzle, vm.puzzleLabel)
     setText(el.streak, vm.streakLabel)
+    show(el.asof, Boolean(vm.asOfLabel))
+    if (vm.asOfLabel) setText(el.asof, vm.asOfLabel)
     setText(el.prompt, vm.prompt)
     el["guess-input"].placeholder = vm.placeholder
 
@@ -93,6 +112,8 @@
     show(el.stats, vm.stats.visible)
     setText(el["stats-summary"], vm.stats.summary)
     setText(el["stats-footer"], vm.stats.footer)
+    show(el.calibration, Boolean(vm.stats.calibration))
+    if (vm.stats.calibration) setText(el.calibration, vm.stats.calibration)
     renderBars(vm.stats.bars)
 
     setText(el.chev, statsOpen ? "▾" : "▸")

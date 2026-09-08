@@ -27,7 +27,7 @@ var QUESTIONS = [
     "id": "cells-in-human-body",
     "prompt": "Roughly how many cells are in the adult human body?",
     "unit": "cells",
-    "answerValue": 37000000000000.0,
+    "answerValue": 37000000000000,
     "decompositionHint": "Estimate body mass (~70kg), average cell mass, and that most of the count comes from small, numerous cells like red blood cells and other blood/tissue cells.",
     "source": "Bianconi et al. 2013, Annals of Human Biology - widely cited estimate ~3.72\u00d710^13"
   },
@@ -35,7 +35,7 @@ var QUESTIONS = [
     "id": "grains-of-sand-beach",
     "prompt": "How many grains of sand are on a typical 1km-long, 30m-wide beach (down to 1m depth)?",
     "unit": "grains of sand",
-    "answerValue": 2500000000000000.0,
+    "answerValue": 2500000000000000,
     "decompositionHint": "Compute beach volume (length x width x depth), estimate a sand grain's volume (~0.5mm cube), then divide, accounting for packing.",
     "source": "Order-of-magnitude estimate using typical sand grain size ~0.5mm"
   },
@@ -43,7 +43,7 @@ var QUESTIONS = [
     "id": "stars-in-milky-way",
     "prompt": "Approximately how many stars are in the Milky Way galaxy?",
     "unit": "stars",
-    "answerValue": 200000000000.0,
+    "answerValue": 200000000000,
     "decompositionHint": "Use the galaxy's estimated total mass and the average stellar mass to back out a star count, or recall published astronomical estimates.",
     "source": "NASA/ESA estimates typically cite 100-400 billion stars"
   },
@@ -51,7 +51,7 @@ var QUESTIONS = [
     "id": "trees-on-earth",
     "prompt": "Approximately how many trees are there on Earth?",
     "unit": "trees",
-    "answerValue": 3000000000000.0,
+    "answerValue": 3000000000000,
     "decompositionHint": "Estimate global forest area and average tree density per hectare, then multiply.",
     "source": "Crowther et al. 2015, Nature - estimated ~3.04 trillion trees"
   },
@@ -59,7 +59,7 @@ var QUESTIONS = [
     "id": "water-drops-in-swimming-pool",
     "prompt": "How many drops of water would it take to fill an Olympic swimming pool (2,500 m\u00b3)?",
     "unit": "drops",
-    "answerValue": 50000000000.0,
+    "answerValue": 50000000000,
     "decompositionHint": "A typical water drop is about 0.05 mL. Convert the pool's volume to milliliters and divide by drop volume.",
     "source": "Olympic pool standard volume 2,500,000 L; typical drop ~0.05mL"
   },
@@ -67,7 +67,7 @@ var QUESTIONS = [
     "id": "words-spoken-lifetime",
     "prompt": "How many words does an average person speak in their lifetime?",
     "unit": "words",
-    "answerValue": 860000000.0,
+    "answerValue": 860000000,
     "decompositionHint": "Estimate average words spoken per day (~16,000), multiply by days in an ~80 year lifespan, adjusting for years before speech develops.",
     "source": "Mehl et al. 2007, Science - average ~16,000 words/day"
   },
@@ -75,7 +75,7 @@ var QUESTIONS = [
     "id": "heartbeats-lifetime",
     "prompt": "How many times does an average human heart beat over a full lifetime (~80 years)?",
     "unit": "heartbeats",
-    "answerValue": 3000000000.0,
+    "answerValue": 3000000000,
     "decompositionHint": "Average resting heart rate ~70-75 bpm. Multiply beats/minute by minutes/year by 80 years.",
     "source": "Standard physiology figures; commonly cited ~2.5-3 billion beats"
   },
@@ -83,29 +83,32 @@ var QUESTIONS = [
     "id": "bricks-empire-state",
     "prompt": "Roughly how many bricks would it take to build a structure the size of the Empire State Building (if built entirely of brick)?",
     "unit": "bricks",
-    "answerValue": 10000000.0,
+    "answerValue": 10000000,
     "decompositionHint": "Estimate the building's total exterior wall surface area and typical wall thickness, a standard brick's volume, and divide.",
     "source": "Order-of-magnitude estimate based on building volume ~37 million cubic feet"
   },
   {
     "id": "cars-in-us",
     "prompt": "How many registered passenger cars are there in the United States?",
+    "asOf": 2025,
     "unit": "cars",
-    "answerValue": 280000000.0,
+    "answerValue": 280000000,
     "decompositionHint": "US population (~335M) x average vehicles per person (~0.8), or recall it's roughly 1 vehicle for every 1.2 people.",
     "source": "US Dept. of Transportation / Bureau of Transportation Statistics, ~280 million registered vehicles"
   },
   {
     "id": "smartphones-in-world",
     "prompt": "How many smartphones are actively in use worldwide?",
+    "asOf": 2025,
     "unit": "smartphones",
-    "answerValue": 6900000000.0,
+    "answerValue": 6900000000,
     "decompositionHint": "World population (~8B) x smartphone penetration rate (~85% of adults in many regions, lower in others, roughly ~86% overall).",
     "source": "GSMA / Statista estimates, ~6.9 billion smartphone users worldwide (2024-2025)"
   },
   {
     "id": "gallons-water-us-daily",
     "prompt": "How many gallons of water does the average US household use per day?",
+    "asOf": 2025,
     "unit": "gallons/day",
     "answerValue": 300,
     "decompositionHint": "Estimate per-person daily use (~80-100 gallons: showers, toilets, laundry, dishes) times average household size (~2.5 people).",
@@ -114,8 +117,9 @@ var QUESTIONS = [
   {
     "id": "pizza-slices-consumed-us-daily",
     "prompt": "How many slices of pizza are eaten in the United States per day?",
+    "asOf": 2025,
     "unit": "pizza slices",
-    "answerValue": 100000000.0,
+    "answerValue": 100000000,
     "decompositionHint": "US population (~335M), estimate fraction eating pizza on a given day (~13% per commonly cited industry figures) x average slices per person (~2-3).",
     "source": "Often-cited pizza industry statistic: ~100 million slices/day"
   },
@@ -131,7 +135,7 @@ var QUESTIONS = [
     "id": "atoms-in-grain-of-salt",
     "prompt": "Approximately how many atoms are in a single grain of table salt (NaCl)?",
     "unit": "atoms",
-    "answerValue": 1.2e+18,
+    "answerValue": 1200000000000000000,
     "decompositionHint": "Estimate the grain's volume (~0.3mm cube), use NaCl's density (~2.16 g/cm\u00b3) to get mass, convert to moles via molar mass (58.44 g/mol), multiply by Avogadro's number, then by 2 (for Na and Cl atoms).",
     "source": "Standard chemistry calculation using Avogadro's number 6.022\u00d710^23"
   },
@@ -139,13 +143,14 @@ var QUESTIONS = [
     "id": "breaths-per-lifetime",
     "prompt": "How many breaths does a person take over an 80-year lifetime?",
     "unit": "breaths",
-    "answerValue": 670000000.0,
+    "answerValue": 670000000,
     "decompositionHint": "Average resting breathing rate ~12-16 breaths/minute. Multiply by minutes/year and years lived.",
     "source": "Standard respiratory physiology figures"
   },
   {
     "id": "libraries-of-congress-internet",
     "prompt": "How many 'Libraries of Congress' worth of data (~20 petabytes of text/print) is generated globally by internet traffic in one day?",
+    "asOf": 2025,
     "unit": "Libraries of Congress",
     "answerValue": 15000,
     "decompositionHint": "Global daily internet traffic is roughly 300+ exabytes (2024 estimates). Convert to petabytes and divide by ~20 PB.",
@@ -155,7 +160,7 @@ var QUESTIONS = [
     "id": "bacteria-per-human-body",
     "prompt": "How many bacterial cells live in and on an average human body?",
     "unit": "bacterial cells",
-    "answerValue": 38000000000000.0,
+    "answerValue": 38000000000000,
     "decompositionHint": "Recent research revised the old '10x more bacteria than human cells' claim - the actual ratio is close to 1:1. Use human cell count (~3.7\u00d710^13) as an anchor.",
     "source": "Sender, Fuchs, Milo 2016, PLOS Biology - revised bacteria:human cell ratio ~1.3:1"
   },
@@ -170,6 +175,7 @@ var QUESTIONS = [
   {
     "id": "planes-in-air-worldwide",
     "prompt": "At any given moment, how many commercial passenger planes are in the air worldwide?",
+    "asOf": 2025,
     "unit": "planes",
     "answerValue": 9000,
     "decompositionHint": "Global commercial fleet is ~25,000-30,000 aircraft; at peak times a large fraction are airborne simultaneously across time zones.",
@@ -178,6 +184,7 @@ var QUESTIONS = [
   {
     "id": "gold-total-mined",
     "prompt": "How much gold has ever been mined in human history, in metric tons?",
+    "asOf": 2025,
     "unit": "metric tons",
     "answerValue": 212000,
     "decompositionHint": "This is largely a recall-based estimate, but you can sanity check: if all mined gold were melted into a cube, it would only be about 22m on a side - gold is surprisingly rare relative to its cultural prominence.",
@@ -202,16 +209,18 @@ var QUESTIONS = [
   {
     "id": "chickens-on-earth",
     "prompt": "How many live chickens are there on Earth at any given time?",
+    "asOf": 2025,
     "unit": "chickens",
-    "answerValue": 26000000000.0,
+    "answerValue": 26000000000,
     "decompositionHint": "World population (~8B) x average annual chicken meat + egg consumption per person, combined with typical chicken lifespan before slaughter (~6 weeks for broilers), gives a standing population estimate.",
     "source": "UN FAO livestock statistics, ~26 billion chickens (roughly 3x the human population)"
   },
   {
     "id": "gasoline-us-daily",
     "prompt": "How many gallons of gasoline does the US consume per day?",
+    "asOf": 2025,
     "unit": "gallons/day",
-    "answerValue": 370000000.0,
+    "answerValue": 370000000,
     "decompositionHint": "US has ~280M registered vehicles, average ~25-30 miles driven/day per active vehicle isn't quite right - better: total annual gasoline consumption (~135 billion gallons/year) divided by 365.",
     "source": "US Energy Information Administration (EIA) data"
   },
@@ -235,15 +244,16 @@ var QUESTIONS = [
     "id": "post-it-notes-stacked-to-moon",
     "prompt": "How many standard Post-it notes (0.1mm thick) would you need to stack to reach the Moon (384,400 km away)?",
     "unit": "Post-it notes",
-    "answerValue": 3800000000000.0,
+    "answerValue": 3800000000000,
     "decompositionHint": "Convert the Earth-Moon distance to millimeters and divide by a single note's thickness.",
     "source": "Simple unit-conversion Fermi problem"
   },
   {
     "id": "credit-cards-us-total",
     "prompt": "How many active credit card accounts are there in the United States?",
+    "asOf": 2025,
     "unit": "credit card accounts",
-    "answerValue": 680000000.0,
+    "answerValue": 680000000,
     "decompositionHint": "US adult population (~260M) x average number of credit cards per adult (~2.5-4, since many people hold multiple cards).",
     "source": "Federal Reserve / credit bureau (Experian) reports"
   },
@@ -251,7 +261,7 @@ var QUESTIONS = [
     "id": "keystrokes-programmer-lifetime",
     "prompt": "How many keystrokes might a professional software developer type over a 30-year career?",
     "unit": "keystrokes",
-    "answerValue": 300000000.0,
+    "answerValue": 300000000,
     "decompositionHint": "Estimate typing hours/day at work (~4 active hours), typing speed in keystrokes/minute (~150 including code/comments/chat), workdays/year (~230), and years (30).",
     "source": "Order-of-magnitude estimate from typical office typing patterns"
   },
@@ -259,7 +269,7 @@ var QUESTIONS = [
     "id": "raindrops-in-thunderstorm",
     "prompt": "How many individual raindrops fall during a typical thunderstorm covering 100 km\u00b2 and dropping 25mm of rain?",
     "unit": "raindrops",
-    "answerValue": 80000000000000.0,
+    "answerValue": 80000000000000,
     "decompositionHint": "Total rain volume = area x depth. A typical raindrop is about 4mm in diameter (~34 microliters). Divide total volume by single-drop volume.",
     "source": "Standard meteorology figures for raindrop size (2-5mm typical)"
   },
@@ -283,7 +293,7 @@ var QUESTIONS = [
     "id": "ants-on-earth",
     "prompt": "Approximately how many individual ants are alive on Earth at any given time?",
     "unit": "ants",
-    "answerValue": 2e+16,
+    "answerValue": 20000000000000000,
     "decompositionHint": "This requires recalling a published biomass-based estimate - ant biomass roughly matches or exceeds human biomass despite ants being tiny, implying an enormous count.",
     "source": "Schultheiss et al. 2022, PNAS - estimated ~20 quadrillion (2\u00d710^16) ants globally"
   },
@@ -298,8 +308,9 @@ var QUESTIONS = [
   {
     "id": "emails-sent-per-day-worldwide",
     "prompt": "How many emails are sent worldwide per day?",
+    "asOf": 2025,
     "unit": "emails",
-    "answerValue": 360000000000.0,
+    "answerValue": 360000000000,
     "decompositionHint": "Estimate number of email accounts (~4-5B users, several accounts each) x average emails sent per account per day (~15-30, weighted heavily by automated/business email).",
     "source": "Radicati Group email statistics reports"
   },
@@ -522,6 +533,7 @@ var QUESTIONS = [
   {
     "id": "cattle-in-the-world",
     "prompt": "How many cattle are alive in the world at any given time?",
+    "asOf": 2025,
     "unit": "cattle",
     "answerValue": 1500000000,
     "decompositionHint": "Global beef and dairy output divided by per-animal yield, or simply anchor on the fact that cattle number roughly one for every five or six people.",
@@ -538,6 +550,7 @@ var QUESTIONS = [
   {
     "id": "grains-of-rice-produced-per-year",
     "prompt": "How many individual grains of rice are produced worldwide in a year?",
+    "asOf": 2025,
     "unit": "grains of rice",
     "answerValue": 20000000000000000,
     "decompositionHint": "World rice production is roughly 5x10^11 kg per year. A single grain weighs about 0.025 g. Convert and divide.",
@@ -546,6 +559,7 @@ var QUESTIONS = [
   {
     "id": "people-ever-lived",
     "prompt": "How many humans have ever been born in the whole of human history?",
+    "asOf": 2025,
     "unit": "people",
     "answerValue": 117000000000,
     "decompositionHint": "Integrate population over time: populations were tiny for most of prehistory but birth rates were high, so the cumulative total is dominated by the last few thousand years. Today's 8 billion is only about 7% of the total.",
@@ -554,6 +568,7 @@ var QUESTIONS = [
   {
     "id": "people-born-per-day",
     "prompt": "How many babies are born worldwide each day?",
+    "asOf": 2025,
     "unit": "births/day",
     "answerValue": 385000,
     "decompositionHint": "World population ~8x10^9 with a crude birth rate of ~17 per 1,000 people per year. Multiply, then divide by 365.",
@@ -562,6 +577,7 @@ var QUESTIONS = [
   {
     "id": "weight-of-all-humans",
     "prompt": "What is the combined mass of every living human, in kilograms?",
+    "asOf": 2025,
     "unit": "kilograms",
     "answerValue": 500000000000,
     "decompositionHint": "World population (~8.1x10^9) times average body mass across all ages (~62 kg, lower than the adult average because a large fraction are children).",
@@ -570,6 +586,7 @@ var QUESTIONS = [
   {
     "id": "internet-users-worldwide",
     "prompt": "How many people worldwide use the internet?",
+    "asOf": 2025,
     "unit": "people",
     "answerValue": 5400000000,
     "decompositionHint": "World population ~8.1 billion with global penetration around two thirds, much higher in wealthy regions and lower in parts of Africa and South Asia.",
@@ -578,6 +595,7 @@ var QUESTIONS = [
   {
     "id": "google-searches-per-day",
     "prompt": "How many searches does Google handle per day?",
+    "asOf": 2025,
     "unit": "searches",
     "answerValue": 8500000000,
     "decompositionHint": "Estimate the number of active users (billions) and average searches each per day (a handful), remembering that a large share of queries come from a small heavy-use minority.",
@@ -586,6 +604,7 @@ var QUESTIONS = [
   {
     "id": "youtube-hours-uploaded-per-minute",
     "prompt": "How many hours of video are uploaded to YouTube every minute?",
+    "asOf": 2025,
     "unit": "hours/minute",
     "answerValue": 500,
     "decompositionHint": "A useful sanity check: this means YouTube receives far more video per day than a person could watch in several lifetimes.",
@@ -594,6 +613,7 @@ var QUESTIONS = [
   {
     "id": "messages-sent-per-day-worldwide",
     "prompt": "How many messages are sent on WhatsApp worldwide each day?",
+    "asOf": 2025,
     "unit": "messages",
     "answerValue": 100000000000,
     "decompositionHint": "Roughly 2 billion users sending on the order of tens of messages a day each.",
@@ -602,6 +622,7 @@ var QUESTIONS = [
   {
     "id": "photos-taken-per-year",
     "prompt": "How many photographs are taken worldwide in a year?",
+    "asOf": 2025,
     "unit": "photographs",
     "answerValue": 1900000000000,
     "decompositionHint": "Around 5 billion smartphone owners, each taking a handful of photos on an average day. Multiply by 365.",
@@ -610,6 +631,7 @@ var QUESTIONS = [
   {
     "id": "commercial-flights-per-day",
     "prompt": "How many commercial flights take off worldwide on a typical day?",
+    "asOf": 2025,
     "unit": "flights",
     "answerValue": 100000,
     "decompositionHint": "The global commercial fleet is ~25,000-30,000 aircraft, and a typical airliner flies several sectors per day.",
@@ -618,6 +640,7 @@ var QUESTIONS = [
   {
     "id": "air-passengers-per-year",
     "prompt": "How many passenger journeys are flown worldwide in a year?",
+    "asOf": 2025,
     "unit": "passenger journeys",
     "answerValue": 4500000000,
     "decompositionHint": "About 100,000 flights a day, averaging on the order of 100+ passengers each, times 365 days.",
@@ -626,6 +649,7 @@ var QUESTIONS = [
   {
     "id": "cups-of-coffee-per-day-worldwide",
     "prompt": "How many cups of coffee are drunk worldwide each day?",
+    "asOf": 2025,
     "unit": "cups",
     "answerValue": 2250000000,
     "decompositionHint": "Global green coffee production is ~10 million tonnes a year; roughly 10 g of coffee makes a cup. Convert and divide by 365.",
@@ -634,6 +658,7 @@ var QUESTIONS = [
   {
     "id": "bananas-eaten-per-year",
     "prompt": "How many individual bananas are eaten worldwide in a year?",
+    "asOf": 2025,
     "unit": "bananas",
     "answerValue": 1100000000000,
     "decompositionHint": "World banana production is roughly 1.3x10^11 kg per year, and a banana weighs about 120 g of edible fruit. Divide.",
@@ -642,6 +667,7 @@ var QUESTIONS = [
   {
     "id": "plastic-bottles-per-minute",
     "prompt": "How many plastic drink bottles are sold worldwide every minute?",
+    "asOf": 2025,
     "unit": "bottles/minute",
     "answerValue": 1000000,
     "decompositionHint": "Annual sales are on the order of half a trillion bottles. Divide by the ~525,600 minutes in a year.",
@@ -650,6 +676,7 @@ var QUESTIONS = [
   {
     "id": "books-published-per-year",
     "prompt": "How many new book titles are published worldwide each year?",
+    "asOf": 2025,
     "unit": "titles",
     "answerValue": 2200000,
     "decompositionHint": "Large publishing markets each produce tens to hundreds of thousands of titles a year; summing major markets and adding self-published titles gets you into the low millions.",
@@ -658,6 +685,7 @@ var QUESTIONS = [
   {
     "id": "pencils-made-per-year",
     "prompt": "How many wooden pencils are manufactured worldwide each year?",
+    "asOf": 2025,
     "unit": "pencils",
     "answerValue": 14000000000,
     "decompositionHint": "Roughly two pencils per person on Earth per year is a reasonable anchor, weighted heavily towards school-age users.",
@@ -666,6 +694,7 @@ var QUESTIONS = [
   {
     "id": "lego-elements-per-year",
     "prompt": "How many individual LEGO elements are produced each year?",
+    "asOf": 2025,
     "unit": "LEGO elements",
     "answerValue": 75000000000,
     "decompositionHint": "Estimate sets sold per year and average pieces per set - the answer works out to roughly ten pieces for every person on Earth, every year.",
@@ -674,6 +703,7 @@ var QUESTIONS = [
   {
     "id": "shipping-containers-per-year",
     "prompt": "How many shipping containers (TEU) pass through the world's ports in a year?",
+    "asOf": 2025,
     "unit": "TEU",
     "answerValue": 850000000,
     "decompositionHint": "The largest single port handles tens of millions of TEU per year; the global total is dominated by a few dozen major ports.",
@@ -682,6 +712,7 @@ var QUESTIONS = [
   {
     "id": "us-currency-in-circulation",
     "prompt": "What is the total value of US physical currency in circulation, in dollars?",
+    "asOf": 2025,
     "unit": "US dollars",
     "answerValue": 2300000000000,
     "decompositionHint": "Most of the value sits in $100 notes, a large share of which are held outside the United States. That works out to several thousand dollars of cash per American.",
@@ -690,6 +721,7 @@ var QUESTIONS = [
   {
     "id": "atms-worldwide",
     "prompt": "How many ATMs are there worldwide?",
+    "asOf": 2025,
     "unit": "ATMs",
     "answerValue": 3000000,
     "decompositionHint": "Roughly one ATM per few thousand people globally, with much higher density in wealthy and cash-heavy economies.",
@@ -698,6 +730,7 @@ var QUESTIONS = [
   {
     "id": "mcdonalds-customers-per-day",
     "prompt": "How many customers does McDonald's serve worldwide per day?",
+    "asOf": 2025,
     "unit": "customers/day",
     "answerValue": 69000000,
     "decompositionHint": "About 40,000 restaurants worldwide, each serving on the order of 1,500-2,000 customers a day.",
@@ -706,6 +739,7 @@ var QUESTIONS = [
   {
     "id": "gas-stations-in-us",
     "prompt": "How many petrol stations (gas stations) are there in the United States?",
+    "asOf": 2025,
     "unit": "stations",
     "answerValue": 145000,
     "decompositionHint": "US population ~335 million; roughly one station per 2,000-2,500 people is a reasonable density for a car-dependent country.",
@@ -714,6 +748,7 @@ var QUESTIONS = [
   {
     "id": "roads-in-us-length",
     "prompt": "How many kilometres of public road are there in the United States?",
+    "asOf": 2025,
     "unit": "kilometres",
     "answerValue": 6600000,
     "decompositionHint": "Estimate from settlement density: every town needs local streets, and the interstate system alone is only ~78,000 km, so local roads dominate the total by two orders of magnitude.",
@@ -722,6 +757,7 @@ var QUESTIONS = [
   {
     "id": "km-driven-per-car-per-year",
     "prompt": "How many kilometres does an average car travel in one year?",
+    "asOf": 2025,
     "unit": "kilometres/year",
     "answerValue": 15000,
     "decompositionHint": "A typical commute is on the order of 30-50 km a day round trip on working days, plus errands and occasional long trips.",
@@ -730,6 +766,7 @@ var QUESTIONS = [
   {
     "id": "hospitals-in-us",
     "prompt": "How many hospitals are there in the United States?",
+    "asOf": 2025,
     "unit": "hospitals",
     "answerValue": 6100,
     "decompositionHint": "US population ~335 million; a hospital typically serves a catchment of tens of thousands of people.",
@@ -738,6 +775,7 @@ var QUESTIONS = [
   {
     "id": "public-libraries-in-us",
     "prompt": "How many public libraries are there in the United States?",
+    "asOf": 2025,
     "unit": "libraries",
     "answerValue": 17000,
     "decompositionHint": "Most towns of any size have at least one branch; estimate the number of towns above a few thousand people.",
@@ -746,6 +784,7 @@ var QUESTIONS = [
   {
     "id": "schools-in-us",
     "prompt": "How many K-12 schools are there in the United States?",
+    "asOf": 2025,
     "unit": "schools",
     "answerValue": 130000,
     "decompositionHint": "About 50 million school-age children, with an average school enrolling a few hundred students.",
@@ -754,6 +793,7 @@ var QUESTIONS = [
   {
     "id": "words-in-english-wikipedia",
     "prompt": "How many words are there in the whole of English Wikipedia?",
+    "asOf": 2025,
     "unit": "words",
     "answerValue": 4600000000,
     "decompositionHint": "Roughly 7 million articles averaging several hundred words each - though the mean is dragged up by a minority of very long articles.",
@@ -762,6 +802,7 @@ var QUESTIONS = [
   {
     "id": "transistors-in-a-smartphone-chip",
     "prompt": "How many transistors are on a modern flagship smartphone processor?",
+    "asOf": 2025,
     "unit": "transistors",
     "answerValue": 15000000000,
     "decompositionHint": "Chip area is on the order of 1 cm^2 and modern process nodes pack on the order of 10^8 transistors per mm^2.",
@@ -770,6 +811,7 @@ var QUESTIONS = [
   {
     "id": "cups-of-tea-uk-per-day",
     "prompt": "How many cups of tea are drunk in the United Kingdom each day?",
+    "asOf": 2025,
     "unit": "cups",
     "answerValue": 100000000,
     "decompositionHint": "UK population ~68 million; the commonly cited average is a bit under two cups per person per day.",
@@ -778,6 +820,7 @@ var QUESTIONS = [
   {
     "id": "sheep-in-new-zealand",
     "prompt": "How many sheep are there in New Zealand?",
+    "asOf": 2025,
     "unit": "sheep",
     "answerValue": 25000000,
     "decompositionHint": "The famous ratio of sheep to people has fallen a long way from its 1980s peak of over 20:1, but is still around 5:1 against a population of ~5 million.",
