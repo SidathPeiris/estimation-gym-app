@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1a1b26">
+<meta name="description" content="A daily Fermi-estimation puzzle, scored on order-of-magnitude closeness.">
+<title>Estimation Gym</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Estimation Gym">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+
+<main class="app">
+  <header class="hero">
+    <h1>Estimation Gym</h1>
+    <span class="puzzle" id="puzzle">Puzzle #—</span>
+  </header>
+  <p class="streak" id="streak">Streak 0 · Best 0</p>
+
+  <p class="prompt" id="prompt">Loading…</p>
+
+  <form class="guess" id="guess-form" novalidate>
+    <input
+      id="guess-input"
+      type="text"
+      inputmode="decimal"
+      autocomplete="off"
+      autocapitalize="off"
+      spellcheck="false"
+      aria-label="Your estimate">
+    <button type="submit" id="guess-go">Go</button>
+  </form>
+  <p class="error" id="error" role="alert" hidden></p>
+
+  <section class="result" id="result" hidden>
+    <div class="result-head">
+      <span class="band" id="band"></span>
+      <span class="points" id="points"></span>
+    </div>
+    <p class="line" id="guess-line"></p>
+    <p class="line" id="actual-line"></p>
+    <p class="decades" id="decades-line"></p>
+  </section>
+
+  <p class="hint" id="hint" hidden></p>
+  <p class="source" id="source" hidden></p>
+
+  <section class="stats" id="stats" hidden>
+    <button class="stats-toggle" id="stats-toggle" aria-expanded="false" aria-controls="stats-body">
+      <span class="stats-title"><span class="chev" id="chev">▸</span> Stats</span>
+      <span class="stats-summary" id="stats-summary"></span>
+    </button>
+    <div class="stats-body" id="stats-body" hidden>
+      <div id="bars"></div>
+      <p class="stats-footer" id="stats-footer"></p>
+      <button type="button" class="export" id="export">Copy my history</button>
+    </div>
+  </section>
+</main>
+
+<script src="core/Model.js"></script>
+<script src="core/questions.js"></script>
+<script src="presenter.js"></script>
+<script src="storage.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

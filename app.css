@@ -1,0 +1,186 @@
+:root {
+  --bg: #1a1b26;
+  --panel: #1f2335;
+  --line: #2f3550;
+  --fg: #c0caf5;
+  --dim: #7681a8;
+  --accent: #7aa2f7;
+  --urgent: #f7768e;
+  --mono: ui-monospace, "Cascadia Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #eef1f8;
+    --panel: #ffffff;
+    --line: #d3dae9;
+    --fg: #1f2335;
+    --dim: #5a6484;
+    --accent: #2e5db8;
+    --urgent: #c0384f;
+  }
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box }
+
+/* Author display rules below (.guess is a flex row) outrank the UA stylesheet's
+   [hidden] rule, so hiding has to win explicitly or answered days keep showing
+   a live input. */
+[hidden] { display: none !important }
+
+html { background: var(--bg) }
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--mono);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -webkit-text-size-adjust: 100%;
+}
+
+.app {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: calc(24px + env(safe-area-inset-top)) 20px
+           calc(32px + env(safe-area-inset-bottom));
+}
+
+/* ---------- header ---------- */
+.hero {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.hero h1 { font-size: 1.5rem; font-weight: 700; letter-spacing: .3px }
+.puzzle { font-size: .875rem; color: var(--dim) }
+.streak { font-size: .8125rem; color: var(--dim); margin-top: 6px }
+
+/* ---------- question ---------- */
+.prompt {
+  font-size: 1.1875rem;
+  line-height: 1.45;
+  margin-top: 24px;
+}
+
+/* ---------- input ---------- */
+.guess { display: flex; gap: 10px; margin-top: 24px }
+
+.guess input {
+  flex: 1;
+  min-width: 0;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 14px 16px;
+  font: inherit;
+  font-size: 1.0625rem;
+  color: var(--fg);
+}
+.guess input::placeholder { color: var(--dim) }
+.guess input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent);
+}
+
+.guess button {
+  padding: 14px 24px;
+  border-radius: 10px;
+  border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent);
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  color: var(--accent);
+  font: inherit;
+  font-size: 1.0625rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.guess button:active { transform: translateY(1px) }
+
+.error { color: var(--urgent); font-size: .8125rem; margin-top: 10px }
+
+/* ---------- result ---------- */
+.result {
+  margin-top: 24px;
+  border-radius: 12px;
+  padding: 18px 20px;
+  border: 1px solid var(--tone, var(--accent));
+  background: color-mix(in srgb, var(--tone, var(--accent)) 11%, transparent);
+}
+.result.tone-accent  { --tone: var(--accent) }
+.result.tone-neutral { --tone: var(--fg) }
+.result.tone-urgent  { --tone: var(--urgent) }
+
+.result-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+.band { font-size: 1.5rem; font-weight: 700; color: var(--tone) }
+.points { font-size: 1rem; font-weight: 700; color: var(--tone) }
+.line { font-size: .9375rem; margin-top: 8px }
+.decades { font-size: .8125rem; color: var(--dim); margin-top: 10px }
+
+.hint, .source { font-size: .8125rem; color: var(--dim); margin-top: 18px }
+.source { font-style: italic }
+
+/* ---------- stats ---------- */
+.stats { margin-top: 28px; border-top: 1px solid var(--line); padding-top: 18px }
+
+.stats-toggle {
+  width: 100%;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  background: none;
+  border: 0;
+  padding: 4px 0;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+.stats-title { font-size: .875rem; font-weight: 700 }
+.chev { display: inline-block; width: 1em; color: var(--dim) }
+.stats-summary { font-size: .8125rem; color: var(--dim) }
+
+.stats-body { margin-top: 14px }
+
+.bar-row {
+  display: grid;
+  grid-template-columns: 5.5rem 1fr 2rem;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+.bar-label { font-size: .8125rem; color: var(--dim) }
+.bar-track {
+  height: 8px;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--fg) 14%, transparent);
+  overflow: hidden;
+}
+.bar-fill { height: 100%; border-radius: 4px; background: var(--accent) }
+.bar-fill.tone-accent  { background: var(--accent) }
+.bar-fill.tone-neutral { background: var(--fg) }
+.bar-fill.tone-urgent  { background: var(--urgent) }
+.bar-tally { font-size: .8125rem; color: var(--dim); text-align: right }
+
+.stats-footer { font-size: .8125rem; color: var(--dim); margin-top: 16px }
+
+.export {
+  margin-top: 16px;
+  padding: 9px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: none;
+  color: var(--dim);
+  font: inherit;
+  font-size: .8125rem;
+  cursor: pointer;
+}
+.export:active { transform: translateY(1px) }
