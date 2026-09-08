@@ -386,3 +386,19 @@ body {
   padding-top: 0.5rem;
   border-top: 1px solid var(--line);
 }
+
+/* --- suggest a question --- */
+.suggest {
+  margin: 1.4rem 0 0;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--dim);
+  text-align: center;
+}
+
+.suggest a { color: var(--accent); text-decoration: none; border-bottom: 1px solid currentColor }
+.suggest a:hover { color: var(--fg) }
+
+/* Stated up front, because the link redirects to a login page for anyone who
+   is not signed in to GitHub - most players, on a phone. */
+.suggest-caveat { display: block; margin-top: 0.15rem; opacity: 0.7; font-size: 0.72rem }
