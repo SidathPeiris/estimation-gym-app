@@ -21,6 +21,8 @@
              "error", "result", "band", "points", "guess-line", "actual-line",
              "decades-line", "share", "hint", "source",
              "hint-toggle", "strategy", "strategy-label", "strategy-guidance", "approach",
+             "howto", "howto-toggle", "howto-chev", "howto-body",
+             "howto-steps", "howto-intro", "howto-scoring", "howto-notes",
              "history", "history-toggle", "history-chev", "history-summary",
              "history-body", "history-list", "history-more",
              "stats", "stats-toggle", "chev", "stats-summary", "stats-body",
@@ -44,6 +46,9 @@
   var historyOpen = false
   var historyLimit = HISTORY_PAGE   // 0 means show every day played
   var hintShown = false
+  // Open on a first visit, where "how to play" is the whole question, and
+  // collapsed thereafter so it stays out of the way of the daily puzzle.
+  var howToOpen = !hasAnsweredAnything(state)
 
   function applyReset() {
     var mode = null
@@ -62,6 +67,10 @@
     } catch (e) {
       // Not fatal - the reset already applied; the URL just stays dirty.
     }
+  }
+
+  function hasAnsweredAnything(s) {
+    return !!(s && s.history && Object.keys(s.history).length)
   }
 
   function setText(node, value) { node.textContent = value }
@@ -95,6 +104,46 @@
 
       row.append(label, track, tally)
       el.bars.appendChild(row)
+    })
+  }
+
+  // Static content, so it is built once rather than on every render.
+  function renderHowToPlay(guide) {
+    el["howto-steps"].replaceChildren()
+    guide.steps.forEach(function (step) {
+      var li = document.createElement("li")
+      li.textContent = step
+      el["howto-steps"].appendChild(li)
+    })
+
+    setText(el["howto-intro"], guide.scoringIntro)
+
+    el["howto-scoring"].replaceChildren()
+    guide.scoring.forEach(function (row) {
+      var tr = document.createElement("tr")
+
+      var band = document.createElement("td")
+      band.className = "howto-band tone-" + row.tone
+      band.textContent = row.band
+
+      var meaning = document.createElement("td")
+      meaning.className = "howto-meaning"
+      meaning.textContent = row.meaning
+
+      var points = document.createElement("td")
+      points.className = "howto-points"
+      points.textContent = row.pointsLabel
+
+      tr.append(band, meaning, points)
+      el["howto-scoring"].appendChild(tr)
+    })
+
+    el["howto-notes"].replaceChildren()
+    guide.notes.forEach(function (note) {
+      var p = document.createElement("p")
+      p.className = "howto-note"
+      p.textContent = note
+      el["howto-notes"].appendChild(p)
     })
   }
 
@@ -177,6 +226,10 @@
     show(el.source, Boolean(vm.source))
     if (vm.source) setText(el.source, vm.source)
 
+    setText(el["howto-chev"], howToOpen ? "▾" : "▸")
+    el["howto-toggle"].setAttribute("aria-expanded", String(howToOpen))
+    show(el["howto-body"], howToOpen)
+
     show(el.history, vm.history.visible)
     setText(el["history-summary"], vm.history.total === 1
       ? "1 day"
@@ -247,6 +300,11 @@
     }
   })
 
+  el["howto-toggle"].addEventListener("click", function () {
+    howToOpen = !howToOpen
+    render()
+  })
+
   el["history-toggle"].addEventListener("click", function () {
     historyOpen = !historyOpen
     render()
@@ -271,11 +329,10 @@
     }
   })
 
+  // Static content, built once rather than on every render.
+  renderHowToPlay(viewModel(Model, state, question, today, 0, false).howToPlay)
   render()
 
-  // Registered after render so a failure here can never stop the puzzle from
-  // showing. Absent on http:// origins other than localhost, and in browsers
-  // with service workers disabled.
   // --- Anonymous install counter -----------------------------------------
   //
   // Counts installs and nothing else. The request carries no identifier, no
@@ -326,6 +383,9 @@
   window.addEventListener("appinstalled", countInstall)
   if (launchedStandalone()) countInstall()
 
+  // Registered after render so a failure here can never stop the puzzle from
+  // showing. Absent on http:// origins other than localhost, and in browsers
+  // with service workers disabled.
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", function () {
       navigator.serviceWorker.register("./sw.js").catch(function () {})

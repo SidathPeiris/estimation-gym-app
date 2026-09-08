@@ -328,6 +328,46 @@ function strategyFor(question) {
 // learn the method would be exactly the wrong incentive.
 var HINT_MULTIPLIER = 0.5
 
+// The how-to-play guide.
+//
+// Lives here rather than in either UI so the widget and the app teach the same
+// rules in the same words, the way calibrationLabel and the strategy guidance
+// already do.
+//
+// The scoring rows are derived from BANDS and BAND_POINTS rather than written
+// out, so the guide cannot drift away from what the scoring actually does. A
+// band added or repriced shows up here automatically.
+var BAND_MEANING = {
+  Bullseye: "within about 2x",
+  Close: "within 10x",
+  Ballpark: "within 100x",
+  Off: "more than 100x out"
+}
+
+function scoringRows() {
+  return BANDS.map(function (band) {
+    return {
+      band: band,
+      meaning: BAND_MEANING[band] || "",
+      points: BAND_POINTS[band]
+    }
+  })
+}
+
+var HOW_TO_PLAY = {
+  title: "How to play",
+  steps: [
+    "Read today's question and estimate the answer. Nobody expects you to know it - work it out from things you do know.",
+    "Type your guess and submit. Scientific notation works for big numbers: 3e12 rather than counting zeroes.",
+    "You are scored on how close you get in powers of ten, not on being exact.",
+    "Come back tomorrow for a new question. Everyone gets the same one on the same day."
+  ],
+  scoringIntro: "Being within a factor of ten of a hard question is the skill worth having, so scoring is measured in powers of ten rather than percentages.",
+  streakNote: "Anything better than Off extends your streak. An Off resets it to zero. Your best streak is kept alongside your current one.",
+  hintNote: "Stuck? Hint tells you how to attack that shape of problem without giving anything away about the answer. It halves the day's points, but it never breaks your streak.",
+  statsNote: "After ten days, Stats will tell you which way you lean - whether you habitually guess high or low. That is the part you can actually correct."
+}
+
 // The public surface, declared once. Under node this is the module export;
 // loaded as a plain script it is a global. Callers therefore get the same
 // object either way, so a function added here cannot be missing on one surface
@@ -352,6 +392,9 @@ var ModelAPI = {
   calibrationLabel: calibrationLabel,
   CALIBRATION_MIN_PLAYS: CALIBRATION_MIN_PLAYS,
   formatCompact: formatCompact,
+  HOW_TO_PLAY: HOW_TO_PLAY,
+  scoringRows: scoringRows,
+  BAND_MEANING: BAND_MEANING,
   STRATEGIES: STRATEGIES,
   strategyFor: strategyFor,
   HINT_MULTIPLIER: HINT_MULTIPLIER,

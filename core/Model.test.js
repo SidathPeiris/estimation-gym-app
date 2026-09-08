@@ -245,4 +245,30 @@ assert.equal(mixedStats.totalPoints, 40 + 20, "the hinted Ballpark scores half")
 assert.equal(mixedStats.calibrationSample, 1, "the hinted day is left out of calibration")
 assert.ok(mixedStats.biasDecades < 0, "so the surviving lean is the unaided one")
 
+// --- how to play ---
+// The guide must describe the scoring that actually runs, so it is derived
+// rather than written out. These pin that derivation.
+const rows = Model.scoringRows()
+assert.equal(rows.length, Model.BANDS.length, "every band appears in the guide")
+for (const row of rows) {
+  assert.ok(Model.BANDS.includes(row.band))
+  assert.equal(row.points, Model.BAND_POINTS[row.band], `${row.band} guide points match the real award`)
+  assert.ok(row.meaning.length > 0, `${row.band} says what it means in plain words`)
+}
+assert.deepEqual(rows.map((r) => r.band), Model.BANDS, "and in scoring order, best first")
+
+// A guess exactly on each band boundary must earn the points the guide claims.
+for (const [guess, band] of [[100, "Bullseye"], [1000, "Close"], [10000, "Ballpark"], [1e7, "Off"]]) {
+  const scored = Model.scoreGuess(guess, 100)
+  assert.equal(scored.band, band)
+  const promised = rows.find((r) => r.band === band).points
+  assert.equal(scored.points, promised, `the guide promises ${promised} for ${band}`)
+}
+
+assert.ok(Model.HOW_TO_PLAY.steps.length >= 3, "the guide has usable steps")
+for (const step of Model.HOW_TO_PLAY.steps) assert.ok(step.length > 20)
+for (const key of ["scoringIntro", "streakNote", "hintNote", "statsNote"]) {
+  assert.ok(Model.HOW_TO_PLAY[key] && Model.HOW_TO_PLAY[key].length > 30, `${key} is present`)
+}
+
 console.log("All Model.js tests passed.")

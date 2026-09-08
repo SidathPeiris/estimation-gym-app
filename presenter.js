@@ -120,6 +120,26 @@ function statsView(Model, stats) {
 
 // `hintShown` is the live UI flag for today, not persisted state: once the day
 // is answered the entry's own `assisted` flag is what counts.
+// The guide, shaped for rendering. Content comes from the Model so the widget
+// and the app teach identical rules.
+function howToPlayView(Model) {
+  var guide = Model.HOW_TO_PLAY
+  return {
+    title: guide.title,
+    steps: guide.steps,
+    scoringIntro: guide.scoringIntro,
+    scoring: Model.scoringRows().map(function (row) {
+      return {
+        band: row.band,
+        tone: toneForBand(row.band),
+        meaning: row.meaning,
+        pointsLabel: row.points + " pts"
+      }
+    }),
+    notes: [guide.streakNote, guide.hintNote, guide.statsNote]
+  }
+}
+
 function viewModel(Model, state, question, day, historyLimit, hintShown) {
   var answered = Model.hasAnsweredDay(state, day)
   var entry = answered ? state.history[String(day)] : null
@@ -152,7 +172,8 @@ function viewModel(Model, state, question, day, historyLimit, hintShown) {
     hint: question && answered ? "How to think about it: " + question.decompositionHint : null,
     source: question && answered && question.source ? "Source: " + question.source : null,
     stats: statsView(Model, stats),
-    history: historyView(Model, state, limit)
+    history: historyView(Model, state, limit),
+    howToPlay: howToPlayView(Model)
   }
 }
 
@@ -184,6 +205,7 @@ if (typeof module !== "undefined") {
     validateGuess: validateGuess,
     viewModel: viewModel,
     historyView: historyView,
+    howToPlayView: howToPlayView,
     shareText: shareText,
     BAND_EMOJI: BAND_EMOJI,
     HISTORY_PAGE: HISTORY_PAGE
