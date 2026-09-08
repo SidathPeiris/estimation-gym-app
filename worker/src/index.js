@@ -12,17 +12,20 @@
 
 const BANDS = ["Bullseye", "Close", "Ballpark", "Off"];
 
-// Below this the shape of the chart is noise rather than information, so the
-// endpoint reports the count but withholds the breakdown and the client says
-// so rather than drawing four misleading bars.
+// The breakdown is released from the very first response.
 //
-// Deliberately low. Everyone playing on a given calendar date gets the same
-// question, so a day's responses all land on one question id rather than
-// spreading across the bank - the constraint is how many people play, not
-// dilution. Set against that, a question only recurs about every 500 days and
-// a returning player is not counted twice, so a high floor would keep the
-// chart hidden for years on a small audience.
-const MIN_SAMPLE = 5;
+// Everyone playing on a given calendar date gets the same question, so a day's
+// responses land on one question id rather than spreading across the bank -
+// the constraint is how many people play, not dilution. A question also
+// recurs only about every 500 days and a returning player is not counted
+// twice, so any floor above 1 keeps the chart hidden for a long time on a
+// small audience.
+//
+// The honesty problem a floor was guarding against is handled in the client
+// instead, where it belongs: at n = 1 the sole respondent is the player
+// looking at it, so it is presented as "you are the first" rather than as a
+// comparison against themselves.
+const MIN_SAMPLE = 1;
 
 function corsHeaders(env) {
   return {

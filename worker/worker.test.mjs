@@ -61,10 +61,9 @@ function post(body, ip = "1.2.3.4") {
 const get = (q) =>
   new Request("https://w.dev/dist?q=" + encodeURIComponent(q), { headers: { Origin: ORIGIN } });
 
-// The floor is deliberately low: everyone on a given date answers the same
-// question, so responses concentrate rather than spread, but a question only
-// recurs about every 500 days.
-const MIN_SAMPLE = 5;
+// The breakdown is released from the first response; presenting n = 1 honestly
+// is the client's job, not the endpoint's.
+const MIN_SAMPLE = 1;
 
 // --- a fresh question withholds its shape until there is enough of it ---
 let e = env();
@@ -88,19 +87,13 @@ assert.equal(body.enough, true);
 assert.deepEqual(body.counts, { Bullseye: 5, Close: 10, Ballpark: 7, Off: 3 });
 console.log("25 submissions    -> " + JSON.stringify(body.counts));
 
-// --- exactly at the floor the breakdown is released ---
+// --- the very first response already carries a breakdown ---
 e = env();
-for (let i = 0; i < MIN_SAMPLE - 1; i++) {
-  await worker.fetch(post({ questionId: "cars-in-us", band: "Close" }, "172.16.0." + i), e);
-}
-let atEdge = await (await worker.fetch(get("cars-in-us"), e)).json();
-assert.equal(atEdge.enough, false, "one short of the floor stays withheld");
-assert.equal(atEdge.n, MIN_SAMPLE - 1);
-await worker.fetch(post({ questionId: "cars-in-us", band: "Close" }, "172.16.0.99"), e);
-atEdge = await (await worker.fetch(get("cars-in-us"), e)).json();
-assert.equal(atEdge.enough, true, "reaching the floor releases it");
-assert.equal(atEdge.n, MIN_SAMPLE);
-console.log("at the floor      -> withheld at " + (MIN_SAMPLE - 1) + ", released at " + MIN_SAMPLE);
+let first = await (await worker.fetch(post({ questionId: "cars-in-us", band: "Close" }, "172.16.0.1"), e)).json();
+assert.equal(first.n, 1);
+assert.equal(first.enough, true, "one response is enough for the endpoint");
+assert.deepEqual(first.counts, { Bullseye: 0, Close: 1, Ballpark: 0, Off: 0 });
+console.log("first response    -> n=1, breakdown released");
 
 // --- one address counts once per question ---
 e = env();

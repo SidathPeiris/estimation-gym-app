@@ -133,15 +133,26 @@ function distributionView(Model, dist, myBand) {
     if (Model.BANDS[j] === myBand) seenMine = true
   }
 
+  // The chart only ever appears on a question the player has answered, so
+  // their own response is always inside these counts. At a total of one, that
+  // response is the only one there is - reporting "you did better than 0% of
+  // them" would be comparing someone against themselves.
+  var solo = total === 1
+
   return {
     visible: true,
     enough: true,
     n: total,
+    solo: solo,
     bars: bars,
-    summary: total + " people have answered this",
-    comparison: myBand
-      ? "You did better than " + Math.round((beaten / total) * 100) + "% of them"
-      : null
+    summary: solo
+      ? "You are the first to answer this one"
+      : total + " people have answered this",
+    comparison: solo
+      ? "Check back once others have played."
+      : (myBand
+        ? "You did better than " + Math.round((beaten / total) * 100) + "% of them"
+        : null)
   }
 }
 

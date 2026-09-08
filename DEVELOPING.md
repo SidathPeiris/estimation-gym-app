@@ -172,16 +172,20 @@ stand-in for D1, so the logic is testable without deploying.
 
 ### Limits worth knowing
 
-- **Below 5 responses the endpoint withholds the breakdown** (`MIN_SAMPLE` in
-  the Worker) and returns only the count, so the app says "too few to compare
-  against yet" rather than drawing a chart out of three answers.
+- **The breakdown is released from the first response** (`MIN_SAMPLE = 1` in the
+  Worker). Everyone playing on a given calendar date gets the same question, so
+  a day's responses land on **one** question id rather than spreading across the
+  bank — the constraint is how many people play, not dilution. A question also
+  recurs only about every 500 days and a returning player is not counted twice,
+  so any floor above 1 keeps the chart hidden for a long time on a small
+  audience.
 
-  The floor is deliberately low. Everyone playing on a given calendar date gets
-  the same question, so a day's responses all land on **one** question id
-  rather than spreading across the bank — the constraint is how many people
-  play, not dilution. But a question recurs only about every 500 days, and a
-  returning player is not counted twice, so a high floor would keep the chart
-  hidden for years on a small audience.
+  Presenting a tiny sample honestly is the **client's** job rather than the
+  endpoint's. The chart only ever appears on a question the player has answered,
+  so their own response is always inside the counts; at a total of one, that
+  response is the only one there is. `distributionView` detects this and says
+  "You are the first to answer this one" instead of reporting that they did
+  better than 0% of them, which would be comparing someone against themselves.
 - **Submissions are unauthenticated.** One per address per question is enforced,
   and the origin is checked, but a determined person could still skew a
   question. Treat the chart as indicative.
