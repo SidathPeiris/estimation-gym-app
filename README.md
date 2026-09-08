@@ -106,6 +106,3 @@ the desktop widget makes no network connection whatsoever.
 
 MIT
 
----
-
-*Working on the app itself? See [DEVELOPING.md](DEVELOPING.md).*
