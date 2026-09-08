@@ -8,7 +8,7 @@ compatibility_date = "2026-01-01"
 [[d1_databases]]
 binding = "DB"
 database_name = "estimation-gym"
-database_id = "PASTE_YOUR_D1_DATABASE_ID_HERE"
+database_id = "9f7deb91-5df5-41a0-9477-309d71e010cf"
 
 # The app's origin. Requests from anywhere else are refused, so the endpoint is
 # not trivially usable as someone else's free counter.
