@@ -14,11 +14,13 @@ Working single screen: today's puzzle, guess entry, scored result with points,
 and a collapsible lifetime stats panel. Ships a web manifest, icons and a
 cache-first service worker, so it installs to the home screen and plays offline.
 
-**Caveat:** the service worker registers correctly, but its offline behaviour
-could not be exercised during development — headless Chrome on the authoring
-machine fails every `CacheStorage` call with `UnknownError: Unexpected internal
-error`, so precaching is unverified. Confirm offline play in a real browser
-(load the app, enable airplane mode, reload) before relying on it.
+Live at <https://sidathpeiris.github.io/estimation-gym-app/>. Offline play is
+confirmed on a real device (installed to the home screen, airplane mode, reload).
+
+Note that `CacheStorage` cannot be exercised in headless Chrome — every call
+fails there with `UnknownError: Unexpected internal error` regardless of
+headless mode or sandbox flags. Offline changes therefore have to be checked on
+a real browser; an automated headless test will report a false failure.
 
 ## How it relates to the widget
 
