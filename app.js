@@ -18,6 +18,7 @@
 
   var el = {}
   var ids = ["puzzle", "streak", "asof", "prompt", "guess-form", "guess-input", "guess-go",
+             "exp",
              "error", "result", "band", "points", "guess-line", "actual-line",
              "decades-line", "share", "hint", "source",
              "dist", "dist-summary", "dist-bars", "dist-note",
@@ -484,6 +485,31 @@
     if (refreshDay()) render()
     if (pendingReload) applyUpdate()
     requestUpdate()
+  })
+
+  // The numeric keypad a phone shows for inputmode="decimal" has no "e", so
+  // scientific notation - which the guide tells people to use, and which the
+  // answers genuinely need, spanning 10^-11 to 10^80 - was unreachable on the
+  // device most people play on. This inserts it without giving up the keypad.
+  el.exp.addEventListener("click", function () {
+    var input = el["guess-input"]
+    var value = String(input.value)
+
+    // One exponent only; "3e4e5" is not a number and the field would just
+    // reject it later with no explanation.
+    if (value.toLowerCase().indexOf("e") >= 0) return
+
+    var start = typeof input.selectionStart === "number" ? input.selectionStart : value.length
+    var end = typeof input.selectionEnd === "number" ? input.selectionEnd : value.length
+    input.value = value.slice(0, start) + "e" + value.slice(end)
+
+    // Keep the keypad up and the caret after the "e", ready for the exponent.
+    try {
+      input.focus()
+      if (input.setSelectionRange) input.setSelectionRange(start + 1, start + 1)
+    } catch (e) {
+      // Focus handling is a convenience; the character is already inserted.
+    }
   })
 
   el["hint-toggle"].addEventListener("click", function () {

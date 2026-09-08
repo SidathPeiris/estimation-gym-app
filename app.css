@@ -402,3 +402,23 @@ body {
 /* Stated up front, because the link redirects to a login page for anyone who
    is not signed in to GitHub - most players, on a phone. */
 .suggest-caveat { display: block; margin-top: 0.15rem; opacity: 0.7; font-size: 0.72rem }
+
+/* --- scientific-notation helper --- */
+/* The phone keypad has no "e"; this puts one within reach without swapping
+   the keypad for a full keyboard. */
+#exp {
+  flex: 0 0 auto;
+  padding: 0 0.7rem;
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--dim);
+  font: inherit;
+  font-size: 0.85rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+#exp sup { font-size: 0.7em }
+#exp:hover, #exp:focus-visible { color: var(--fg); border-color: var(--dim) }
+#exp:active { background: color-mix(in srgb, var(--fg) 8%, transparent) }
