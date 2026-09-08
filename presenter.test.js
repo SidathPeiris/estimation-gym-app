@@ -104,6 +104,55 @@ for (let d = 1; d <= Model.CALIBRATION_MIN_PLAYS; d++) leaning = Model.recordAns
 const leaningVm = P.viewModel(Model, leaning, question, Model.CALIBRATION_MIN_PLAYS)
 assert.ok(leaningVm.stats.calibration.includes("low"), "a consistent low lean is reported once earned")
 
+// --- history view ---
+assert.equal(P.historyView(Model, Model.emptyState(), 20).visible, false, "no history to show yet")
+assert.deepEqual(P.historyView(Model, Model.emptyState(), 20).rows, [])
+
+let hist = Model.emptyState()
+hist = Model.recordAnswer(hist, 979, 10, 100)     // Close, guessed low
+hist = Model.recordAnswer(hist, 980, 1e7, 100)    // Off
+hist = Model.recordAnswer(hist, 981, 100, 100)    // Bullseye
+const view = P.historyView(Model, hist, 20)
+
+assert.equal(view.visible, true)
+assert.equal(view.total, 3)
+assert.deepEqual(view.rows.map((r) => r.day), [981, 980, 979], "newest day first")
+assert.equal(view.rows[0].band, "Bullseye")
+assert.equal(view.rows[0].dateLabel, Model.formatDay(981), "each row is dated from its own day index")
+assert.equal(view.rows[0].points, 100)
+assert.equal(view.rows[1].tone, "urgent", "an Off row is toned as urgent")
+
+// Each row reports the value it was scored against, which is what makes old
+// rows survive the bank being reshuffled.
+assert.equal(view.rows[2].guessLabel, "10")
+assert.equal(view.rows[2].actualLabel, "100")
+assert.equal(view.rows[2].decadesLabel, "1.00")
+
+// --- paging ---
+let many = Model.emptyState()
+for (let d = 900; d <= 950; d++) many = Model.recordAnswer(many, d, 100, 100)
+const paged = P.historyView(Model, many, 20)
+assert.equal(paged.total, 51, "total counts every played day")
+assert.equal(paged.shown, 20, "only a page is returned")
+assert.equal(paged.rows[0].day, 950, "the page starts at the most recent day")
+assert.equal(P.historyView(Model, many, 0).shown, 51, "a limit of 0 returns everything")
+
+// --- corrupted entries are skipped rather than crashing the list ---
+const messy = { history: { "1": null, "2": { band: "Close", guess: 5, answerValue: 10, distanceDecades: 0.3 }, "oops": { band: "Close" } } }
+const messyView = P.historyView(Model, messy, 20)
+assert.equal(messyView.total, 1, "null entries and non-numeric day keys are skipped")
+assert.equal(messyView.rows[0].day, 2)
+
+// An entry missing its answerValue still renders rather than showing NaN.
+const noAnswer = { history: { "5": { band: "Off", guess: 3, distanceDecades: null } } }
+const noAnswerRow = P.historyView(Model, noAnswer, 20).rows[0]
+assert.equal(noAnswerRow.actualLabel, "?")
+assert.equal(noAnswerRow.decadesLabel, "?")
+
+// --- history reaches the view model ---
+assert.equal(P.viewModel(Model, hist, question, 981).history.total, 3)
+assert.equal(P.viewModel(Model, Model.emptyState(), question, 981).history.visible, false)
+
 // --- share text ---
 const spoiler = { ...question, answerValue: 137, unit: "widgets" }
 assert.equal(P.shareText(Model, Model.emptyState(), spoiler, 981, "https://example.test"), null,

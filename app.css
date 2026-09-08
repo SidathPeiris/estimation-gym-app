@@ -151,6 +151,31 @@ body {
 .hint, .source { font-size: .8125rem; color: var(--dim); margin-top: 18px }
 .source { font-style: italic }
 
+/* ---------- history ---------- */
+.history { margin-top: 28px; border-top: 1px solid var(--line); padding-top: 18px }
+
+.history-list { list-style: none; margin-top: 6px }
+
+.history-row {
+  display: grid;
+  grid-template-columns: 5.5rem 1fr auto;
+  align-items: baseline;
+  gap: 10px;
+  padding: 9px 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--line) 60%, transparent);
+}
+.history-row:last-child { border-bottom: 0 }
+
+.history-date { font-size: .8125rem; color: var(--dim) }
+
+.history-band { font-size: .8125rem; font-weight: 700 }
+.history-band.tone-accent  { color: var(--accent) }
+.history-band.tone-neutral { color: var(--fg) }
+.history-band.tone-urgent  { color: var(--urgent) }
+
+.history-numbers { font-size: .75rem; color: var(--dim); text-align: right; min-width: 0 }
+.history-numbers .nowrap { white-space: nowrap }
+
 /* ---------- stats ---------- */
 .stats { margin-top: 28px; border-top: 1px solid var(--line); padding-top: 18px }
 

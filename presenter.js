@@ -40,6 +40,53 @@ function resultView(Model, entry, question) {
   }
 }
 
+// How many past days the panel lists before offering to show the rest.
+var HISTORY_PAGE = 20
+
+// Past results, newest first.
+//
+// Only what was actually recorded is shown: the date, the band, the guess and
+// the value it was scored against. The question text is deliberately absent -
+// it is not stored, and it cannot be looked up by day either, because growing
+// the bank reshuffles which question falls on which date. Naming a question
+// here would eventually name the wrong one.
+function historyView(Model, state, limit) {
+  var history = (state && state.history) || {}
+  var days = []
+
+  for (var key in history) {
+    var entry = history[key]
+    if (!entry || !entry.band) continue
+    var day = Number(key)
+    if (!isFinite(day)) continue
+    days.push({ day: day, entry: entry })
+  }
+
+  days.sort(function (a, b) { return b.day - a.day })
+
+  var total = days.length
+  var shown = (limit > 0 && limit < total) ? days.slice(0, limit) : days
+
+  var rows = shown.map(function (item) {
+    var entry = item.entry
+    var decades = entry.distanceDecades
+    var scoredAgainst = typeof entry.answerValue === "number" ? entry.answerValue : null
+
+    return {
+      day: item.day,
+      dateLabel: Model.formatDay(item.day),
+      band: entry.band,
+      tone: toneForBand(entry.band),
+      points: Model.pointsForBand(entry.band),
+      guessLabel: Model.formatCompact(entry.guess),
+      actualLabel: scoredAgainst !== null ? Model.formatCompact(scoredAgainst) : "?",
+      decadesLabel: (decades !== null && decades !== undefined) ? decades.toFixed(2) : "?"
+    }
+  })
+
+  return { visible: total > 0, rows: rows, total: total, shown: rows.length }
+}
+
 function statsView(Model, stats) {
   var bars = []
   for (var i = 0; i < Model.BANDS.length; i++) {
@@ -67,10 +114,11 @@ function statsView(Model, stats) {
   }
 }
 
-function viewModel(Model, state, question, day) {
+function viewModel(Model, state, question, day, historyLimit) {
   var answered = Model.hasAnsweredDay(state, day)
   var entry = answered ? state.history[String(day)] : null
   var stats = Model.computeStats(state)
+  var limit = historyLimit === undefined ? HISTORY_PAGE : historyLimit
 
   return {
     // The calendar date rather than the day number: everyone playing on a given
@@ -88,7 +136,8 @@ function viewModel(Model, state, question, day) {
     result: question ? resultView(Model, entry, question) : null,
     hint: question && answered ? "How to think about it: " + question.decompositionHint : null,
     source: question && answered && question.source ? "Source: " + question.source : null,
-    stats: statsView(Model, stats)
+    stats: statsView(Model, stats),
+    history: historyView(Model, state, limit)
   }
 }
 
@@ -117,7 +166,9 @@ if (typeof module !== "undefined") {
     toneForBand: toneForBand,
     validateGuess: validateGuess,
     viewModel: viewModel,
+    historyView: historyView,
     shareText: shareText,
-    BAND_EMOJI: BAND_EMOJI
+    BAND_EMOJI: BAND_EMOJI,
+    HISTORY_PAGE: HISTORY_PAGE
   }
 }

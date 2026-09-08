@@ -54,6 +54,17 @@
   <p class="hint" id="hint" hidden></p>
   <p class="source" id="source" hidden></p>
 
+  <section class="history" id="history" hidden>
+    <button class="stats-toggle" id="history-toggle" aria-expanded="false" aria-controls="history-body">
+      <span class="stats-title"><span class="chev" id="history-chev">▸</span> History</span>
+      <span class="stats-summary" id="history-summary"></span>
+    </button>
+    <div class="stats-body" id="history-body" hidden>
+      <ol class="history-list" id="history-list"></ol>
+      <button type="button" class="export" id="history-more" hidden>Show all</button>
+    </div>
+  </section>
+
   <section class="stats" id="stats" hidden>
     <button class="stats-toggle" id="stats-toggle" aria-expanded="false" aria-controls="stats-body">
       <span class="stats-title"><span class="chev" id="chev">▸</span> Stats</span>

@@ -19,15 +19,19 @@
   var el = {}
   var ids = ["puzzle", "streak", "asof", "prompt", "guess-form", "guess-input", "guess-go",
              "error", "result", "band", "points", "guess-line", "actual-line",
-             "decades-line", "share", "hint", "source", "stats", "stats-toggle",
-             "chev", "stats-summary", "stats-body", "bars", "stats-footer",
-             "calibration", "export"]
+             "decades-line", "share", "hint", "source",
+             "history", "history-toggle", "history-chev", "history-summary",
+             "history-body", "history-list", "history-more",
+             "stats", "stats-toggle", "chev", "stats-summary", "stats-body",
+             "bars", "stats-footer", "calibration", "export"]
   ids.forEach(function (id) { el[id] = document.getElementById(id) })
 
   var today = Model.dayIndex(new Date())
   var question = Model.questionForDay(today, QUESTIONS)
   var state = loadState(Model, window.localStorage)
   var statsOpen = false
+  var historyOpen = false
+  var historyLimit = HISTORY_PAGE   // 0 means show every day played
 
   function setText(node, value) { node.textContent = value }
 
@@ -63,8 +67,47 @@
     })
   }
 
+  function renderHistory(history) {
+    el["history-list"].replaceChildren()
+
+    history.rows.forEach(function (row) {
+      var item = document.createElement("li")
+      item.className = "history-row"
+
+      var date = document.createElement("span")
+      date.className = "history-date"
+      date.textContent = row.dateLabel
+
+      var band = document.createElement("span")
+      band.className = "history-band tone-" + row.tone
+      band.textContent = row.band
+
+      // Guess against the value it was scored against, then the distance. The
+      // two halves are separately unbreakable so a very wide value wraps
+      // between them instead of overflowing a narrow phone.
+      var numbers = document.createElement("span")
+      numbers.className = "history-numbers"
+
+      var pair = document.createElement("span")
+      pair.className = "nowrap"
+      pair.textContent = row.guessLabel + " / " + row.actualLabel
+
+      var distance = document.createElement("span")
+      distance.className = "nowrap"
+      distance.textContent = " · " + row.decadesLabel + " dec"
+
+      numbers.append(pair, distance)
+      item.append(date, band, numbers)
+      el["history-list"].appendChild(item)
+    })
+
+    var more = history.total > history.shown
+    show(el["history-more"], more)
+    if (more) el["history-more"].textContent = "Show all " + history.total
+  }
+
   function render() {
-    var vm = viewModel(Model, state, question, today)
+    var vm = viewModel(Model, state, question, today, historyLimit)
 
     setText(el.puzzle, vm.dateLabel)
     setText(el.streak, vm.streakLabel)
@@ -92,6 +135,15 @@
     if (vm.hint) setText(el.hint, vm.hint)
     show(el.source, Boolean(vm.source))
     if (vm.source) setText(el.source, vm.source)
+
+    show(el.history, vm.history.visible)
+    setText(el["history-summary"], vm.history.total === 1
+      ? "1 day"
+      : vm.history.total + " days")
+    renderHistory(vm.history)
+    setText(el["history-chev"], historyOpen ? "▾" : "▸")
+    el["history-toggle"].setAttribute("aria-expanded", String(historyOpen))
+    show(el["history-body"], historyOpen)
 
     show(el.stats, vm.stats.visible)
     setText(el["stats-summary"], vm.stats.summary)
@@ -146,6 +198,16 @@
         .then(function () { flash(el.share, "Copied") })
         .catch(function () { flash(el.share, "Could not copy") })
     }
+  })
+
+  el["history-toggle"].addEventListener("click", function () {
+    historyOpen = !historyOpen
+    render()
+  })
+
+  el["history-more"].addEventListener("click", function () {
+    historyLimit = 0
+    render()
   })
 
   el["stats-toggle"].addEventListener("click", function () {
