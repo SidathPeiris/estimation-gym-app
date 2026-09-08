@@ -4,10 +4,14 @@
 // name plus skipWaiting/claim, a deploy replaces the old copy on next launch
 // rather than stranding people on a stale build.
 //
+// Bumping CACHE is necessary but not sufficient: the precache itself has to
+// bypass the HTTP cache, or the new version is filled with old files. See the
+// install handler.
+//
 // Note this caches code only. Play history lives in localStorage, which the
 // cache never touches, so a version bump can never cost anyone their streak.
 
-var CACHE = "estimation-gym-v10"
+var CACHE = "estimation-gym-v11"
 
 var ASSETS = [
   "./",
@@ -28,7 +32,17 @@ var ASSETS = [
 self.addEventListener("install", function (event) {
   event.waitUntil(
     caches.open(CACHE)
-      .then(function (cache) { return cache.addAll(ASSETS) })
+      .then(function (cache) {
+        // { cache: "reload" } bypasses the browser HTTP cache for each
+        // precache request. Without it, addAll is free to satisfy these from
+        // the HTTP cache, which means a fresh cache version can be populated
+        // with the *previous* build - the deploy then looks like it landed
+        // (new cache name, new service worker) while the app quietly keeps
+        // running old code. Observed happening to core/Model.js.
+        return cache.addAll(ASSETS.map(function (url) {
+          return new Request(url, { cache: "reload" })
+        }))
+      })
       .then(function () { return self.skipWaiting() })
   )
 })

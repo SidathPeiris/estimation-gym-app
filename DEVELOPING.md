@@ -109,6 +109,27 @@ The service worker is cache-first, so a returning visitor is served the cached
 build until a new worker takes over. **Bump `CACHE` in `sw.js` whenever any
 asset changes**, or people keep the old version indefinitely.
 
+Bumping `CACHE` is necessary but not sufficient. The precache requests are made
+with `{ cache: "reload" }` so they bypass the browser HTTP cache; without that,
+`addAll` may satisfy them from the HTTP cache and fill the *new* cache version
+with the *previous* build. The deploy then looks like it landed — new cache
+name, new worker, new files on the origin — while the app quietly keeps running
+old code. This was observed happening to `core/Model.js`, so do not remove it.
+
+When checking a deploy, compare what the page is running against the origin
+rather than trusting the cache name:
+
+```js
+const c = await caches.open("estimation-gym-vNN")
+const cached = await (await c.match("./core/Model.js")).text()
+const origin = await (await fetch("./core/Model.js?bust=" + Date.now())).text()
+cached === origin   // false means the precache picked up a stale copy
+```
+
+Note that a plain `fetch(url, {cache: "reload"})` from the page does **not**
+bypass the service worker — it is intercepted like any other request. Only a
+URL the worker has no cache entry for (the `?bust=` above) reaches the origin.
+
 Note the consequence when testing: immediately after a deploy the first load
 still runs the *previous* bundle, and the new one takes effect on the reload
 after that. A change that looks like it did not ship usually just needs a second
