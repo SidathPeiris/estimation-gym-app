@@ -6,6 +6,26 @@ assert.equal(Model.dayIndex(new Date(Date.UTC(2024, 0, 1))), 0)
 assert.equal(Model.dayIndex(new Date(Date.UTC(2024, 0, 2))), 1)
 assert.equal(Model.dayIndex(new Date(Date.UTC(2023, 11, 31))), -1)
 
+// --- dateForDay / formatDay: the date shown must match the puzzle served ---
+assert.equal(Model.formatDay(0), "Mon 1 Jan", "day 0 is the epoch, 1 January 2024, a Monday")
+assert.equal(Model.formatDay(1), "Tue 2 Jan")
+assert.equal(Model.formatDay(-1), "Sun 31 Dec", "days before the epoch still resolve")
+
+// Round trip: formatting the index of a date must name that same date.
+for (const [y, m, d, expected] of [
+  [2024, 0, 1, "Mon 1 Jan"],
+  [2024, 1, 29, "Thu 29 Feb"],   // leap day
+  [2025, 11, 25, "Thu 25 Dec"],
+  [2026, 8, 8, "Tue 8 Sep"]
+]) {
+  const idx = Model.dayIndex(new Date(Date.UTC(y, m, d)))
+  assert.equal(Model.formatDay(idx), expected, `${y}-${m + 1}-${d} formats as ${expected}`)
+}
+
+// The date must track the index, not the wall clock, or a shared result could
+// name a different day than the puzzle it describes.
+assert.notEqual(Model.formatDay(500), Model.formatDay(501))
+
 // --- question selection: deterministic, covers full bank before repeating ---
 const bank = ["a", "b", "c", "d", "e"]
 const seenInFirstPass = new Set()

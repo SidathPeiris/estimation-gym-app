@@ -15,6 +15,24 @@ function dayIndex(date) {
   return Math.floor((utcMidnight - EPOCH_MS) / DAY_MS)
 }
 
+var WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+var MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+
+// Inverse of dayIndex. Puzzles are still selected by day number, but the number
+// is meaningless to a new player - it reads as though they are 980 days behind
+// - so the calendar date is what gets shown. Derived from the index rather than
+// from the clock, so the date on screen always matches the puzzle being served.
+function dateForDay(dayIdx) {
+  return new Date(EPOCH_MS + dayIdx * DAY_MS)
+}
+
+// Hand-rolled rather than toLocaleDateString: QML's JS engine does not handle
+// locale date formatting reliably, the same reason formatCompact exists.
+function formatDay(dayIdx) {
+  var d = dateForDay(dayIdx)
+  return WEEKDAYS[d.getUTCDay()] + " " + d.getUTCDate() + " " + MONTHS[d.getUTCMonth()]
+}
+
 // Deterministic small PRNG (mulberry32) so a given seed always produces the
 // same shuffle - needed because Math.random() would make different players
 // (or the same player after a restart) see different question orders.
@@ -217,26 +235,32 @@ function formatCompact(value) {
   return parts.join(".")
 }
 
-if (typeof module !== "undefined") {
-  module.exports = {
-    dayIndex: dayIndex,
-    seededRandom: seededRandom,
-    shuffledIndices: shuffledIndices,
-    pickQuestionIndex: pickQuestionIndex,
-    questionForDay: questionForDay,
-    log10Distance: log10Distance,
-    signedLog10Error: signedLog10Error,
-    bandForDistance: bandForDistance,
-    scoreGuess: scoreGuess,
-    pointsForBand: pointsForBand,
-    emptyState: emptyState,
-    recordAnswer: recordAnswer,
-    hasAnsweredDay: hasAnsweredDay,
-    computeStats: computeStats,
-    calibrationLabel: calibrationLabel,
-    CALIBRATION_MIN_PLAYS: CALIBRATION_MIN_PLAYS,
-    formatCompact: formatCompact,
-    BANDS: BANDS,
-    BAND_POINTS: BAND_POINTS
-  }
+// The public surface, declared once. Under node this is the module export;
+// loaded as a plain script it is a global. Callers therefore get the same
+// object either way, so a function added here cannot be missing on one surface
+// and present on the other.
+var ModelAPI = {
+  dayIndex: dayIndex,
+  dateForDay: dateForDay,
+  formatDay: formatDay,
+  seededRandom: seededRandom,
+  shuffledIndices: shuffledIndices,
+  pickQuestionIndex: pickQuestionIndex,
+  questionForDay: questionForDay,
+  log10Distance: log10Distance,
+  signedLog10Error: signedLog10Error,
+  bandForDistance: bandForDistance,
+  scoreGuess: scoreGuess,
+  pointsForBand: pointsForBand,
+  emptyState: emptyState,
+  recordAnswer: recordAnswer,
+  hasAnsweredDay: hasAnsweredDay,
+  computeStats: computeStats,
+  calibrationLabel: calibrationLabel,
+  CALIBRATION_MIN_PLAYS: CALIBRATION_MIN_PLAYS,
+  formatCompact: formatCompact,
+  BANDS: BANDS,
+  BAND_POINTS: BAND_POINTS
 }
+
+if (typeof module !== "undefined") module.exports = ModelAPI

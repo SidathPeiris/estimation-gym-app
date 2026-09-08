@@ -73,7 +73,10 @@ function viewModel(Model, state, question, day) {
   var stats = Model.computeStats(state)
 
   return {
-    puzzleLabel: "Puzzle #" + day,
+    // The calendar date rather than the day number: everyone playing on a given
+    // date still gets the same question, so it stays a shared identifier, but it
+    // does not tell a first-time player they are 980 puzzles behind.
+    dateLabel: Model.formatDay(day),
     streakLabel: "Streak " + state.streak + " · Best " + state.bestStreak,
     // Present only on questions whose answer drifts with time; timeless ones
     // (physical constants and the like) carry no year.
@@ -104,7 +107,7 @@ function shareText(Model, state, question, day, url) {
     second += " · " + decades.toFixed(2) + " decades off"
   }
 
-  var lines = ["Estimation Gym #" + day, second, "Streak " + state.streak]
+  var lines = ["Estimation Gym · " + Model.formatDay(day), second, "Streak " + state.streak]
   if (url) lines.push("", url)
   return lines.join("\n")
 }

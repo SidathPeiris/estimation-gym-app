@@ -5,33 +5,16 @@
   // plugin, so they load as classic scripts and expose their declarations
   // globally. Collect them into one object matching the shape presenter.js and
   // storage.js expect, which is also the shape require() gives them under node.
-  var Model = {
-    dayIndex: dayIndex,
-    questionForDay: questionForDay,
-    hasAnsweredDay: hasAnsweredDay,
-    recordAnswer: recordAnswer,
-    computeStats: computeStats,
-    calibrationLabel: calibrationLabel,
-    formatCompact: formatCompact,
-    pointsForBand: pointsForBand,
-    emptyState: emptyState,
-    BANDS: BANDS,
-    CALIBRATION_MIN_PLAYS: CALIBRATION_MIN_PLAYS
-  }
-
-  // This facade is assembled by hand, so a function added to Model.js but
-  // forgotten here throws mid-render and leaves a blank page with the failure
-  // buried in the console. Check it up front and say so on screen instead.
-  var missing = ["dayIndex", "questionForDay", "hasAnsweredDay", "recordAnswer",
-                 "computeStats", "calibrationLabel", "formatCompact",
-                 "pointsForBand", "emptyState", "BANDS"]
-    .filter(function (name) { return Model[name] === undefined })
-
-  if (missing.length) {
+  // core/Model.js declares its public surface as ModelAPI and exports that same
+  // object under node, so there is no hand-maintained list here to fall out of
+  // step. Twice already a function added to the Model was missing from a list
+  // in this file, which threw mid-render and left a blank page.
+  if (typeof ModelAPI === "undefined") {
     document.getElementById("prompt").textContent =
-      "Setup error: Model is missing " + missing.join(", ")
+      "Setup error: core/Model.js did not load"
     return
   }
+  var Model = ModelAPI
 
   var el = {}
   var ids = ["puzzle", "streak", "asof", "prompt", "guess-form", "guess-input", "guess-go",
@@ -83,7 +66,7 @@
   function render() {
     var vm = viewModel(Model, state, question, today)
 
-    setText(el.puzzle, vm.puzzleLabel)
+    setText(el.puzzle, vm.dateLabel)
     setText(el.streak, vm.streakLabel)
     show(el.asof, Boolean(vm.asOfLabel))
     if (vm.asOfLabel) setText(el.asof, vm.asOfLabel)

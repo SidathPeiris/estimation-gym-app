@@ -32,7 +32,8 @@ assert.equal(P.validateGuess("3e12").value, 3e12, "scientific notation is accept
 // --- unanswered day ---
 const fresh = Model.emptyState()
 const before = P.viewModel(Model, fresh, question, 981)
-assert.equal(before.puzzleLabel, "Puzzle #981")
+assert.equal(before.dateLabel, "Tue 8 Sep", "day 981 is 8 September 2026")
+assert.equal(before.dateLabel, Model.formatDay(981), "the label comes from the day index, not the clock")
 assert.equal(before.streakLabel, "Streak 0 · Best 0")
 assert.equal(before.prompt, "How many test things?")
 assert.equal(before.placeholder, "Guess (things)")
@@ -110,7 +111,8 @@ assert.equal(P.shareText(Model, Model.emptyState(), spoiler, 981, "https://examp
 
 let shared = Model.recordAnswer(Model.emptyState(), 981, 61, 137)
 const text = P.shareText(Model, shared, spoiler, 981, "https://example.test")
-assert.ok(text.includes("Estimation Gym #981"), "names the puzzle")
+assert.ok(text.includes("Estimation Gym · Tue 8 Sep"), "names the day by date, not by an opaque number")
+assert.ok(!text.includes("#981"), "the day number is no longer surfaced")
 assert.ok(text.includes("Close"), "names the band")
 assert.ok(text.includes("decades off"), "says how close")
 assert.ok(text.includes("Streak 1"), "includes the streak")
