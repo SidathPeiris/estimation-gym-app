@@ -147,7 +147,9 @@ function viewModel(Model, state, question, day, historyLimit, hintShown) {
     streakLabel: "Streak " + state.streak + " · Best " + state.bestStreak,
     // Present only on questions whose answer drifts with time; timeless ones
     // (physical constants and the like) carry no year.
-    asOfLabel: question && question.asOf !== undefined ? "as of " + question.asOf : null,
+    asOfLabel: question && question.asOf !== undefined
+      ? "as of " + Model.formatAsOf(question.asOf)
+      : null,
     prompt: question ? question.prompt : "No question available",
     unit: question ? question.unit : "",
     placeholder: question ? "Guess (" + question.unit + ")" : "",

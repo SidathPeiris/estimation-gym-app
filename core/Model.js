@@ -236,6 +236,19 @@ function historyDays(state) {
   return days
 }
 
+// Dates a question for display. Years before the common era are stored
+// negative, which is right for arithmetic and wrong on screen: the Library of
+// Alexandria question was rendering as "as of -250" rather than "as of 250 BC".
+function formatAsOf(year) {
+  if (typeof year !== "number" || !isFinite(year)) return ""
+  return year < 0 ? Math.abs(year) + " BC" : String(year)
+}
+
+// Mirrors "version" in manifest.json. Model.test.js asserts the two match, so
+// this cannot quietly drift from what the plugin actually declares - the whole
+// point of showing a version is that it is trustworthy.
+var PLUGIN_VERSION = "0.1.0"
+
 // A lean is only worth reporting once there are enough days behind it -
 // below this a couple of unlucky guesses read as a personality trait.
 var CALIBRATION_MIN_PLAYS = 10
@@ -418,6 +431,8 @@ var ModelAPI = {
   recordAnswer: recordAnswer,
   hasAnsweredDay: hasAnsweredDay,
   historyDays: historyDays,
+  PLUGIN_VERSION: PLUGIN_VERSION,
+  formatAsOf: formatAsOf,
   computeStats: computeStats,
   calibrationLabel: calibrationLabel,
   CALIBRATION_MIN_PLAYS: CALIBRATION_MIN_PLAYS,

@@ -89,12 +89,21 @@ assert.equal(before.asOfLabel, null, "a timeless question carries no year")
 const datedQuestion = Object.assign({}, question, { asOf: 2025 })
 assert.equal(P.viewModel(Model, fresh, datedQuestion, 981).asOfLabel, "as of 2025")
 
+// BC years are stored negative for arithmetic but must not be shown that way.
+const bcQuestion = Object.assign({}, question, { asOf: -250 })
+assert.equal(P.viewModel(Model, fresh, bcQuestion, 981).asOfLabel, "as of 250 BC")
+
 // Every dated question in the shipped bank must render its year, and no
-// timeless one may invent a year it does not have.
+// timeless one may invent a year it does not have. Formatting comes from the
+// Model so the widget dates a question identically.
 for (const q of QUESTIONS) {
   const rendered = P.viewModel(Model, Model.emptyState(), q, 1)
-  if ("asOf" in q) assert.equal(rendered.asOfLabel, "as of " + q.asOf, `${q.id}: shows its year`)
-  else assert.equal(rendered.asOfLabel, null, `${q.id}: timeless, no year shown`)
+  if ("asOf" in q) {
+    assert.equal(rendered.asOfLabel, "as of " + Model.formatAsOf(q.asOf), `${q.id}: shows its year`)
+    assert.ok(rendered.asOfLabel.indexOf("-") < 0, `${q.id}: no stray minus sign`)
+  } else {
+    assert.equal(rendered.asOfLabel, null, `${q.id}: timeless, no year shown`)
+  }
 }
 
 // --- calibration surfaces through the view model ---

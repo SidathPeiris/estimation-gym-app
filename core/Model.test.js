@@ -322,4 +322,40 @@ assert.equal(Model.historyDays(handEdited).length, 2, "History shows only real d
 assert.equal(Model.computeStats(handEdited).played, 2, "and Stats counts the same ones")
 assert.equal(Model.computeStats(handEdited).totalPoints, 100 + 40, "points follow too")
 
+// --- PLUGIN_VERSION must match what the plugin declares ---
+// The widget shows this at the foot of the panel. A version display is only
+// worth having if it is trustworthy, so the constant is pinned to the manifest
+// rather than trusted to be updated alongside it.
+//
+// Skipped when running from the app repo, where the manifest does not travel
+// with the vendored copy.
+{
+  const path = require("node:path")
+  const manifestPath = path.join(__dirname, "manifest.json")
+  if (require("node:fs").existsSync(manifestPath)) {
+    const manifest = require(manifestPath)
+    assert.equal(
+      Model.PLUGIN_VERSION,
+      manifest.version,
+      `Model.js PLUGIN_VERSION is "${Model.PLUGIN_VERSION}" but manifest.json says "${manifest.version}" - bump both`
+    )
+  }
+}
+
+// --- formatAsOf: BC years are stored negative but must not be shown that way ---
+assert.equal(Model.formatAsOf(2025), "2025")
+assert.equal(Model.formatAsOf(1800), "1800")
+assert.equal(Model.formatAsOf(-250), "250 BC", "the Library of Alexandria is not 'as of -250'")
+assert.equal(Model.formatAsOf(-10000), "10000 BC")
+assert.equal(Model.formatAsOf(undefined), "")
+assert.equal(Model.formatAsOf(null), "")
+
+// Every dated question in the bank renders without a stray minus sign.
+for (const q of questionBank) {
+  if (q.asOf === undefined) continue
+  const shown = Model.formatAsOf(q.asOf)
+  assert.ok(shown.length > 0, `${q.id}: asOf ${q.asOf} rendered empty`)
+  assert.ok(shown.indexOf("-") < 0, `${q.id}: asOf renders as "${shown}"`)
+}
+
 console.log("All Model.js tests passed.")
