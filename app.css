@@ -321,6 +321,10 @@ body {
 .howto-scoring tr:last-child td { border-bottom: 0 }
 
 .howto-band { font-weight: 700; white-space: nowrap }
+/* Tone colours are scoped per component, so the guide needs its own. */
+.howto-band.tone-accent  { color: var(--accent) }
+.howto-band.tone-neutral { color: var(--fg) }
+.howto-band.tone-urgent  { color: var(--urgent) }
 .howto-meaning { color: var(--dim); padding-left: 0.6rem !important }
 .howto-points { color: var(--dim); text-align: right; white-space: nowrap }
 
