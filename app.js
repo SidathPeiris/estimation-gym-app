@@ -62,7 +62,7 @@
   // What gets sent is the question id and which of the four bands you landed
   // in. Not your guess, not the answer, no identifier. See worker/ for the
   // endpoint that receives it.
-  var DISTRIBUTION_URL = ""
+  var DISTRIBUTION_URL = "https://estimation-gym-distribution.estimationgym.workers.dev"
 
   // questionId -> last payload seen. Cleared on nothing: a distribution is
   // cheap to hold and the app is a single screen.
@@ -95,8 +95,13 @@
   // Submitting also returns the current picture, so answering costs one round
   // trip rather than two. Every failure path is silent and leaves the puzzle
   // untouched - offline play must not look broken.
+  function canFetch() {
+    return typeof fetch === "function"
+  }
+
   function submitResult(questionId, band) {
-    if (!DISTRIBUTION_URL || !questionId || !band) return
+    if (!DISTRIBUTION_URL || !questionId || !band || !canFetch()) return
+    try {
     fetch(DISTRIBUTION_URL + "/submit", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -109,12 +114,16 @@
         render()
       })
       .catch(function () {})
+    } catch (e) {
+      // Never let sharing a result interfere with having scored it.
+    }
   }
 
   function loadDistribution(questionId) {
-    if (!DISTRIBUTION_URL || !questionId) return
+    if (!DISTRIBUTION_URL || !questionId || !canFetch()) return
     if (distCache[questionId] || distInFlight[questionId]) return
     distInFlight[questionId] = true
+    try {
     fetch(DISTRIBUTION_URL + "/dist?q=" + encodeURIComponent(questionId))
       .then(function (r) { return r.ok ? r.json() : null })
       .then(function (data) {
@@ -124,6 +133,9 @@
         render()
       })
       .catch(function () { distInFlight[questionId] = false })
+    } catch (e) {
+      distInFlight[questionId] = false
+    }
   }
 
   function renderDistribution(view) {
@@ -459,10 +471,10 @@
       setText(el.error, "Scored, but your streak could not be saved on this device")
       show(el.error, true)
     }
+    render()
+
     var entry = state.history[String(today)]
     if (entry) submitResult(entry.questionId, entry.band)
-
-    render()
   }
 
   el["guess-form"].addEventListener("submit", submit)
