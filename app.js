@@ -21,6 +21,7 @@
              "error", "result", "band", "points", "guess-line", "actual-line",
              "decades-line", "share", "hint", "source",
              "hint-toggle", "strategy", "strategy-label", "strategy-guidance", "approach",
+             "build",
              "howto", "howto-toggle", "howto-chev", "howto-body",
              "howto-steps", "howto-intro", "howto-scoring", "howto-notes",
              "history", "history-toggle", "history-chev", "history-summary",
@@ -29,6 +30,10 @@
              "bars", "stats-footer", "calibration", "export"]
   ids.forEach(function (id) { el[id] = document.getElementById(id) })
 
+  // Recomputed whenever the app comes back to the foreground, not fixed for
+  // the life of the page. An installed copy is resumed from memory rather than
+  // reloaded, so a phone left open overnight would otherwise still be showing
+  // yesterday's question - and would record an answer against yesterday.
   var today = Model.dayIndex(new Date())
   var question = Model.questionForDay(today, QUESTIONS)
   var state = loadState(Model, window.localStorage)
@@ -71,6 +76,34 @@
 
   function hasAnsweredAnything(s) {
     return !!(s && s.history && Object.keys(s.history).length)
+  }
+
+  // Returns true when the calendar day actually moved on.
+  function refreshDay() {
+    var now = Model.dayIndex(new Date())
+    if (now === today) return false
+    today = now
+    question = Model.questionForDay(today, QUESTIONS)
+    hintShown = false
+    return true
+  }
+
+  // The running build, read from the service worker cache rather than from a
+  // constant that could claim anything. Paired with the puzzle date so one
+  // line answers both "am I on the latest version" and "is this today's
+  // question".
+  function renderBuild() {
+    var dayPart = Model.formatDay(today)
+    if (!(window.caches && window.caches.keys)) {
+      setText(el.build, dayPart)
+      return
+    }
+    window.caches.keys().then(function (names) {
+      var mine = names.filter(function (n) { return n.indexOf("estimation-gym-") === 0 })
+      setText(el.build, mine.length
+        ? mine[0].replace("estimation-gym-", "") + " · " + dayPart
+        : dayPart)
+    }).catch(function () { setText(el.build, dayPart) })
   }
 
   function setText(node, value) { node.textContent = value }
@@ -226,6 +259,8 @@
     show(el.source, Boolean(vm.source))
     if (vm.source) setText(el.source, vm.source)
 
+    renderBuild()
+
     setText(el["howto-chev"], howToOpen ? "▾" : "▸")
     el["howto-toggle"].setAttribute("aria-expanded", String(howToOpen))
     show(el["howto-body"], howToOpen)
@@ -269,6 +304,13 @@
   }
 
   el["guess-form"].addEventListener("submit", submit)
+
+  document.addEventListener("visibilitychange", function () {
+    if (document.hidden) return
+    if (refreshDay()) render()
+    if (pendingReload) applyUpdate()
+    requestUpdate()
+  })
 
   el["hint-toggle"].addEventListener("click", function () {
     hintShown = true
@@ -383,10 +425,43 @@
   window.addEventListener("appinstalled", countInstall)
   if (launchedStandalone()) countInstall()
 
-  // Registered after render so a failure here can never stop the puzzle from
-  // showing. Absent on http:// origins other than localhost, and in browsers
-  // with service workers disabled.
+  // --- Staying on the latest build ---------------------------------------
+  //
+  // An installed copy is resumed rather than reloaded, so without this it can
+  // sit on one build indefinitely: the service worker only looks for a new
+  // version when the page is loaded, and on a phone that may be weeks apart.
+  // Asking for an update every time the app comes to the foreground closes
+  // that gap.
+  var pendingReload = false
+  var reloading = false
+
+  function requestUpdate() {
+    if (!("serviceWorker" in navigator)) return
+    navigator.serviceWorker.getRegistration()
+      .then(function (reg) { if (reg) reg.update() })
+      .catch(function () {})
+  }
+
+  // sw.js claims clients as soon as it activates, but the page keeps running
+  // whatever code it started with, so a reload is what actually applies the
+  // update. Deferred while a guess is half-typed - losing someone's input to
+  // a background update would be a poor trade.
+  function applyUpdate() {
+    if (reloading) return
+    if (el["guess-input"] && String(el["guess-input"].value).trim() !== "") {
+      pendingReload = true
+      return
+    }
+    reloading = true
+    window.location.reload()
+  }
+
   if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.addEventListener("controllerchange", applyUpdate)
+
+    // Registered after render so a failure here can never stop the puzzle from
+    // showing. Absent on http:// origins other than localhost, and in browsers
+    // with service workers disabled.
     window.addEventListener("load", function () {
       navigator.serviceWorker.register("./sw.js").catch(function () {})
     })

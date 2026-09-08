@@ -103,6 +103,26 @@ Caveats worth remembering:
 - The Abacus key expires after roughly six months without traffic, which would
   reset the badge rather than hold the total.
 
+## Staying current, and the day rollover
+
+Two things an installed copy gets wrong unless handled, both because a PWA on a
+phone is **resumed from memory rather than reloaded**, sometimes for weeks:
+
+1. **The day never changes.** `today` used to be computed once when the page
+   loaded. Left open overnight, the app would still show yesterday's question and
+   would record an answer against yesterday. `refreshDay()` now recomputes on
+   every `visibilitychange`, and re-renders only when the day actually moved.
+2. **The build never changes.** A service worker only looks for a new version
+   when the page loads. The app now calls `registration.update()` each time it
+   comes to the foreground, and reloads on `controllerchange` so the new code
+   actually takes effect - deferred while a guess is half-typed, so a background
+   update cannot eat someone's input.
+
+The line at the bottom of the screen reads e.g. `v12 · Thu 10 Sep`. The version
+half is read from the **live service worker cache name**, not from a constant,
+so it reports what is actually running rather than what the source claims. The
+date half is the puzzle currently on screen. One glance confirms both.
+
 ## Updating the app after deploy
 
 The service worker is cache-first, so a returning visitor is served the cached

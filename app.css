@@ -334,3 +334,13 @@ body {
   line-height: 1.6;
   color: var(--dim);
 }
+
+/* --- build / puzzle-date stamp --- */
+.build {
+  margin: 1.2rem 0 0;
+  font-size: 0.72rem;
+  color: var(--dim);
+  opacity: 0.75;
+  text-align: right;
+  letter-spacing: 0.02em;
+}
