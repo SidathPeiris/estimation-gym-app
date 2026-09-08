@@ -22,6 +22,18 @@ fails there with `UnknownError: Unexpected internal error` regardless of
 headless mode or sandbox flags. Offline changes therefore have to be checked on
 a real browser; an automated headless test will report a false failure.
 
+## The Omarchy plugin
+
+This started life as a bar widget for the [Omarchy](https://omarchy.org) shell,
+which is still where the logic and the question bank are maintained:
+
+- **Repo:** <https://github.com/SidathPeiris/estimation-gym-omarchy>
+- **Marketplace listing:** <https://plugins.omarchy.org/plugin.html?id=sidath.estimation-gym>
+
+```bash
+omarchy plugin add https://github.com/SidathPeiris/estimation-gym-omarchy.git --enable
+```
+
 ## How it relates to the widget
 
 | | Widget (Omarchy) | App (this repo) |
