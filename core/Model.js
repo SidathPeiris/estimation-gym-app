@@ -164,7 +164,6 @@ function medianOf(values) {
 // so state files written before scoring was surfaced still total up correctly
 // and no migration is needed.
 function computeStats(state) {
-  var history = (state && state.history) || {}
   var counts = {}
   for (var b = 0; b < BANDS.length; b++) counts[BANDS[b]] = 0
 
@@ -174,8 +173,12 @@ function computeStats(state) {
   var distances = []
   var signedErrors = []
 
-  for (var key in history) {
-    var entry = history[key]
+  // Iterates the same day list the history panels render, so "N played"
+  // here and "N days" there cannot disagree - a hand-edited state file used to
+  // make Stats count entries History correctly refused to show.
+  var days = historyDays(state)
+  for (var d = 0; d < days.length; d++) {
+    var entry = days[d].entry
     if (!entry || BANDS.indexOf(entry.band) < 0) continue
     played++
     counts[entry.band]++

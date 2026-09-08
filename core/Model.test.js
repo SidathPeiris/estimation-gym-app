@@ -305,4 +305,21 @@ spanEpoch = Model.recordAnswer(spanEpoch, 0, 100, 100)
 spanEpoch = Model.recordAnswer(spanEpoch, -1, 100, 100)
 assert.deepEqual(Model.historyDays(spanEpoch).map((d) => d.day), [0, -1])
 
+// Stats and History are two panels on one screen, so they must count the same
+// days. A hand-edited state file used to make Stats say "5 played" while
+// History correctly listed 3.
+const handEdited = {
+  history: {
+    "10": { guess: 100, answerValue: 100, band: "Bullseye", distanceDecades: 0 },
+    "11": { guess: 1, answerValue: 100, band: "Ballpark", distanceDecades: 2 },
+    "": { guess: 1, answerValue: 1, band: "Close", distanceDecades: 0 },
+    "notanumber": { guess: 1, answerValue: 1, band: "Close", distanceDecades: 0 },
+    " 12": { guess: 1, answerValue: 1, band: "Close", distanceDecades: 0 }
+  },
+  streak: 2, bestStreak: 2, lastCompletedDay: 11
+}
+assert.equal(Model.historyDays(handEdited).length, 2, "History shows only real days")
+assert.equal(Model.computeStats(handEdited).played, 2, "and Stats counts the same ones")
+assert.equal(Model.computeStats(handEdited).totalPoints, 100 + 40, "points follow too")
+
 console.log("All Model.js tests passed.")
