@@ -475,14 +475,6 @@ var QUESTIONS = [
     "source": "Standard cardiac output figures (~5 L/min at rest)"
   },
   {
-    "id": "skin-cells-shed-per-day",
-    "prompt": "How many skin cells does a person shed per day?",
-    "unit": "skin cells",
-    "answerValue": 400000000,
-    "decompositionHint": "Skin is fully replaced roughly every month. Estimate total skin surface area (~1.8 m^2), cells per square centimetre in the outer layer, and divide the total by ~30 days.",
-    "source": "Dermatology estimates, commonly cited ~30-40 thousand cells per minute"
-  },
-  {
     "id": "bacteria-in-the-mouth",
     "prompt": "How many bacteria live in an average human mouth?",
     "unit": "bacteria",
@@ -1233,11 +1225,11 @@ var QUESTIONS = [
   },
   {
     "id": "lakes-on-earth",
-    "prompt": "How many lakes larger than a hectare are there on Earth?",
+    "prompt": "How many lakes larger than 0.2 hectares are there on Earth?",
     "unit": "lakes",
     "answerValue": 117000000,
-    "decompositionHint": "Small lakes vastly outnumber large ones, following a steep size distribution, so the count is dominated by the smallest counted size.",
-    "source": "Satellite-based global lake inventories"
+    "decompositionHint": "Small lakes vastly outnumber large ones on a steep size distribution, so the count is dominated by the smallest size counted. Above one square kilometre there are only a few hundred thousand.",
+    "source": "Verpoorter et al. 2014, Geophysical Research Letters - ~117 million lakes above 0.2 ha"
   },
   {
     "id": "rain-falling-on-earth-per-year",
@@ -1251,8 +1243,8 @@ var QUESTIONS = [
     "id": "sand-grains-in-a-cubic-metre",
     "prompt": "How many grains of sand are in one cubic metre of sand?",
     "unit": "grains of sand",
-    "answerValue": 15000000000,
-    "decompositionHint": "A typical grain is around half a millimetre across, so roughly 10^-10 cubic metres each once packing is allowed for.",
+    "answerValue": 5000000000,
+    "decompositionHint": "A grain about 0.5 mm across occupies roughly 1.25x10^-10 cubic metres. Divide one cubic metre by that, then multiply by a packing fraction of about 0.6, since spheres cannot fill space completely.",
     "source": "Derived from typical grain size and packing density"
   },
   {
@@ -1428,7 +1420,7 @@ var QUESTIONS = [
     "id": "steps-in-a-marathon",
     "prompt": "How many steps does a runner take to complete a marathon?",
     "unit": "steps",
-    "answerValue": 55000,
+    "answerValue": 53000,
     "decompositionHint": "42.2 km divided by a running stride of roughly 0.8 metres, which is longer than a walking stride.",
     "source": "Derived from marathon distance and typical running stride"
   },
@@ -1436,7 +1428,7 @@ var QUESTIONS = [
     "id": "calories-burned-in-a-marathon",
     "prompt": "How many kilocalories does a runner burn completing a marathon?",
     "unit": "kilocalories",
-    "answerValue": 2600,
+    "answerValue": 2900,
     "decompositionHint": "Running costs roughly one kilocalorie per kilogram per kilometre. Multiply by body mass and the 42 km distance.",
     "source": "Exercise physiology energy cost estimates"
   },
@@ -1503,8 +1495,8 @@ var QUESTIONS = [
     "id": "grains-of-wheat-in-a-loaf",
     "prompt": "How many grains of wheat go into one loaf of bread?",
     "unit": "grains of wheat",
-    "answerValue": 15000,
-    "decompositionHint": "A loaf takes roughly 500 grams of flour and a single wheat grain weighs about 0.04 grams.",
+    "answerValue": 17000,
+    "decompositionHint": "A loaf takes roughly 500 grams of flour, and milling yields about 72% flour from the grain, so around 700 grams of wheat. A single grain weighs about 0.04 grams.",
     "source": "Derived from typical loaf flour content and grain mass"
   },
   {
@@ -2028,6 +2020,2189 @@ var QUESTIONS = [
     "answerValue": 5000000,
     "decompositionHint": "Hunter gatherer densities are very low, on the order of one person per ten square kilometres of habitable land.",
     "source": "Archaeological and demographic reconstructions"
+  },
+  {
+    "id": "energy-in-a-aa-battery",
+    "prompt": "How many joules of energy does a single AA alkaline battery hold?",
+    "unit": "joules",
+    "answerValue": 10000,
+    "decompositionHint": "Around 2.5 amp hours at 1.5 volts. Convert amp hours to coulombs (multiply by 3600) and multiply by voltage.",
+    "source": "Alkaline cell capacity specifications"
+  },
+  {
+    "id": "energy-in-a-litre-of-petrol",
+    "prompt": "How many joules of energy are released by burning one litre of petrol?",
+    "unit": "joules",
+    "answerValue": 34000000,
+    "decompositionHint": "Petrol carries about 45 megajoules per kilogram and weighs roughly 0.75 kg per litre.",
+    "source": "Standard fuel energy density tables"
+  },
+  {
+    "id": "power-of-a-large-power-station",
+    "prompt": "How many watts does a large nuclear power station generate?",
+    "unit": "watts",
+    "answerValue": 1000000000,
+    "decompositionHint": "A single large reactor is around a gigawatt, which is roughly the average electricity demand of a million people in a wealthy country.",
+    "source": "Typical reactor nameplate capacity"
+  },
+  {
+    "id": "household-electricity-per-year",
+    "prompt": "How many kilowatt hours of electricity does a typical household use in a year?",
+    "asOf": 2025,
+    "unit": "kilowatt hours",
+    "answerValue": 4000,
+    "decompositionHint": "Averages range from about 2,500 kWh in much of Europe to over 10,000 in the United States. Heating and hot water dominate where they are electric.",
+    "source": "National household electricity consumption statistics"
+  },
+  {
+    "id": "solar-panel-output-per-year",
+    "prompt": "How many kilowatt hours does a single rooftop solar panel produce in a year?",
+    "unit": "kilowatt hours",
+    "answerValue": 450,
+    "decompositionHint": "A panel is roughly 400 watts peak, and a temperate site delivers something like 1,100 full-sun-equivalent hours a year.",
+    "source": "Typical panel rating and capacity factor"
+  },
+  {
+    "id": "energy-to-boil-a-kettle",
+    "prompt": "How many joules does it take to boil a litre of water from room temperature?",
+    "unit": "joules",
+    "answerValue": 340000,
+    "decompositionHint": "Water needs 4,180 joules per kilogram per degree. One kilogram raised about 80 degrees gives the answer, before losses.",
+    "source": "Specific heat capacity of water"
+  },
+  {
+    "id": "global-electricity-generation",
+    "prompt": "How many terawatt hours of electricity does the world generate in a year?",
+    "asOf": 2025,
+    "unit": "terawatt hours",
+    "answerValue": 30000,
+    "decompositionHint": "About 8 billion people averaging some 3,700 kWh each, though consumption per person varies by more than a hundredfold between countries.",
+    "source": "IEA world electricity generation statistics"
+  },
+  {
+    "id": "wind-turbine-output-per-year",
+    "prompt": "How many megawatt hours does one large wind turbine produce in a year?",
+    "unit": "megawatt hours",
+    "answerValue": 9000,
+    "decompositionHint": "A modern onshore turbine is around 3 MW and runs at roughly a 35% capacity factor across the 8,760 hours in a year.",
+    "source": "Typical turbine rating and onshore capacity factor"
+  },
+  {
+    "id": "energy-in-a-lightning-strike-vs-household",
+    "prompt": "For how many days could a typical household run on the energy in one lightning bolt?",
+    "unit": "days",
+    "answerValue": 4,
+    "decompositionHint": "A bolt carries roughly 5 gigajoules, or about 1,400 kWh. A household uses on the order of 300 kWh a month.",
+    "source": "Derived from lightning energy and household consumption"
+  },
+  {
+    "id": "calories-in-a-kilogram-of-fat",
+    "prompt": "How many kilocalories are stored in one kilogram of body fat?",
+    "unit": "kilocalories",
+    "answerValue": 7700,
+    "decompositionHint": "Pure fat carries about 9 kcal per gram, and body fat tissue is roughly 85% fat with the rest water and connective tissue.",
+    "source": "Standard nutrition figures"
+  },
+  {
+    "id": "coal-burned-per-year-worldwide",
+    "prompt": "How many tonnes of coal are burned worldwide in a year?",
+    "asOf": 2025,
+    "unit": "tonnes",
+    "answerValue": 8500000000,
+    "decompositionHint": "Roughly a tonne per person on Earth per year, dominated by electricity generation and steelmaking in a handful of countries.",
+    "source": "IEA coal consumption statistics"
+  },
+  {
+    "id": "oil-consumed-per-day-worldwide",
+    "prompt": "How many barrels of oil does the world consume each day?",
+    "asOf": 2025,
+    "unit": "barrels/day",
+    "answerValue": 103000000,
+    "decompositionHint": "About 100 million barrels, which works out near 1.6 litres per person per day averaged across everyone alive.",
+    "source": "IEA and OPEC demand figures"
+  },
+  {
+    "id": "speed-to-reach-orbit",
+    "prompt": "How fast must a spacecraft travel to stay in low Earth orbit, in kilometres per hour?",
+    "unit": "kilometres per hour",
+    "answerValue": 28000,
+    "decompositionHint": "About 7.8 km/s. Convert to hours by multiplying by 3,600. It circles the planet in roughly 90 minutes.",
+    "source": "Orbital mechanics for low Earth orbit"
+  },
+  {
+    "id": "altitude-of-the-space-station",
+    "prompt": "How high above the Earth does the International Space Station orbit, in kilometres?",
+    "unit": "kilometres",
+    "answerValue": 410,
+    "decompositionHint": "Low enough that residual atmosphere drags it down and it needs periodic reboosting - only about 1/16th of Earth's radius above the surface.",
+    "source": "ISS operational orbital altitude"
+  },
+  {
+    "id": "people-who-have-been-to-space",
+    "prompt": "How many people have travelled to space?",
+    "asOf": 2025,
+    "unit": "people",
+    "answerValue": 700,
+    "decompositionHint": "Six decades of spaceflight at an average of roughly a dozen people a year, rising sharply with recent commercial flights.",
+    "source": "Astronaut and cosmonaut flight records"
+  },
+  {
+    "id": "people-who-have-walked-on-the-moon",
+    "prompt": "How many people have walked on the Moon?",
+    "unit": "people",
+    "answerValue": 12,
+    "decompositionHint": "Six successful landing missions, two crew on the surface each time.",
+    "source": "Apollo mission records"
+  },
+  {
+    "id": "cost-per-kilogram-to-orbit",
+    "prompt": "What does it cost to put one kilogram into low Earth orbit, in US dollars?",
+    "asOf": 2025,
+    "unit": "US dollars",
+    "answerValue": 2500,
+    "decompositionHint": "Reusable boosters have cut this by more than an order of magnitude from the shuttle era, when it ran into the tens of thousands.",
+    "source": "Published commercial launch pricing"
+  },
+  {
+    "id": "asteroids-discovered",
+    "prompt": "How many asteroids have been discovered and catalogued?",
+    "asOf": 2025,
+    "unit": "asteroids",
+    "answerValue": 1400000,
+    "decompositionHint": "Automated sky surveys add tens of thousands a year, so the catalogue has grown by more than a factor of ten since the 1990s.",
+    "source": "Minor Planet Center catalogue"
+  },
+  {
+    "id": "distance-to-the-moon",
+    "prompt": "How far away is the Moon, in kilometres?",
+    "unit": "kilometres",
+    "answerValue": 384400,
+    "decompositionHint": "About thirty Earth diameters. Light takes a little over a second to cross the gap.",
+    "source": "Mean Earth-Moon distance"
+  },
+  {
+    "id": "time-for-sunlight-to-reach-earth",
+    "prompt": "How many seconds does sunlight take to reach the Earth?",
+    "unit": "seconds",
+    "answerValue": 500,
+    "decompositionHint": "150 million kilometres divided by 300,000 kilometres per second.",
+    "source": "Astronomical unit divided by the speed of light"
+  },
+  {
+    "id": "moons-in-the-solar-system",
+    "prompt": "How many moons are known in the solar system?",
+    "asOf": 2025,
+    "unit": "moons",
+    "answerValue": 400,
+    "decompositionHint": "Saturn and Jupiter account for most of them, and the count keeps rising as surveys find smaller irregular satellites.",
+    "source": "IAU confirmed natural satellite counts"
+  },
+  {
+    "id": "rocket-launches-per-year",
+    "prompt": "How many orbital rocket launches take place worldwide in a year?",
+    "asOf": 2025,
+    "unit": "launches",
+    "answerValue": 250,
+    "decompositionHint": "Roughly one every day and a half, more than double the rate of a decade ago, driven largely by satellite constellation deployment.",
+    "source": "Orbital launch logs"
+  },
+  {
+    "id": "energy-in-a-hurricane",
+    "prompt": "How many joules of energy does a hurricane release in a single day through cloud formation?",
+    "unit": "joules",
+    "answerValue": 50000000000000000000,
+    "decompositionHint": "Dominated by latent heat as water vapour condenses. It is several hundred times the world's daily electricity generation.",
+    "source": "NOAA hurricane energy estimates"
+  },
+  {
+    "id": "raindrops-per-cubic-metre-of-cloud",
+    "prompt": "How many water droplets are in one cubic metre of cloud?",
+    "unit": "droplets",
+    "answerValue": 100000000,
+    "decompositionHint": "Cloud droplets are tiny, around 20 micrometres, and a cubic metre of cloud holds under a gram of liquid water in total.",
+    "source": "Cloud physics droplet concentration figures"
+  },
+  {
+    "id": "lightning-bolt-temperature",
+    "prompt": "How hot does the air in a lightning channel get, in kelvin?",
+    "unit": "kelvin",
+    "answerValue": 30000,
+    "decompositionHint": "Several times hotter than the surface of the Sun, which is why the surrounding air expands explosively and makes thunder.",
+    "source": "Atmospheric physics measurements of return stroke temperature"
+  },
+  {
+    "id": "snowflakes-in-a-cubic-metre-of-snow",
+    "prompt": "How many snowflakes make up one cubic metre of fresh snow?",
+    "unit": "snowflakes",
+    "answerValue": 100000000,
+    "decompositionHint": "Fresh snow is about a tenth the density of water, so a cubic metre holds ~100 kg of ice, and a snowflake weighs a few milligrams.",
+    "source": "Derived from fresh snow density and typical flake mass"
+  },
+  {
+    "id": "tornadoes-in-the-us-per-year",
+    "prompt": "How many tornadoes are recorded in the United States each year?",
+    "asOf": 2025,
+    "unit": "tornadoes",
+    "answerValue": 1200,
+    "decompositionHint": "More than the rest of the world combined, because of the collision of Gulf moisture with dry continental air over the plains.",
+    "source": "NOAA Storm Prediction Center annual counts"
+  },
+  {
+    "id": "hottest-and-coldest-spread",
+    "prompt": "What is the difference between the hottest and coldest air temperatures ever recorded on Earth, in degrees Celsius?",
+    "unit": "degrees Celsius",
+    "answerValue": 150,
+    "decompositionHint": "Around 57 C in Death Valley against about -89 C at Vostok in Antarctica.",
+    "source": "WMO verified temperature extremes"
+  },
+  {
+    "id": "weight-of-a-cloud",
+    "prompt": "How many kilograms does a typical cumulus cloud weigh?",
+    "unit": "kilograms",
+    "answerValue": 500000,
+    "decompositionHint": "About a cubic kilometre in volume at roughly half a gram of liquid water per cubic metre. It stays up because the droplets are tiny and the air beneath is rising.",
+    "source": "Derived from cumulus dimensions and liquid water content"
+  },
+  {
+    "id": "deepest-point-in-the-ocean",
+    "prompt": "How deep is the deepest point in the ocean, in metres?",
+    "unit": "metres",
+    "answerValue": 10900,
+    "decompositionHint": "The Mariana Trench is deeper than Everest is tall, by more than a kilometre.",
+    "source": "Challenger Deep depth measurements"
+  },
+  {
+    "id": "salt-in-the-oceans",
+    "prompt": "How many tonnes of salt are dissolved in the world's oceans?",
+    "unit": "tonnes",
+    "answerValue": 50000000000000000,
+    "decompositionHint": "Seawater is about 3.5% salt by mass, and the oceans hold roughly 1.4x10^18 tonnes of water.",
+    "source": "Derived from ocean mass and mean salinity"
+  },
+  {
+    "id": "plankton-in-a-litre-of-seawater",
+    "prompt": "How many phytoplankton cells are in one litre of surface seawater?",
+    "unit": "cells",
+    "answerValue": 1000000,
+    "decompositionHint": "Concentrations run to thousands per millilitre in productive water. Collectively they produce roughly half the oxygen in the atmosphere.",
+    "source": "Marine biology cell count surveys"
+  },
+  {
+    "id": "fish-in-the-ocean",
+    "prompt": "How many individual fish are in the world's oceans?",
+    "unit": "fish",
+    "answerValue": 3500000000000,
+    "decompositionHint": "Dominated by small mesopelagic species rather than the large fish people picture, which is why the estimate is far larger than fishery statistics suggest.",
+    "source": "Marine biomass estimates, commonly cited around 3.5 trillion"
+  },
+  {
+    "id": "coral-reef-area",
+    "prompt": "How many square kilometres of coral reef are there worldwide?",
+    "unit": "square kilometres",
+    "answerValue": 280000,
+    "decompositionHint": "Under a tenth of a percent of the ocean floor, yet home to roughly a quarter of all marine species.",
+    "source": "Global coral reef mapping surveys"
+  },
+  {
+    "id": "waves-hitting-a-beach-per-day",
+    "prompt": "How many waves break on a given beach in one day?",
+    "unit": "waves",
+    "answerValue": 8000,
+    "decompositionHint": "Sets arrive roughly every ten seconds, so count the number of ten second intervals in 24 hours.",
+    "source": "Typical ocean swell period"
+  },
+  {
+    "id": "water-evaporating-from-oceans-per-year",
+    "prompt": "How many cubic kilometres of water evaporate from the oceans each year?",
+    "unit": "cubic kilometres",
+    "answerValue": 430000,
+    "decompositionHint": "Almost all of global precipitation ultimately comes from ocean evaporation, so it is close to the total rain and snow falling worldwide.",
+    "source": "Global hydrological cycle budgets"
+  },
+  {
+    "id": "krill-in-the-southern-ocean",
+    "prompt": "How many tonnes of Antarctic krill live in the Southern Ocean?",
+    "unit": "tonnes",
+    "answerValue": 400000000,
+    "decompositionHint": "One of the largest single-species biomasses on Earth, and the base of the food chain that supports whales, seals and penguins.",
+    "source": "Antarctic krill biomass surveys"
+  },
+  {
+    "id": "steps-in-a-football-match",
+    "prompt": "How far does a professional footballer run during a 90 minute match, in kilometres?",
+    "unit": "kilometres",
+    "answerValue": 10,
+    "decompositionHint": "Mostly walking and jogging with short sprints. Averaging a little over 6 km/h across 90 minutes gets you close.",
+    "source": "Match tracking data for outfield players"
+  },
+  {
+    "id": "golf-balls-made-per-year",
+    "prompt": "How many golf balls are manufactured worldwide each year?",
+    "asOf": 2025,
+    "unit": "golf balls",
+    "answerValue": 1200000000,
+    "decompositionHint": "Roughly 60 million golfers losing and replacing on the order of twenty balls a year each.",
+    "source": "Golf equipment industry production estimates"
+  },
+  {
+    "id": "tennis-balls-used-at-wimbledon",
+    "prompt": "How many tennis balls are used during the Wimbledon championships?",
+    "unit": "tennis balls",
+    "answerValue": 55000,
+    "decompositionHint": "Balls are changed every nine games, and there are hundreds of matches across the fortnight including qualifying and doubles.",
+    "source": "Wimbledon published tournament figures"
+  },
+  {
+    "id": "marathon-finishers-per-year",
+    "prompt": "How many people finish a marathon worldwide each year?",
+    "asOf": 2025,
+    "unit": "finishers",
+    "answerValue": 1100000,
+    "decompositionHint": "Thousands of events, with the largest half dozen accounting for well over a hundred thousand finishers between them.",
+    "source": "Running event participation statistics"
+  },
+  {
+    "id": "olympic-medals-awarded",
+    "prompt": "How many medals are awarded at a modern summer Olympic Games?",
+    "unit": "medals",
+    "answerValue": 1000,
+    "decompositionHint": "Around 330 events, each awarding gold, silver and bronze, with team events multiplying the physical medal count further.",
+    "source": "Recent summer Olympic event and medal counts"
+  },
+  {
+    "id": "swimming-pool-lengths-in-a-mile",
+    "prompt": "How many lengths of a 25 metre pool make up a mile?",
+    "unit": "lengths",
+    "answerValue": 64,
+    "decompositionHint": "A mile is about 1,609 metres. Divide by the length of the pool.",
+    "source": "Direct unit conversion"
+  },
+  {
+    "id": "heartbeats-during-a-marathon",
+    "prompt": "How many times does a runner's heart beat during a marathon?",
+    "unit": "heartbeats",
+    "answerValue": 26000,
+    "decompositionHint": "Around 160 beats a minute sustained for roughly four hours.",
+    "source": "Derived from typical racing heart rate and finish time"
+  },
+  {
+    "id": "footballs-made-per-year",
+    "prompt": "How many footballs are manufactured worldwide each year?",
+    "asOf": 2025,
+    "unit": "footballs",
+    "answerValue": 40000000,
+    "decompositionHint": "A large share come from a single manufacturing cluster in Pakistan. Think of one ball per two hundred people on Earth per year.",
+    "source": "Sporting goods manufacturing estimates"
+  },
+  {
+    "id": "notes-in-a-piano-piece",
+    "prompt": "How many individual notes does a pianist play in a typical three minute piece?",
+    "unit": "notes",
+    "answerValue": 2000,
+    "decompositionHint": "Perhaps ten notes a second in busy passages, far fewer in slow ones. Average a few per second across 180 seconds.",
+    "source": "Order-of-magnitude estimate from typical note density"
+  },
+  {
+    "id": "strings-in-a-piano",
+    "prompt": "How many strings are inside a grand piano?",
+    "unit": "strings",
+    "answerValue": 230,
+    "decompositionHint": "88 keys, but most notes use two or three strings struck together, with only the lowest bass notes using a single thick string.",
+    "source": "Piano construction references"
+  },
+  {
+    "id": "musicians-in-a-symphony-orchestra",
+    "prompt": "How many musicians play in a full symphony orchestra?",
+    "unit": "musicians",
+    "answerValue": 90,
+    "decompositionHint": "Strings are the bulk of it at around sixty, with woodwind, brass and percussion making up the rest.",
+    "source": "Standard orchestral complement"
+  },
+  {
+    "id": "paintings-in-the-louvre",
+    "prompt": "How many works of art are held by the Louvre?",
+    "asOf": 2025,
+    "unit": "works",
+    "answerValue": 500000,
+    "decompositionHint": "Only a small fraction is on display at any time; most of the collection is in storage.",
+    "source": "Louvre published collection figures"
+  },
+  {
+    "id": "books-in-the-library-of-congress",
+    "prompt": "How many books does the Library of Congress hold?",
+    "asOf": 2025,
+    "unit": "books",
+    "answerValue": 25000000,
+    "decompositionHint": "Its total collection runs to well over 170 million items, but most of that is manuscripts, maps, photographs and recordings rather than books.",
+    "source": "Library of Congress collection statistics"
+  },
+  {
+    "id": "songs-recorded-in-history",
+    "prompt": "How many distinct songs have been commercially recorded in history?",
+    "asOf": 2025,
+    "unit": "songs",
+    "answerValue": 100000000,
+    "decompositionHint": "Streaming catalogues alone list around a hundred million tracks, which is a reasonable proxy for everything ever released.",
+    "source": "Streaming platform catalogue sizes as a proxy"
+  },
+  {
+    "id": "words-in-a-feature-film-script",
+    "prompt": "How many words are in a typical feature film screenplay?",
+    "unit": "words",
+    "answerValue": 20000,
+    "decompositionHint": "Roughly 110 pages at one minute of screen time per page, and a screenplay page carries far fewer words than a novel page.",
+    "source": "Standard screenplay formatting conventions"
+  },
+  {
+    "id": "words-in-the-english-language",
+    "prompt": "How many words are listed in a comprehensive English dictionary?",
+    "unit": "words",
+    "answerValue": 600000,
+    "decompositionHint": "Far more than any person knows. An educated native speaker has a vocabulary of perhaps 20,000 to 35,000 word families.",
+    "source": "Oxford English Dictionary headword counts"
+  },
+  {
+    "id": "words-an-adult-knows",
+    "prompt": "How many words does an average adult native English speaker know?",
+    "unit": "words",
+    "answerValue": 30000,
+    "decompositionHint": "Vocabulary tests suggest steady growth of a few words a day through childhood, plateauing in adulthood.",
+    "source": "Vocabulary size research"
+  },
+  {
+    "id": "languages-spoken-worldwide",
+    "prompt": "How many languages are spoken in the world?",
+    "asOf": 2025,
+    "unit": "languages",
+    "answerValue": 7000,
+    "decompositionHint": "Around half have fewer than ten thousand speakers, and a language dies roughly every few weeks.",
+    "source": "Ethnologue language counts"
+  },
+  {
+    "id": "characters-needed-to-read-chinese",
+    "prompt": "How many Chinese characters do you need to know to read a newspaper?",
+    "unit": "characters",
+    "answerValue": 3000,
+    "decompositionHint": "The full set runs to tens of thousands, but frequency is very skewed - a few thousand covers the overwhelming majority of running text.",
+    "source": "Chinese literacy standards"
+  },
+  {
+    "id": "words-spoken-per-day",
+    "prompt": "How many words does an average person speak in a day?",
+    "unit": "words",
+    "answerValue": 16000,
+    "decompositionHint": "Recording studies found men and women almost identical, contrary to the popular claim that women speak far more.",
+    "source": "Mehl et al. 2007, Science"
+  },
+  {
+    "id": "letters-in-a-typical-novel",
+    "prompt": "How many individual letters are printed in an average novel?",
+    "unit": "letters",
+    "answerValue": 450000,
+    "decompositionHint": "About 90,000 words at roughly five letters each.",
+    "source": "Derived from typical novel length and word length"
+  },
+  {
+    "id": "concrete-produced-per-year",
+    "prompt": "How many tonnes of concrete are produced worldwide each year?",
+    "asOf": 2025,
+    "unit": "tonnes",
+    "answerValue": 30000000000,
+    "decompositionHint": "By mass the most used material on Earth after water - roughly four tonnes per person per year.",
+    "source": "Global cement and concrete industry statistics"
+  },
+  {
+    "id": "steel-produced-per-year",
+    "prompt": "How many kilograms of steel are produced for each person on Earth in a year?",
+    "asOf": 2025,
+    "unit": "kilograms per person",
+    "answerValue": 240,
+    "decompositionHint": "World steel output is around 1.9 billion tonnes against a population of 8 billion. China alone makes over half of it.",
+    "source": "World Steel Association output divided by world population"
+  },
+  {
+    "id": "plastic-produced-per-year",
+    "prompt": "How many tonnes of plastic have been manufactured in total since mass production began in the 1950s?",
+    "asOf": 2025,
+    "unit": "tonnes",
+    "answerValue": 9500000000,
+    "decompositionHint": "Annual output is around 400 million tonnes now but was tiny in the 1950s and has grown roughly exponentially, so the cumulative total is around twenty times the current annual figure.",
+    "source": "Geyer, Jambeck and Law 2017, Science Advances - cumulative plastics production"
+  },
+  {
+    "id": "cement-in-a-house-foundation",
+    "prompt": "How many tonnes of concrete go into the foundation of a typical house?",
+    "unit": "tonnes",
+    "answerValue": 30,
+    "decompositionHint": "A slab of maybe 100 square metres at 150 mm thick, and concrete weighs about 2.4 tonnes per cubic metre.",
+    "source": "Construction estimating figures"
+  },
+  {
+    "id": "steel-in-the-eiffel-tower",
+    "prompt": "How many tonnes of iron went into the Eiffel Tower?",
+    "unit": "tonnes",
+    "answerValue": 7300,
+    "decompositionHint": "Famously light for its size - the iron in it would only fill a cube about 12 metres on a side if melted down.",
+    "source": "Eiffel Tower construction records"
+  },
+  {
+    "id": "rivets-in-the-eiffel-tower",
+    "prompt": "How many rivets hold the Eiffel Tower together?",
+    "unit": "rivets",
+    "answerValue": 2500000,
+    "decompositionHint": "Around 18,000 individual iron pieces joined by hand, needing well over a hundred rivets each on average.",
+    "source": "Eiffel Tower construction records"
+  },
+  {
+    "id": "aluminium-cans-recycled-per-year",
+    "prompt": "How many aluminium drink cans are used worldwide each year?",
+    "asOf": 2025,
+    "unit": "cans",
+    "answerValue": 400000000000,
+    "decompositionHint": "Roughly fifty per person on Earth per year, heavily skewed towards a handful of countries.",
+    "source": "Aluminium packaging industry statistics"
+  },
+  {
+    "id": "glass-bottles-produced-per-year",
+    "prompt": "How many glass containers are produced worldwide each year?",
+    "asOf": 2025,
+    "unit": "containers",
+    "answerValue": 500000000000,
+    "decompositionHint": "Comparable in count to aluminium cans, dominated by beverage packaging.",
+    "source": "Glass packaging industry statistics"
+  },
+  {
+    "id": "buildings-in-new-york-city",
+    "prompt": "How many buildings are there in New York City?",
+    "asOf": 2025,
+    "unit": "buildings",
+    "answerValue": 1000000,
+    "decompositionHint": "Dominated by low rise housing in the outer boroughs rather than the towers of Manhattan.",
+    "source": "NYC building footprint datasets"
+  },
+  {
+    "id": "skyscrapers-over-150m",
+    "prompt": "How many buildings over 150 metres tall exist worldwide?",
+    "asOf": 2025,
+    "unit": "buildings",
+    "answerValue": 9000,
+    "decompositionHint": "China holds nearly half. The count has roughly tripled since 2010.",
+    "source": "Council on Tall Buildings and Urban Habitat database"
+  },
+  {
+    "id": "steps-in-the-empire-state-building",
+    "prompt": "How many stairs are there to the top of the Empire State Building?",
+    "unit": "stairs",
+    "answerValue": 1576,
+    "decompositionHint": "102 floors at roughly 15 steps each, allowing for taller lobby levels.",
+    "source": "Empire State Building published figures"
+  },
+  {
+    "id": "lifts-in-a-skyscraper",
+    "prompt": "How many lifts serve a large 100 storey skyscraper?",
+    "unit": "lifts",
+    "answerValue": 70,
+    "decompositionHint": "Tall buildings need banks serving different floor ranges, or the lift shafts would consume too much floor area at the base.",
+    "source": "Tall building services design figures"
+  },
+  {
+    "id": "people-per-square-kilometre-in-a-city",
+    "prompt": "How many people live in one square kilometre of a dense city like Paris?",
+    "unit": "people",
+    "answerValue": 20000,
+    "decompositionHint": "About two million people in roughly a hundred square kilometres within the historic boundary.",
+    "source": "Municipal population density figures"
+  },
+  {
+    "id": "bricks-in-the-great-wall",
+    "prompt": "How many bricks make up the Great Wall of China?",
+    "unit": "bricks",
+    "answerValue": 3900000000,
+    "decompositionHint": "Thousands of kilometres of wall, several metres tall and thick, though much of the length is rammed earth rather than brick.",
+    "source": "Order-of-magnitude estimate from wall dimensions"
+  },
+  {
+    "id": "windows-in-the-empire-state-building",
+    "prompt": "How many windows does the Empire State Building have?",
+    "unit": "windows",
+    "answerValue": 6500,
+    "decompositionHint": "102 floors, with the tower tapering sharply above the sixth floor so upper floors have far fewer windows than the base.",
+    "source": "Empire State Building published figures"
+  },
+  {
+    "id": "houses-in-a-suburb",
+    "prompt": "How many houses are in one square kilometre of typical low density suburb?",
+    "unit": "houses",
+    "answerValue": 1200,
+    "decompositionHint": "Plots of roughly 600 square metres including the share of roads and verges.",
+    "source": "Derived from typical suburban lot sizes"
+  },
+  {
+    "id": "paint-to-cover-a-house",
+    "prompt": "How many litres of paint does it take to paint the outside of a house?",
+    "unit": "litres",
+    "answerValue": 40,
+    "decompositionHint": "Around 200 square metres of wall at roughly 10 square metres per litre, over two coats.",
+    "source": "Paint coverage rates from manufacturer guidance"
+  },
+  {
+    "id": "fuel-burned-on-a-transatlantic-flight",
+    "prompt": "How many litres of fuel does a wide body airliner burn crossing the Atlantic?",
+    "unit": "litres",
+    "answerValue": 60000,
+    "decompositionHint": "Roughly 8 hours at about 7,500 litres an hour for a large twin engine jet.",
+    "source": "Published fuel burn rates for long haul aircraft"
+  },
+  {
+    "id": "fuel-per-passenger-per-100km-flying",
+    "prompt": "How many litres of fuel does a full airliner burn per passenger per 100 kilometres?",
+    "unit": "litres",
+    "answerValue": 3,
+    "decompositionHint": "Comparable to a small efficient car carrying one person, which surprises people who assume flying is far worse per kilometre.",
+    "source": "Airline fuel efficiency reporting"
+  },
+  {
+    "id": "rivets-in-an-airliner",
+    "prompt": "How many rivets hold a large airliner together?",
+    "unit": "rivets",
+    "answerValue": 3000000,
+    "decompositionHint": "Aluminium skin panels across a fuselage 60 metres long plus the wings, with rivets every few centimetres along every seam.",
+    "source": "Aircraft manufacturing figures"
+  },
+  {
+    "id": "parts-in-a-car",
+    "prompt": "How many individual parts make up a modern car?",
+    "unit": "parts",
+    "answerValue": 30000,
+    "decompositionHint": "Counting every nut, clip and fastener. An electric car has substantially fewer because the drivetrain is far simpler.",
+    "source": "Automotive manufacturing figures"
+  },
+  {
+    "id": "parts-in-a-bicycle",
+    "prompt": "How many individual parts make up a bicycle?",
+    "unit": "parts",
+    "answerValue": 900,
+    "decompositionHint": "The chain alone accounts for several hundred once you count every link, pin and roller.",
+    "source": "Bicycle assembly component counts"
+  },
+  {
+    "id": "revolutions-of-a-car-tyre-in-its-life",
+    "prompt": "How many times does a car tyre rotate over its usable life?",
+    "unit": "rotations",
+    "answerValue": 20000000,
+    "decompositionHint": "A tyre lasts around 50,000 km and has a circumference of about 2 metres.",
+    "source": "Derived from typical tyre life and wheel circumference"
+  },
+  {
+    "id": "trains-running-in-japan-daily",
+    "prompt": "How many passenger trains run in Japan on a typical day?",
+    "asOf": 2025,
+    "unit": "trains",
+    "answerValue": 26000,
+    "decompositionHint": "Tokyo alone moves millions of passengers a day on services running every few minutes across dozens of lines.",
+    "source": "Japanese rail operator service statistics"
+  },
+  {
+    "id": "bicycles-in-the-netherlands",
+    "prompt": "How many bicycles are there in the Netherlands?",
+    "asOf": 2025,
+    "unit": "bicycles",
+    "answerValue": 23000000,
+    "decompositionHint": "More bicycles than people, in a country of about 18 million.",
+    "source": "Dutch cycling statistics"
+  },
+  {
+    "id": "shipping-container-capacity-of-largest-ship",
+    "prompt": "How many shipping containers can the largest container ship carry?",
+    "asOf": 2025,
+    "unit": "containers",
+    "answerValue": 24000,
+    "decompositionHint": "Measured in twenty foot equivalent units. Stacked end to end they would stretch well over a hundred kilometres.",
+    "source": "Container ship capacity specifications"
+  },
+  {
+    "id": "distance-a-truck-tyre-travels-per-year",
+    "prompt": "How many kilometres does a long haul truck cover in a year?",
+    "asOf": 2025,
+    "unit": "kilometres",
+    "answerValue": 120000,
+    "decompositionHint": "Perhaps 500 km a day across 240 working days, several times what a private car covers.",
+    "source": "Commercial fleet mileage statistics"
+  },
+  {
+    "id": "thickness-of-earths-crust",
+    "prompt": "How thick is the Earth's continental crust, in kilometres?",
+    "unit": "kilometres",
+    "answerValue": 35,
+    "decompositionHint": "Proportionally thinner than the skin of an apple relative to the 6,371 km radius beneath it.",
+    "source": "Standard geophysical figures"
+  },
+  {
+    "id": "speed-of-continental-drift",
+    "prompt": "How many centimetres do tectonic plates move in a year?",
+    "unit": "centimetres",
+    "answerValue": 5,
+    "decompositionHint": "Famously about the rate fingernails grow. Over a human lifetime that adds up to a few metres.",
+    "source": "GPS measurements of plate motion"
+  },
+  {
+    "id": "diamonds-mined-per-year",
+    "prompt": "How many carats of natural diamonds are mined worldwide each year?",
+    "asOf": 2025,
+    "unit": "carats",
+    "answerValue": 120000000,
+    "decompositionHint": "A carat is 0.2 grams, so the annual total is only around 24 tonnes - a single truckload.",
+    "source": "Kimberley Process production statistics"
+  },
+  {
+    "id": "gold-in-seawater",
+    "prompt": "How many tonnes of gold are dissolved in the world's oceans?",
+    "unit": "tonnes",
+    "answerValue": 20000,
+    "decompositionHint": "Concentration is only a few parts per trillion, but the oceans are so vast that the total is comparable to a decade of mining. Extracting it costs far more than it is worth.",
+    "source": "Oceanographic trace element measurements"
+  },
+  {
+    "id": "age-of-the-oldest-rocks",
+    "prompt": "How old are the oldest rocks found on Earth's surface, in years?",
+    "unit": "years",
+    "answerValue": 4000000000,
+    "decompositionHint": "Slightly younger than the planet itself, because plate tectonics and erosion have recycled almost all of the original crust.",
+    "source": "Radiometric dating of Acasta and Nuvvuagittuq formations"
+  },
+  {
+    "id": "volcanic-eruptions-per-year",
+    "prompt": "How many volcanoes erupt somewhere on Earth in a given year?",
+    "unit": "eruptions",
+    "answerValue": 70,
+    "decompositionHint": "Out of roughly 1,500 active volcanoes, only a small fraction are erupting in any given year, and most go unnoticed.",
+    "source": "Smithsonian Global Volcanism Program annual activity"
+  },
+  {
+    "id": "salt-mined-per-year",
+    "prompt": "How many kilograms of salt does an average person eat in a year?",
+    "asOf": 2025,
+    "unit": "kilograms",
+    "answerValue": 3.3,
+    "decompositionHint": "Typical intake is around 9 grams of salt a day, well above the 5 grams the WHO recommends. Multiply by 365 and convert to kilograms.",
+    "source": "WHO dietary sodium intake estimates"
+  },
+  {
+    "id": "seeds-in-a-sunflower-head",
+    "prompt": "How many seeds are in a single large sunflower head?",
+    "unit": "seeds",
+    "answerValue": 1500,
+    "decompositionHint": "Seeds spiral outward in a tightly packed Fibonacci arrangement across a head 20 to 30 centimetres across.",
+    "source": "Agronomy references for sunflower seed counts"
+  },
+  {
+    "id": "grains-of-pollen-from-one-plant",
+    "prompt": "How many pollen grains does a single ragweed plant release in a season?",
+    "unit": "pollen grains",
+    "answerValue": 1000000000,
+    "decompositionHint": "Wind pollinated plants must produce vast quantities because the odds any one grain reaches a receptive flower are minuscule.",
+    "source": "Aerobiology pollen production studies"
+  },
+  {
+    "id": "leaves-on-a-mature-tree",
+    "prompt": "How many leaves does a mature broadleaf tree carry?",
+    "unit": "leaves",
+    "answerValue": 200000,
+    "decompositionHint": "Estimate the number of major branches, then twigs per branch and leaves per twig - the multiplication runs away quickly.",
+    "source": "Forestry leaf area estimates"
+  },
+  {
+    "id": "water-a-tree-drinks-per-day",
+    "prompt": "How many litres of water does a large tree draw up in a summer day?",
+    "unit": "litres",
+    "answerValue": 400,
+    "decompositionHint": "Almost all of it evaporates through the leaves rather than being retained. A hectare of forest can move several hundred tonnes of water a week.",
+    "source": "Plant transpiration measurements"
+  },
+  {
+    "id": "rings-in-an-old-tree",
+    "prompt": "How many growth rings does the oldest known living tree have?",
+    "unit": "rings",
+    "answerValue": 4900,
+    "decompositionHint": "One ring a year, and the oldest bristlecone pines were already ancient when the pyramids were built.",
+    "source": "Dendrochronology records for Great Basin bristlecone pine"
+  },
+  {
+    "id": "oxygen-produced-by-a-tree-per-year",
+    "prompt": "How many kilograms of oxygen does a mature tree produce in a year?",
+    "unit": "kilograms",
+    "answerValue": 100,
+    "decompositionHint": "Tied directly to how much carbon it fixes: roughly 20 kg of carbon dioxide absorbed yields a bit under its own mass in oxygen released.",
+    "source": "Forestry carbon and oxygen exchange estimates"
+  },
+  {
+    "id": "bacteria-on-a-doorknob",
+    "prompt": "How many bacteria live on a typical door handle?",
+    "unit": "bacteria",
+    "answerValue": 100000,
+    "decompositionHint": "Hard, dry, frequently touched surfaces carry hundreds of organisms per square centimetre - far fewer than a kitchen sponge.",
+    "source": "Environmental microbiology swab studies"
+  },
+  {
+    "id": "bacteria-in-a-kitchen-sponge",
+    "prompt": "How many bacteria live in a used kitchen sponge?",
+    "unit": "bacteria",
+    "answerValue": 50000000000,
+    "decompositionHint": "Warm, wet and full of food residue with enormous surface area - densities rival those found in faeces.",
+    "source": "Cardinale et al. 2017, Scientific Reports"
+  },
+  {
+    "id": "bacteria-generation-time",
+    "prompt": "How many minutes does it take a well fed E. coli cell to divide?",
+    "unit": "minutes",
+    "answerValue": 20,
+    "decompositionHint": "Fast enough that a single cell could in principle produce a colony visible to the naked eye overnight.",
+    "source": "Standard microbiology growth rates"
+  },
+  {
+    "id": "viruses-in-a-drop-of-seawater",
+    "prompt": "How many virus particles are in a single drop of seawater?",
+    "unit": "virus particles",
+    "answerValue": 500000,
+    "decompositionHint": "About ten million per millilitre, and a drop is roughly 0.05 millilitres.",
+    "source": "Marine virology concentration measurements"
+  },
+  {
+    "id": "microbes-in-the-human-gut",
+    "prompt": "How many microbial cells live in the human large intestine?",
+    "unit": "microbial cells",
+    "answerValue": 38000000000000,
+    "decompositionHint": "Roughly comparable to the number of human cells in the body, revising down the old claim of a ten to one ratio.",
+    "source": "Sender, Fuchs and Milo 2016, PLOS Biology"
+  },
+  {
+    "id": "possible-lottery-combinations",
+    "prompt": "How many possible combinations are there in a 6 from 49 lottery?",
+    "unit": "combinations",
+    "answerValue": 14000000,
+    "decompositionHint": "49 choose 6. Equivalent to picking one particular second out of about five months.",
+    "source": "Direct combinatorial calculation"
+  },
+  {
+    "id": "possible-rubiks-cube-positions",
+    "prompt": "How many positions can a 3x3 Rubik's cube be in?",
+    "unit": "positions",
+    "answerValue": 43000000000000000000,
+    "decompositionHint": "Corner and edge permutations and orientations, divided by the constraints that make some arrangements unreachable by legal turns.",
+    "source": "Standard Rubik's cube group order, 4.325x10^19"
+  },
+  {
+    "id": "possible-eight-character-passwords",
+    "prompt": "How many different eight character passwords can be made from letters, digits and symbols?",
+    "unit": "passwords",
+    "answerValue": 6000000000000000,
+    "decompositionHint": "About 95 printable characters raised to the eighth power.",
+    "source": "Direct calculation over the printable ASCII set"
+  },
+  {
+    "id": "possible-chess-openings-after-four-moves",
+    "prompt": "How many distinct chess positions are possible after each player has made two moves?",
+    "unit": "positions",
+    "answerValue": 72000,
+    "decompositionHint": "Twenty legal first moves each, then roughly thirty replies, with transpositions reducing the raw product somewhat.",
+    "source": "Chess game tree enumeration"
+  },
+  {
+    "id": "birthday-paradox-group-size",
+    "prompt": "How many people must be in a room for a shared birthday to be more likely than not?",
+    "unit": "people",
+    "answerValue": 23,
+    "decompositionHint": "It counts pairs, not people: 23 people form 253 pairs, and each pair has a 1 in 365 chance.",
+    "source": "The birthday problem"
+  },
+  {
+    "id": "items-in-a-supermarket",
+    "prompt": "How many distinct products does a large supermarket stock?",
+    "asOf": 2025,
+    "unit": "products",
+    "answerValue": 30000,
+    "decompositionHint": "Counting every size and flavour variant separately, which is why the number dwarfs what a shopper perceives.",
+    "source": "Grocery retail assortment statistics"
+  },
+  {
+    "id": "items-owned-by-a-household",
+    "prompt": "How many individual possessions does a typical household own?",
+    "unit": "possessions",
+    "answerValue": 15000,
+    "decompositionHint": "Count a kitchen drawer honestly and extrapolate - cutlery, screws, socks and books add up far faster than intuition suggests.",
+    "source": "Frequently cited household inventory estimates"
+  },
+  {
+    "id": "loads-of-laundry-per-year",
+    "prompt": "How many loads of laundry does a family of four wash in a year?",
+    "unit": "loads",
+    "answerValue": 300,
+    "decompositionHint": "Something like six loads a week across 52 weeks.",
+    "source": "Appliance usage surveys"
+  },
+  {
+    "id": "water-used-in-a-shower",
+    "prompt": "How many litres of water does an eight minute shower use?",
+    "unit": "litres",
+    "answerValue": 80,
+    "decompositionHint": "A standard head delivers roughly 10 litres a minute; low flow heads about half that.",
+    "source": "Plumbing fixture flow rate standards"
+  },
+  {
+    "id": "toothbrushes-used-in-a-lifetime",
+    "prompt": "How many toothbrushes does a person get through in a lifetime?",
+    "unit": "toothbrushes",
+    "answerValue": 300,
+    "decompositionHint": "Dentists advise replacing every three months, so four a year across roughly 75 years of brushing.",
+    "source": "Dental guidance on brush replacement"
+  },
+  {
+    "id": "batteries-used-per-person-per-year",
+    "prompt": "How many disposable batteries does an average person use in a year?",
+    "asOf": 2025,
+    "unit": "batteries",
+    "answerValue": 8,
+    "decompositionHint": "Global alkaline production runs into the tens of billions of cells a year across 8 billion people, though consumption is concentrated in wealthy countries.",
+    "source": "Battery industry production statistics"
+  },
+  {
+    "id": "plastic-bags-used-per-year-worldwide",
+    "prompt": "How many plastic bags are used worldwide each year?",
+    "asOf": 2025,
+    "unit": "bags",
+    "answerValue": 500000000000,
+    "decompositionHint": "Roughly sixty per person on Earth per year, though bans have cut this sharply in some countries.",
+    "source": "Plastics industry and environmental agency estimates"
+  },
+  {
+    "id": "coffee-cups-used-per-year",
+    "prompt": "How many disposable coffee cups are thrown away worldwide each year?",
+    "asOf": 2025,
+    "unit": "cups",
+    "answerValue": 250000000000,
+    "decompositionHint": "Follows from roughly 2 billion cups of coffee drunk a day, with a minority served in disposable cups.",
+    "source": "Packaging waste estimates"
+  },
+  {
+    "id": "nappies-used-per-baby",
+    "prompt": "How many disposable nappies does one baby get through before toilet training?",
+    "unit": "nappies",
+    "answerValue": 5000,
+    "decompositionHint": "Six or so a day for the first year, tapering to three or four, across about two and a half years.",
+    "source": "Parenting and waste management estimates"
+  },
+  {
+    "id": "shoes-owned-in-a-lifetime",
+    "prompt": "How many pairs of shoes does a person buy in a lifetime?",
+    "unit": "pairs",
+    "answerValue": 250,
+    "decompositionHint": "Averaging three or four pairs a year across seventy adult years, more in childhood when feet keep growing.",
+    "source": "Consumer purchasing surveys"
+  },
+  {
+    "id": "uk-population-1801",
+    "prompt": "What was the population of Britain at its first census?",
+    "asOf": 1801,
+    "unit": "people",
+    "answerValue": 10500000,
+    "decompositionHint": "Barely a sixth of today's figure, on the eve of the industrial expansion that would transform it.",
+    "source": "UK census records"
+  },
+  {
+    "id": "uk-population-2025",
+    "prompt": "What is the population of the United Kingdom?",
+    "asOf": 2025,
+    "unit": "people",
+    "answerValue": 69000000,
+    "decompositionHint": "Around 0.85% of world population, in a country roughly the size of the American state of Oregon.",
+    "source": "Office for National Statistics estimates"
+  },
+  {
+    "id": "china-population-1950",
+    "prompt": "What was the population of China?",
+    "asOf": 1950,
+    "unit": "people",
+    "answerValue": 550000000,
+    "decompositionHint": "Under half its later peak, before the mortality decline that drove rapid growth through the second half of the century.",
+    "source": "UN World Population Prospects"
+  },
+  {
+    "id": "india-population-2025",
+    "prompt": "What is the population of India?",
+    "asOf": 2025,
+    "unit": "people",
+    "answerValue": 1460000000,
+    "decompositionHint": "It overtook China around 2023, and now holds roughly one in six people alive.",
+    "source": "UN World Population Prospects"
+  },
+  {
+    "id": "global-literacy-1900",
+    "prompt": "What percentage of the world's adults could read and write?",
+    "asOf": 1900,
+    "unit": "percent",
+    "answerValue": 21,
+    "decompositionHint": "Literacy was largely confined to Europe, North America and a thin elite elsewhere. Mass schooling was still decades away for most of the world.",
+    "source": "Historical literacy reconstructions"
+  },
+  {
+    "id": "global-literacy-2025",
+    "prompt": "What percentage of the world's adults can read and write?",
+    "asOf": 2025,
+    "unit": "percent",
+    "answerValue": 87,
+    "decompositionHint": "One of the largest changes of the last century, though the remaining illiterate population is still counted in the hundreds of millions.",
+    "source": "UNESCO literacy statistics"
+  },
+  {
+    "id": "urban-share-1900",
+    "prompt": "What percentage of the world's people lived in cities?",
+    "asOf": 1900,
+    "unit": "percent",
+    "answerValue": 15,
+    "decompositionHint": "Overwhelmingly rural. The crossover to a majority urban world only happened around 2007.",
+    "source": "UN urbanisation historical estimates"
+  },
+  {
+    "id": "urban-share-2025",
+    "prompt": "What percentage of the world's people live in cities?",
+    "asOf": 2025,
+    "unit": "percent",
+    "answerValue": 58,
+    "decompositionHint": "The crossover past half happened around 2007, and the share continues to climb by roughly half a point a year.",
+    "source": "UN World Urbanization Prospects"
+  },
+  {
+    "id": "child-mortality-1900",
+    "prompt": "What percentage of children died before their fifth birthday worldwide?",
+    "asOf": 1900,
+    "unit": "percent",
+    "answerValue": 36,
+    "decompositionHint": "More than a third. This single figure explains why historical life expectancy at birth looks so grim compared with adult lifespans.",
+    "source": "Historical demographic reconstructions"
+  },
+  {
+    "id": "child-mortality-2025",
+    "prompt": "What percentage of children die before their fifth birthday worldwide?",
+    "asOf": 2025,
+    "unit": "percent",
+    "answerValue": 3.7,
+    "decompositionHint": "Down roughly tenfold from 1900, though it still means several million deaths a year.",
+    "source": "UN Inter-agency Group for Child Mortality Estimation"
+  },
+  {
+    "id": "cost-of-artificial-light-1800",
+    "prompt": "How many hours of work did an hour of artificial light cost a labourer?",
+    "asOf": 1800,
+    "unit": "hours of work",
+    "answerValue": 5,
+    "decompositionHint": "Tallow candles were dim and expensive. The collapse in this figure to near zero is one of the starkest measures of economic progress.",
+    "source": "Nordhaus 1996, historical price of light"
+  },
+  {
+    "id": "horses-in-us-1900",
+    "prompt": "How many horses and mules worked in the United States?",
+    "asOf": 1900,
+    "unit": "horses and mules",
+    "answerValue": 21000000,
+    "decompositionHint": "Roughly one for every four people, and cities had to dispose of thousands of tonnes of manure a day before motor vehicles arrived.",
+    "source": "US Department of Agriculture historical livestock censuses"
+  },
+  {
+    "id": "books-printed-before-1500",
+    "prompt": "How many books were printed in Europe in the first fifty years after the printing press?",
+    "asOf": 1500,
+    "unit": "books",
+    "answerValue": 20000000,
+    "decompositionHint": "Around 30,000 distinct titles in editions of several hundred each - more books produced in fifty years than European scribes had made in the previous thousand.",
+    "source": "Incunabula bibliographic surveys"
+  },
+  {
+    "id": "children-in-school-worldwide",
+    "prompt": "How many children are enrolled in primary school worldwide?",
+    "asOf": 2025,
+    "unit": "children",
+    "answerValue": 750000000,
+    "decompositionHint": "Roughly one in eleven people alive, reflecting how young the population still is in much of the world.",
+    "source": "UNESCO Institute for Statistics enrolment data"
+  },
+  {
+    "id": "teachers-worldwide",
+    "prompt": "How many school teachers are there worldwide?",
+    "asOf": 2025,
+    "unit": "teachers",
+    "answerValue": 85000000,
+    "decompositionHint": "Primary and secondary combined, at average class sizes in the twenties across roughly 1.5 billion pupils.",
+    "source": "UNESCO teacher workforce statistics"
+  },
+  {
+    "id": "universities-worldwide",
+    "prompt": "How many universities are there in the world?",
+    "asOf": 2025,
+    "unit": "universities",
+    "answerValue": 30000,
+    "decompositionHint": "Counting degree awarding institutions. India and the United States alone account for several thousand each.",
+    "source": "International higher education directories"
+  },
+  {
+    "id": "phds-awarded-per-year-worldwide",
+    "prompt": "How many doctorates are awarded worldwide each year?",
+    "asOf": 2025,
+    "unit": "doctorates",
+    "answerValue": 300000,
+    "decompositionHint": "The United States and China each award several tens of thousands, and the OECD total alone is around a quarter of a million.",
+    "source": "OECD education statistics"
+  },
+  {
+    "id": "hours-a-child-spends-in-school",
+    "prompt": "How many hours does a child spend in school across their entire education?",
+    "unit": "hours",
+    "answerValue": 12000,
+    "decompositionHint": "Roughly 6 hours a day, 190 days a year, for about 12 years.",
+    "source": "Derived from typical school year length"
+  },
+  {
+    "id": "academic-papers-published-per-year",
+    "prompt": "How many peer reviewed academic papers are published each year?",
+    "asOf": 2025,
+    "unit": "papers",
+    "answerValue": 3000000,
+    "decompositionHint": "Growing a few percent a year across tens of thousands of journals, which is why no researcher can read even their own subfield exhaustively.",
+    "source": "Scholarly publishing output studies"
+  },
+  {
+    "id": "countries-in-the-world",
+    "prompt": "How many sovereign countries are there in the world?",
+    "asOf": 2025,
+    "unit": "countries",
+    "answerValue": 195,
+    "decompositionHint": "193 UN member states plus two observers. The number roughly quadrupled over the twentieth century through decolonisation.",
+    "source": "United Nations membership"
+  },
+  {
+    "id": "people-in-prison-worldwide",
+    "prompt": "How many people are held in prison worldwide?",
+    "asOf": 2025,
+    "unit": "prisoners",
+    "answerValue": 11000000,
+    "decompositionHint": "Roughly 140 per 100,000 people globally, though rates vary more than tenfold between countries.",
+    "source": "World Prison Population List"
+  },
+  {
+    "id": "police-officers-worldwide",
+    "prompt": "How many police officers are there worldwide?",
+    "asOf": 2025,
+    "unit": "officers",
+    "answerValue": 12000000,
+    "decompositionHint": "The UN median is around 300 officers per 100,000 people. Multiply across a population of 8 billion.",
+    "source": "UNODC criminal justice statistics"
+  },
+  {
+    "id": "soldiers-worldwide",
+    "prompt": "How many active duty military personnel are there worldwide?",
+    "asOf": 2025,
+    "unit": "personnel",
+    "answerValue": 27000000,
+    "decompositionHint": "A handful of countries account for over half. Reserves would add tens of millions more.",
+    "source": "IISS Military Balance"
+  },
+  {
+    "id": "refugees-worldwide",
+    "prompt": "How many people are forcibly displaced worldwide?",
+    "asOf": 2025,
+    "unit": "people",
+    "answerValue": 120000000,
+    "decompositionHint": "Around one in every 67 people alive, and the figure has more than doubled in a decade.",
+    "source": "UNHCR global trends reports"
+  },
+  {
+    "id": "elections-held-per-year",
+    "prompt": "How many national elections take place worldwide in a typical year?",
+    "asOf": 2025,
+    "unit": "elections",
+    "answerValue": 60,
+    "decompositionHint": "About 195 countries with terms averaging four or five years, so a predictable fraction go to the polls annually.",
+    "source": "International electoral calendars"
+  },
+  {
+    "id": "laws-passed-per-year-in-a-country",
+    "prompt": "How many acts of parliament does a typical national legislature pass in a year?",
+    "unit": "acts",
+    "answerValue": 50,
+    "decompositionHint": "A few dozen primary statutes, though secondary regulations made under them run into the thousands.",
+    "source": "National legislative output records"
+  },
+  {
+    "id": "emails-a-worker-receives-per-day",
+    "prompt": "How many emails does an office worker receive on a working day?",
+    "asOf": 2025,
+    "unit": "emails",
+    "answerValue": 120,
+    "decompositionHint": "Including automated notifications and copies, which typically outnumber genuinely personal messages several times over.",
+    "source": "Workplace email volume studies"
+  },
+  {
+    "id": "hours-of-video-on-youtube",
+    "prompt": "How many years would it take to watch every video on YouTube?",
+    "asOf": 2025,
+    "unit": "years",
+    "answerValue": 200000,
+    "decompositionHint": "About 500 hours are uploaded every minute, so a year of uploads alone is far more than a lifetime of watching.",
+    "source": "Derived from published upload rates"
+  },
+  {
+    "id": "podcasts-in-existence",
+    "prompt": "How many podcasts have been published?",
+    "asOf": 2025,
+    "unit": "podcasts",
+    "answerValue": 4000000,
+    "decompositionHint": "Millions of feeds exist but only a small fraction are still actively producing episodes.",
+    "source": "Podcast directory listings"
+  },
+  {
+    "id": "photos-on-social-media-per-day",
+    "prompt": "How many photographs are uploaded to social media each day?",
+    "asOf": 2025,
+    "unit": "photographs",
+    "answerValue": 4000000000,
+    "decompositionHint": "Follows from roughly 5 billion social media users posting on the order of one image a day on average.",
+    "source": "Social platform published upload figures"
+  },
+  {
+    "id": "text-characters-typed-per-day-worldwide",
+    "prompt": "How many text messages are sent worldwide each day across all platforms?",
+    "asOf": 2025,
+    "unit": "messages",
+    "answerValue": 200000000000,
+    "decompositionHint": "Messaging apps alone carry over a hundred billion, before SMS and in-platform direct messages are counted.",
+    "source": "Aggregated messaging platform statistics"
+  },
+  {
+    "id": "newspapers-printed-per-day",
+    "prompt": "How many newspaper copies are printed worldwide each day?",
+    "asOf": 2025,
+    "unit": "copies",
+    "answerValue": 200000000,
+    "decompositionHint": "Down sharply from the peak but still substantial, sustained largely by markets like India and Japan where print remains strong.",
+    "source": "World Association of News Publishers circulation data"
+  },
+  {
+    "id": "dogs-in-the-world",
+    "prompt": "How many domestic dogs are there in the world?",
+    "asOf": 2025,
+    "unit": "dogs",
+    "answerValue": 900000000,
+    "decompositionHint": "Counting strays and village dogs, which outnumber pets in much of the world.",
+    "source": "Global canine population estimates"
+  },
+  {
+    "id": "cats-in-the-world",
+    "prompt": "How many domestic cats are there in the world?",
+    "asOf": 2025,
+    "unit": "cats",
+    "answerValue": 600000000,
+    "decompositionHint": "Roughly comparable to dogs, again dominated by free roaming animals rather than housecats.",
+    "source": "Global feline population estimates"
+  },
+  {
+    "id": "elephants-remaining",
+    "prompt": "How many African elephants remain in the wild?",
+    "asOf": 2025,
+    "unit": "elephants",
+    "answerValue": 415000,
+    "decompositionHint": "Down from several million a century ago. A single population estimate for a species this large is easier to pin down than most.",
+    "source": "IUCN African elephant status reports"
+  },
+  {
+    "id": "penguins-in-antarctica",
+    "prompt": "How many penguins live in Antarctica and its surrounding waters?",
+    "unit": "penguins",
+    "answerValue": 20000000,
+    "decompositionHint": "Dominated by a few enormously abundant species like Adelie and chinstrap, counted from satellite imagery of guano stains.",
+    "source": "Antarctic seabird population surveys"
+  },
+  {
+    "id": "eggs-a-queen-bee-lays-per-day",
+    "prompt": "How many eggs does a queen bee lay in a day at peak season?",
+    "unit": "eggs",
+    "answerValue": 1500,
+    "decompositionHint": "More than her own body weight daily, which is why the colony must feed her constantly.",
+    "source": "Apiculture references"
+  },
+  {
+    "id": "wingbeats-of-a-hummingbird-per-second",
+    "prompt": "How many times does a hummingbird beat its wings per second in hovering flight?",
+    "unit": "wingbeats",
+    "answerValue": 55,
+    "decompositionHint": "Fast enough to produce an audible hum, which is where the name comes from.",
+    "source": "High speed photography of hummingbird flight"
+  },
+  {
+    "id": "lifespan-of-a-mayfly",
+    "prompt": "How many hours does an adult mayfly live?",
+    "unit": "hours",
+    "answerValue": 24,
+    "decompositionHint": "The winged adult exists only to reproduce and often has no functioning mouthparts. The nymph stage underwater lasts a year or more.",
+    "source": "Entomology references for Ephemeroptera"
+  },
+  {
+    "id": "distance-a-monarch-butterfly-migrates",
+    "prompt": "How many kilometres does a monarch butterfly migrate?",
+    "unit": "kilometres",
+    "answerValue": 4000,
+    "decompositionHint": "From Canada to central Mexico, a journey no single butterfly completes in both directions - it takes several generations.",
+    "source": "Monarch migration tracking studies"
+  },
+  {
+    "id": "seconds-in-a-year",
+    "prompt": "How many seconds are there in a year?",
+    "unit": "seconds",
+    "answerValue": 31500000,
+    "decompositionHint": "A useful constant to memorise: pi times ten million is accurate to under half a percent.",
+    "source": "Direct unit conversion"
+  },
+  {
+    "id": "heartbeats-in-a-day",
+    "prompt": "How many times does a human heart beat in a day?",
+    "unit": "beats",
+    "answerValue": 100000,
+    "decompositionHint": "About 70 beats a minute across 1,440 minutes.",
+    "source": "Standard resting heart rate figures"
+  },
+  {
+    "id": "walking-speed-in-a-lifetime",
+    "prompt": "How many kilometres does an average person walk in a lifetime?",
+    "unit": "kilometres",
+    "answerValue": 150000,
+    "decompositionHint": "Roughly 7,000 steps a day at 0.75 metres, across some 75 years - enough to circle the equator three times.",
+    "source": "Derived from typical daily step counts"
+  },
+  {
+    "id": "hours-slept-in-a-lifetime",
+    "prompt": "How many hours does a person sleep in an 80 year lifetime?",
+    "unit": "hours",
+    "answerValue": 230000,
+    "decompositionHint": "About 8 hours a night across roughly 29,000 nights, which works out to a full third of life.",
+    "source": "Derived from typical sleep duration"
+  },
+  {
+    "id": "meals-eaten-in-a-lifetime",
+    "prompt": "How many meals does a person eat in a lifetime?",
+    "unit": "meals",
+    "answerValue": 80000,
+    "decompositionHint": "Three a day across about 29,000 days.",
+    "source": "Derived from typical meal frequency"
+  },
+  {
+    "id": "days-in-a-human-lifetime",
+    "prompt": "How many days does an average person live?",
+    "unit": "days",
+    "answerValue": 29000,
+    "decompositionHint": "About 80 years at 365 days. A strikingly small number when written out, which is rather the point.",
+    "source": "Direct unit conversion"
+  },
+  {
+    "id": "photons-from-a-candle-per-second",
+    "prompt": "How many photons does a candle emit each second in visible light?",
+    "unit": "photons",
+    "answerValue": 10000000000000000000,
+    "decompositionHint": "A candle radiates a few watts, but only about 0.1 watt as visible light. A visible photon carries roughly 4x10^-19 joules.",
+    "source": "Derived from candle luminous output and photon energy"
+  },
+  {
+    "id": "photons-entering-the-eye-in-starlight",
+    "prompt": "How many photons per second enter your eye from a faint naked eye star?",
+    "unit": "photons",
+    "answerValue": 1000,
+    "decompositionHint": "The dark adapted eye can detect a handful of photons. A sixth magnitude star is right at that threshold across a pupil about 7 mm wide.",
+    "source": "Visual astronomy photon flux estimates"
+  },
+  {
+    "id": "time-for-sound-to-travel-a-kilometre",
+    "prompt": "How many seconds does sound take to travel one kilometre through air?",
+    "unit": "seconds",
+    "answerValue": 3,
+    "decompositionHint": "Sound moves at about 340 metres a second, which is why counting seconds between lightning and thunder gives distance in kilometres divided by three.",
+    "source": "Speed of sound at sea level"
+  },
+  {
+    "id": "wavelength-of-visible-light",
+    "prompt": "How many nanometres is the wavelength of green light?",
+    "unit": "nanometres",
+    "answerValue": 530,
+    "decompositionHint": "Visible light spans roughly 400 nm at the violet end to 700 nm at the red end, and human vision peaks in the middle.",
+    "source": "Standard optical physics figures"
+  },
+  {
+    "id": "decibels-of-a-jet-engine",
+    "prompt": "How many decibels does a jet engine produce at 30 metres?",
+    "unit": "decibels",
+    "answerValue": 140,
+    "decompositionHint": "Decibels are logarithmic: every 10 adds a factor of ten in intensity, so 140 dB is 10^14 times the quietest audible sound.",
+    "source": "Occupational noise exposure references"
+  },
+  {
+    "id": "sound-intensity-ratio-whisper-to-jet",
+    "prompt": "How many times more intense is a jet engine than a whisper?",
+    "unit": "times",
+    "answerValue": 1000000000000,
+    "decompositionHint": "A whisper is about 20 dB and a jet about 140 dB. Each 10 dB is a tenfold increase, so the gap of 120 dB is ten to the twelfth.",
+    "source": "Derived from the decibel scale"
+  },
+  {
+    "id": "frames-per-second-for-smooth-motion",
+    "prompt": "How many frames per second does film use to create the illusion of motion?",
+    "unit": "frames per second",
+    "answerValue": 24,
+    "decompositionHint": "Low enough that the flicker had to be masked by showing each frame twice in projection.",
+    "source": "Standard cinema frame rate"
+  },
+  {
+    "id": "energy-from-fissioning-a-uranium-atom",
+    "prompt": "How many joules are released by splitting a single uranium atom?",
+    "unit": "joules",
+    "answerValue": 3.2e-11,
+    "decompositionHint": "About 200 million electron volts, and one electron volt is 1.6x10^-19 joules.",
+    "source": "Standard nuclear fission energy release"
+  },
+  {
+    "id": "uranium-to-power-a-house-for-a-year",
+    "prompt": "How many grams of uranium fuel would power one household for a year?",
+    "unit": "grams",
+    "answerValue": 0.5,
+    "decompositionHint": "A household uses roughly 4,000 kWh, and fissioning a gram of uranium-235 releases around 24,000 kWh of heat before conversion losses.",
+    "source": "Derived from fission energy density"
+  },
+  {
+    "id": "background-radiation-per-year",
+    "prompt": "How many millisieverts of background radiation does a person absorb in a year?",
+    "unit": "millisieverts",
+    "answerValue": 3,
+    "decompositionHint": "Mostly radon indoors, plus cosmic rays and potassium-40 in your own body. A chest X-ray is about 0.1 mSv.",
+    "source": "UNSCEAR background radiation estimates"
+  },
+  {
+    "id": "half-life-of-carbon-14",
+    "prompt": "How many years is the half life of carbon-14?",
+    "unit": "years",
+    "answerValue": 5730,
+    "decompositionHint": "Short enough that after about ten half lives, roughly 60,000 years, too little remains to date reliably.",
+    "source": "Standard radiometric dating constant"
+  },
+  {
+    "id": "nuclear-warheads-in-the-world",
+    "prompt": "How many nuclear warheads exist worldwide?",
+    "asOf": 2025,
+    "unit": "warheads",
+    "answerValue": 12000,
+    "decompositionHint": "Down from a peak above 60,000 in the 1980s, with two countries holding roughly 90% of the total.",
+    "source": "Federation of American Scientists nuclear notebook"
+  },
+  {
+    "id": "colours-the-eye-can-distinguish",
+    "prompt": "How many distinct colours can the human eye distinguish?",
+    "unit": "colours",
+    "answerValue": 10000000,
+    "decompositionHint": "Three cone types, each resolving perhaps a couple of hundred levels, multiplied together.",
+    "source": "Colour vision research estimates"
+  },
+  {
+    "id": "smells-humans-can-distinguish",
+    "prompt": "How many distinct smells can a human nose distinguish?",
+    "unit": "smells",
+    "answerValue": 1000000000000,
+    "decompositionHint": "About 400 olfactory receptor types combining combinatorially, which is why the number vastly exceeds the old textbook figure of 10,000.",
+    "source": "Bushdid et al. 2014, Science"
+  },
+  {
+    "id": "rods-and-cones-in-the-eye",
+    "prompt": "How many photoreceptor cells are in one human retina?",
+    "unit": "photoreceptors",
+    "answerValue": 120000000,
+    "decompositionHint": "Around 120 million rods for dim light and 6 million cones for colour, all feeding into only about a million optic nerve fibres.",
+    "source": "Standard ophthalmology references"
+  },
+  {
+    "id": "reaction-time-milliseconds",
+    "prompt": "How many milliseconds does a human take to react to a visual signal?",
+    "unit": "milliseconds",
+    "answerValue": 250,
+    "decompositionHint": "Signal transduction, nerve conduction and muscle activation each cost tens of milliseconds. Sound is faster than sight by about 40 ms.",
+    "source": "Reaction time psychology research"
+  },
+  {
+    "id": "information-through-the-optic-nerve",
+    "prompt": "How many bits per second does the optic nerve carry to the brain?",
+    "unit": "bits per second",
+    "answerValue": 10000000,
+    "decompositionHint": "Roughly a million fibres each firing a few times a second with several bits per spike - comparable to an ethernet connection.",
+    "source": "Koch et al. 2006, Current Biology"
+  },
+  {
+    "id": "taste-buds-replaced-per-week",
+    "prompt": "How many days does a taste bud cell live before being replaced?",
+    "unit": "days",
+    "answerValue": 10,
+    "decompositionHint": "Constant turnover is why a burnt tongue recovers within a couple of weeks.",
+    "source": "Oral physiology references"
+  },
+  {
+    "id": "molecules-in-a-mole",
+    "prompt": "How many particles are in one mole of a substance?",
+    "unit": "particles",
+    "answerValue": 6.022e+23,
+    "decompositionHint": "Avogadro's number, defined so that a mole of carbon-12 weighs exactly 12 grams.",
+    "source": "Avogadro constant"
+  },
+  {
+    "id": "atoms-in-a-gram-of-hydrogen",
+    "prompt": "How many atoms are in one gram of hydrogen?",
+    "unit": "atoms",
+    "answerValue": 6e+23,
+    "decompositionHint": "Hydrogen's molar mass is about 1 gram, so a gram is one mole of atoms.",
+    "source": "Derived from molar mass and Avogadro's number"
+  },
+  {
+    "id": "elements-found-in-nature",
+    "prompt": "How many chemical elements occur naturally on Earth?",
+    "unit": "elements",
+    "answerValue": 94,
+    "decompositionHint": "Everything up to plutonium occurs naturally at least in traces; beyond that they must be synthesised.",
+    "source": "Standard periodic table classification"
+  },
+  {
+    "id": "ph-difference-in-hydrogen-ions",
+    "prompt": "How many times more acidic is lemon juice at pH 2 than water at pH 7?",
+    "unit": "times",
+    "answerValue": 100000,
+    "decompositionHint": "pH is logarithmic - each unit is a factor of ten in hydrogen ion concentration, and the gap here is five units.",
+    "source": "Definition of the pH scale"
+  },
+  {
+    "id": "water-molecules-in-the-oceans",
+    "prompt": "How many water molecules are in all the world's oceans?",
+    "unit": "molecules",
+    "answerValue": 4.6e+46,
+    "decompositionHint": "The oceans hold about 1.4x10^21 kg of water. Convert to moles using 18 grams per mole, then multiply by Avogadro's number.",
+    "source": "Derived from ocean mass and molar mass of water"
+  },
+  {
+    "id": "oxygen-atoms-breathed-per-day",
+    "prompt": "How many oxygen molecules does a person breathe in and absorb in a day?",
+    "unit": "molecules",
+    "answerValue": 1.5e+25,
+    "decompositionHint": "About 550 litres of oxygen consumed a day. Convert to moles via 22.4 litres per mole, then multiply by Avogadro's number.",
+    "source": "Derived from resting oxygen consumption"
+  },
+  {
+    "id": "grains-of-sugar-in-a-teaspoon",
+    "prompt": "How many sugar crystals are in a teaspoon of granulated sugar?",
+    "unit": "crystals",
+    "answerValue": 100000,
+    "decompositionHint": "A teaspoon holds about 4 grams, and a crystal is roughly half a millimetre across weighing well under a milligram.",
+    "source": "Derived from crystal size and teaspoon volume"
+  },
+  {
+    "id": "bubbles-in-a-glass-of-champagne",
+    "prompt": "How many bubbles are released from a glass of champagne?",
+    "unit": "bubbles",
+    "answerValue": 1000000,
+    "decompositionHint": "Dissolved carbon dioxide comes out of solution at nucleation sites on the glass until the wine goes flat.",
+    "source": "Liger-Belair champagne physics research"
+  },
+  {
+    "id": "coffee-drunk-in-a-lifetime",
+    "prompt": "How many litres of coffee does a regular drinker consume in a lifetime?",
+    "unit": "litres",
+    "answerValue": 15000,
+    "decompositionHint": "Two cups a day at about 250 ml, across roughly 55 adult years.",
+    "source": "Derived from typical consumption rates"
+  },
+  {
+    "id": "eggs-eaten-in-a-lifetime",
+    "prompt": "How many eggs does a person eat in a lifetime?",
+    "unit": "eggs",
+    "answerValue": 15000,
+    "decompositionHint": "Around 200 a year in many countries, across about 75 years.",
+    "source": "National egg consumption statistics"
+  },
+  {
+    "id": "bread-eaten-in-a-lifetime",
+    "prompt": "How many loaves of bread does a person eat in a lifetime?",
+    "unit": "loaves",
+    "answerValue": 3000,
+    "decompositionHint": "Roughly 40 to 50 loaves a year in a bread eating country, across some 70 years.",
+    "source": "National bread consumption statistics"
+  },
+  {
+    "id": "calories-in-a-lifetime",
+    "prompt": "How many kilocalories does a person eat in a lifetime?",
+    "unit": "kilocalories",
+    "answerValue": 60000000,
+    "decompositionHint": "About 2,200 a day across roughly 29,000 days.",
+    "source": "Derived from daily energy intake"
+  },
+  {
+    "id": "pizzas-eaten-in-italy-per-year",
+    "prompt": "How many pizzas are eaten in Italy each year?",
+    "asOf": 2025,
+    "unit": "pizzas",
+    "answerValue": 2500000000,
+    "decompositionHint": "About 59 million people eating on the order of forty a year each, counting both restaurant and frozen.",
+    "source": "Italian food industry consumption estimates"
+  },
+  {
+    "id": "ping-pong-balls-in-a-double-decker-bus",
+    "prompt": "How many ping pong balls would fill a double decker bus?",
+    "unit": "ping pong balls",
+    "answerValue": 10000000,
+    "decompositionHint": "The bus interior is roughly 100 cubic metres. A ball is 40 mm across, so about 6.4x10^-5 cubic metres before allowing for 26% empty space in packing.",
+    "source": "Classic interview Fermi problem"
+  },
+  {
+    "id": "tennis-balls-in-a-car",
+    "prompt": "How many tennis balls fit inside a saloon car?",
+    "unit": "tennis balls",
+    "answerValue": 40000,
+    "decompositionHint": "Perhaps 3 cubic metres of usable interior, and a tennis ball occupies about 1.5x10^-4 cubic metres allowing for packing gaps.",
+    "source": "Classic interview Fermi problem"
+  },
+  {
+    "id": "pennies-to-fill-a-room",
+    "prompt": "How many one penny coins would fill an average bedroom?",
+    "unit": "coins",
+    "answerValue": 40000000,
+    "decompositionHint": "A room of maybe 35 cubic metres, and a penny occupies roughly a cubic centimetre once stacking gaps are allowed for.",
+    "source": "Derived from coin dimensions and room volume"
+  },
+  {
+    "id": "hairs-cut-in-a-barbershop-per-year",
+    "prompt": "How many individual hairs does a busy barber cut in a year?",
+    "unit": "hairs",
+    "answerValue": 500000000,
+    "decompositionHint": "Perhaps 3,000 haircuts a year, each removing a fraction of the roughly 100,000 hairs on a head - but every hair on the head gets cut each time.",
+    "source": "Derived from haircut volume and hair count"
+  },
+  {
+    "id": "breaths-taken-in-a-cinema-screening",
+    "prompt": "How many breaths do the people in a full cinema take during one film?",
+    "unit": "breaths",
+    "answerValue": 300000,
+    "decompositionHint": "Around 200 people breathing roughly 14 times a minute for two hours.",
+    "source": "Derived from audience size and respiratory rate"
+  },
+  {
+    "id": "words-heard-in-a-lifetime",
+    "prompt": "How many words does a person hear in a lifetime?",
+    "unit": "words",
+    "answerValue": 3000000000,
+    "decompositionHint": "Speech runs at roughly 150 words a minute, and people are exposed to conversation, media and background talk for several hours a day.",
+    "source": "Derived from speech rate and daily exposure"
+  },
+  {
+    "id": "keystrokes-in-writing-a-novel",
+    "prompt": "How many keystrokes does it take to type a novel?",
+    "unit": "keystrokes",
+    "answerValue": 550000,
+    "decompositionHint": "About 90,000 words at roughly five letters plus a space each, before counting the deleting and rewriting.",
+    "source": "Derived from novel length and word length"
+  },
+  {
+    "id": "grains-of-salt-in-a-shaker",
+    "prompt": "How many grains of salt are in a full table salt shaker?",
+    "unit": "grains",
+    "answerValue": 300000,
+    "decompositionHint": "Perhaps 100 grams of salt, and a single grain weighs around 0.3 milligrams.",
+    "source": "Derived from grain mass and shaker capacity"
+  },
+  {
+    "id": "sheets-of-paper-in-a-filing-cabinet",
+    "prompt": "How many sheets of paper fit in a four drawer filing cabinet?",
+    "unit": "sheets",
+    "answerValue": 20000,
+    "decompositionHint": "Each drawer holds roughly 60 cm of packed paper, and 500 sheets make a stack about 5 cm thick.",
+    "source": "Derived from paper thickness and drawer dimensions"
+  },
+  {
+    "id": "cups-of-water-in-a-bathtub",
+    "prompt": "How many cups of water does it take to fill a bathtub?",
+    "unit": "cups",
+    "answerValue": 600,
+    "decompositionHint": "A bath holds around 150 litres and a cup is roughly 250 millilitres.",
+    "source": "Direct unit conversion"
+  },
+  {
+    "id": "banknotes-printed-per-year-us",
+    "prompt": "How many banknotes does the United States print each year?",
+    "asOf": 2025,
+    "unit": "banknotes",
+    "answerValue": 7000000000,
+    "decompositionHint": "Most replace worn notes rather than expanding the supply. A one dollar bill lasts under seven years in circulation.",
+    "source": "US Bureau of Engraving and Printing production figures"
+  },
+  {
+    "id": "coins-in-circulation-us",
+    "prompt": "How many coins are in circulation in the United States?",
+    "asOf": 2025,
+    "unit": "coins",
+    "answerValue": 150000000000,
+    "decompositionHint": "Hundreds of coins per person, most sitting unused in jars and drawers rather than actually circulating.",
+    "source": "US Mint circulating coinage estimates"
+  },
+  {
+    "id": "credit-card-transactions-per-day",
+    "prompt": "How many card payments are made worldwide each day?",
+    "asOf": 2025,
+    "unit": "transactions",
+    "answerValue": 1500000000,
+    "decompositionHint": "Several billion cards in circulation, each used on the order of once every day or two.",
+    "source": "Payment network transaction volumes"
+  },
+  {
+    "id": "atm-withdrawals-per-year",
+    "prompt": "How many cash withdrawals are made from ATMs worldwide each year?",
+    "asOf": 2025,
+    "unit": "withdrawals",
+    "answerValue": 80000000000,
+    "decompositionHint": "About 3 million machines each dispensing on the order of seventy times a day.",
+    "source": "ATM industry transaction statistics"
+  },
+  {
+    "id": "value-of-all-bitcoin",
+    "prompt": "How many bitcoin will ever exist?",
+    "unit": "bitcoin",
+    "answerValue": 21000000,
+    "decompositionHint": "The supply cap is fixed in the protocol, approached asymptotically as block rewards halve every four years.",
+    "source": "Bitcoin protocol supply schedule"
+  },
+  {
+    "id": "cost-of-a-loaf-of-bread-1970",
+    "prompt": "What did a loaf of bread cost in the United States, in cents?",
+    "asOf": 1970,
+    "unit": "cents",
+    "answerValue": 25,
+    "decompositionHint": "Prices have risen roughly eightfold since, tracking general inflation rather than anything specific to bread.",
+    "source": "US Bureau of Labor Statistics historical price data"
+  },
+  {
+    "id": "median-house-price-us",
+    "prompt": "What is the median price of a home sold in the United States, in dollars?",
+    "asOf": 2025,
+    "unit": "US dollars",
+    "answerValue": 420000,
+    "decompositionHint": "Roughly five times median household income, up from about three times in the 1980s.",
+    "source": "US existing home sales price data"
+  },
+  {
+    "id": "global-advertising-spend",
+    "prompt": "How many US dollars are spent on advertising worldwide each year?",
+    "asOf": 2025,
+    "unit": "US dollars",
+    "answerValue": 1000000000000,
+    "decompositionHint": "Roughly 1% of world GDP, and now more than two thirds digital.",
+    "source": "Global advertising expenditure forecasts"
+  },
+  {
+    "id": "insurance-premiums-worldwide",
+    "prompt": "How many US dollars in insurance premiums are paid worldwide each year?",
+    "asOf": 2025,
+    "unit": "US dollars",
+    "answerValue": 7000000000000,
+    "decompositionHint": "Around 7% of world GDP, split roughly evenly between life and non-life cover.",
+    "source": "Swiss Re sigma insurance market reports"
+  },
+  {
+    "id": "people-employed-worldwide",
+    "prompt": "How many people are in paid employment worldwide?",
+    "asOf": 2025,
+    "unit": "people",
+    "answerValue": 3400000000,
+    "decompositionHint": "Out of about 5.5 billion of working age, with participation rates around 60%.",
+    "source": "ILO global employment estimates"
+  },
+  {
+    "id": "farmers-worldwide",
+    "prompt": "How many people work in agriculture worldwide?",
+    "asOf": 2025,
+    "unit": "people",
+    "answerValue": 850000000,
+    "decompositionHint": "About a quarter of the global workforce, down from well over half in 1990 and near universal before industrialisation.",
+    "source": "ILO sectoral employment data"
+  },
+  {
+    "id": "software-developers-worldwide",
+    "prompt": "How many professional software developers are there worldwide?",
+    "asOf": 2025,
+    "unit": "developers",
+    "answerValue": 28000000,
+    "decompositionHint": "Roughly one in every 120 workers, concentrated heavily in a handful of countries.",
+    "source": "Developer population surveys"
+  },
+  {
+    "id": "hours-worked-in-a-lifetime",
+    "prompt": "How many hours does a person work in their career?",
+    "unit": "hours",
+    "answerValue": 80000,
+    "decompositionHint": "About 1,800 hours a year across roughly 45 working years.",
+    "source": "Derived from annual working hours"
+  },
+  {
+    "id": "factories-in-china",
+    "prompt": "How many manufacturing enterprises operate in China?",
+    "asOf": 2025,
+    "unit": "enterprises",
+    "answerValue": 3000000,
+    "decompositionHint": "Counting registered industrial firms above a revenue threshold; including tiny workshops would multiply this several times.",
+    "source": "China National Bureau of Statistics industrial surveys"
+  },
+  {
+    "id": "meetings-held-per-day-worldwide",
+    "prompt": "How many business meetings take place worldwide each day?",
+    "asOf": 2025,
+    "unit": "meetings",
+    "answerValue": 1000000000,
+    "decompositionHint": "Hundreds of millions of office workers averaging a few meetings a day between them.",
+    "source": "Order-of-magnitude estimate from workforce and meeting frequency"
+  },
+  {
+    "id": "instructions-a-cpu-executes-per-second",
+    "prompt": "How many instructions does a modern desktop processor execute per second?",
+    "asOf": 2025,
+    "unit": "instructions",
+    "answerValue": 50000000000,
+    "decompositionHint": "Several billion cycles a second, several instructions per cycle, across several cores.",
+    "source": "Typical desktop CPU throughput figures"
+  },
+  {
+    "id": "transistors-per-square-millimetre",
+    "prompt": "How many transistors fit in one square millimetre on a leading chip process?",
+    "asOf": 2025,
+    "unit": "transistors",
+    "answerValue": 200000000,
+    "decompositionHint": "Around 200 million per square millimetre at the leading nodes, up from about a million twenty years ago.",
+    "source": "Semiconductor process density figures"
+  },
+  {
+    "id": "bytes-in-a-typical-web-page",
+    "prompt": "How many bytes does an average web page transfer when it loads?",
+    "asOf": 2025,
+    "unit": "bytes",
+    "answerValue": 2500000,
+    "decompositionHint": "Images and scripts dominate. The median page has grown roughly tenfold since 2010.",
+    "source": "HTTP Archive page weight reports"
+  },
+  {
+    "id": "packets-per-second-on-the-internet",
+    "prompt": "How many data packets cross the internet each second?",
+    "asOf": 2025,
+    "unit": "packets",
+    "answerValue": 10000000000000,
+    "decompositionHint": "Global traffic of several hundred terabits a second divided by a typical packet of around 1,000 bytes.",
+    "source": "Derived from global traffic estimates and packet size"
+  },
+  {
+    "id": "lines-of-code-in-a-car",
+    "prompt": "How many lines of software code run in a modern car?",
+    "asOf": 2025,
+    "unit": "lines of code",
+    "answerValue": 100000000,
+    "decompositionHint": "More than a passenger aircraft, spread across a hundred or more separate control units.",
+    "source": "Automotive software complexity estimates"
+  },
+  {
+    "id": "storage-shipped-per-year",
+    "prompt": "How many bytes of storage capacity are shipped worldwide each year?",
+    "asOf": 2025,
+    "unit": "bytes",
+    "answerValue": 1.5e+21,
+    "decompositionHint": "Well over a zettabyte, dominated by hard drives for data centres rather than consumer devices.",
+    "source": "Storage industry shipment reports"
+  },
+  {
+    "id": "bits-in-a-minute-of-music",
+    "prompt": "How many bits are in one minute of CD quality audio?",
+    "unit": "bits",
+    "answerValue": 85000000,
+    "decompositionHint": "44,100 samples a second, 16 bits each, two channels, times 60 seconds.",
+    "source": "CD audio specification"
+  },
+  {
+    "id": "steps-recommended-per-day",
+    "prompt": "How many steps a day are typically recommended for health benefits?",
+    "unit": "steps",
+    "answerValue": 8000,
+    "decompositionHint": "The famous 10,000 figure came from a 1960s Japanese pedometer marketing campaign; research suggests benefits plateau somewhat below it.",
+    "source": "Physical activity epidemiology research"
+  },
+  {
+    "id": "people-with-diabetes-worldwide",
+    "prompt": "How many adults live with diabetes worldwide?",
+    "asOf": 2025,
+    "unit": "adults",
+    "answerValue": 590000000,
+    "decompositionHint": "Roughly one adult in nine, and the figure has more than tripled since 2000.",
+    "source": "International Diabetes Federation atlas"
+  },
+  {
+    "id": "deaths-worldwide-per-year",
+    "prompt": "How many people die worldwide each year?",
+    "asOf": 2025,
+    "unit": "deaths",
+    "answerValue": 62000000,
+    "decompositionHint": "About 8 billion people with a crude death rate near 7.7 per thousand. Births exceed this by roughly 70 million, which is the annual population growth.",
+    "source": "UN World Population Prospects"
+  },
+  {
+    "id": "heart-attacks-per-year-worldwide",
+    "prompt": "What percentage of all deaths worldwide are caused by cardiovascular disease?",
+    "asOf": 2025,
+    "unit": "percent",
+    "answerValue": 32,
+    "decompositionHint": "Roughly 19 million cardiovascular deaths against about 62 million deaths from all causes. It is comfortably the leading cause worldwide, ahead of cancer.",
+    "source": "WHO global health estimates"
+  },
+  {
+    "id": "antibiotic-courses-per-year",
+    "prompt": "How many courses of antibiotics are taken worldwide each year?",
+    "asOf": 2025,
+    "unit": "courses",
+    "answerValue": 40000000000,
+    "decompositionHint": "Measured in defined daily doses this runs to tens of billions, unevenly distributed and heavily overused in some countries.",
+    "source": "Global antibiotic consumption surveillance"
+  },
+  {
+    "id": "spectacles-worn-worldwide",
+    "prompt": "How many people wear glasses or contact lenses worldwide?",
+    "asOf": 2025,
+    "unit": "people",
+    "answerValue": 4000000000,
+    "decompositionHint": "Around half the world needs vision correction, though a substantial share of those who need it go without.",
+    "source": "Vision impairment prevalence studies"
+  },
+  {
+    "id": "hours-of-exercise-recommended-per-week",
+    "prompt": "How many minutes of moderate exercise a week do health authorities recommend?",
+    "unit": "minutes",
+    "answerValue": 150,
+    "decompositionHint": "Usually framed as thirty minutes on five days, or half that if the activity is vigorous.",
+    "source": "WHO physical activity guidelines"
+  },
+  {
+    "id": "million-seconds-in-days",
+    "prompt": "How many days is one million seconds?",
+    "unit": "days",
+    "answerValue": 11.6,
+    "decompositionHint": "86,400 seconds in a day. The contrast with a billion seconds is the point of the question.",
+    "source": "Direct unit conversion"
+  },
+  {
+    "id": "billion-seconds-in-years",
+    "prompt": "How many years is one billion seconds?",
+    "unit": "years",
+    "answerValue": 31.7,
+    "decompositionHint": "About 3.15x10^7 seconds a year. A million seconds is under a fortnight; a billion is most of a career.",
+    "source": "Direct unit conversion"
+  },
+  {
+    "id": "trillion-seconds-in-years",
+    "prompt": "How many years is one trillion seconds?",
+    "unit": "years",
+    "answerValue": 31700,
+    "decompositionHint": "A thousand times a billion seconds, taking you back well before the end of the last ice age.",
+    "source": "Direct unit conversion"
+  },
+  {
+    "id": "sheets-of-paper-to-the-moon",
+    "prompt": "How many times would you fold a sheet of paper to reach the Moon?",
+    "unit": "folds",
+    "answerValue": 42,
+    "decompositionHint": "Each fold doubles the thickness. Starting at 0.1 mm, ask what power of two exceeds 384,400 km.",
+    "source": "Classic exponential growth problem"
+  },
+  {
+    "id": "grains-of-rice-on-a-chessboard",
+    "prompt": "How many grains of rice end up on a chessboard if you double on each of the 64 squares?",
+    "unit": "grains",
+    "answerValue": 18000000000000000000,
+    "decompositionHint": "Two to the sixty-fourth minus one. More rice than the world has produced in all of history.",
+    "source": "The classic wheat and chessboard problem"
+  },
+  {
+    "id": "distance-if-earth-were-a-marble",
+    "prompt": "If the Earth were shrunk to the size of a marble, how many metres away would the Moon be?",
+    "unit": "metres",
+    "answerValue": 0.3,
+    "decompositionHint": "The Moon sits about thirty Earth diameters away, so scale that ratio onto a marble roughly a centimetre across.",
+    "source": "Derived from the Earth-Moon distance ratio"
+  },
+  {
+    "id": "humans-stacked-to-the-moon",
+    "prompt": "How many people lying head to toe would reach the Moon?",
+    "unit": "people",
+    "answerValue": 220000000,
+    "decompositionHint": "384,400 km divided by an average height of about 1.7 metres.",
+    "source": "Direct unit conversion"
+  },
+  {
+    "id": "all-humans-in-a-cube",
+    "prompt": "How many kilometres on a side would a cube be that held every living human packed shoulder to shoulder?",
+    "unit": "kilometres",
+    "answerValue": 1,
+    "decompositionHint": "A person occupies roughly 0.1 cubic metres when packed. Eight billion of those is 8x10^8 cubic metres - a cube under a kilometre on each side.",
+    "source": "Derived from human body volume and world population"
+  },
+  {
+    "id": "time-to-count-to-a-billion",
+    "prompt": "How many years would it take to count to a billion out loud?",
+    "unit": "years",
+    "answerValue": 95,
+    "decompositionHint": "At roughly one number a second without sleeping - and later numbers take much longer to say than early ones.",
+    "source": "Derived from counting rate and a billion seconds"
+  },
+  {
+    "id": "paper-thickness-doubling-to-sun",
+    "prompt": "How many times must you double a sheet of paper's thickness to reach the Sun?",
+    "unit": "folds",
+    "answerValue": 51,
+    "decompositionHint": "150 million kilometres from a 0.1 mm start. Each doubling adds a power of two, and 2^51 times 0.1 mm is about right.",
+    "source": "Classic exponential growth problem"
+  },
+  {
+    "id": "atoms-in-a-grain-of-sand",
+    "prompt": "How many atoms are in a single grain of sand?",
+    "unit": "atoms",
+    "answerValue": 60000000000000000000,
+    "decompositionHint": "A 0.5 mm grain of quartz weighs about 0.3 milligrams. Divide by the molar mass of silicon dioxide, multiply by Avogadro's number, then by three atoms per unit.",
+    "source": "Standard chemistry calculation"
+  },
+  {
+    "id": "human-cells-vs-stars-in-galaxy",
+    "prompt": "How many times more cells are in your body than there are stars in the Milky Way?",
+    "unit": "times",
+    "answerValue": 185,
+    "decompositionHint": "About 3.7x10^13 cells against roughly 2x10^11 stars.",
+    "source": "Derived from human cell count and Milky Way star count"
+  },
+  {
+    "id": "seconds-of-attention-in-a-lifetime",
+    "prompt": "How many waking hours does a person have in a lifetime?",
+    "unit": "hours",
+    "answerValue": 460000,
+    "decompositionHint": "About 16 waking hours across roughly 29,000 days.",
+    "source": "Derived from lifespan and sleep duration"
+  },
+  {
+    "id": "words-read-in-a-lifetime",
+    "prompt": "How many words does a keen reader read in a lifetime?",
+    "unit": "words",
+    "answerValue": 500000000,
+    "decompositionHint": "An hour a day at 250 words a minute across 60 years, plus everything read incidentally.",
+    "source": "Derived from reading speed and daily reading time"
+  },
+  {
+    "id": "grains-of-sand-vs-stars",
+    "prompt": "How many times more stars are in the observable universe than grains of sand on Earth's beaches?",
+    "unit": "times",
+    "answerValue": 10,
+    "decompositionHint": "Sand is estimated near 7.5x10^18 grains and stars near 10^22 to 10^24, so the ratio is large but the two are closer than the cliche suggests.",
+    "source": "Derived from published sand and star estimates"
+  },
+  {
+    "id": "breaths-in-a-cubic-metre-of-air",
+    "prompt": "How many breaths could you take from one cubic metre of air before the oxygen ran too low?",
+    "unit": "breaths",
+    "answerValue": 400,
+    "decompositionHint": "A cubic metre is 1,000 litres and a breath is half a litre, but you can only draw down a few percent of the oxygen before it becomes unbreathable.",
+    "source": "Derived from tidal volume and usable oxygen fraction"
+  },
+  {
+    "id": "trees-per-person-on-earth",
+    "prompt": "How many trees are there for each person on Earth?",
+    "asOf": 2025,
+    "unit": "trees per person",
+    "answerValue": 375,
+    "decompositionHint": "Roughly three trillion trees against eight billion people. The ratio has fallen by nearly half since the start of human civilisation.",
+    "source": "Crowther et al. 2015 tree count divided by world population"
+  },
+  {
+    "id": "ants-per-person-on-earth",
+    "prompt": "How many ants are there for each person on Earth?",
+    "unit": "ants per person",
+    "answerValue": 2500000,
+    "decompositionHint": "About 2x10^16 ants against 8x10^9 people. Their combined mass rivals that of all wild birds and mammals together.",
+    "source": "Schultheiss et al. 2022 ant estimate divided by world population"
+  },
+  {
+    "id": "weight-of-all-ants-vs-humans",
+    "prompt": "What fraction of the combined weight of all humans do all the world's ants weigh?",
+    "unit": "fraction",
+    "answerValue": 0.024,
+    "decompositionHint": "Around 12 million tonnes of ants against roughly 500 million tonnes of people. The old claim that ants outweigh us turns out to be wrong by a wide margin.",
+    "source": "Derived from published ant and human biomass estimates"
+  },
+  {
+    "id": "raindrops-to-fill-a-bathtub",
+    "prompt": "How many raindrops would it take to fill a bathtub?",
+    "unit": "raindrops",
+    "answerValue": 4500000,
+    "decompositionHint": "A bath holds about 150 litres and a typical raindrop is roughly 0.03 millilitres.",
+    "source": "Derived from bath volume and raindrop size"
+  },
+  {
+    "id": "time-to-walk-around-the-world",
+    "prompt": "How many days of continuous walking would it take to circle the equator?",
+    "unit": "days",
+    "answerValue": 333,
+    "decompositionHint": "40,075 km at 5 km/h without stopping. Walking eight hours a day would take three times as long.",
+    "source": "Derived from equatorial circumference and walking speed"
+  },
+  {
+    "id": "cost-to-feed-a-person-for-a-year",
+    "prompt": "How many US dollars does it cost to feed one person for a year at subsistence level?",
+    "asOf": 2025,
+    "unit": "US dollars",
+    "answerValue": 400,
+    "decompositionHint": "Around a dollar a day for basic staples in a low income country, several times that for a nutritionally adequate diet.",
+    "source": "World Food Programme cost of diet analyses"
+  },
+  {
+    "id": "water-a-person-drinks-in-a-lifetime",
+    "prompt": "How many litres of water does a person drink in a lifetime?",
+    "unit": "litres",
+    "answerValue": 60000,
+    "decompositionHint": "Roughly two litres a day across some 29,000 days.",
+    "source": "Derived from daily fluid intake"
+  },
+  {
+    "id": "air-breathed-in-a-lifetime",
+    "prompt": "How many cubic metres of air does a person breathe in a lifetime?",
+    "unit": "cubic metres",
+    "answerValue": 300000,
+    "decompositionHint": "About 11 cubic metres a day at rest, across roughly 29,000 days.",
+    "source": "Derived from tidal volume and respiratory rate"
+  },
+  {
+    "id": "cells-in-a-blue-whale",
+    "prompt": "How many cells make up a blue whale?",
+    "unit": "cells",
+    "answerValue": 100000000000000000,
+    "decompositionHint": "A human of 70 kg has about 3.7x10^13 cells. A whale is roughly 2,000 times heavier and made of broadly similar tissue.",
+    "source": "Scaled from human cell count by body mass"
+  },
+  {
+    "id": "bacteria-on-earth",
+    "prompt": "How many bacterial cells are there on Earth?",
+    "unit": "bacteria",
+    "answerValue": 1e+30,
+    "decompositionHint": "Most live in soil and in the deep subsurface rather than anywhere visible. They outweigh all animals combined.",
+    "source": "Whitman et al. 1998, PNAS - prokaryote abundance estimates"
+  },
+  {
+    "id": "grains-of-sand-on-earth",
+    "prompt": "How many grains of sand are on all the beaches and deserts of Earth?",
+    "unit": "grains of sand",
+    "answerValue": 7500000000000000000,
+    "decompositionHint": "Estimate the world's beach and desert area, a depth of a few metres, and roughly 5x10^9 grains per cubic metre.",
+    "source": "Commonly cited estimate of around 7.5x10^18 grains"
   }
 ]
 
