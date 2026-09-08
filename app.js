@@ -30,10 +30,39 @@
   var today = Model.dayIndex(new Date())
   var question = Model.questionForDay(today, QUESTIONS)
   var state = loadState(Model, window.localStorage)
+  // --- Debug reset -------------------------------------------------------
+  // ?reset=today  un-answers today, leaving the rest of the history intact
+  // ?reset=all    wipes history, streak and all, back to a first run
+  //
+  // Applied before the first render, then stripped from the address bar, so a
+  // reload or an accidentally bookmarked URL cannot silently wipe again. An
+  // installed copy opens at start_url with no query string, so reach for this
+  // in the browser rather than from the home screen.
+  applyReset()
+
   var statsOpen = false
   var historyOpen = false
   var historyLimit = HISTORY_PAGE   // 0 means show every day played
   var hintShown = false
+
+  function applyReset() {
+    var mode = null
+    try {
+      mode = new URLSearchParams(window.location.search).get("reset")
+    } catch (e) {
+      return
+    }
+    if (mode !== "today" && mode !== "all") return
+
+    state = mode === "all" ? Model.emptyState() : forgetDay(state, today)
+    saveState(state, window.localStorage)
+
+    try {
+      window.history.replaceState(null, "", window.location.pathname)
+    } catch (e) {
+      // Not fatal - the reset already applied; the URL just stays dirty.
+    }
+  }
 
   function setText(node, value) { node.textContent = value }
 
@@ -247,6 +276,56 @@
   // Registered after render so a failure here can never stop the puzzle from
   // showing. Absent on http:// origins other than localhost, and in browsers
   // with service workers disabled.
+  // --- Anonymous install counter -----------------------------------------
+  //
+  // Counts installs and nothing else. The request carries no identifier, no
+  // score, no history and no query of any kind beyond a cache-buster - the
+  // only information conveyed is that one more install exists. Play history
+  // still never leaves the device.
+  //
+  // Disabled by default: with no endpoint configured this is a no-op and the
+  // app makes no outbound request at all. Set INSTALL_PING_URL to switch it on.
+  var INSTALL_PING_URL = ""
+  var INSTALL_PING_KEY = "estimation-gym-install-counted"
+
+  // Two triggers, because no single one covers every platform. Chrome and the
+  // desktop browsers fire `appinstalled`; iOS Safari never has, so a
+  // home-screen launch is detected instead. Counting a first standalone launch
+  // is arguably the better measure anyway - it counts installs that someone
+  // actually opened rather than ones that were added and forgotten.
+  function countInstall() {
+    if (!INSTALL_PING_URL) return
+
+    // The flag is both the de-duplicator and the consent record. If storage is
+    // unavailable (private browsing), skip entirely rather than ping on every
+    // single launch with no way to remember having done so.
+    try {
+      if (window.localStorage.getItem(INSTALL_PING_KEY)) return
+      window.localStorage.setItem(INSTALL_PING_KEY, "1")
+    } catch (e) {
+      return
+    }
+
+    try {
+      var sep = INSTALL_PING_URL.indexOf("?") >= 0 ? "&" : "?"
+      new Image().src = INSTALL_PING_URL + sep + "t=" + Date.now()
+    } catch (e) {
+      // A failed count is not worth surfacing to someone trying to play.
+    }
+  }
+
+  function launchedStandalone() {
+    try {
+      if (window.navigator && window.navigator.standalone) return true
+      return !!(window.matchMedia && window.matchMedia("(display-mode: standalone)").matches)
+    } catch (e) {
+      return false
+    }
+  }
+
+  window.addEventListener("appinstalled", countInstall)
+  if (launchedStandalone()) countInstall()
+
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", function () {
       navigator.serviceWorker.register("./sw.js").catch(function () {})

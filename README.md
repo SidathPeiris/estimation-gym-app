@@ -67,10 +67,13 @@ omarchy plugin add https://github.com/SidathPeiris/estimation-gym-omarchy.git --
 | UI | `Widget.qml` (Quickshell) | `index.html` + `app.js` |
 | Storage | `~/.local/state/estimation-gym/state.json` | `localStorage` |
 
-The two installs keep **independent streaks** by design — no account, no server,
-no network, exactly like the widget. The stored JSON shape is identical to the
-widget's `state.json`, so a history blob can be moved across by hand if you ever
-want to.
+The two installs keep **independent streaks** by design — no account and no
+server. The stored JSON shape is identical to the widget's `state.json`, so a
+history blob can be moved across by hand if you ever want to.
+
+Your play history never leaves the device on either surface. The widget makes
+no network calls at all; this app makes one optional, anonymous request when it
+is installed, described below, and it is off by default.
 
 ## Layout
 
@@ -92,6 +95,59 @@ scripts/
 `presenter.js` exists so the "what goes on screen" decisions are testable and
 reusable: a React Native view can consume the same view model without any of
 this repo's DOM code.
+
+### Debug resets
+
+Two query parameters make the pre-answer screen reachable again without
+clearing site data by hand:
+
+| URL | Effect |
+| --- | --- |
+| `?reset=today` | Un-answers today only. Earlier days, and `bestStreak`, survive; the current streak is rebuilt around the gap. |
+| `?reset=all` | Wipes history, streak and all, back to a first run. |
+
+Both apply before the first render and then strip themselves from the address
+bar, so a reload — or a URL that got bookmarked — cannot silently wipe again.
+Any other value is ignored.
+
+An installed copy opens at `start_url` with no query string, so use these from
+a normal browser tab rather than from the home screen:
+
+```
+https://sidathpeiris.github.io/estimation-gym-app/?reset=today
+```
+
+## Install counter
+
+Nothing about play is collected — not scores, not streaks, not answers — and
+there is no way to see who has the app or on what device.
+
+There is one optional exception: an anonymous count of installs. It is
+**disabled by default**, and while `INSTALL_PING_URL` in `app.js` is empty the
+app makes no outbound request whatsoever. Set it to a counter endpoint to turn
+it on:
+
+```js
+var INSTALL_PING_URL = "https://YOURCODE.goatcounter.com/count?p=/installed"
+```
+
+What it sends is a bare GET to that URL plus a cache-buster. No identifier, no
+history, no score, no query about the player at all. The only fact conveyed is
+that one more install exists.
+
+It fires at most once per browser profile, guarded by a `localStorage` flag, on
+whichever of two triggers comes first:
+
+- the browser's `appinstalled` event, on Chrome and the desktop browsers;
+- the first launch in standalone display mode, which is how iOS is caught,
+  since Safari has never fired `appinstalled`.
+
+Counting the first standalone *launch* is the better measure anyway: it counts
+installs somebody actually opened rather than ones added and forgotten.
+
+Two things it cannot tell you. It counts **browser profiles, not people or
+devices** — one person with a phone and a laptop is two. And offline play never
+reports, which is rather the point of the app.
 
 ## Develop
 

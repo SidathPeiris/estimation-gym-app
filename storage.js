@@ -32,6 +32,40 @@ function saveState(state, backend) {
   }
 }
 
+// Debug affordance: drop one day's answer and rebuild the streak around the
+// gap, so the pre-answer screen can be looked at without discarding a run.
+//
+// bestStreak is deliberately left alone. It is a high-water mark of something
+// that genuinely happened, and un-answering a day for a screenshot should not
+// quietly rewrite the record books.
+function forgetDay(state, dayIdx) {
+  var history = {}
+  for (var key in state.history) {
+    if (key !== String(dayIdx)) history[key] = state.history[key]
+  }
+
+  var days = Object.keys(history)
+    .map(Number)
+    .filter(function (d) { return isFinite(d) })
+    .sort(function (a, b) { return b - a })
+
+  // Walk back from the most recent day, stopping at the first gap or the
+  // first miss - the same rule recordAnswer applies going forwards.
+  var streak = 0
+  for (var i = 0; i < days.length; i++) {
+    if (i > 0 && days[i] !== days[i - 1] - 1) break
+    if (history[String(days[i])].band === "Off") break
+    streak++
+  }
+
+  return {
+    history: history,
+    streak: streak,
+    bestStreak: state.bestStreak,
+    lastCompletedDay: days.length ? days[0] : -1
+  }
+}
+
 function exportState(state) {
   return JSON.stringify(state, null, 2)
 }
@@ -41,6 +75,7 @@ if (typeof module !== "undefined") {
     STORAGE_KEY: STORAGE_KEY,
     loadState: loadState,
     saveState: saveState,
+    forgetDay: forgetDay,
     exportState: exportState
   }
 }

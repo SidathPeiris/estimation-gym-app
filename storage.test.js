@@ -48,4 +48,48 @@ const exported = S.exportState(state)
 assert.deepEqual(JSON.parse(exported), state)
 assert.ok(exported.includes("\n"), "exported blob is pretty printed for copy/paste")
 
+
+// --- forgetDay (the ?reset=today debug affordance) ---
+
+let run = Model.emptyState()
+run = Model.recordAnswer(run, 10, 100, 100)   // Bullseye
+run = Model.recordAnswer(run, 11, 100, 100)   // Bullseye
+run = Model.recordAnswer(run, 12, 100, 100)   // Bullseye
+assert.equal(run.streak, 3)
+assert.equal(run.bestStreak, 3)
+
+const undone = S.forgetDay(run, 12)
+assert.equal(undone.history["12"], undefined, "the day is gone")
+assert.equal(undone.history["11"].band, "Bullseye", "the other days survive")
+assert.equal(undone.streak, 2, "the streak is rebuilt around the gap")
+assert.equal(undone.lastCompletedDay, 11, "so the next answer counts as consecutive")
+assert.equal(undone.bestStreak, 3, "the high-water mark is not rewritten")
+
+// Answering again after un-answering must rebuild the same streak, not skip it.
+const redone = Model.recordAnswer(undone, 12, 100, 100)
+assert.equal(redone.streak, 3)
+
+// A gap in the middle stops the rebuilt streak at the gap.
+let gapped = Model.emptyState()
+gapped = Model.recordAnswer(gapped, 20, 100, 100)
+gapped = Model.recordAnswer(gapped, 21, 100, 100)
+gapped = Model.recordAnswer(gapped, 22, 100, 100)
+assert.equal(S.forgetDay(gapped, 21).streak, 1, "only day 22 survives contiguously")
+
+// A miss stops it too, exactly as recordAnswer would going forwards.
+let missed = Model.emptyState()
+missed = Model.recordAnswer(missed, 30, 1, 100000000)   // Off
+missed = Model.recordAnswer(missed, 31, 100, 100)
+missed = Model.recordAnswer(missed, 32, 100, 100)
+assert.equal(S.forgetDay(missed, 32).streak, 1)
+
+// Removing the only day returns something a fresh run can build on.
+const emptied = S.forgetDay(Model.recordAnswer(Model.emptyState(), 7, 100, 100), 7)
+assert.equal(emptied.streak, 0)
+assert.equal(emptied.lastCompletedDay, -1)
+assert.deepEqual(emptied.history, {})
+
+// Removing a day that was never answered changes nothing meaningful.
+assert.equal(S.forgetDay(run, 999).streak, 3)
+
 console.log("All storage tests passed.")
