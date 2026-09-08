@@ -61,6 +61,11 @@ function post(body, ip = "1.2.3.4") {
 const get = (q) =>
   new Request("https://w.dev/dist?q=" + encodeURIComponent(q), { headers: { Origin: ORIGIN } });
 
+// The floor is deliberately low: everyone on a given date answers the same
+// question, so responses concentrate rather than spread, but a question only
+// recurs about every 500 days.
+const MIN_SAMPLE = 5;
+
 // --- a fresh question withholds its shape until there is enough of it ---
 let e = env();
 let res = await worker.fetch(get("piano-tuners-chicago"), e);
@@ -82,6 +87,20 @@ assert.equal(body.n, 25);
 assert.equal(body.enough, true);
 assert.deepEqual(body.counts, { Bullseye: 5, Close: 10, Ballpark: 7, Off: 3 });
 console.log("25 submissions    -> " + JSON.stringify(body.counts));
+
+// --- exactly at the floor the breakdown is released ---
+e = env();
+for (let i = 0; i < MIN_SAMPLE - 1; i++) {
+  await worker.fetch(post({ questionId: "cars-in-us", band: "Close" }, "172.16.0." + i), e);
+}
+let atEdge = await (await worker.fetch(get("cars-in-us"), e)).json();
+assert.equal(atEdge.enough, false, "one short of the floor stays withheld");
+assert.equal(atEdge.n, MIN_SAMPLE - 1);
+await worker.fetch(post({ questionId: "cars-in-us", band: "Close" }, "172.16.0.99"), e);
+atEdge = await (await worker.fetch(get("cars-in-us"), e)).json();
+assert.equal(atEdge.enough, true, "reaching the floor releases it");
+assert.equal(atEdge.n, MIN_SAMPLE);
+console.log("at the floor      -> withheld at " + (MIN_SAMPLE - 1) + ", released at " + MIN_SAMPLE);
 
 // --- one address counts once per question ---
 e = env();

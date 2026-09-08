@@ -15,7 +15,14 @@ const BANDS = ["Bullseye", "Close", "Ballpark", "Off"];
 // Below this the shape of the chart is noise rather than information, so the
 // endpoint reports the count but withholds the breakdown and the client says
 // so rather than drawing four misleading bars.
-const MIN_SAMPLE = 20;
+//
+// Deliberately low. Everyone playing on a given calendar date gets the same
+// question, so a day's responses all land on one question id rather than
+// spreading across the bank - the constraint is how many people play, not
+// dilution. Set against that, a question only recurs about every 500 days and
+// a returning player is not counted twice, so a high floor would keep the
+// chart hidden for years on a small audience.
+const MIN_SAMPLE = 5;
 
 function corsHeaders(env) {
   return {
