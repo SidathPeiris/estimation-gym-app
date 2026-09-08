@@ -1,2 +1,5 @@
 node_modules/
 .DS_Store
+
+# wrangler local state: account cache, build output, local D1 copies.
+.wrangler/
