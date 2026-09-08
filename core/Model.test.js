@@ -191,4 +191,58 @@ assert.equal(Model.formatCompact(100), "100")
 assert.equal(Model.formatCompact(1234), "1,234")
 assert.equal(Model.formatCompact(1.2e18), "1.2 × 10^18")
 
+// --- strategies / hints ---
+// Every archetype used by the bank must have guidance, or a player pressing
+// Hint on that day gets nothing.
+// The bank sits at content/questions.js here and directly alongside this file
+// once vendored into the app repo, so resolve whichever layout is present.
+const questionBank = require(
+  require("node:fs").existsSync(require("node:path").join(__dirname, "content"))
+    ? "./content/questions.js"
+    : "./questions.js"
+)
+const used = [...new Set(questionBank.map((q) => q.strategy))]
+for (const key of used) {
+  assert.ok(Model.STRATEGIES[key], `bank uses strategy "${key}" with no guidance text`)
+}
+for (const [key, s] of Object.entries(Model.STRATEGIES)) {
+  assert.ok(s.label && s.label.length > 3, `${key} needs a label`)
+  assert.ok(s.guidance && s.guidance.length > 60, `${key} guidance is too thin to help`)
+}
+
+// An unknown or missing strategy still yields honest generic advice.
+assert.equal(Model.strategyFor({ strategy: "no-such-archetype" }), Model.STRATEGIES["decompose"])
+assert.equal(Model.strategyFor({}), Model.STRATEGIES["decompose"])
+assert.equal(Model.strategyFor(null), Model.STRATEGIES["decompose"])
+
+// --- assisted scoring ---
+assert.equal(Model.pointsForBand("Bullseye"), 100)
+assert.equal(Model.pointsForBand("Bullseye", true), 50, "taking the hint halves the points")
+assert.equal(Model.pointsForBand("Off", true), 5)
+assert.equal(Model.scoreGuess(100, 100, true).points, 50)
+assert.equal(Model.scoreGuess(100, 100).assisted, false)
+
+// The flag is only persisted when true, so state files written before hints
+// existed stay valid and read back as unassisted days.
+const unaided = Model.recordAnswer(Model.emptyState(), 5, 100, 100)
+assert.ok(!("assisted" in unaided.history["5"]), "unassisted days carry no flag")
+const aided = Model.recordAnswer(Model.emptyState(), 5, 100, 100, true)
+assert.equal(aided.history["5"].assisted, true)
+
+// Taking the hint must not cost a streak - the streak measures showing up.
+assert.equal(aided.streak, 1)
+assert.equal(Model.computeStats(aided).streak, unaided.streak)
+
+// Assisted days count as played and score half, but are excluded from
+// calibration: they measure the hint as much as the player.
+let mixed = Model.emptyState()
+mixed = Model.recordAnswer(mixed, 0, 1, 100)          // unaided, two decades low
+mixed = Model.recordAnswer(mixed, 1, 1000, 10, true)  // hinted, two decades high
+const mixedStats = Model.computeStats(mixed)
+assert.equal(mixedStats.played, 2)
+assert.equal(mixedStats.assisted, 1)
+assert.equal(mixedStats.totalPoints, 40 + 20, "the hinted Ballpark scores half")
+assert.equal(mixedStats.calibrationSample, 1, "the hinted day is left out of calibration")
+assert.ok(mixedStats.biasDecades < 0, "so the surviving lean is the unaided one")
+
 console.log("All Model.js tests passed.")

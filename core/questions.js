@@ -5,6 +5,7 @@ var QUESTIONS = [
     "unit": "piano tuners",
     "answerValue": 100,
     "decompositionHint": "Metro population (~9.5M) \u2192 households with a piano (~1 in 20) \u2192 pianos tuned about once a year \u2192 a full-time tuner can do ~4 tunings/day, ~250 working days/year (~1000/year). Divide pianos-needing-tuning by tunings-per-tuner-per-year.",
+    "strategy": "population-rate",
     "source": "Classic Fermi problem (originally posed by Enrico Fermi); widely accepted estimate range 50-200"
   },
   {
@@ -13,6 +14,7 @@ var QUESTIONS = [
     "unit": "golf balls",
     "answerValue": 500000,
     "decompositionHint": "Estimate the bus's interior volume (~cuboid, roughly 8m x 2.5m x 2m \u2248 40 m\u00b3), a golf ball's volume (~40 mL, diameter ~4.3cm), account for ~74% packing efficiency for spheres, then divide.",
+    "strategy": "volume-packing",
     "source": "Classic interview-style Fermi problem; order-of-magnitude estimate"
   },
   {
@@ -21,6 +23,7 @@ var QUESTIONS = [
     "unit": "hairs",
     "answerValue": 100000,
     "decompositionHint": "Estimate scalp area (~600 cm\u00b2) and hair density (~150-200 hairs per cm\u00b2), then multiply.",
+    "strategy": "area-density",
     "source": "Dermatology references; typical range 80,000-120,000"
   },
   {
@@ -29,6 +32,7 @@ var QUESTIONS = [
     "unit": "cells",
     "answerValue": 37000000000000,
     "decompositionHint": "Estimate body mass (~70kg), average cell mass, and that most of the count comes from small, numerous cells like red blood cells and other blood/tissue cells.",
+    "strategy": "chain-multiply",
     "source": "Bianconi et al. 2013, Annals of Human Biology - widely cited estimate ~3.72\u00d710^13"
   },
   {
@@ -37,6 +41,7 @@ var QUESTIONS = [
     "unit": "grains of sand",
     "answerValue": 2500000000000000,
     "decompositionHint": "Compute beach volume (length x width x depth), estimate a sand grain's volume (~0.5mm cube), then divide, accounting for packing.",
+    "strategy": "volume-packing",
     "source": "Order-of-magnitude estimate using typical sand grain size ~0.5mm"
   },
   {
@@ -45,6 +50,7 @@ var QUESTIONS = [
     "unit": "stars",
     "answerValue": 200000000000,
     "decompositionHint": "Use the galaxy's estimated total mass and the average stellar mass to back out a star count, or recall published astronomical estimates.",
+    "strategy": "recall-sanity",
     "source": "NASA/ESA estimates typically cite 100-400 billion stars"
   },
   {
@@ -53,6 +59,7 @@ var QUESTIONS = [
     "unit": "trees",
     "answerValue": 3000000000000,
     "decompositionHint": "Estimate global forest area and average tree density per hectare, then multiply.",
+    "strategy": "area-density",
     "source": "Crowther et al. 2015, Nature - estimated ~3.04 trillion trees"
   },
   {
@@ -61,6 +68,7 @@ var QUESTIONS = [
     "unit": "drops",
     "answerValue": 50000000000,
     "decompositionHint": "A typical water drop is about 0.05 mL. Convert the pool's volume to milliliters and divide by drop volume.",
+    "strategy": "unit-conversion",
     "source": "Olympic pool standard volume 2,500,000 L; typical drop ~0.05mL"
   },
   {
@@ -69,6 +77,7 @@ var QUESTIONS = [
     "unit": "words",
     "answerValue": 860000000,
     "decompositionHint": "Estimate average words spoken per day (~16,000), multiply by days in an ~80 year lifespan, adjusting for years before speech develops.",
+    "strategy": "stock-flow",
     "source": "Mehl et al. 2007, Science - average ~16,000 words/day"
   },
   {
@@ -77,6 +86,7 @@ var QUESTIONS = [
     "unit": "heartbeats",
     "answerValue": 3000000000,
     "decompositionHint": "Average resting heart rate ~70-75 bpm. Multiply beats/minute by minutes/year by 80 years.",
+    "strategy": "chain-multiply",
     "source": "Standard physiology figures; commonly cited ~2.5-3 billion beats"
   },
   {
@@ -85,6 +95,7 @@ var QUESTIONS = [
     "unit": "bricks",
     "answerValue": 10000000,
     "decompositionHint": "Estimate the building's total exterior wall surface area and typical wall thickness, a standard brick's volume, and divide.",
+    "strategy": "area-density",
     "source": "Order-of-magnitude estimate based on building volume ~37 million cubic feet"
   },
   {
@@ -94,6 +105,7 @@ var QUESTIONS = [
     "unit": "cars",
     "answerValue": 280000000,
     "decompositionHint": "US population (~335M) x average vehicles per person (~0.8), or recall it's roughly 1 vehicle for every 1.2 people.",
+    "strategy": "population-rate",
     "source": "US Dept. of Transportation / Bureau of Transportation Statistics, ~280 million registered vehicles"
   },
   {
@@ -103,6 +115,7 @@ var QUESTIONS = [
     "unit": "smartphones",
     "answerValue": 6900000000,
     "decompositionHint": "World population (~8B) x smartphone penetration rate (~85% of adults in many regions, lower in others, roughly ~86% overall).",
+    "strategy": "population-rate",
     "source": "GSMA / Statista estimates, ~6.9 billion smartphone users worldwide (2024-2025)"
   },
   {
@@ -112,6 +125,7 @@ var QUESTIONS = [
     "unit": "gallons/day",
     "answerValue": 300,
     "decompositionHint": "Estimate per-person daily use (~80-100 gallons: showers, toilets, laundry, dishes) times average household size (~2.5 people).",
+    "strategy": "rate-time",
     "source": "US EPA WaterSense program estimates"
   },
   {
@@ -121,6 +135,7 @@ var QUESTIONS = [
     "unit": "pizza slices",
     "answerValue": 100000000,
     "decompositionHint": "US population (~335M), estimate fraction eating pizza on a given day (~13% per commonly cited industry figures) x average slices per person (~2-3).",
+    "strategy": "population-rate",
     "source": "Often-cited pizza industry statistic: ~100 million slices/day"
   },
   {
@@ -129,6 +144,7 @@ var QUESTIONS = [
     "unit": "leaves",
     "answerValue": 200000,
     "decompositionHint": "Estimate canopy volume or number of branches x leaves per branch, or use published estimates for a mature tree's leaf count.",
+    "strategy": "chain-multiply",
     "source": "Botanical estimates for mature oaks, typically 100,000-250,000 leaves"
   },
   {
@@ -137,6 +153,7 @@ var QUESTIONS = [
     "unit": "atoms",
     "answerValue": 1200000000000000000,
     "decompositionHint": "Estimate the grain's volume (~0.3mm cube), use NaCl's density (~2.16 g/cm\u00b3) to get mass, convert to moles via molar mass (58.44 g/mol), multiply by Avogadro's number, then by 2 (for Na and Cl atoms).",
+    "strategy": "molar",
     "source": "Standard chemistry calculation using Avogadro's number 6.022\u00d710^23"
   },
   {
@@ -145,6 +162,7 @@ var QUESTIONS = [
     "unit": "breaths",
     "answerValue": 670000000,
     "decompositionHint": "Average resting breathing rate ~12-16 breaths/minute. Multiply by minutes/year and years lived.",
+    "strategy": "chain-multiply",
     "source": "Standard respiratory physiology figures"
   },
   {
@@ -154,6 +172,7 @@ var QUESTIONS = [
     "unit": "Libraries of Congress",
     "answerValue": 15000,
     "decompositionHint": "Global daily internet traffic is roughly 300+ exabytes (2024 estimates). Convert to petabytes and divide by ~20 PB.",
+    "strategy": "unit-conversion",
     "source": "Cisco/various internet traffic reports; Library of Congress print collection estimated at ~20TB-20PB depending on what's counted (text only vs. all formats)"
   },
   {
@@ -162,6 +181,7 @@ var QUESTIONS = [
     "unit": "bacterial cells",
     "answerValue": 38000000000000,
     "decompositionHint": "Recent research revised the old '10x more bacteria than human cells' claim - the actual ratio is close to 1:1. Use human cell count (~3.7\u00d710^13) as an anchor.",
+    "strategy": "anchor-scale",
     "source": "Sender, Fuchs, Milo 2016, PLOS Biology - revised bacteria:human cell ratio ~1.3:1"
   },
   {
@@ -170,6 +190,7 @@ var QUESTIONS = [
     "unit": "steps",
     "answerValue": 6000000,
     "decompositionHint": "Average adult stride length is about 0.75m. Convert the distance to meters and divide by stride length.",
+    "strategy": "unit-conversion",
     "source": "Standard stride length figures (~0.7-0.8m)"
   },
   {
@@ -179,6 +200,7 @@ var QUESTIONS = [
     "unit": "planes",
     "answerValue": 9000,
     "decompositionHint": "Global commercial fleet is ~25,000-30,000 aircraft; at peak times a large fraction are airborne simultaneously across time zones.",
+    "strategy": "chain-multiply",
     "source": "FlightAware/Flightradar24 peak concurrent flight estimates, ~9,000-20,000 depending on time of day"
   },
   {
@@ -188,6 +210,7 @@ var QUESTIONS = [
     "unit": "metric tons",
     "answerValue": 212000,
     "decompositionHint": "This is largely a recall-based estimate, but you can sanity check: if all mined gold were melted into a cube, it would only be about 22m on a side - gold is surprisingly rare relative to its cultural prominence.",
+    "strategy": "anchor-scale",
     "source": "World Gold Council estimates, ~212,000 tonnes as of recent surveys"
   },
   {
@@ -196,6 +219,7 @@ var QUESTIONS = [
     "unit": "words",
     "answerValue": 90000,
     "decompositionHint": "Estimate pages (~300) x words per page (~300 for typical prose formatting).",
+    "strategy": "chain-multiply",
     "source": "Standard publishing industry figures, typical novel 70,000-100,000 words"
   },
   {
@@ -204,6 +228,7 @@ var QUESTIONS = [
     "unit": "kilometers",
     "answerValue": 100000,
     "decompositionHint": "Most of the length comes from capillaries, which are extremely numerous and thin despite each being very short - the count of capillaries dominates over their individual length.",
+    "strategy": "recall-sanity",
     "source": "Commonly cited physiology estimate, ~60,000-100,000 km total"
   },
   {
@@ -213,6 +238,7 @@ var QUESTIONS = [
     "unit": "chickens",
     "answerValue": 26000000000,
     "decompositionHint": "World population (~8B) x average annual chicken meat + egg consumption per person, combined with typical chicken lifespan before slaughter (~6 weeks for broilers), gives a standing population estimate.",
+    "strategy": "stock-flow",
     "source": "UN FAO livestock statistics, ~26 billion chickens (roughly 3x the human population)"
   },
   {
@@ -222,6 +248,7 @@ var QUESTIONS = [
     "unit": "gallons/day",
     "answerValue": 370000000,
     "decompositionHint": "US has ~280M registered vehicles, average ~25-30 miles driven/day per active vehicle isn't quite right - better: total annual gasoline consumption (~135 billion gallons/year) divided by 365.",
+    "strategy": "energy-balance",
     "source": "US Energy Information Administration (EIA) data"
   },
   {
@@ -230,6 +257,7 @@ var QUESTIONS = [
     "unit": "kilometers",
     "answerValue": 19,
     "decompositionHint": "The heart completes a full circulation roughly once per minute at rest. Estimate the average circuit length (~1000-1300 cm through the full vascular loop) and multiply by circuits per day.",
+    "strategy": "rate-time",
     "source": "Physiology estimate based on ~1 full circulation per minute"
   },
   {
@@ -238,6 +266,7 @@ var QUESTIONS = [
     "unit": "hours",
     "answerValue": 66,
     "decompositionHint": "Each doubling multiplies mass by 2. Figure out how many doublings are needed to go from one bacterium's mass (~1 picogram) to Earth's mass (~6\u00d710^24 kg), then multiply doublings by 20 minutes.",
+    "strategy": "exponential",
     "source": "Classic exponential-growth Fermi/math problem"
   },
   {
@@ -246,6 +275,7 @@ var QUESTIONS = [
     "unit": "Post-it notes",
     "answerValue": 3800000000000,
     "decompositionHint": "Convert the Earth-Moon distance to millimeters and divide by a single note's thickness.",
+    "strategy": "unit-conversion",
     "source": "Simple unit-conversion Fermi problem"
   },
   {
@@ -255,6 +285,7 @@ var QUESTIONS = [
     "unit": "credit card accounts",
     "answerValue": 680000000,
     "decompositionHint": "US adult population (~260M) x average number of credit cards per adult (~2.5-4, since many people hold multiple cards).",
+    "strategy": "population-rate",
     "source": "Federal Reserve / credit bureau (Experian) reports"
   },
   {
@@ -263,6 +294,7 @@ var QUESTIONS = [
     "unit": "keystrokes",
     "answerValue": 300000000,
     "decompositionHint": "Estimate typing hours/day at work (~4 active hours), typing speed in keystrokes/minute (~150 including code/comments/chat), workdays/year (~230), and years (30).",
+    "strategy": "chain-multiply",
     "source": "Order-of-magnitude estimate from typical office typing patterns"
   },
   {
@@ -271,6 +303,7 @@ var QUESTIONS = [
     "unit": "raindrops",
     "answerValue": 80000000000000,
     "decompositionHint": "Total rain volume = area x depth. A typical raindrop is about 4mm in diameter (~34 microliters). Divide total volume by single-drop volume.",
+    "strategy": "divide-total",
     "source": "Standard meteorology figures for raindrop size (2-5mm typical)"
   },
   {
@@ -279,6 +312,7 @@ var QUESTIONS = [
     "unit": "ratio (roughly X:1)",
     "answerValue": 1,
     "decompositionHint": "This is the famous 'more energy from the sun in an hour than humanity uses in a year' claim - the two quantities are roughly equal in order of magnitude (~5\u00d710^20 J vs ~6\u00d710^20 J), so the ratio is close to 1:1.",
+    "strategy": "energy-balance",
     "source": "US Dept. of Energy solar energy figures; widely cited comparison, roughly accurate to within a factor of ~1"
   },
   {
@@ -287,6 +321,7 @@ var QUESTIONS = [
     "unit": "sheets",
     "answerValue": 384000,
     "decompositionHint": "Average American uses roughly 3-4 rolls per week (~200 sheets/roll). Multiply weekly sheet use by weeks in 80 years.",
+    "strategy": "chain-multiply",
     "source": "Industry consumption estimates (~100+ rolls/person/year in the US)"
   },
   {
@@ -295,6 +330,7 @@ var QUESTIONS = [
     "unit": "ants",
     "answerValue": 20000000000000000,
     "decompositionHint": "This requires recalling a published biomass-based estimate - ant biomass roughly matches or exceeds human biomass despite ants being tiny, implying an enormous count.",
+    "strategy": "recall-sanity",
     "source": "Schultheiss et al. 2022, PNAS - estimated ~20 quadrillion (2\u00d710^16) ants globally"
   },
   {
@@ -303,6 +339,7 @@ var QUESTIONS = [
     "unit": "orbits",
     "answerValue": 300000,
     "decompositionHint": "One orbit equals one year, so this reduces directly to the number of years elapsed - a reminder that not every Fermi problem needs heavy decomposition.",
+    "strategy": "chain-multiply",
     "source": "Paleoanthropological dating of earliest Homo sapiens fossils (~300,000 years, Jebel Irhoud find)"
   },
   {
@@ -312,6 +349,7 @@ var QUESTIONS = [
     "unit": "emails",
     "answerValue": 360000000000,
     "decompositionHint": "Estimate number of email accounts (~4-5B users, several accounts each) x average emails sent per account per day (~15-30, weighted heavily by automated/business email).",
+    "strategy": "rate-time",
     "source": "Radicati Group email statistics reports"
   },
   {
@@ -320,6 +358,7 @@ var QUESTIONS = [
     "unit": "round trips",
     "answerValue": 400,
     "decompositionHint": "Each cell's DNA is about 2m long, and the body has ~3.7\u00d710^13 cells. Multiply to get total DNA length, then divide by twice the Earth-Sun distance.",
+    "strategy": "divide-total",
     "source": "Combines cell count (Bianconi et al. 2013) with commonly cited ~2m of DNA per cell"
   },
   {
@@ -328,6 +367,7 @@ var QUESTIONS = [
     "unit": "seconds",
     "answerValue": 3160000000,
     "decompositionHint": "60 seconds x 60 minutes x 24 hours x 365.25 days x 100 years. Worth internalising: a century is only about 3 billion seconds, so a human lifetime is on the order of 2-3 billion.",
+    "strategy": "unit-conversion",
     "source": "Direct unit conversion"
   },
   {
@@ -336,6 +376,7 @@ var QUESTIONS = [
     "unit": "atoms",
     "answerValue": 7e+27,
     "decompositionHint": "Body mass ~70 kg, mostly water. A water molecule is 18 g/mol and contains 3 atoms, so work out moles of water, multiply by Avogadro's number and by atoms per molecule.",
+    "strategy": "molar",
     "source": "Standard physics estimate, ~7x10^27 atoms"
   },
   {
@@ -344,6 +385,7 @@ var QUESTIONS = [
     "unit": "molecules",
     "answerValue": 8.4e+24,
     "decompositionHint": "250 mL of water weighs 250 g. Divide by the molar mass of water (18 g/mol) to get moles, then multiply by Avogadro's number.",
+    "strategy": "molar",
     "source": "Standard chemistry calculation using Avogadro's number"
   },
   {
@@ -352,6 +394,7 @@ var QUESTIONS = [
     "unit": "molecules",
     "answerValue": 1.3e+22,
     "decompositionHint": "One mole of gas occupies about 22.4 litres at standard conditions. Divide 0.5 L by 22.4 L/mol to get moles, then multiply by Avogadro's number.",
+    "strategy": "molar",
     "source": "Ideal gas molar volume and Avogadro's number"
   },
   {
@@ -360,6 +403,7 @@ var QUESTIONS = [
     "unit": "molecules",
     "answerValue": 1,
     "decompositionHint": "Compare molecules in one breath (~10^22) against molecules in the whole atmosphere (~10^44). The ratio of one breath to the atmosphere, squared by the two-step mixing, lands on roughly one molecule - the classic surprise is that the answer is about 1, not 0.",
+    "strategy": "anchor-scale",
     "source": "Classic Fermi problem; standard result is on the order of a single molecule"
   },
   {
@@ -368,6 +412,7 @@ var QUESTIONS = [
     "unit": "seconds",
     "answerValue": 440000000000000000,
     "decompositionHint": "There are about 3.15x10^7 seconds in a year. Multiply by 1.38x10^10 years.",
+    "strategy": "rate-time",
     "source": "Planck mission age of the universe (~13.8 billion years) x seconds per year"
   },
   {
@@ -376,6 +421,7 @@ var QUESTIONS = [
     "unit": "galaxies",
     "answerValue": 2000000000000,
     "decompositionHint": "Deep-field images count galaxies in a tiny patch of sky, then scale that density up to the whole celestial sphere.",
+    "strategy": "area-density",
     "source": "Hubble/JWST deep field extrapolations; estimates range from ~2x10^11 to ~2x10^12"
   },
   {
@@ -384,6 +430,7 @@ var QUESTIONS = [
     "unit": "kilometres",
     "answerValue": 40000000000000,
     "decompositionHint": "Proxima Centauri is about 4.2 light years away. A light year is roughly 9.5x10^12 km - light travels 300,000 km/s times ~3.15x10^7 seconds per year.",
+    "strategy": "unit-conversion",
     "source": "Standard astronomical distance, ~4.24 light years"
   },
   {
@@ -392,6 +439,7 @@ var QUESTIONS = [
     "unit": "kilograms",
     "answerValue": 5.97e+24,
     "decompositionHint": "Earth's radius is ~6,371 km, so compute the volume of a sphere, then multiply by average density (~5,500 kg/m^3 - higher than surface rock because of the iron core).",
+    "strategy": "volume-packing",
     "source": "Standard geophysical constant, 5.97x10^24 kg"
   },
   {
@@ -400,6 +448,7 @@ var QUESTIONS = [
     "unit": "kilograms",
     "answerValue": 5150000000000000000,
     "decompositionHint": "Atmospheric pressure at sea level is ~101,000 N/m^2, which is the weight of the air column above each square metre. Divide by g to get mass per square metre, then multiply by Earth's surface area (~5.1x10^14 m^2).",
+    "strategy": "area-density",
     "source": "Derived from sea-level pressure and Earth's surface area"
   },
   {
@@ -408,6 +457,7 @@ var QUESTIONS = [
     "unit": "circuits",
     "answerValue": 7.5,
     "decompositionHint": "Light travels 300,000 km per second; Earth's equatorial circumference is about 40,075 km. Divide.",
+    "strategy": "divide-total",
     "source": "Speed of light and Earth's equatorial circumference"
   },
   {
@@ -416,6 +466,7 @@ var QUESTIONS = [
     "unit": "Earths",
     "answerValue": 1300000,
     "decompositionHint": "The Sun's radius is about 109 times Earth's. Volume scales with the cube of radius, so cube 109.",
+    "strategy": "volume-packing",
     "source": "Ratio of solar to terrestrial radius, cubed"
   },
   {
@@ -424,6 +475,7 @@ var QUESTIONS = [
     "unit": "neurons",
     "answerValue": 86000000000,
     "decompositionHint": "This is largely recall, but note the popular '100 billion' figure was a guess later measured more carefully - the real number is close to 86 billion.",
+    "strategy": "recall-sanity",
     "source": "Azevedo et al. 2009, Journal of Comparative Neurology - ~86 billion neurons"
   },
   {
@@ -432,6 +484,7 @@ var QUESTIONS = [
     "unit": "synapses",
     "answerValue": 150000000000000,
     "decompositionHint": "Start from ~8.6x10^10 neurons and multiply by average connections per neuron (on the order of 1,000-10,000).",
+    "strategy": "chain-multiply",
     "source": "Neuroscience estimates, ~100-150 trillion synapses"
   },
   {
@@ -440,6 +493,7 @@ var QUESTIONS = [
     "unit": "red blood cells",
     "answerValue": 25000000000000,
     "decompositionHint": "An adult has ~5 litres of blood, and blood contains roughly 5x10^6 red blood cells per microlitre. Convert litres to microlitres and multiply.",
+    "strategy": "unit-conversion",
     "source": "Standard haematology reference ranges"
   },
   {
@@ -448,6 +502,7 @@ var QUESTIONS = [
     "unit": "cells/second",
     "answerValue": 3800000,
     "decompositionHint": "Roughly 330 billion cells are replaced per day, dominated by short-lived blood and gut lining cells. Divide by 86,400 seconds.",
+    "strategy": "unit-conversion",
     "source": "Cell turnover estimates, ~3.3x10^11 cells replaced per day"
   },
   {
@@ -456,6 +511,7 @@ var QUESTIONS = [
     "unit": "blinks",
     "answerValue": 5300000,
     "decompositionHint": "About 15 blinks per minute while awake, ~16 waking hours a day, 365 days a year.",
+    "strategy": "rate-time",
     "source": "Ophthalmology figures, ~15-20 blinks per minute"
   },
   {
@@ -464,6 +520,7 @@ var QUESTIONS = [
     "unit": "steps",
     "answerValue": 220000000,
     "decompositionHint": "Typical daily step counts are ~5,000-8,000. Multiply by 365 days and ~75 active years.",
+    "strategy": "rate-time",
     "source": "Pedometer studies of average daily step counts"
   },
   {
@@ -472,6 +529,7 @@ var QUESTIONS = [
     "unit": "litres/day",
     "answerValue": 7000,
     "decompositionHint": "Each beat ejects ~70 mL. Multiply by ~70 beats/minute, 60 minutes and 24 hours.",
+    "strategy": "unit-conversion",
     "source": "Standard cardiac output figures (~5 L/min at rest)"
   },
   {
@@ -480,6 +538,7 @@ var QUESTIONS = [
     "unit": "bacteria",
     "answerValue": 20000000000,
     "decompositionHint": "Saliva alone carries ~10^8 bacteria per millilitre, and most of the population sits in plaque and on the tongue rather than free in saliva.",
+    "strategy": "area-density",
     "source": "Oral microbiology estimates, ~10-100 billion bacteria"
   },
   {
@@ -488,6 +547,7 @@ var QUESTIONS = [
     "unit": "taste buds",
     "answerValue": 10000,
     "decompositionHint": "Taste buds sit in the papillae covering the tongue, with a few thousand more spread across the palate and throat.",
+    "strategy": "decompose",
     "source": "Standard anatomy references, ~2,000-10,000 taste buds"
   },
   {
@@ -496,6 +556,7 @@ var QUESTIONS = [
     "unit": "metres",
     "answerValue": 12,
     "decompositionHint": "Scalp hair grows roughly 1.25 cm per month. Multiply by 12 months and 80 years, then convert to metres. (In reality each hair falls out after a few years, which is why nobody has 12-metre hair.)",
+    "strategy": "unit-conversion",
     "source": "Standard hair growth rate, ~1-1.5 cm per month"
   },
   {
@@ -504,6 +565,7 @@ var QUESTIONS = [
     "unit": "seconds",
     "answerValue": 2500000000,
     "decompositionHint": "About 3.15x10^7 seconds per year, times 80.",
+    "strategy": "rate-time",
     "source": "Direct unit conversion"
   },
   {
@@ -512,6 +574,7 @@ var QUESTIONS = [
     "unit": "species",
     "answerValue": 8700000,
     "decompositionHint": "Only ~1.2 million species have been formally described. Estimates extrapolate from how the rate of new descriptions is slowing within well-studied groups.",
+    "strategy": "recall-sanity",
     "source": "Mora et al. 2011, PLOS Biology - estimated ~8.7 million eukaryotic species"
   },
   {
@@ -520,6 +583,7 @@ var QUESTIONS = [
     "unit": "insects",
     "answerValue": 10000000000000000000,
     "decompositionHint": "Estimate insects per square metre of land (on the order of thousands when soil-dwellers are counted) and multiply by Earth's land area (~1.5x10^14 m^2).",
+    "strategy": "area-density",
     "source": "Entomological biomass estimates, commonly cited on the order of 10^18-10^19"
   },
   {
@@ -529,6 +593,7 @@ var QUESTIONS = [
     "unit": "cattle",
     "answerValue": 1500000000,
     "decompositionHint": "Global beef and dairy output divided by per-animal yield, or simply anchor on the fact that cattle number roughly one for every five or six people.",
+    "strategy": "divide-total",
     "source": "UN FAO livestock statistics, ~1.5 billion head"
   },
   {
@@ -537,6 +602,7 @@ var QUESTIONS = [
     "unit": "flower visits",
     "answerValue": 4400000,
     "decompositionHint": "A bee carries a tiny nectar load per trip and nectar is mostly water that must be evaporated off. The widely quoted figure is about two million flower visits per pound of honey.",
+    "strategy": "rate-time",
     "source": "Beekeeping figures, ~2 million flower visits per pound"
   },
   {
@@ -546,6 +612,7 @@ var QUESTIONS = [
     "unit": "grains of rice",
     "answerValue": 20000000000000000,
     "decompositionHint": "World rice production is roughly 5x10^11 kg per year. A single grain weighs about 0.025 g. Convert and divide.",
+    "strategy": "unit-conversion",
     "source": "FAO rice production statistics and typical grain mass"
   },
   {
@@ -555,6 +622,7 @@ var QUESTIONS = [
     "unit": "people",
     "answerValue": 117000000000,
     "decompositionHint": "Integrate population over time: populations were tiny for most of prehistory but birth rates were high, so the cumulative total is dominated by the last few thousand years. Today's 8 billion is only about 7% of the total.",
+    "strategy": "population-rate",
     "source": "Population Reference Bureau estimate, ~117 billion people ever born"
   },
   {
@@ -564,6 +632,7 @@ var QUESTIONS = [
     "unit": "births/day",
     "answerValue": 385000,
     "decompositionHint": "World population ~8x10^9 with a crude birth rate of ~17 per 1,000 people per year. Multiply, then divide by 365.",
+    "strategy": "population-rate",
     "source": "UN World Population Prospects birth rate data"
   },
   {
@@ -573,6 +642,7 @@ var QUESTIONS = [
     "unit": "kilograms",
     "answerValue": 500000000000,
     "decompositionHint": "World population (~8.1x10^9) times average body mass across all ages (~62 kg, lower than the adult average because a large fraction are children).",
+    "strategy": "population-rate",
     "source": "World population x global mean body mass estimates"
   },
   {
@@ -582,6 +652,7 @@ var QUESTIONS = [
     "unit": "people",
     "answerValue": 5400000000,
     "decompositionHint": "World population ~8.1 billion with global penetration around two thirds, much higher in wealthy regions and lower in parts of Africa and South Asia.",
+    "strategy": "population-rate",
     "source": "ITU global connectivity statistics, ~67% of the world online"
   },
   {
@@ -591,6 +662,7 @@ var QUESTIONS = [
     "unit": "searches",
     "answerValue": 8500000000,
     "decompositionHint": "Estimate the number of active users (billions) and average searches each per day (a handful), remembering that a large share of queries come from a small heavy-use minority.",
+    "strategy": "rate-time",
     "source": "Widely cited industry figure, ~8.5 billion searches per day"
   },
   {
@@ -600,6 +672,7 @@ var QUESTIONS = [
     "unit": "hours/minute",
     "answerValue": 500,
     "decompositionHint": "A useful sanity check: this means YouTube receives far more video per day than a person could watch in several lifetimes.",
+    "strategy": "rate-time",
     "source": "YouTube/Google published upload statistics, ~500 hours per minute"
   },
   {
@@ -609,6 +682,7 @@ var QUESTIONS = [
     "unit": "messages",
     "answerValue": 100000000000,
     "decompositionHint": "Roughly 2 billion users sending on the order of tens of messages a day each.",
+    "strategy": "rate-time",
     "source": "Meta published messaging volume, ~100 billion messages per day"
   },
   {
@@ -618,6 +692,7 @@ var QUESTIONS = [
     "unit": "photographs",
     "answerValue": 1900000000000,
     "decompositionHint": "Around 5 billion smartphone owners, each taking a handful of photos on an average day. Multiply by 365.",
+    "strategy": "rate-time",
     "source": "Industry estimates of annual photo volume, ~1.8-2 trillion"
   },
   {
@@ -627,6 +702,7 @@ var QUESTIONS = [
     "unit": "flights",
     "answerValue": 100000,
     "decompositionHint": "The global commercial fleet is ~25,000-30,000 aircraft, and a typical airliner flies several sectors per day.",
+    "strategy": "rate-time",
     "source": "Flight tracking services report ~100,000 commercial flights daily"
   },
   {
@@ -636,6 +712,7 @@ var QUESTIONS = [
     "unit": "passenger journeys",
     "answerValue": 4500000000,
     "decompositionHint": "About 100,000 flights a day, averaging on the order of 100+ passengers each, times 365 days.",
+    "strategy": "rate-time",
     "source": "IATA/ICAO annual passenger traffic statistics"
   },
   {
@@ -645,6 +722,7 @@ var QUESTIONS = [
     "unit": "cups",
     "answerValue": 2250000000,
     "decompositionHint": "Global green coffee production is ~10 million tonnes a year; roughly 10 g of coffee makes a cup. Convert and divide by 365.",
+    "strategy": "unit-conversion",
     "source": "International Coffee Organization consumption figures, ~2 billion cups daily"
   },
   {
@@ -654,6 +732,7 @@ var QUESTIONS = [
     "unit": "bananas",
     "answerValue": 1100000000000,
     "decompositionHint": "World banana production is roughly 1.3x10^11 kg per year, and a banana weighs about 120 g of edible fruit. Divide.",
+    "strategy": "divide-total",
     "source": "FAO banana production statistics and typical fruit mass"
   },
   {
@@ -663,6 +742,7 @@ var QUESTIONS = [
     "unit": "bottles/minute",
     "answerValue": 1000000,
     "decompositionHint": "Annual sales are on the order of half a trillion bottles. Divide by the ~525,600 minutes in a year.",
+    "strategy": "divide-total",
     "source": "Widely cited packaging industry figure, ~1 million bottles per minute"
   },
   {
@@ -672,6 +752,7 @@ var QUESTIONS = [
     "unit": "titles",
     "answerValue": 2200000,
     "decompositionHint": "Large publishing markets each produce tens to hundreds of thousands of titles a year; summing major markets and adding self-published titles gets you into the low millions.",
+    "strategy": "rate-time",
     "source": "UNESCO and national ISBN agency statistics"
   },
   {
@@ -681,6 +762,7 @@ var QUESTIONS = [
     "unit": "pencils",
     "answerValue": 14000000000,
     "decompositionHint": "Roughly two pencils per person on Earth per year is a reasonable anchor, weighted heavily towards school-age users.",
+    "strategy": "population-rate",
     "source": "Pencil industry estimates, ~14 billion pencils annually"
   },
   {
@@ -690,6 +772,7 @@ var QUESTIONS = [
     "unit": "LEGO elements",
     "answerValue": 75000000000,
     "decompositionHint": "Estimate sets sold per year and average pieces per set - the answer works out to roughly ten pieces for every person on Earth, every year.",
+    "strategy": "rate-time",
     "source": "LEGO Group published production figures, ~75 billion elements per year"
   },
   {
@@ -699,6 +782,7 @@ var QUESTIONS = [
     "unit": "TEU",
     "answerValue": 850000000,
     "decompositionHint": "The largest single port handles tens of millions of TEU per year; the global total is dominated by a few dozen major ports.",
+    "strategy": "rate-time",
     "source": "UNCTAD world container port throughput statistics"
   },
   {
@@ -708,6 +792,7 @@ var QUESTIONS = [
     "unit": "US dollars",
     "answerValue": 2300000000000,
     "decompositionHint": "Most of the value sits in $100 notes, a large share of which are held outside the United States. That works out to several thousand dollars of cash per American.",
+    "strategy": "decompose",
     "source": "US Federal Reserve currency in circulation data"
   },
   {
@@ -717,6 +802,7 @@ var QUESTIONS = [
     "unit": "ATMs",
     "answerValue": 3000000,
     "decompositionHint": "Roughly one ATM per few thousand people globally, with much higher density in wealthy and cash-heavy economies.",
+    "strategy": "area-density",
     "source": "World Bank / ATM industry statistics, ~3 million machines"
   },
   {
@@ -726,6 +812,7 @@ var QUESTIONS = [
     "unit": "customers/day",
     "answerValue": 69000000,
     "decompositionHint": "About 40,000 restaurants worldwide, each serving on the order of 1,500-2,000 customers a day.",
+    "strategy": "rate-time",
     "source": "McDonald's corporate reporting, ~69 million customers daily"
   },
   {
@@ -735,6 +822,7 @@ var QUESTIONS = [
     "unit": "stations",
     "answerValue": 145000,
     "decompositionHint": "US population ~335 million; roughly one station per 2,000-2,500 people is a reasonable density for a car-dependent country.",
+    "strategy": "area-density",
     "source": "US convenience store and fuel retailing industry counts"
   },
   {
@@ -744,6 +832,7 @@ var QUESTIONS = [
     "unit": "kilometres",
     "answerValue": 6600000,
     "decompositionHint": "Estimate from settlement density: every town needs local streets, and the interstate system alone is only ~78,000 km, so local roads dominate the total by two orders of magnitude.",
+    "strategy": "area-density",
     "source": "US Federal Highway Administration, ~4.1 million miles of public road"
   },
   {
@@ -753,6 +842,7 @@ var QUESTIONS = [
     "unit": "kilometres/year",
     "answerValue": 15000,
     "decompositionHint": "A typical commute is on the order of 30-50 km a day round trip on working days, plus errands and occasional long trips.",
+    "strategy": "rate-time",
     "source": "National transport survey averages (~12,000-15,000 km/year)"
   },
   {
@@ -762,6 +852,7 @@ var QUESTIONS = [
     "unit": "hospitals",
     "answerValue": 6100,
     "decompositionHint": "US population ~335 million; a hospital typically serves a catchment of tens of thousands of people.",
+    "strategy": "population-rate",
     "source": "American Hospital Association registered hospital counts"
   },
   {
@@ -771,6 +862,7 @@ var QUESTIONS = [
     "unit": "libraries",
     "answerValue": 17000,
     "decompositionHint": "Most towns of any size have at least one branch; estimate the number of towns above a few thousand people.",
+    "strategy": "chain-multiply",
     "source": "Institute of Museum and Library Services public library survey"
   },
   {
@@ -780,6 +872,7 @@ var QUESTIONS = [
     "unit": "schools",
     "answerValue": 130000,
     "decompositionHint": "About 50 million school-age children, with an average school enrolling a few hundred students.",
+    "strategy": "population-rate",
     "source": "US National Center for Education Statistics"
   },
   {
@@ -789,6 +882,7 @@ var QUESTIONS = [
     "unit": "words",
     "answerValue": 4600000000,
     "decompositionHint": "Roughly 7 million articles averaging several hundred words each - though the mean is dragged up by a minority of very long articles.",
+    "strategy": "decompose",
     "source": "Wikipedia's own published statistics on article count and size"
   },
   {
@@ -798,6 +892,7 @@ var QUESTIONS = [
     "unit": "transistors",
     "answerValue": 15000000000,
     "decompositionHint": "Chip area is on the order of 1 cm^2 and modern process nodes pack on the order of 10^8 transistors per mm^2.",
+    "strategy": "decompose",
     "source": "Published die statistics for recent flagship mobile SoCs (~15-20 billion)"
   },
   {
@@ -807,6 +902,7 @@ var QUESTIONS = [
     "unit": "cups",
     "answerValue": 100000000,
     "decompositionHint": "UK population ~68 million; the commonly cited average is a bit under two cups per person per day.",
+    "strategy": "population-rate",
     "source": "UK Tea and Infusions Association, ~100 million cups daily"
   },
   {
@@ -816,6 +912,7 @@ var QUESTIONS = [
     "unit": "sheep",
     "answerValue": 25000000,
     "decompositionHint": "The famous ratio of sheep to people has fallen a long way from its 1980s peak of over 20:1, but is still around 5:1 against a population of ~5 million.",
+    "strategy": "population-rate",
     "source": "Stats NZ agricultural production statistics"
   },
   {
@@ -824,6 +921,7 @@ var QUESTIONS = [
     "unit": "kilocalories/day",
     "answerValue": 2000,
     "decompositionHint": "Basal metabolic rate accounts for most of it (~1,400-1,700 kcal), with activity adding a few hundred more for a sedentary person.",
+    "strategy": "energy-balance",
     "source": "Standard dietary reference intakes"
   },
   {
@@ -833,6 +931,7 @@ var QUESTIONS = [
     "unit": "people",
     "answerValue": 1000000000,
     "decompositionHint": "The first billion was reached right around 1800 after millennia of very slow growth. Everything since is the anomaly, not the norm.",
+    "strategy": "population-rate",
     "source": "UN and HYDE historical population reconstructions"
   },
   {
@@ -842,6 +941,7 @@ var QUESTIONS = [
     "unit": "people",
     "answerValue": 1650000000,
     "decompositionHint": "Growth from 1800 to 1900 was well under a doubling. Industrialisation had begun but the great mortality decline had not yet reached most of the world.",
+    "strategy": "exponential",
     "source": "UN and HYDE historical population reconstructions"
   },
   {
@@ -851,6 +951,7 @@ var QUESTIONS = [
     "unit": "people",
     "answerValue": 2500000000,
     "decompositionHint": "Half a century after 1900 added roughly as many people as the whole of prior history had by 1800. The acceleration is the story here.",
+    "strategy": "population-rate",
     "source": "UN World Population Prospects"
   },
   {
@@ -860,6 +961,7 @@ var QUESTIONS = [
     "unit": "people",
     "answerValue": 6100000000,
     "decompositionHint": "The population roughly doubled between 1960 and 2000, the fastest sustained growth in human history.",
+    "strategy": "population-rate",
     "source": "UN World Population Prospects"
   },
   {
@@ -869,6 +971,7 @@ var QUESTIONS = [
     "unit": "people",
     "answerValue": 8200000000,
     "decompositionHint": "Growth has slowed markedly since the 1960s peak rate. Adding the eighth billion took about twelve years.",
+    "strategy": "population-rate",
     "source": "UN World Population Prospects"
   },
   {
@@ -878,6 +981,7 @@ var QUESTIONS = [
     "unit": "years",
     "answerValue": 32,
     "decompositionHint": "Dominated by infant and child mortality rather than short adult lives - someone who survived to twenty could still expect a further few decades.",
+    "strategy": "decompose",
     "source": "Historical demography reconstructions"
   },
   {
@@ -887,6 +991,7 @@ var QUESTIONS = [
     "unit": "years",
     "answerValue": 46,
     "decompositionHint": "Most of the gain over 1900 came from falling child mortality, driven by sanitation and vaccination rather than by medicine for the old.",
+    "strategy": "population-rate",
     "source": "UN World Population Prospects"
   },
   {
@@ -896,6 +1001,7 @@ var QUESTIONS = [
     "unit": "years",
     "answerValue": 73,
     "decompositionHint": "Global average across very different national figures, from the low sixties in parts of Africa to the mid eighties in Japan.",
+    "strategy": "decompose",
     "source": "WHO and UN life expectancy estimates"
   },
   {
@@ -905,6 +1011,7 @@ var QUESTIONS = [
     "unit": "people",
     "answerValue": 3900000,
     "decompositionHint": "Thirteen states, overwhelmingly rural, with no city above about 50,000 people. Smaller than a single large metro area today.",
+    "strategy": "population-rate",
     "source": "US Census Bureau, 1790 census"
   },
   {
@@ -914,6 +1021,7 @@ var QUESTIONS = [
     "unit": "people",
     "answerValue": 76000000,
     "decompositionHint": "Roughly twenty times the 1790 figure after a century of immigration and westward expansion, but still under a quarter of today's.",
+    "strategy": "population-rate",
     "source": "US Census Bureau"
   },
   {
@@ -923,6 +1031,7 @@ var QUESTIONS = [
     "unit": "people",
     "answerValue": 340000000,
     "decompositionHint": "About four percent of world population, and the third largest country after India and China.",
+    "strategy": "population-rate",
     "source": "US Census Bureau estimates"
   },
   {
@@ -932,6 +1041,7 @@ var QUESTIONS = [
     "unit": "US dollars",
     "answerValue": 10000,
     "decompositionHint": "Drives were priced per megabyte then, at roughly ten dollars each. Multiply by a thousand megabytes to reach a gigabyte.",
+    "strategy": "chain-multiply",
     "source": "Historical storage price surveys"
   },
   {
@@ -941,6 +1051,7 @@ var QUESTIONS = [
     "unit": "US dollars",
     "answerValue": 0.02,
     "decompositionHint": "A consumer drive of several terabytes costs under a hundred dollars. Divide the price by the capacity in gigabytes.",
+    "strategy": "divide-total",
     "source": "Consumer drive pricing"
   },
   {
@@ -950,6 +1061,7 @@ var QUESTIONS = [
     "unit": "transistors",
     "answerValue": 2300,
     "decompositionHint": "Small enough to be counted by hand on a die photograph. Compare against a modern chip to feel five decades of Moore's law.",
+    "strategy": "anchor-scale",
     "source": "Intel historical specifications"
   },
   {
@@ -959,6 +1071,7 @@ var QUESTIONS = [
     "unit": "people",
     "answerValue": 410000000,
     "decompositionHint": "Under seven percent of the world, concentrated in wealthy countries and mostly on dial-up connections.",
+    "strategy": "population-rate",
     "source": "ITU historical connectivity statistics"
   },
   {
@@ -968,6 +1081,7 @@ var QUESTIONS = [
     "unit": "subscriptions",
     "answerValue": 90000000,
     "decompositionHint": "Under two percent of the world's population, when a handset was still an expensive business tool rather than a default possession.",
+    "strategy": "population-rate",
     "source": "ITU historical telecommunications statistics"
   },
   {
@@ -977,6 +1091,7 @@ var QUESTIONS = [
     "unit": "vehicles",
     "answerValue": 70000000,
     "decompositionHint": "Overwhelmingly American - the United States held the large majority of the world's vehicles at mid century.",
+    "strategy": "anchor-scale",
     "source": "Historical automotive production and registration data"
   },
   {
@@ -986,6 +1101,7 @@ var QUESTIONS = [
     "unit": "vehicles",
     "answerValue": 1500000000,
     "decompositionHint": "Roughly one vehicle for every five or six people globally, with enormous variation between countries.",
+    "strategy": "anchor-scale",
     "source": "International vehicle registration statistics"
   },
   {
@@ -995,6 +1111,7 @@ var QUESTIONS = [
     "unit": "parts per million",
     "answerValue": 317,
     "decompositionHint": "The Mauna Loa record began in 1958 near 315 ppm, against a pre-industrial baseline of about 280.",
+    "strategy": "anchor-scale",
     "source": "NOAA Mauna Loa observatory record"
   },
   {
@@ -1004,6 +1121,7 @@ var QUESTIONS = [
     "unit": "parts per million",
     "answerValue": 425,
     "decompositionHint": "Rising roughly two to three parts per million each year from the 1960 figure - a small number that compounds steadily.",
+    "strategy": "anchor-scale",
     "source": "NOAA Mauna Loa observatory record"
   },
   {
@@ -1013,6 +1131,7 @@ var QUESTIONS = [
     "unit": "member states",
     "answerValue": 51,
     "decompositionHint": "Before decolonisation. Most of Africa and much of Asia was still under colonial rule and therefore unrepresented.",
+    "strategy": "decompose",
     "source": "United Nations founding records"
   },
   {
@@ -1021,6 +1140,7 @@ var QUESTIONS = [
     "unit": "kilograms",
     "answerValue": 7.35e+22,
     "decompositionHint": "The Moon's radius is about a quarter of Earth's, so its volume is roughly one sixtieth, and it is somewhat less dense as well.",
+    "strategy": "recall-sanity",
     "source": "Standard astronomical constant"
   },
   {
@@ -1029,6 +1149,7 @@ var QUESTIONS = [
     "unit": "kilograms",
     "answerValue": 1.99e+30,
     "decompositionHint": "About 330,000 times Earth's mass, and roughly 99.9 percent of all the mass in the solar system.",
+    "strategy": "chain-multiply",
     "source": "Standard astronomical constant"
   },
   {
@@ -1037,6 +1158,7 @@ var QUESTIONS = [
     "unit": "kelvin",
     "answerValue": 15000000,
     "decompositionHint": "Hot enough to sustain hydrogen fusion. The visible surface is only about 5,800 K, so the core is thousands of times hotter.",
+    "strategy": "chain-multiply",
     "source": "Standard solar model"
   },
   {
@@ -1045,6 +1167,7 @@ var QUESTIONS = [
     "unit": "kilometres",
     "answerValue": 150000000,
     "decompositionHint": "Light takes about eight minutes to cross it, so multiply 300,000 km/s by roughly 500 seconds.",
+    "strategy": "unit-conversion",
     "source": "Astronomical unit, 149.6 million km"
   },
   {
@@ -1053,6 +1176,7 @@ var QUESTIONS = [
     "unit": "kilometres per hour",
     "answerValue": 107000,
     "decompositionHint": "Divide the circumference of Earth's orbit (2 pi times 150 million km) by the hours in a year.",
+    "strategy": "divide-total",
     "source": "Derived from orbital radius and period"
   },
   {
@@ -1061,6 +1185,7 @@ var QUESTIONS = [
     "unit": "atoms",
     "answerValue": 1e+80,
     "decompositionHint": "Multiply the number of stars per galaxy by the number of galaxies, then by the atoms in an average star. Most ordinary matter is hydrogen in stars and gas.",
+    "strategy": "chain-multiply",
     "source": "Standard cosmological estimate, 10^78 to 10^82"
   },
   {
@@ -1069,6 +1194,7 @@ var QUESTIONS = [
     "unit": "joules",
     "answerValue": 5000000000,
     "decompositionHint": "Enough to power a household for weeks, but delivered in microseconds - the power is spectacular, the total energy less so than people expect.",
+    "strategy": "energy-balance",
     "source": "Atmospheric physics estimates, roughly 1-10 gigajoules"
   },
   {
@@ -1077,6 +1203,7 @@ var QUESTIONS = [
     "unit": "strikes",
     "answerValue": 8000000,
     "decompositionHint": "Roughly a hundred every second, concentrated over tropical land masses rather than spread evenly.",
+    "strategy": "rate-time",
     "source": "NASA and satellite lightning detection data"
   },
   {
@@ -1085,6 +1212,7 @@ var QUESTIONS = [
     "unit": "kilograms",
     "answerValue": 15000000,
     "decompositionHint": "Almost all of it is dust and grains that burn up unnoticed, not the rare large impacts that get attention.",
+    "strategy": "rate-time",
     "source": "Planetary science estimates, roughly 15,000 tonnes per year"
   },
   {
@@ -1093,6 +1221,7 @@ var QUESTIONS = [
     "unit": "neutrinos",
     "answerValue": 65000000000,
     "decompositionHint": "The solar neutrino flux at Earth is about 6.5x10^10 per square centimetre per second, and a thumbnail is roughly a square centimetre.",
+    "strategy": "area-density",
     "source": "Standard solar model neutrino flux"
   },
   {
@@ -1101,6 +1230,7 @@ var QUESTIONS = [
     "unit": "years",
     "answerValue": 4540000000,
     "decompositionHint": "Dated by radiometric measurement of the oldest meteorites, which formed with the solar system. About a third of the age of the universe.",
+    "strategy": "recall-sanity",
     "source": "Radiometric dating, 4.54 billion years"
   },
   {
@@ -1109,6 +1239,7 @@ var QUESTIONS = [
     "unit": "kilometres",
     "answerValue": 9460000000000,
     "decompositionHint": "Light travels 300,000 km each second. Multiply by the roughly 3.15x10^7 seconds in a year.",
+    "strategy": "unit-conversion",
     "source": "Direct calculation from the speed of light"
   },
   {
@@ -1117,6 +1248,7 @@ var QUESTIONS = [
     "unit": "molecules",
     "answerValue": 1.7e+21,
     "decompositionHint": "A drop is about 0.05 mL, so 0.05 g. Divide by the molar mass of water and multiply by Avogadro's number.",
+    "strategy": "molar",
     "source": "Standard chemistry calculation"
   },
   {
@@ -1125,6 +1257,7 @@ var QUESTIONS = [
     "unit": "atoms",
     "answerValue": 350000,
     "decompositionHint": "A hair is roughly 70 micrometres across and an atom about 0.2 nanometres. Convert both to the same units and divide.",
+    "strategy": "unit-conversion",
     "source": "Typical hair diameter and atomic radius"
   },
   {
@@ -1133,6 +1266,7 @@ var QUESTIONS = [
     "unit": "atoms",
     "answerValue": 1e+22,
     "decompositionHint": "A carat is 0.2 grams. Divide by carbon's molar mass of 12 and multiply by Avogadro's number.",
+    "strategy": "molar",
     "source": "Standard chemistry calculation"
   },
   {
@@ -1141,6 +1275,7 @@ var QUESTIONS = [
     "unit": "atoms",
     "answerValue": 3.2e+22,
     "decompositionHint": "Three grams divided by iron's molar mass of about 56, multiplied by Avogadro's number.",
+    "strategy": "molar",
     "source": "Standard chemistry calculation"
   },
   {
@@ -1149,6 +1284,7 @@ var QUESTIONS = [
     "unit": "molecules",
     "answerValue": 25000000000000000000,
     "decompositionHint": "One mole occupies 22.4 litres, which is 22,400 cubic centimetres. Divide Avogadro's number by that.",
+    "strategy": "molar",
     "source": "Loschmidt constant, 2.5x10^19 per cubic centimetre"
   },
   {
@@ -1157,6 +1293,7 @@ var QUESTIONS = [
     "unit": "balloons",
     "answerValue": 5000,
     "decompositionHint": "Helium lifts roughly one gram per litre. A 70 kg person needs 70,000 litres of lift, and a party balloon holds about 14 litres.",
+    "strategy": "area-density",
     "source": "Buoyancy calculation from helium and air densities"
   },
   {
@@ -1165,6 +1302,7 @@ var QUESTIONS = [
     "unit": "square kilometres",
     "answerValue": 510000000,
     "decompositionHint": "Use the surface area of a sphere, 4 pi r squared, with a radius of about 6,371 km.",
+    "strategy": "area-density",
     "source": "Standard geophysical constant"
   },
   {
@@ -1173,6 +1311,7 @@ var QUESTIONS = [
     "unit": "square kilometres",
     "answerValue": 149000000,
     "decompositionHint": "Land is about 29 percent of the total surface. Take the whole surface area and take a bit under a third.",
+    "strategy": "area-density",
     "source": "Standard geographic figures"
   },
   {
@@ -1181,6 +1320,7 @@ var QUESTIONS = [
     "unit": "cubic kilometres",
     "answerValue": 1335000000,
     "decompositionHint": "Ocean covers about 361 million square kilometres at an average depth of roughly 3.7 km. Multiply area by mean depth.",
+    "strategy": "chain-multiply",
     "source": "NOAA ocean volume estimates"
   },
   {
@@ -1189,6 +1329,7 @@ var QUESTIONS = [
     "unit": "cubic metres per second",
     "answerValue": 210000,
     "decompositionHint": "About a fifth of all river water reaching the oceans, and more than the next several largest rivers combined.",
+    "strategy": "rate-time",
     "source": "Hydrological measurements of the Amazon basin"
   },
   {
@@ -1197,6 +1338,7 @@ var QUESTIONS = [
     "unit": "square kilometres",
     "answerValue": 9200000,
     "decompositionHint": "Comparable in area to the United States or to China. It spans nearly the full width of Africa.",
+    "strategy": "anchor-scale",
     "source": "Standard geographic figures"
   },
   {
@@ -1205,6 +1347,7 @@ var QUESTIONS = [
     "unit": "earthquakes",
     "answerValue": 1500,
     "decompositionHint": "Each step down in magnitude is roughly ten times more frequent, so work from the handful of magnitude 8 events per decade.",
+    "strategy": "rate-time",
     "source": "US Geological Survey earthquake statistics"
   },
   {
@@ -1213,6 +1356,7 @@ var QUESTIONS = [
     "unit": "volcanoes",
     "answerValue": 1500,
     "decompositionHint": "Counting those that have erupted in the Holocene. Only a few dozen are erupting in any given year.",
+    "strategy": "decompose",
     "source": "Smithsonian Global Volcanism Program"
   },
   {
@@ -1221,6 +1365,7 @@ var QUESTIONS = [
     "unit": "glaciers",
     "answerValue": 200000,
     "decompositionHint": "Counted from satellite inventories, excluding the two continental ice sheets which are catalogued separately.",
+    "strategy": "recall-sanity",
     "source": "Randolph Glacier Inventory"
   },
   {
@@ -1229,6 +1374,7 @@ var QUESTIONS = [
     "unit": "lakes",
     "answerValue": 117000000,
     "decompositionHint": "Small lakes vastly outnumber large ones on a steep size distribution, so the count is dominated by the smallest size counted. Above one square kilometre there are only a few hundred thousand.",
+    "strategy": "area-density",
     "source": "Verpoorter et al. 2014, Geophysical Research Letters - ~117 million lakes above 0.2 ha"
   },
   {
@@ -1237,6 +1383,7 @@ var QUESTIONS = [
     "unit": "cubic kilometres",
     "answerValue": 500000,
     "decompositionHint": "Global average precipitation is about one metre per year. Multiply that depth by Earth's whole surface area.",
+    "strategy": "volume-packing",
     "source": "Global hydrological cycle estimates"
   },
   {
@@ -1245,6 +1392,7 @@ var QUESTIONS = [
     "unit": "grains of sand",
     "answerValue": 5000000000,
     "decompositionHint": "A grain about 0.5 mm across occupies roughly 1.25x10^-10 cubic metres. Divide one cubic metre by that, then multiply by a packing fraction of about 0.6, since spheres cannot fill space completely.",
+    "strategy": "volume-packing",
     "source": "Derived from typical grain size and packing density"
   },
   {
@@ -1254,6 +1402,7 @@ var QUESTIONS = [
     "unit": "trees",
     "answerValue": 3000000000,
     "decompositionHint": "Global paper production is roughly 400 million tonnes, and a single tree yields on the order of a tenth of a tonne of pulp.",
+    "strategy": "divide-total",
     "source": "FAO forest products statistics"
   },
   {
@@ -1262,6 +1411,7 @@ var QUESTIONS = [
     "unit": "kilograms",
     "answerValue": 150000,
     "decompositionHint": "About 25 metres long. Water weighs a tonne per cubic metre and a whale is near neutral buoyancy, so estimate its volume and treat it as water.",
+    "strategy": "volume-packing",
     "source": "Marine biology references, roughly 100-190 tonnes"
   },
   {
@@ -1270,6 +1420,7 @@ var QUESTIONS = [
     "unit": "bees",
     "answerValue": 50000,
     "decompositionHint": "A queen lays on the order of 1,500 eggs a day and a worker lives about six weeks in summer. Multiply the daily rate by the lifespan.",
+    "strategy": "stock-flow",
     "source": "Apiculture references, 20,000-80,000 in summer"
   },
   {
@@ -1278,6 +1429,7 @@ var QUESTIONS = [
     "unit": "eggs",
     "answerValue": 300,
     "decompositionHint": "Close to one a day with short breaks, which is why the figure lands just under the number of days in a year.",
+    "strategy": "rate-time",
     "source": "Poultry industry production figures"
   },
   {
@@ -1286,6 +1438,7 @@ var QUESTIONS = [
     "unit": "species",
     "answerValue": 400000,
     "decompositionHint": "Beetles are about a quarter of all described animal species - the reason for the remark that the creator had an inordinate fondness for them.",
+    "strategy": "recall-sanity",
     "source": "Entomological catalogues, roughly 400,000 described species"
   },
   {
@@ -1294,6 +1447,7 @@ var QUESTIONS = [
     "unit": "birds",
     "answerValue": 50000000000,
     "decompositionHint": "Roughly six birds for every person. A handful of common species account for a very large share of the total.",
+    "strategy": "decompose",
     "source": "Callaghan et al. 2021, PNAS - estimated ~50 billion wild birds"
   },
   {
@@ -1302,6 +1456,7 @@ var QUESTIONS = [
     "unit": "kilometres",
     "answerValue": 70000,
     "decompositionHint": "It flies pole to pole and back, but by a looping route rather than a straight line, so the total well exceeds twice the Earth's radius of travel.",
+    "strategy": "anchor-scale",
     "source": "Tracking studies of Arctic tern migration"
   },
   {
@@ -1310,6 +1465,7 @@ var QUESTIONS = [
     "unit": "virus particles",
     "answerValue": 1e+30,
     "decompositionHint": "Seawater holds around ten million virus particles per millilitre. Multiply by the ocean's volume converted to millilitres.",
+    "strategy": "unit-conversion",
     "source": "Marine microbiology estimates, ~10^30 virions"
   },
   {
@@ -1318,6 +1474,7 @@ var QUESTIONS = [
     "unit": "bacteria",
     "answerValue": 1000000000,
     "decompositionHint": "Soil is one of the densest microbial habitats known - a teaspoon holds more organisms than there are people on Earth.",
+    "strategy": "population-rate",
     "source": "Soil microbiology estimates, 10^8 to 10^10 per gram"
   },
   {
@@ -1326,6 +1483,7 @@ var QUESTIONS = [
     "unit": "base pairs",
     "answerValue": 3200000000,
     "decompositionHint": "Around three billion, which at one byte per base would fit on an ordinary memory card - the information density of life is lower than people expect.",
+    "strategy": "area-density",
     "source": "Human Genome Project reference assembly"
   },
   {
@@ -1334,6 +1492,7 @@ var QUESTIONS = [
     "unit": "genes",
     "answerValue": 20000,
     "decompositionHint": "Early estimates ran to 100,000 and were revised sharply down. It is roughly comparable to a nematode worm, which was the surprise.",
+    "strategy": "anchor-scale",
     "source": "GENCODE annotation, roughly 20,000 protein-coding genes"
   },
   {
@@ -1342,6 +1501,7 @@ var QUESTIONS = [
     "unit": "protein molecules",
     "answerValue": 10000000000,
     "decompositionHint": "A typical cell masses about a nanogram, protein is roughly a fifth of that, and an average protein is around 50 kilodaltons.",
+    "strategy": "decompose",
     "source": "Cell biology estimates, ~10^10 proteins per mammalian cell"
   },
   {
@@ -1350,6 +1510,7 @@ var QUESTIONS = [
     "unit": "mitochondria",
     "answerValue": 1000,
     "decompositionHint": "Varies enormously by tissue - a heart muscle cell holds several thousand while a red blood cell holds none at all.",
+    "strategy": "decompose",
     "source": "Cell biology references, hundreds to thousands"
   },
   {
@@ -1358,6 +1519,7 @@ var QUESTIONS = [
     "unit": "square metres",
     "answerValue": 70,
     "decompositionHint": "Roughly 300 million alveoli, each about 0.2 mm across. The folding is what turns a chest-sized organ into something closer to a tennis court.",
+    "strategy": "area-density",
     "source": "Respiratory physiology references, 50-100 square metres"
   },
   {
@@ -1366,6 +1528,7 @@ var QUESTIONS = [
     "unit": "square metres",
     "answerValue": 30,
     "decompositionHint": "Six metres of tube only gives a fraction of a square metre. Folds, villi and microvilli multiply it by more than a hundred.",
+    "strategy": "area-density",
     "source": "Gastroenterology references, roughly 30 square metres"
   },
   {
@@ -1374,6 +1537,7 @@ var QUESTIONS = [
     "unit": "sweat glands",
     "answerValue": 3000000,
     "decompositionHint": "Skin area is around 1.8 square metres, with roughly 150-350 glands per square centimetre depending on the region.",
+    "strategy": "area-density",
     "source": "Dermatology references, 2-4 million glands"
   },
   {
@@ -1382,6 +1546,7 @@ var QUESTIONS = [
     "unit": "metres per second",
     "answerValue": 100,
     "decompositionHint": "Fast enough to cross the body in a few hundredths of a second, but roughly three million times slower than electricity in a wire.",
+    "strategy": "rate-time",
     "source": "Neurophysiology references, 70-120 m/s for myelinated fibres"
   },
   {
@@ -1390,6 +1555,7 @@ var QUESTIONS = [
     "unit": "cells/second",
     "answerValue": 2500000,
     "decompositionHint": "There are about 2.5x10^13 red cells and each lasts roughly 120 days. Divide the total by the lifespan in seconds.",
+    "strategy": "stock-flow",
     "source": "Derived from red cell count and 120-day lifespan"
   },
   {
@@ -1398,6 +1564,7 @@ var QUESTIONS = [
     "unit": "platelets",
     "answerValue": 1500000000000,
     "decompositionHint": "Roughly 3x10^11 per litre of blood, across about five litres.",
+    "strategy": "area-density",
     "source": "Standard haematology reference ranges"
   },
   {
@@ -1406,6 +1573,7 @@ var QUESTIONS = [
     "unit": "white blood cells",
     "answerValue": 25000000000,
     "decompositionHint": "About 5x10^9 per litre - roughly a thousandth the number of red cells - across five litres of blood.",
+    "strategy": "area-density",
     "source": "Standard haematology reference ranges"
   },
   {
@@ -1414,6 +1582,7 @@ var QUESTIONS = [
     "unit": "litres",
     "answerValue": 42,
     "decompositionHint": "Roughly 60 percent of body mass, and a litre of water weighs a kilogram, so it is simply 0.6 times body weight.",
+    "strategy": "chain-multiply",
     "source": "Standard physiology, ~60% of body mass"
   },
   {
@@ -1422,6 +1591,7 @@ var QUESTIONS = [
     "unit": "steps",
     "answerValue": 53000,
     "decompositionHint": "42.2 km divided by a running stride of roughly 0.8 metres, which is longer than a walking stride.",
+    "strategy": "divide-total",
     "source": "Derived from marathon distance and typical running stride"
   },
   {
@@ -1430,6 +1600,7 @@ var QUESTIONS = [
     "unit": "kilocalories",
     "answerValue": 2900,
     "decompositionHint": "Running costs roughly one kilocalorie per kilogram per kilometre. Multiply by body mass and the 42 km distance.",
+    "strategy": "energy-balance",
     "source": "Exercise physiology energy cost estimates"
   },
   {
@@ -1438,6 +1609,7 @@ var QUESTIONS = [
     "unit": "litres",
     "answerValue": 1.5,
     "decompositionHint": "Production runs continuously at a low rate and spikes with eating. Over 24 hours it adds up to more than most people guess.",
+    "strategy": "unit-conversion",
     "source": "Oral physiology references, 0.5-1.5 litres daily"
   },
   {
@@ -1446,6 +1618,7 @@ var QUESTIONS = [
     "unit": "sperm cells",
     "answerValue": 200000000,
     "decompositionHint": "Concentration is on the order of 50 million per millilitre across a few millilitres of volume.",
+    "strategy": "area-density",
     "source": "WHO semen analysis reference values"
   },
   {
@@ -1454,6 +1627,7 @@ var QUESTIONS = [
     "unit": "egg cells",
     "answerValue": 1000000,
     "decompositionHint": "The supply is fixed at birth and declines steadily. Only a few hundred are ever ovulated across a lifetime.",
+    "strategy": "decompose",
     "source": "Reproductive biology references, 1-2 million at birth"
   },
   {
@@ -1463,6 +1637,7 @@ var QUESTIONS = [
     "unit": "tonnes",
     "answerValue": 790000000,
     "decompositionHint": "Enough to give every person on Earth roughly 100 kg a year, which is about right for a staple grain.",
+    "strategy": "rate-time",
     "source": "FAO cereal production statistics"
   },
   {
@@ -1472,6 +1647,7 @@ var QUESTIONS = [
     "unit": "eggs",
     "answerValue": 1600000000000,
     "decompositionHint": "Roughly 200 eggs per person per year across 8 billion people, though consumption is very unevenly distributed.",
+    "strategy": "population-rate",
     "source": "FAO livestock production statistics"
   },
   {
@@ -1481,6 +1657,7 @@ var QUESTIONS = [
     "unit": "litres",
     "answerValue": 900000000000,
     "decompositionHint": "About 1.5 billion cattle exist, but only a fraction are dairy animals, each yielding on the order of several thousand litres a year.",
+    "strategy": "rate-time",
     "source": "FAO dairy production statistics"
   },
   {
@@ -1489,6 +1666,7 @@ var QUESTIONS = [
     "unit": "coffee beans",
     "answerValue": 70,
     "decompositionHint": "A cup uses roughly 10 grams of coffee and a roasted bean weighs about 0.13 grams.",
+    "strategy": "divide-total",
     "source": "Derived from standard brew ratios and bean mass"
   },
   {
@@ -1497,6 +1675,7 @@ var QUESTIONS = [
     "unit": "grains of wheat",
     "answerValue": 17000,
     "decompositionHint": "A loaf takes roughly 500 grams of flour, and milling yields about 72% flour from the grain, so around 700 grams of wheat. A single grain weighs about 0.04 grams.",
+    "strategy": "divide-total",
     "source": "Derived from typical loaf flour content and grain mass"
   },
   {
@@ -1506,6 +1685,7 @@ var QUESTIONS = [
     "unit": "square kilometres",
     "answerValue": 48000000,
     "decompositionHint": "About half of all habitable land, with grazing taking far more area than cropland does.",
+    "strategy": "area-density",
     "source": "FAO land use statistics"
   },
   {
@@ -1514,6 +1694,7 @@ var QUESTIONS = [
     "unit": "litres",
     "answerValue": 15000,
     "decompositionHint": "Almost all of it is the water grown into the feed the animal eats over its life, not water the animal drinks.",
+    "strategy": "decompose",
     "source": "Water footprint assessments, roughly 15,000 litres per kg"
   },
   {
@@ -1522,6 +1703,7 @@ var QUESTIONS = [
     "unit": "litres",
     "answerValue": 1000,
     "decompositionHint": "A loaf needs roughly 650 grams of wheat, and growing wheat consumes about 1,500 litres of water per kilogram. An order of magnitude less than beef, which must feed a large animal for years first.",
+    "strategy": "decompose",
     "source": "Water footprint assessments, ~1,500 litres per kg of wheat"
   },
   {
@@ -1531,6 +1713,7 @@ var QUESTIONS = [
     "unit": "chickens",
     "answerValue": 75000000000,
     "decompositionHint": "The standing population is about 26 billion and a broiler reaches slaughter weight in roughly six weeks, so the flock turns over several times a year.",
+    "strategy": "stock-flow",
     "source": "FAO livestock slaughter statistics"
   },
   {
@@ -1540,6 +1723,7 @@ var QUESTIONS = [
     "unit": "tonnes",
     "answerValue": 90000000,
     "decompositionHint": "Wild capture has been roughly flat for decades; almost all growth in seafood supply since the 1990s has come from farming instead.",
+    "strategy": "decompose",
     "source": "FAO fisheries statistics"
   },
   {
@@ -1549,6 +1733,7 @@ var QUESTIONS = [
     "unit": "operations",
     "answerValue": 310000000,
     "decompositionHint": "Roughly one operation per 25 people per year, though access is very unevenly distributed between rich and poor countries.",
+    "strategy": "rate-time",
     "source": "Lancet Commission on Global Surgery estimates"
   },
   {
@@ -1558,6 +1743,7 @@ var QUESTIONS = [
     "unit": "births",
     "answerValue": 30000000,
     "decompositionHint": "There are about 135 million births a year and roughly a fifth are surgical, though rates range from under 5 percent to over 50 by country.",
+    "strategy": "rate-time",
     "source": "WHO caesarean section rate estimates"
   },
   {
@@ -1567,6 +1753,7 @@ var QUESTIONS = [
     "unit": "prescriptions",
     "answerValue": 6700000000,
     "decompositionHint": "About twenty per American per year on average, driven up sharply by older patients on several long-term medications.",
+    "strategy": "rate-time",
     "source": "US pharmacy dispensing statistics"
   },
   {
@@ -1576,6 +1763,7 @@ var QUESTIONS = [
     "unit": "doses",
     "answerValue": 13500000000,
     "decompositionHint": "More than one dose per person alive, achieved in under three years - the fastest mass immunisation campaign ever run.",
+    "strategy": "population-rate",
     "source": "WHO COVID-19 vaccination dashboard"
   },
   {
@@ -1585,6 +1773,7 @@ var QUESTIONS = [
     "unit": "donations",
     "answerValue": 120000000,
     "decompositionHint": "Roughly one donation for every 65 people, with high income countries donating at several times the rate of low income ones.",
+    "strategy": "chain-multiply",
     "source": "WHO global blood supply statistics"
   },
   {
@@ -1594,6 +1783,7 @@ var QUESTIONS = [
     "unit": "cigarettes",
     "answerValue": 5000000000000,
     "decompositionHint": "Around a billion smokers averaging on the order of ten to fifteen cigarettes a day.",
+    "strategy": "rate-time",
     "source": "WHO tobacco consumption estimates"
   },
   {
@@ -1603,6 +1793,7 @@ var QUESTIONS = [
     "unit": "hospital beds",
     "answerValue": 20000000,
     "decompositionHint": "Global average is roughly 2.5 beds per thousand people, ranging from under one in low income countries to over twelve in Japan and Korea.",
+    "strategy": "population-rate",
     "source": "WHO health infrastructure statistics"
   },
   {
@@ -1612,6 +1803,7 @@ var QUESTIONS = [
     "unit": "physicians",
     "answerValue": 13000000,
     "decompositionHint": "Global average is about 1.6 doctors per thousand people, again ranging over more than an order of magnitude by country.",
+    "strategy": "population-rate",
     "source": "WHO global health workforce statistics"
   },
   {
@@ -1621,6 +1813,7 @@ var QUESTIONS = [
     "unit": "operations/second",
     "answerValue": 1700000000000000000,
     "decompositionHint": "The exascale threshold of 10^18 was crossed in 2022. Machines are built from tens of thousands of GPUs each doing on the order of 10^14.",
+    "strategy": "rate-time",
     "source": "TOP500 supercomputer rankings"
   },
   {
@@ -1630,6 +1823,7 @@ var QUESTIONS = [
     "unit": "bytes",
     "answerValue": 400000000000000000000,
     "decompositionHint": "Roughly 400 exabytes. Video streaming dominates, so estimate hours watched globally times the bitrate of a stream.",
+    "strategy": "chain-multiply",
     "source": "Industry data volume estimates"
   },
   {
@@ -1639,6 +1833,7 @@ var QUESTIONS = [
     "unit": "articles",
     "answerValue": 7000000,
     "decompositionHint": "Growth has been roughly linear for over a decade at a few hundred thousand articles a year.",
+    "strategy": "rate-time",
     "source": "Wikipedia published statistics"
   },
   {
@@ -1648,6 +1843,7 @@ var QUESTIONS = [
     "unit": "lines of code",
     "answerValue": 35000000,
     "decompositionHint": "Well over half is device drivers rather than core kernel logic, which is why the number is far larger than people expect.",
+    "strategy": "decompose",
     "source": "Linux kernel source statistics"
   },
   {
@@ -1657,6 +1853,7 @@ var QUESTIONS = [
     "unit": "websites",
     "answerValue": 1100000000,
     "decompositionHint": "Counted by registered hostnames. The large majority are parked or inactive, with only a couple of hundred million actually maintained.",
+    "strategy": "recall-sanity",
     "source": "Netcraft web server surveys"
   },
   {
@@ -1666,6 +1863,7 @@ var QUESTIONS = [
     "unit": "kilometres",
     "answerValue": 1400000,
     "decompositionHint": "A few hundred cables, many spanning entire oceans. Enough to wrap the equator dozens of times over.",
+    "strategy": "chain-multiply",
     "source": "TeleGeography submarine cable statistics"
   },
   {
@@ -1675,6 +1873,7 @@ var QUESTIONS = [
     "unit": "terawatt hours",
     "answerValue": 460,
     "decompositionHint": "A little under two percent of global electricity - comparable to the total consumption of a mid-sized industrialised country.",
+    "strategy": "energy-balance",
     "source": "International Energy Agency data centre estimates"
   },
   {
@@ -1684,6 +1883,7 @@ var QUESTIONS = [
     "unit": "satellites",
     "answerValue": 10000,
     "decompositionHint": "The count has risen roughly tenfold in a decade, dominated by a single large communications constellation in low orbit.",
+    "strategy": "decompose",
     "source": "UNOOSA and satellite tracking registries"
   },
   {
@@ -1693,6 +1893,7 @@ var QUESTIONS = [
     "unit": "tracked objects",
     "answerValue": 35000,
     "decompositionHint": "Tracking covers objects above roughly ten centimetres. Smaller fragments are far more numerous but cannot be catalogued individually.",
+    "strategy": "recall-sanity",
     "source": "ESA space debris office estimates"
   },
   {
@@ -1701,6 +1902,7 @@ var QUESTIONS = [
     "unit": "bits",
     "answerValue": 32000000,
     "decompositionHint": "A compressed photo is around four megabytes. Multiply by 8 bits per byte and by a million bytes per megabyte.",
+    "strategy": "chain-multiply",
     "source": "Typical JPEG file sizes from modern phone cameras"
   },
   {
@@ -1710,6 +1912,7 @@ var QUESTIONS = [
     "unit": "US dollars",
     "answerValue": 105000000000000,
     "decompositionHint": "About 8 billion people producing roughly 13,000 dollars each on average, though the median is far below the mean.",
+    "strategy": "rate-time",
     "source": "World Bank and IMF world GDP estimates"
   },
   {
@@ -1719,6 +1922,7 @@ var QUESTIONS = [
     "unit": "US dollars",
     "answerValue": 2400000000000,
     "decompositionHint": "A little over two percent of world GDP, with the single largest spender accounting for roughly 40 percent of the total.",
+    "strategy": "rate-time",
     "source": "SIPRI military expenditure database"
   },
   {
@@ -1728,6 +1932,7 @@ var QUESTIONS = [
     "unit": "US dollars",
     "answerValue": 17000000000000,
     "decompositionHint": "About 212,000 tonnes exist. Convert to grams and multiply by a gold price on the order of 80 dollars per gram.",
+    "strategy": "unit-conversion",
     "source": "World Gold Council stock figures at prevailing prices"
   },
   {
@@ -1737,6 +1942,7 @@ var QUESTIONS = [
     "unit": "US dollars",
     "answerValue": 7500000000000,
     "decompositionHint": "More changes hands in a few days than the entire world produces in a year, because most of it is trading rather than trade.",
+    "strategy": "rate-time",
     "source": "Bank for International Settlements triennial survey"
   },
   {
@@ -1746,6 +1952,7 @@ var QUESTIONS = [
     "unit": "people",
     "answerValue": 700000000,
     "decompositionHint": "Under nine percent of the world, down from roughly 40 percent in 1990 - one of the largest changes of the last half century.",
+    "strategy": "decompose",
     "source": "World Bank poverty estimates"
   },
   {
@@ -1755,6 +1962,7 @@ var QUESTIONS = [
     "unit": "US dollars",
     "answerValue": 860000000000,
     "decompositionHint": "Substantially more than all official development aid combined, and for several countries it exceeds a tenth of national income.",
+    "strategy": "decompose",
     "source": "World Bank remittance statistics"
   },
   {
@@ -1763,6 +1971,7 @@ var QUESTIONS = [
     "unit": "US dollars",
     "answerValue": 280000000000,
     "decompositionHint": "About 25 billion in period dollars across the 1960s, inflated to the present by roughly a factor of ten.",
+    "strategy": "decompose",
     "source": "NASA historical budget analyses"
   },
   {
@@ -1771,6 +1980,7 @@ var QUESTIONS = [
     "unit": "US dollars",
     "answerValue": 150000000000,
     "decompositionHint": "Spread across multiple space agencies over three decades, making it among the most expensive objects ever constructed.",
+    "strategy": "decompose",
     "source": "Combined agency ISS cost estimates"
   },
   {
@@ -1780,6 +1990,7 @@ var QUESTIONS = [
     "unit": "bridges",
     "answerValue": 620000,
     "decompositionHint": "Any span over about six metres counts, so the total is dominated by small highway and rural crossings rather than famous structures.",
+    "strategy": "anchor-scale",
     "source": "US Federal Highway Administration national bridge inventory"
   },
   {
@@ -1789,6 +2000,7 @@ var QUESTIONS = [
     "unit": "kilometres",
     "answerValue": 1300000,
     "decompositionHint": "Roughly thirty times the Earth's circumference, concentrated in the United States, China, Russia and India.",
+    "strategy": "chain-multiply",
     "source": "International Union of Railways statistics"
   },
   {
@@ -1798,6 +2010,7 @@ var QUESTIONS = [
     "unit": "ships",
     "answerValue": 100000,
     "decompositionHint": "Around 100,000 vessels above 100 gross tonnes carry roughly 90 percent of world trade by volume.",
+    "strategy": "decompose",
     "source": "UNCTAD review of maritime transport"
   },
   {
@@ -1807,6 +2020,7 @@ var QUESTIONS = [
     "unit": "airports",
     "answerValue": 40000,
     "decompositionHint": "Counting anything with a defined runway. Only a few thousand handle scheduled commercial passenger flights.",
+    "strategy": "decompose",
     "source": "Global aviation infrastructure databases"
   },
   {
@@ -1816,6 +2030,7 @@ var QUESTIONS = [
     "unit": "street lights",
     "answerValue": 320000000,
     "decompositionHint": "Roughly one for every 25 people. Estimate from the length of lit road worldwide and typical spacing of about 30 metres.",
+    "strategy": "chain-multiply",
     "source": "Municipal lighting inventories and industry estimates"
   },
   {
@@ -1825,6 +2040,7 @@ var QUESTIONS = [
     "unit": "kilometres",
     "answerValue": 16000000000000,
     "decompositionHint": "About 1.5 billion vehicles each covering on the order of 11,000 km a year.",
+    "strategy": "rate-time",
     "source": "Derived from global vehicle stock and average annual distance"
   },
   {
@@ -1833,6 +2049,7 @@ var QUESTIONS = [
     "unit": "kilometres",
     "answerValue": 402,
     "decompositionHint": "Eleven lines serving 272 stations. Estimate average line length and multiply, remembering much of the network is above ground.",
+    "strategy": "chain-multiply",
     "source": "Transport for London network statistics"
   },
   {
@@ -1841,6 +2058,7 @@ var QUESTIONS = [
     "unit": "windows",
     "answerValue": 10000000,
     "decompositionHint": "Estimate buildings in the city, average floors each, and windows per floor. A classic decomposition problem where the count of small buildings dominates.",
+    "strategy": "chain-multiply",
     "source": "Order-of-magnitude estimate from building stock"
   },
   {
@@ -1850,6 +2068,7 @@ var QUESTIONS = [
     "unit": "haircuts",
     "answerValue": 1300000000,
     "decompositionHint": "335 million people getting a haircut roughly every three months, adjusting down for those who cut their own or none at all.",
+    "strategy": "population-rate",
     "source": "Order-of-magnitude estimate from population and haircut frequency"
   },
   {
@@ -1858,6 +2077,7 @@ var QUESTIONS = [
     "unit": "bricks",
     "answerValue": 8000,
     "decompositionHint": "Estimate the total external wall area, then use roughly 60 bricks per square metre for a single skin of standard brick.",
+    "strategy": "area-density",
     "source": "Construction estimating rules of thumb"
   },
   {
@@ -1866,6 +2086,7 @@ var QUESTIONS = [
     "unit": "nails",
     "answerValue": 30000,
     "decompositionHint": "Framing, sheathing, flooring and roofing each consume thousands. Estimate the total length of timber and a nail every few tens of centimetres.",
+    "strategy": "chain-multiply",
     "source": "Construction estimating rules of thumb"
   },
   {
@@ -1874,6 +2095,7 @@ var QUESTIONS = [
     "unit": "sheets",
     "answerValue": 8000,
     "decompositionHint": "A tree yields on the order of 50 kg of usable pulp, and a sheet of A4 weighs about 5 grams.",
+    "strategy": "divide-total",
     "source": "Paper industry yield estimates"
   },
   {
@@ -1882,6 +2104,7 @@ var QUESTIONS = [
     "unit": "drops",
     "answerValue": 3000000,
     "decompositionHint": "A bath holds roughly 150 litres and a drop is about 0.05 millilitres. Convert both to the same unit and divide.",
+    "strategy": "unit-conversion",
     "source": "Derived from typical bath volume and drop size"
   },
   {
@@ -1890,6 +2113,7 @@ var QUESTIONS = [
     "unit": "grains of rice",
     "answerValue": 50000,
     "decompositionHint": "A single grain weighs roughly 0.02 grams, so a kilogram holds tens of thousands.",
+    "strategy": "divide-total",
     "source": "Derived from typical rice grain mass"
   },
   {
@@ -1898,6 +2122,7 @@ var QUESTIONS = [
     "unit": "words",
     "answerValue": 780000,
     "decompositionHint": "Around 1,200 pages of dense two-column text at roughly 600 words a page.",
+    "strategy": "chain-multiply",
     "source": "Word counts of the King James translation"
   },
   {
@@ -1906,6 +2131,7 @@ var QUESTIONS = [
     "unit": "steps",
     "answerValue": 1665,
     "decompositionHint": "The tower is 300 metres tall and a step rises about 18 centimetres, though the public stairs stop well short of the summit.",
+    "strategy": "decompose",
     "source": "Eiffel Tower official figures"
   },
   {
@@ -1914,6 +2140,7 @@ var QUESTIONS = [
     "unit": "blocks",
     "answerValue": 2300000,
     "decompositionHint": "The pyramid's volume is about 2.6 million cubic metres and an average block is roughly one cubic metre.",
+    "strategy": "volume-packing",
     "source": "Egyptological surveys of the Great Pyramid"
   },
   {
@@ -1922,6 +2149,7 @@ var QUESTIONS = [
     "unit": "orderings",
     "answerValue": 8.07e+67,
     "decompositionHint": "52 factorial. Any well shuffled deck has almost certainly never existed before in that order anywhere in history.",
+    "strategy": "combinatorial",
     "source": "52 factorial = 8.07x10^67"
   },
   {
@@ -1930,6 +2158,7 @@ var QUESTIONS = [
     "unit": "positions",
     "answerValue": 4.8e+44,
     "decompositionHint": "Far fewer than the naive count of pieces on squares, because most arrangements cannot be reached by legal play.",
+    "strategy": "combinatorial",
     "source": "Computational enumeration of legal chess positions"
   },
   {
@@ -1938,6 +2167,7 @@ var QUESTIONS = [
     "unit": "grids",
     "answerValue": 6.67e+21,
     "decompositionHint": "Counted by exhaustive computation combined with symmetry arguments rather than by any simple formula.",
+    "strategy": "anchor-scale",
     "source": "Felgenhauer and Jarvis enumeration, 6.67x10^21"
   },
   {
@@ -1947,6 +2177,7 @@ var QUESTIONS = [
     "unit": "tracks",
     "answerValue": 100000000,
     "decompositionHint": "Uploads run to over 100,000 new tracks a day, so the catalogue grows by tens of millions a year.",
+    "strategy": "rate-time",
     "source": "Published streaming platform catalogue sizes"
   },
   {
@@ -1956,6 +2187,7 @@ var QUESTIONS = [
     "unit": "films",
     "answerValue": 10000,
     "decompositionHint": "India alone releases well over a thousand. Summing the major producing countries and adding independents reaches five figures.",
+    "strategy": "decompose",
     "source": "National film industry statistics"
   },
   {
@@ -1965,6 +2197,7 @@ var QUESTIONS = [
     "unit": "golf balls",
     "answerValue": 300000000,
     "decompositionHint": "Around 25 million golfers playing roughly 20 rounds a year and losing on the order of one ball per round.",
+    "strategy": "rate-time",
     "source": "Golf industry estimates"
   },
   {
@@ -1974,6 +2207,7 @@ var QUESTIONS = [
     "unit": "hours",
     "answerValue": 1400,
     "decompositionHint": "Roughly three to four hours a day across 365 days, which adds up to a substantial fraction of waking life.",
+    "strategy": "rate-time",
     "source": "Media consumption surveys"
   },
   {
@@ -1983,6 +2217,7 @@ var QUESTIONS = [
     "unit": "people",
     "answerValue": 60000000,
     "decompositionHint": "Roughly a fifth of all humans alive at the time, in an era when world population was around 250 million.",
+    "strategy": "population-rate",
     "source": "Historical demography of the Roman Empire"
   },
   {
@@ -1992,6 +2227,7 @@ var QUESTIONS = [
     "unit": "soldiers",
     "answerValue": 400000,
     "decompositionHint": "About thirty legions of roughly 5,000 men each, plus auxiliary forces of comparable total size.",
+    "strategy": "anchor-scale",
     "source": "Roman military history estimates"
   },
   {
@@ -2001,6 +2237,7 @@ var QUESTIONS = [
     "unit": "scrolls",
     "answerValue": 500000,
     "decompositionHint": "Ancient sources disagree wildly. Note a scroll held far less text than a modern book, so the collection was smaller than the number suggests.",
+    "strategy": "decompose",
     "source": "Ancient sources, variously 40,000 to 700,000 scrolls"
   },
   {
@@ -2010,6 +2247,7 @@ var QUESTIONS = [
     "unit": "people",
     "answerValue": 400000,
     "decompositionHint": "Tickets sold were a fraction of attendance once the fences came down. Estimate from aerial photographs and crowd density.",
+    "strategy": "area-density",
     "source": "Contemporary crowd estimates"
   },
   {
@@ -2019,6 +2257,7 @@ var QUESTIONS = [
     "unit": "people",
     "answerValue": 5000000,
     "decompositionHint": "Hunter gatherer densities are very low, on the order of one person per ten square kilometres of habitable land.",
+    "strategy": "area-density",
     "source": "Archaeological and demographic reconstructions"
   },
   {
@@ -2027,6 +2266,7 @@ var QUESTIONS = [
     "unit": "joules",
     "answerValue": 10000,
     "decompositionHint": "Around 2.5 amp hours at 1.5 volts. Convert amp hours to coulombs (multiply by 3600) and multiply by voltage.",
+    "strategy": "unit-conversion",
     "source": "Alkaline cell capacity specifications"
   },
   {
@@ -2035,6 +2275,7 @@ var QUESTIONS = [
     "unit": "joules",
     "answerValue": 34000000,
     "decompositionHint": "Petrol carries about 45 megajoules per kilogram and weighs roughly 0.75 kg per litre.",
+    "strategy": "energy-balance",
     "source": "Standard fuel energy density tables"
   },
   {
@@ -2043,6 +2284,7 @@ var QUESTIONS = [
     "unit": "watts",
     "answerValue": 1000000000,
     "decompositionHint": "A single large reactor is around a gigawatt, which is roughly the average electricity demand of a million people in a wealthy country.",
+    "strategy": "energy-balance",
     "source": "Typical reactor nameplate capacity"
   },
   {
@@ -2052,6 +2294,7 @@ var QUESTIONS = [
     "unit": "kilowatt hours",
     "answerValue": 4000,
     "decompositionHint": "Averages range from about 2,500 kWh in much of Europe to over 10,000 in the United States. Heating and hot water dominate where they are electric.",
+    "strategy": "energy-balance",
     "source": "National household electricity consumption statistics"
   },
   {
@@ -2060,6 +2303,7 @@ var QUESTIONS = [
     "unit": "kilowatt hours",
     "answerValue": 450,
     "decompositionHint": "A panel is roughly 400 watts peak, and a temperate site delivers something like 1,100 full-sun-equivalent hours a year.",
+    "strategy": "energy-balance",
     "source": "Typical panel rating and capacity factor"
   },
   {
@@ -2068,6 +2312,7 @@ var QUESTIONS = [
     "unit": "joules",
     "answerValue": 340000,
     "decompositionHint": "Water needs 4,180 joules per kilogram per degree. One kilogram raised about 80 degrees gives the answer, before losses.",
+    "strategy": "energy-balance",
     "source": "Specific heat capacity of water"
   },
   {
@@ -2077,6 +2322,7 @@ var QUESTIONS = [
     "unit": "terawatt hours",
     "answerValue": 30000,
     "decompositionHint": "About 8 billion people averaging some 3,700 kWh each, though consumption per person varies by more than a hundredfold between countries.",
+    "strategy": "population-rate",
     "source": "IEA world electricity generation statistics"
   },
   {
@@ -2085,6 +2331,7 @@ var QUESTIONS = [
     "unit": "megawatt hours",
     "answerValue": 9000,
     "decompositionHint": "A modern onshore turbine is around 3 MW and runs at roughly a 35% capacity factor across the 8,760 hours in a year.",
+    "strategy": "rate-time",
     "source": "Typical turbine rating and onshore capacity factor"
   },
   {
@@ -2093,6 +2340,7 @@ var QUESTIONS = [
     "unit": "days",
     "answerValue": 4,
     "decompositionHint": "A bolt carries roughly 5 gigajoules, or about 1,400 kWh. A household uses on the order of 300 kWh a month.",
+    "strategy": "energy-balance",
     "source": "Derived from lightning energy and household consumption"
   },
   {
@@ -2101,6 +2349,7 @@ var QUESTIONS = [
     "unit": "kilocalories",
     "answerValue": 7700,
     "decompositionHint": "Pure fat carries about 9 kcal per gram, and body fat tissue is roughly 85% fat with the rest water and connective tissue.",
+    "strategy": "energy-balance",
     "source": "Standard nutrition figures"
   },
   {
@@ -2110,6 +2359,7 @@ var QUESTIONS = [
     "unit": "tonnes",
     "answerValue": 8500000000,
     "decompositionHint": "Roughly a tonne per person on Earth per year, dominated by electricity generation and steelmaking in a handful of countries.",
+    "strategy": "population-rate",
     "source": "IEA coal consumption statistics"
   },
   {
@@ -2119,6 +2369,7 @@ var QUESTIONS = [
     "unit": "barrels/day",
     "answerValue": 103000000,
     "decompositionHint": "About 100 million barrels, which works out near 1.6 litres per person per day averaged across everyone alive.",
+    "strategy": "population-rate",
     "source": "IEA and OPEC demand figures"
   },
   {
@@ -2127,6 +2378,7 @@ var QUESTIONS = [
     "unit": "kilometres per hour",
     "answerValue": 28000,
     "decompositionHint": "About 7.8 km/s. Convert to hours by multiplying by 3,600. It circles the planet in roughly 90 minutes.",
+    "strategy": "unit-conversion",
     "source": "Orbital mechanics for low Earth orbit"
   },
   {
@@ -2135,6 +2387,7 @@ var QUESTIONS = [
     "unit": "kilometres",
     "answerValue": 410,
     "decompositionHint": "Low enough that residual atmosphere drags it down and it needs periodic reboosting - only about 1/16th of Earth's radius above the surface.",
+    "strategy": "anchor-scale",
     "source": "ISS operational orbital altitude"
   },
   {
@@ -2144,6 +2397,7 @@ var QUESTIONS = [
     "unit": "people",
     "answerValue": 700,
     "decompositionHint": "Six decades of spaceflight at an average of roughly a dozen people a year, rising sharply with recent commercial flights.",
+    "strategy": "rate-time",
     "source": "Astronaut and cosmonaut flight records"
   },
   {
@@ -2152,6 +2406,7 @@ var QUESTIONS = [
     "unit": "people",
     "answerValue": 12,
     "decompositionHint": "Six successful landing missions, two crew on the surface each time.",
+    "strategy": "decompose",
     "source": "Apollo mission records"
   },
   {
@@ -2161,6 +2416,7 @@ var QUESTIONS = [
     "unit": "US dollars",
     "answerValue": 2500,
     "decompositionHint": "Reusable boosters have cut this by more than an order of magnitude from the shuttle era, when it ran into the tens of thousands.",
+    "strategy": "decompose",
     "source": "Published commercial launch pricing"
   },
   {
@@ -2170,6 +2426,7 @@ var QUESTIONS = [
     "unit": "asteroids",
     "answerValue": 1400000,
     "decompositionHint": "Automated sky surveys add tens of thousands a year, so the catalogue has grown by more than a factor of ten since the 1990s.",
+    "strategy": "rate-time",
     "source": "Minor Planet Center catalogue"
   },
   {
@@ -2178,6 +2435,7 @@ var QUESTIONS = [
     "unit": "kilometres",
     "answerValue": 384400,
     "decompositionHint": "About thirty Earth diameters. Light takes a little over a second to cross the gap.",
+    "strategy": "rate-time",
     "source": "Mean Earth-Moon distance"
   },
   {
@@ -2186,6 +2444,7 @@ var QUESTIONS = [
     "unit": "seconds",
     "answerValue": 500,
     "decompositionHint": "150 million kilometres divided by 300,000 kilometres per second.",
+    "strategy": "unit-conversion",
     "source": "Astronomical unit divided by the speed of light"
   },
   {
@@ -2195,6 +2454,7 @@ var QUESTIONS = [
     "unit": "moons",
     "answerValue": 400,
     "decompositionHint": "Saturn and Jupiter account for most of them, and the count keeps rising as surveys find smaller irregular satellites.",
+    "strategy": "decompose",
     "source": "IAU confirmed natural satellite counts"
   },
   {
@@ -2204,6 +2464,7 @@ var QUESTIONS = [
     "unit": "launches",
     "answerValue": 250,
     "decompositionHint": "Roughly one every day and a half, more than double the rate of a decade ago, driven largely by satellite constellation deployment.",
+    "strategy": "rate-time",
     "source": "Orbital launch logs"
   },
   {
@@ -2212,6 +2473,7 @@ var QUESTIONS = [
     "unit": "joules",
     "answerValue": 50000000000000000000,
     "decompositionHint": "Dominated by latent heat as water vapour condenses. It is several hundred times the world's daily electricity generation.",
+    "strategy": "energy-balance",
     "source": "NOAA hurricane energy estimates"
   },
   {
@@ -2220,6 +2482,7 @@ var QUESTIONS = [
     "unit": "droplets",
     "answerValue": 100000000,
     "decompositionHint": "Cloud droplets are tiny, around 20 micrometres, and a cubic metre of cloud holds under a gram of liquid water in total.",
+    "strategy": "volume-packing",
     "source": "Cloud physics droplet concentration figures"
   },
   {
@@ -2228,6 +2491,7 @@ var QUESTIONS = [
     "unit": "kelvin",
     "answerValue": 30000,
     "decompositionHint": "Several times hotter than the surface of the Sun, which is why the surrounding air expands explosively and makes thunder.",
+    "strategy": "chain-multiply",
     "source": "Atmospheric physics measurements of return stroke temperature"
   },
   {
@@ -2236,6 +2500,7 @@ var QUESTIONS = [
     "unit": "snowflakes",
     "answerValue": 100000000,
     "decompositionHint": "Fresh snow is about a tenth the density of water, so a cubic metre holds ~100 kg of ice, and a snowflake weighs a few milligrams.",
+    "strategy": "volume-packing",
     "source": "Derived from fresh snow density and typical flake mass"
   },
   {
@@ -2245,6 +2510,7 @@ var QUESTIONS = [
     "unit": "tornadoes",
     "answerValue": 1200,
     "decompositionHint": "More than the rest of the world combined, because of the collision of Gulf moisture with dry continental air over the plains.",
+    "strategy": "rate-time",
     "source": "NOAA Storm Prediction Center annual counts"
   },
   {
@@ -2253,6 +2519,7 @@ var QUESTIONS = [
     "unit": "degrees Celsius",
     "answerValue": 150,
     "decompositionHint": "Around 57 C in Death Valley against about -89 C at Vostok in Antarctica.",
+    "strategy": "decompose",
     "source": "WMO verified temperature extremes"
   },
   {
@@ -2261,6 +2528,7 @@ var QUESTIONS = [
     "unit": "kilograms",
     "answerValue": 500000,
     "decompositionHint": "About a cubic kilometre in volume at roughly half a gram of liquid water per cubic metre. It stays up because the droplets are tiny and the air beneath is rising.",
+    "strategy": "decompose",
     "source": "Derived from cumulus dimensions and liquid water content"
   },
   {
@@ -2269,6 +2537,7 @@ var QUESTIONS = [
     "unit": "metres",
     "answerValue": 10900,
     "decompositionHint": "The Mariana Trench is deeper than Everest is tall, by more than a kilometre.",
+    "strategy": "decompose",
     "source": "Challenger Deep depth measurements"
   },
   {
@@ -2277,6 +2546,7 @@ var QUESTIONS = [
     "unit": "tonnes",
     "answerValue": 50000000000000000,
     "decompositionHint": "Seawater is about 3.5% salt by mass, and the oceans hold roughly 1.4x10^18 tonnes of water.",
+    "strategy": "decompose",
     "source": "Derived from ocean mass and mean salinity"
   },
   {
@@ -2285,6 +2555,7 @@ var QUESTIONS = [
     "unit": "cells",
     "answerValue": 1000000,
     "decompositionHint": "Concentrations run to thousands per millilitre in productive water. Collectively they produce roughly half the oxygen in the atmosphere.",
+    "strategy": "area-density",
     "source": "Marine biology cell count surveys"
   },
   {
@@ -2293,6 +2564,7 @@ var QUESTIONS = [
     "unit": "fish",
     "answerValue": 3500000000000,
     "decompositionHint": "Dominated by small mesopelagic species rather than the large fish people picture, which is why the estimate is far larger than fishery statistics suggest.",
+    "strategy": "recall-sanity",
     "source": "Marine biomass estimates, commonly cited around 3.5 trillion"
   },
   {
@@ -2301,6 +2573,7 @@ var QUESTIONS = [
     "unit": "square kilometres",
     "answerValue": 280000,
     "decompositionHint": "Under a tenth of a percent of the ocean floor, yet home to roughly a quarter of all marine species.",
+    "strategy": "decompose",
     "source": "Global coral reef mapping surveys"
   },
   {
@@ -2309,6 +2582,7 @@ var QUESTIONS = [
     "unit": "waves",
     "answerValue": 8000,
     "decompositionHint": "Sets arrive roughly every ten seconds, so count the number of ten second intervals in 24 hours.",
+    "strategy": "unit-conversion",
     "source": "Typical ocean swell period"
   },
   {
@@ -2317,6 +2591,7 @@ var QUESTIONS = [
     "unit": "cubic kilometres",
     "answerValue": 430000,
     "decompositionHint": "Almost all of global precipitation ultimately comes from ocean evaporation, so it is close to the total rain and snow falling worldwide.",
+    "strategy": "volume-packing",
     "source": "Global hydrological cycle budgets"
   },
   {
@@ -2325,6 +2600,7 @@ var QUESTIONS = [
     "unit": "tonnes",
     "answerValue": 400000000,
     "decompositionHint": "One of the largest single-species biomasses on Earth, and the base of the food chain that supports whales, seals and penguins.",
+    "strategy": "decompose",
     "source": "Antarctic krill biomass surveys"
   },
   {
@@ -2333,6 +2609,7 @@ var QUESTIONS = [
     "unit": "kilometres",
     "answerValue": 10,
     "decompositionHint": "Mostly walking and jogging with short sprints. Averaging a little over 6 km/h across 90 minutes gets you close.",
+    "strategy": "decompose",
     "source": "Match tracking data for outfield players"
   },
   {
@@ -2342,6 +2619,7 @@ var QUESTIONS = [
     "unit": "golf balls",
     "answerValue": 1200000000,
     "decompositionHint": "Roughly 60 million golfers losing and replacing on the order of twenty balls a year each.",
+    "strategy": "rate-time",
     "source": "Golf equipment industry production estimates"
   },
   {
@@ -2350,6 +2628,7 @@ var QUESTIONS = [
     "unit": "tennis balls",
     "answerValue": 55000,
     "decompositionHint": "Balls are changed every nine games, and there are hundreds of matches across the fortnight including qualifying and doubles.",
+    "strategy": "decompose",
     "source": "Wimbledon published tournament figures"
   },
   {
@@ -2359,6 +2638,7 @@ var QUESTIONS = [
     "unit": "finishers",
     "answerValue": 1100000,
     "decompositionHint": "Thousands of events, with the largest half dozen accounting for well over a hundred thousand finishers between them.",
+    "strategy": "decompose",
     "source": "Running event participation statistics"
   },
   {
@@ -2367,6 +2647,7 @@ var QUESTIONS = [
     "unit": "medals",
     "answerValue": 1000,
     "decompositionHint": "Around 330 events, each awarding gold, silver and bronze, with team events multiplying the physical medal count further.",
+    "strategy": "chain-multiply",
     "source": "Recent summer Olympic event and medal counts"
   },
   {
@@ -2375,6 +2656,7 @@ var QUESTIONS = [
     "unit": "lengths",
     "answerValue": 64,
     "decompositionHint": "A mile is about 1,609 metres. Divide by the length of the pool.",
+    "strategy": "divide-total",
     "source": "Direct unit conversion"
   },
   {
@@ -2383,6 +2665,7 @@ var QUESTIONS = [
     "unit": "heartbeats",
     "answerValue": 26000,
     "decompositionHint": "Around 160 beats a minute sustained for roughly four hours.",
+    "strategy": "rate-time",
     "source": "Derived from typical racing heart rate and finish time"
   },
   {
@@ -2392,6 +2675,7 @@ var QUESTIONS = [
     "unit": "footballs",
     "answerValue": 40000000,
     "decompositionHint": "A large share come from a single manufacturing cluster in Pakistan. Think of one ball per two hundred people on Earth per year.",
+    "strategy": "population-rate",
     "source": "Sporting goods manufacturing estimates"
   },
   {
@@ -2400,6 +2684,7 @@ var QUESTIONS = [
     "unit": "notes",
     "answerValue": 2000,
     "decompositionHint": "Perhaps ten notes a second in busy passages, far fewer in slow ones. Average a few per second across 180 seconds.",
+    "strategy": "area-density",
     "source": "Order-of-magnitude estimate from typical note density"
   },
   {
@@ -2408,6 +2693,7 @@ var QUESTIONS = [
     "unit": "strings",
     "answerValue": 230,
     "decompositionHint": "88 keys, but most notes use two or three strings struck together, with only the lowest bass notes using a single thick string.",
+    "strategy": "decompose",
     "source": "Piano construction references"
   },
   {
@@ -2416,6 +2702,7 @@ var QUESTIONS = [
     "unit": "musicians",
     "answerValue": 90,
     "decompositionHint": "Strings are the bulk of it at around sixty, with woodwind, brass and percussion making up the rest.",
+    "strategy": "decompose",
     "source": "Standard orchestral complement"
   },
   {
@@ -2425,6 +2712,7 @@ var QUESTIONS = [
     "unit": "works",
     "answerValue": 500000,
     "decompositionHint": "Only a small fraction is on display at any time; most of the collection is in storage.",
+    "strategy": "decompose",
     "source": "Louvre published collection figures"
   },
   {
@@ -2434,6 +2722,7 @@ var QUESTIONS = [
     "unit": "books",
     "answerValue": 25000000,
     "decompositionHint": "Its total collection runs to well over 170 million items, but most of that is manuscripts, maps, photographs and recordings rather than books.",
+    "strategy": "decompose",
     "source": "Library of Congress collection statistics"
   },
   {
@@ -2443,6 +2732,7 @@ var QUESTIONS = [
     "unit": "songs",
     "answerValue": 100000000,
     "decompositionHint": "Streaming catalogues alone list around a hundred million tracks, which is a reasonable proxy for everything ever released.",
+    "strategy": "recall-sanity",
     "source": "Streaming platform catalogue sizes as a proxy"
   },
   {
@@ -2451,6 +2741,7 @@ var QUESTIONS = [
     "unit": "words",
     "answerValue": 20000,
     "decompositionHint": "Roughly 110 pages at one minute of screen time per page, and a screenplay page carries far fewer words than a novel page.",
+    "strategy": "decompose",
     "source": "Standard screenplay formatting conventions"
   },
   {
@@ -2459,6 +2750,7 @@ var QUESTIONS = [
     "unit": "words",
     "answerValue": 600000,
     "decompositionHint": "Far more than any person knows. An educated native speaker has a vocabulary of perhaps 20,000 to 35,000 word families.",
+    "strategy": "decompose",
     "source": "Oxford English Dictionary headword counts"
   },
   {
@@ -2467,6 +2759,7 @@ var QUESTIONS = [
     "unit": "words",
     "answerValue": 30000,
     "decompositionHint": "Vocabulary tests suggest steady growth of a few words a day through childhood, plateauing in adulthood.",
+    "strategy": "rate-time",
     "source": "Vocabulary size research"
   },
   {
@@ -2476,6 +2769,7 @@ var QUESTIONS = [
     "unit": "languages",
     "answerValue": 7000,
     "decompositionHint": "Around half have fewer than ten thousand speakers, and a language dies roughly every few weeks.",
+    "strategy": "decompose",
     "source": "Ethnologue language counts"
   },
   {
@@ -2484,6 +2778,7 @@ var QUESTIONS = [
     "unit": "characters",
     "answerValue": 3000,
     "decompositionHint": "The full set runs to tens of thousands, but frequency is very skewed - a few thousand covers the overwhelming majority of running text.",
+    "strategy": "decompose",
     "source": "Chinese literacy standards"
   },
   {
@@ -2492,6 +2787,7 @@ var QUESTIONS = [
     "unit": "words",
     "answerValue": 16000,
     "decompositionHint": "Recording studies found men and women almost identical, contrary to the popular claim that women speak far more.",
+    "strategy": "rate-time",
     "source": "Mehl et al. 2007, Science"
   },
   {
@@ -2500,6 +2796,7 @@ var QUESTIONS = [
     "unit": "letters",
     "answerValue": 450000,
     "decompositionHint": "About 90,000 words at roughly five letters each.",
+    "strategy": "decompose",
     "source": "Derived from typical novel length and word length"
   },
   {
@@ -2509,6 +2806,7 @@ var QUESTIONS = [
     "unit": "tonnes",
     "answerValue": 30000000000,
     "decompositionHint": "By mass the most used material on Earth after water - roughly four tonnes per person per year.",
+    "strategy": "population-rate",
     "source": "Global cement and concrete industry statistics"
   },
   {
@@ -2518,6 +2816,7 @@ var QUESTIONS = [
     "unit": "kilograms per person",
     "answerValue": 240,
     "decompositionHint": "World steel output is around 1.9 billion tonnes against a population of 8 billion. China alone makes over half of it.",
+    "strategy": "population-rate",
     "source": "World Steel Association output divided by world population"
   },
   {
@@ -2527,6 +2826,7 @@ var QUESTIONS = [
     "unit": "tonnes",
     "answerValue": 9500000000,
     "decompositionHint": "Annual output is around 400 million tonnes now but was tiny in the 1950s and has grown roughly exponentially, so the cumulative total is around twenty times the current annual figure.",
+    "strategy": "exponential",
     "source": "Geyer, Jambeck and Law 2017, Science Advances - cumulative plastics production"
   },
   {
@@ -2535,6 +2835,7 @@ var QUESTIONS = [
     "unit": "tonnes",
     "answerValue": 30,
     "decompositionHint": "A slab of maybe 100 square metres at 150 mm thick, and concrete weighs about 2.4 tonnes per cubic metre.",
+    "strategy": "decompose",
     "source": "Construction estimating figures"
   },
   {
@@ -2543,6 +2844,7 @@ var QUESTIONS = [
     "unit": "tonnes",
     "answerValue": 7300,
     "decompositionHint": "Famously light for its size - the iron in it would only fill a cube about 12 metres on a side if melted down.",
+    "strategy": "decompose",
     "source": "Eiffel Tower construction records"
   },
   {
@@ -2551,6 +2853,7 @@ var QUESTIONS = [
     "unit": "rivets",
     "answerValue": 2500000,
     "decompositionHint": "Around 18,000 individual iron pieces joined by hand, needing well over a hundred rivets each on average.",
+    "strategy": "decompose",
     "source": "Eiffel Tower construction records"
   },
   {
@@ -2560,6 +2863,7 @@ var QUESTIONS = [
     "unit": "cans",
     "answerValue": 400000000000,
     "decompositionHint": "Roughly fifty per person on Earth per year, heavily skewed towards a handful of countries.",
+    "strategy": "population-rate",
     "source": "Aluminium packaging industry statistics"
   },
   {
@@ -2569,6 +2873,7 @@ var QUESTIONS = [
     "unit": "containers",
     "answerValue": 500000000000,
     "decompositionHint": "Comparable in count to aluminium cans, dominated by beverage packaging.",
+    "strategy": "anchor-scale",
     "source": "Glass packaging industry statistics"
   },
   {
@@ -2578,6 +2883,7 @@ var QUESTIONS = [
     "unit": "buildings",
     "answerValue": 1000000,
     "decompositionHint": "Dominated by low rise housing in the outer boroughs rather than the towers of Manhattan.",
+    "strategy": "decompose",
     "source": "NYC building footprint datasets"
   },
   {
@@ -2587,6 +2893,7 @@ var QUESTIONS = [
     "unit": "buildings",
     "answerValue": 9000,
     "decompositionHint": "China holds nearly half. The count has roughly tripled since 2010.",
+    "strategy": "decompose",
     "source": "Council on Tall Buildings and Urban Habitat database"
   },
   {
@@ -2595,6 +2902,7 @@ var QUESTIONS = [
     "unit": "stairs",
     "answerValue": 1576,
     "decompositionHint": "102 floors at roughly 15 steps each, allowing for taller lobby levels.",
+    "strategy": "recall-sanity",
     "source": "Empire State Building published figures"
   },
   {
@@ -2603,6 +2911,7 @@ var QUESTIONS = [
     "unit": "lifts",
     "answerValue": 70,
     "decompositionHint": "Tall buildings need banks serving different floor ranges, or the lift shafts would consume too much floor area at the base.",
+    "strategy": "decompose",
     "source": "Tall building services design figures"
   },
   {
@@ -2611,6 +2920,7 @@ var QUESTIONS = [
     "unit": "people",
     "answerValue": 20000,
     "decompositionHint": "About two million people in roughly a hundred square kilometres within the historic boundary.",
+    "strategy": "area-density",
     "source": "Municipal population density figures"
   },
   {
@@ -2619,6 +2929,7 @@ var QUESTIONS = [
     "unit": "bricks",
     "answerValue": 3900000000,
     "decompositionHint": "Thousands of kilometres of wall, several metres tall and thick, though much of the length is rammed earth rather than brick.",
+    "strategy": "decompose",
     "source": "Order-of-magnitude estimate from wall dimensions"
   },
   {
@@ -2627,6 +2938,7 @@ var QUESTIONS = [
     "unit": "windows",
     "answerValue": 6500,
     "decompositionHint": "102 floors, with the tower tapering sharply above the sixth floor so upper floors have far fewer windows than the base.",
+    "strategy": "recall-sanity",
     "source": "Empire State Building published figures"
   },
   {
@@ -2635,6 +2947,7 @@ var QUESTIONS = [
     "unit": "houses",
     "answerValue": 1200,
     "decompositionHint": "Plots of roughly 600 square metres including the share of roads and verges.",
+    "strategy": "area-density",
     "source": "Derived from typical suburban lot sizes"
   },
   {
@@ -2643,6 +2956,7 @@ var QUESTIONS = [
     "unit": "litres",
     "answerValue": 40,
     "decompositionHint": "Around 200 square metres of wall at roughly 10 square metres per litre, over two coats.",
+    "strategy": "area-density",
     "source": "Paint coverage rates from manufacturer guidance"
   },
   {
@@ -2651,6 +2965,7 @@ var QUESTIONS = [
     "unit": "litres",
     "answerValue": 60000,
     "decompositionHint": "Roughly 8 hours at about 7,500 litres an hour for a large twin engine jet.",
+    "strategy": "decompose",
     "source": "Published fuel burn rates for long haul aircraft"
   },
   {
@@ -2659,6 +2974,7 @@ var QUESTIONS = [
     "unit": "litres",
     "answerValue": 3,
     "decompositionHint": "Comparable to a small efficient car carrying one person, which surprises people who assume flying is far worse per kilometre.",
+    "strategy": "anchor-scale",
     "source": "Airline fuel efficiency reporting"
   },
   {
@@ -2667,6 +2983,7 @@ var QUESTIONS = [
     "unit": "rivets",
     "answerValue": 3000000,
     "decompositionHint": "Aluminium skin panels across a fuselage 60 metres long plus the wings, with rivets every few centimetres along every seam.",
+    "strategy": "decompose",
     "source": "Aircraft manufacturing figures"
   },
   {
@@ -2675,6 +2992,7 @@ var QUESTIONS = [
     "unit": "parts",
     "answerValue": 30000,
     "decompositionHint": "Counting every nut, clip and fastener. An electric car has substantially fewer because the drivetrain is far simpler.",
+    "strategy": "decompose",
     "source": "Automotive manufacturing figures"
   },
   {
@@ -2683,6 +3001,7 @@ var QUESTIONS = [
     "unit": "parts",
     "answerValue": 900,
     "decompositionHint": "The chain alone accounts for several hundred once you count every link, pin and roller.",
+    "strategy": "decompose",
     "source": "Bicycle assembly component counts"
   },
   {
@@ -2691,6 +3010,7 @@ var QUESTIONS = [
     "unit": "rotations",
     "answerValue": 20000000,
     "decompositionHint": "A tyre lasts around 50,000 km and has a circumference of about 2 metres.",
+    "strategy": "chain-multiply",
     "source": "Derived from typical tyre life and wheel circumference"
   },
   {
@@ -2700,6 +3020,7 @@ var QUESTIONS = [
     "unit": "trains",
     "answerValue": 26000,
     "decompositionHint": "Tokyo alone moves millions of passengers a day on services running every few minutes across dozens of lines.",
+    "strategy": "rate-time",
     "source": "Japanese rail operator service statistics"
   },
   {
@@ -2709,6 +3030,7 @@ var QUESTIONS = [
     "unit": "bicycles",
     "answerValue": 23000000,
     "decompositionHint": "More bicycles than people, in a country of about 18 million.",
+    "strategy": "decompose",
     "source": "Dutch cycling statistics"
   },
   {
@@ -2718,6 +3040,7 @@ var QUESTIONS = [
     "unit": "containers",
     "answerValue": 24000,
     "decompositionHint": "Measured in twenty foot equivalent units. Stacked end to end they would stretch well over a hundred kilometres.",
+    "strategy": "volume-packing",
     "source": "Container ship capacity specifications"
   },
   {
@@ -2727,6 +3050,7 @@ var QUESTIONS = [
     "unit": "kilometres",
     "answerValue": 120000,
     "decompositionHint": "Perhaps 500 km a day across 240 working days, several times what a private car covers.",
+    "strategy": "rate-time",
     "source": "Commercial fleet mileage statistics"
   },
   {
@@ -2735,6 +3059,7 @@ var QUESTIONS = [
     "unit": "kilometres",
     "answerValue": 35,
     "decompositionHint": "Proportionally thinner than the skin of an apple relative to the 6,371 km radius beneath it.",
+    "strategy": "anchor-scale",
     "source": "Standard geophysical figures"
   },
   {
@@ -2743,6 +3068,7 @@ var QUESTIONS = [
     "unit": "centimetres",
     "answerValue": 5,
     "decompositionHint": "Famously about the rate fingernails grow. Over a human lifetime that adds up to a few metres.",
+    "strategy": "rate-time",
     "source": "GPS measurements of plate motion"
   },
   {
@@ -2752,6 +3078,7 @@ var QUESTIONS = [
     "unit": "carats",
     "answerValue": 120000000,
     "decompositionHint": "A carat is 0.2 grams, so the annual total is only around 24 tonnes - a single truckload.",
+    "strategy": "rate-time",
     "source": "Kimberley Process production statistics"
   },
   {
@@ -2760,6 +3087,7 @@ var QUESTIONS = [
     "unit": "tonnes",
     "answerValue": 20000,
     "decompositionHint": "Concentration is only a few parts per trillion, but the oceans are so vast that the total is comparable to a decade of mining. Extracting it costs far more than it is worth.",
+    "strategy": "anchor-scale",
     "source": "Oceanographic trace element measurements"
   },
   {
@@ -2768,6 +3096,7 @@ var QUESTIONS = [
     "unit": "years",
     "answerValue": 4000000000,
     "decompositionHint": "Slightly younger than the planet itself, because plate tectonics and erosion have recycled almost all of the original crust.",
+    "strategy": "decompose",
     "source": "Radiometric dating of Acasta and Nuvvuagittuq formations"
   },
   {
@@ -2776,6 +3105,7 @@ var QUESTIONS = [
     "unit": "eruptions",
     "answerValue": 70,
     "decompositionHint": "Out of roughly 1,500 active volcanoes, only a small fraction are erupting in any given year, and most go unnoticed.",
+    "strategy": "rate-time",
     "source": "Smithsonian Global Volcanism Program annual activity"
   },
   {
@@ -2785,6 +3115,7 @@ var QUESTIONS = [
     "unit": "kilograms",
     "answerValue": 3.3,
     "decompositionHint": "Typical intake is around 9 grams of salt a day, well above the 5 grams the WHO recommends. Multiply by 365 and convert to kilograms.",
+    "strategy": "unit-conversion",
     "source": "WHO dietary sodium intake estimates"
   },
   {
@@ -2793,6 +3124,7 @@ var QUESTIONS = [
     "unit": "seeds",
     "answerValue": 1500,
     "decompositionHint": "Seeds spiral outward in a tightly packed Fibonacci arrangement across a head 20 to 30 centimetres across.",
+    "strategy": "decompose",
     "source": "Agronomy references for sunflower seed counts"
   },
   {
@@ -2801,6 +3133,7 @@ var QUESTIONS = [
     "unit": "pollen grains",
     "answerValue": 1000000000,
     "decompositionHint": "Wind pollinated plants must produce vast quantities because the odds any one grain reaches a receptive flower are minuscule.",
+    "strategy": "decompose",
     "source": "Aerobiology pollen production studies"
   },
   {
@@ -2809,6 +3142,7 @@ var QUESTIONS = [
     "unit": "leaves",
     "answerValue": 200000,
     "decompositionHint": "Estimate the number of major branches, then twigs per branch and leaves per twig - the multiplication runs away quickly.",
+    "strategy": "area-density",
     "source": "Forestry leaf area estimates"
   },
   {
@@ -2817,6 +3151,7 @@ var QUESTIONS = [
     "unit": "litres",
     "answerValue": 400,
     "decompositionHint": "Almost all of it evaporates through the leaves rather than being retained. A hectare of forest can move several hundred tonnes of water a week.",
+    "strategy": "area-density",
     "source": "Plant transpiration measurements"
   },
   {
@@ -2825,6 +3160,7 @@ var QUESTIONS = [
     "unit": "rings",
     "answerValue": 4900,
     "decompositionHint": "One ring a year, and the oldest bristlecone pines were already ancient when the pyramids were built.",
+    "strategy": "rate-time",
     "source": "Dendrochronology records for Great Basin bristlecone pine"
   },
   {
@@ -2833,6 +3169,7 @@ var QUESTIONS = [
     "unit": "kilograms",
     "answerValue": 100,
     "decompositionHint": "Tied directly to how much carbon it fixes: roughly 20 kg of carbon dioxide absorbed yields a bit under its own mass in oxygen released.",
+    "strategy": "rate-time",
     "source": "Forestry carbon and oxygen exchange estimates"
   },
   {
@@ -2841,6 +3178,7 @@ var QUESTIONS = [
     "unit": "bacteria",
     "answerValue": 100000,
     "decompositionHint": "Hard, dry, frequently touched surfaces carry hundreds of organisms per square centimetre - far fewer than a kitchen sponge.",
+    "strategy": "area-density",
     "source": "Environmental microbiology swab studies"
   },
   {
@@ -2849,6 +3187,7 @@ var QUESTIONS = [
     "unit": "bacteria",
     "answerValue": 50000000000,
     "decompositionHint": "Warm, wet and full of food residue with enormous surface area - densities rival those found in faeces.",
+    "strategy": "area-density",
     "source": "Cardinale et al. 2017, Scientific Reports"
   },
   {
@@ -2857,6 +3196,7 @@ var QUESTIONS = [
     "unit": "minutes",
     "answerValue": 20,
     "decompositionHint": "Fast enough that a single cell could in principle produce a colony visible to the naked eye overnight.",
+    "strategy": "divide-total",
     "source": "Standard microbiology growth rates"
   },
   {
@@ -2865,6 +3205,7 @@ var QUESTIONS = [
     "unit": "virus particles",
     "answerValue": 500000,
     "decompositionHint": "About ten million per millilitre, and a drop is roughly 0.05 millilitres.",
+    "strategy": "area-density",
     "source": "Marine virology concentration measurements"
   },
   {
@@ -2873,6 +3214,7 @@ var QUESTIONS = [
     "unit": "microbial cells",
     "answerValue": 38000000000000,
     "decompositionHint": "Roughly comparable to the number of human cells in the body, revising down the old claim of a ten to one ratio.",
+    "strategy": "anchor-scale",
     "source": "Sender, Fuchs and Milo 2016, PLOS Biology"
   },
   {
@@ -2881,6 +3223,7 @@ var QUESTIONS = [
     "unit": "combinations",
     "answerValue": 14000000,
     "decompositionHint": "49 choose 6. Equivalent to picking one particular second out of about five months.",
+    "strategy": "combinatorial",
     "source": "Direct combinatorial calculation"
   },
   {
@@ -2889,6 +3232,7 @@ var QUESTIONS = [
     "unit": "positions",
     "answerValue": 43000000000000000000,
     "decompositionHint": "Corner and edge permutations and orientations, divided by the constraints that make some arrangements unreachable by legal turns.",
+    "strategy": "combinatorial",
     "source": "Standard Rubik's cube group order, 4.325x10^19"
   },
   {
@@ -2897,6 +3241,7 @@ var QUESTIONS = [
     "unit": "passwords",
     "answerValue": 6000000000000000,
     "decompositionHint": "About 95 printable characters raised to the eighth power.",
+    "strategy": "decompose",
     "source": "Direct calculation over the printable ASCII set"
   },
   {
@@ -2905,6 +3250,7 @@ var QUESTIONS = [
     "unit": "positions",
     "answerValue": 72000,
     "decompositionHint": "Twenty legal first moves each, then roughly thirty replies, with transpositions reducing the raw product somewhat.",
+    "strategy": "combinatorial",
     "source": "Chess game tree enumeration"
   },
   {
@@ -2913,6 +3259,7 @@ var QUESTIONS = [
     "unit": "people",
     "answerValue": 23,
     "decompositionHint": "It counts pairs, not people: 23 people form 253 pairs, and each pair has a 1 in 365 chance.",
+    "strategy": "decompose",
     "source": "The birthday problem"
   },
   {
@@ -2922,6 +3269,7 @@ var QUESTIONS = [
     "unit": "products",
     "answerValue": 30000,
     "decompositionHint": "Counting every size and flavour variant separately, which is why the number dwarfs what a shopper perceives.",
+    "strategy": "decompose",
     "source": "Grocery retail assortment statistics"
   },
   {
@@ -2930,6 +3278,7 @@ var QUESTIONS = [
     "unit": "possessions",
     "answerValue": 15000,
     "decompositionHint": "Count a kitchen drawer honestly and extrapolate - cutlery, screws, socks and books add up far faster than intuition suggests.",
+    "strategy": "recall-sanity",
     "source": "Frequently cited household inventory estimates"
   },
   {
@@ -2938,6 +3287,7 @@ var QUESTIONS = [
     "unit": "loads",
     "answerValue": 300,
     "decompositionHint": "Something like six loads a week across 52 weeks.",
+    "strategy": "rate-time",
     "source": "Appliance usage surveys"
   },
   {
@@ -2946,6 +3296,7 @@ var QUESTIONS = [
     "unit": "litres",
     "answerValue": 80,
     "decompositionHint": "A standard head delivers roughly 10 litres a minute; low flow heads about half that.",
+    "strategy": "rate-time",
     "source": "Plumbing fixture flow rate standards"
   },
   {
@@ -2954,6 +3305,7 @@ var QUESTIONS = [
     "unit": "toothbrushes",
     "answerValue": 300,
     "decompositionHint": "Dentists advise replacing every three months, so four a year across roughly 75 years of brushing.",
+    "strategy": "stock-flow",
     "source": "Dental guidance on brush replacement"
   },
   {
@@ -2963,6 +3315,7 @@ var QUESTIONS = [
     "unit": "batteries",
     "answerValue": 8,
     "decompositionHint": "Global alkaline production runs into the tens of billions of cells a year across 8 billion people, though consumption is concentrated in wealthy countries.",
+    "strategy": "rate-time",
     "source": "Battery industry production statistics"
   },
   {
@@ -2972,6 +3325,7 @@ var QUESTIONS = [
     "unit": "bags",
     "answerValue": 500000000000,
     "decompositionHint": "Roughly sixty per person on Earth per year, though bans have cut this sharply in some countries.",
+    "strategy": "population-rate",
     "source": "Plastics industry and environmental agency estimates"
   },
   {
@@ -2981,6 +3335,7 @@ var QUESTIONS = [
     "unit": "cups",
     "answerValue": 250000000000,
     "decompositionHint": "Follows from roughly 2 billion cups of coffee drunk a day, with a minority served in disposable cups.",
+    "strategy": "rate-time",
     "source": "Packaging waste estimates"
   },
   {
@@ -2989,6 +3344,7 @@ var QUESTIONS = [
     "unit": "nappies",
     "answerValue": 5000,
     "decompositionHint": "Six or so a day for the first year, tapering to three or four, across about two and a half years.",
+    "strategy": "divide-total",
     "source": "Parenting and waste management estimates"
   },
   {
@@ -2997,6 +3353,7 @@ var QUESTIONS = [
     "unit": "pairs",
     "answerValue": 250,
     "decompositionHint": "Averaging three or four pairs a year across seventy adult years, more in childhood when feet keep growing.",
+    "strategy": "rate-time",
     "source": "Consumer purchasing surveys"
   },
   {
@@ -3006,6 +3363,7 @@ var QUESTIONS = [
     "unit": "people",
     "answerValue": 10500000,
     "decompositionHint": "Barely a sixth of today's figure, on the eve of the industrial expansion that would transform it.",
+    "strategy": "population-rate",
     "source": "UK census records"
   },
   {
@@ -3015,6 +3373,7 @@ var QUESTIONS = [
     "unit": "people",
     "answerValue": 69000000,
     "decompositionHint": "Around 0.85% of world population, in a country roughly the size of the American state of Oregon.",
+    "strategy": "population-rate",
     "source": "Office for National Statistics estimates"
   },
   {
@@ -3024,6 +3383,7 @@ var QUESTIONS = [
     "unit": "people",
     "answerValue": 550000000,
     "decompositionHint": "Under half its later peak, before the mortality decline that drove rapid growth through the second half of the century.",
+    "strategy": "population-rate",
     "source": "UN World Population Prospects"
   },
   {
@@ -3033,6 +3393,7 @@ var QUESTIONS = [
     "unit": "people",
     "answerValue": 1460000000,
     "decompositionHint": "It overtook China around 2023, and now holds roughly one in six people alive.",
+    "strategy": "population-rate",
     "source": "UN World Population Prospects"
   },
   {
@@ -3042,6 +3403,7 @@ var QUESTIONS = [
     "unit": "percent",
     "answerValue": 21,
     "decompositionHint": "Literacy was largely confined to Europe, North America and a thin elite elsewhere. Mass schooling was still decades away for most of the world.",
+    "strategy": "population-rate",
     "source": "Historical literacy reconstructions"
   },
   {
@@ -3051,6 +3413,7 @@ var QUESTIONS = [
     "unit": "percent",
     "answerValue": 87,
     "decompositionHint": "One of the largest changes of the last century, though the remaining illiterate population is still counted in the hundreds of millions.",
+    "strategy": "population-rate",
     "source": "UNESCO literacy statistics"
   },
   {
@@ -3060,6 +3423,7 @@ var QUESTIONS = [
     "unit": "percent",
     "answerValue": 15,
     "decompositionHint": "Overwhelmingly rural. The crossover to a majority urban world only happened around 2007.",
+    "strategy": "decompose",
     "source": "UN urbanisation historical estimates"
   },
   {
@@ -3069,6 +3433,7 @@ var QUESTIONS = [
     "unit": "percent",
     "answerValue": 58,
     "decompositionHint": "The crossover past half happened around 2007, and the share continues to climb by roughly half a point a year.",
+    "strategy": "rate-time",
     "source": "UN World Urbanization Prospects"
   },
   {
@@ -3078,6 +3443,7 @@ var QUESTIONS = [
     "unit": "percent",
     "answerValue": 36,
     "decompositionHint": "More than a third. This single figure explains why historical life expectancy at birth looks so grim compared with adult lifespans.",
+    "strategy": "stock-flow",
     "source": "Historical demographic reconstructions"
   },
   {
@@ -3087,6 +3453,7 @@ var QUESTIONS = [
     "unit": "percent",
     "answerValue": 3.7,
     "decompositionHint": "Down roughly tenfold from 1900, though it still means several million deaths a year.",
+    "strategy": "population-rate",
     "source": "UN Inter-agency Group for Child Mortality Estimation"
   },
   {
@@ -3096,6 +3463,7 @@ var QUESTIONS = [
     "unit": "hours of work",
     "answerValue": 5,
     "decompositionHint": "Tallow candles were dim and expensive. The collapse in this figure to near zero is one of the starkest measures of economic progress.",
+    "strategy": "decompose",
     "source": "Nordhaus 1996, historical price of light"
   },
   {
@@ -3105,6 +3473,7 @@ var QUESTIONS = [
     "unit": "horses and mules",
     "answerValue": 21000000,
     "decompositionHint": "Roughly one for every four people, and cities had to dispose of thousands of tonnes of manure a day before motor vehicles arrived.",
+    "strategy": "rate-time",
     "source": "US Department of Agriculture historical livestock censuses"
   },
   {
@@ -3114,6 +3483,7 @@ var QUESTIONS = [
     "unit": "books",
     "answerValue": 20000000,
     "decompositionHint": "Around 30,000 distinct titles in editions of several hundred each - more books produced in fifty years than European scribes had made in the previous thousand.",
+    "strategy": "decompose",
     "source": "Incunabula bibliographic surveys"
   },
   {
@@ -3123,6 +3493,7 @@ var QUESTIONS = [
     "unit": "children",
     "answerValue": 750000000,
     "decompositionHint": "Roughly one in eleven people alive, reflecting how young the population still is in much of the world.",
+    "strategy": "population-rate",
     "source": "UNESCO Institute for Statistics enrolment data"
   },
   {
@@ -3132,6 +3503,7 @@ var QUESTIONS = [
     "unit": "teachers",
     "answerValue": 85000000,
     "decompositionHint": "Primary and secondary combined, at average class sizes in the twenties across roughly 1.5 billion pupils.",
+    "strategy": "chain-multiply",
     "source": "UNESCO teacher workforce statistics"
   },
   {
@@ -3141,6 +3513,7 @@ var QUESTIONS = [
     "unit": "universities",
     "answerValue": 30000,
     "decompositionHint": "Counting degree awarding institutions. India and the United States alone account for several thousand each.",
+    "strategy": "decompose",
     "source": "International higher education directories"
   },
   {
@@ -3150,6 +3523,7 @@ var QUESTIONS = [
     "unit": "doctorates",
     "answerValue": 300000,
     "decompositionHint": "The United States and China each award several tens of thousands, and the OECD total alone is around a quarter of a million.",
+    "strategy": "decompose",
     "source": "OECD education statistics"
   },
   {
@@ -3158,6 +3532,7 @@ var QUESTIONS = [
     "unit": "hours",
     "answerValue": 12000,
     "decompositionHint": "Roughly 6 hours a day, 190 days a year, for about 12 years.",
+    "strategy": "rate-time",
     "source": "Derived from typical school year length"
   },
   {
@@ -3167,6 +3542,7 @@ var QUESTIONS = [
     "unit": "papers",
     "answerValue": 3000000,
     "decompositionHint": "Growing a few percent a year across tens of thousands of journals, which is why no researcher can read even their own subfield exhaustively.",
+    "strategy": "rate-time",
     "source": "Scholarly publishing output studies"
   },
   {
@@ -3176,6 +3552,7 @@ var QUESTIONS = [
     "unit": "countries",
     "answerValue": 195,
     "decompositionHint": "193 UN member states plus two observers. The number roughly quadrupled over the twentieth century through decolonisation.",
+    "strategy": "decompose",
     "source": "United Nations membership"
   },
   {
@@ -3185,6 +3562,7 @@ var QUESTIONS = [
     "unit": "prisoners",
     "answerValue": 11000000,
     "decompositionHint": "Roughly 140 per 100,000 people globally, though rates vary more than tenfold between countries.",
+    "strategy": "population-rate",
     "source": "World Prison Population List"
   },
   {
@@ -3194,6 +3572,7 @@ var QUESTIONS = [
     "unit": "officers",
     "answerValue": 12000000,
     "decompositionHint": "The UN median is around 300 officers per 100,000 people. Multiply across a population of 8 billion.",
+    "strategy": "population-rate",
     "source": "UNODC criminal justice statistics"
   },
   {
@@ -3203,6 +3582,7 @@ var QUESTIONS = [
     "unit": "personnel",
     "answerValue": 27000000,
     "decompositionHint": "A handful of countries account for over half. Reserves would add tens of millions more.",
+    "strategy": "decompose",
     "source": "IISS Military Balance"
   },
   {
@@ -3212,6 +3592,7 @@ var QUESTIONS = [
     "unit": "people",
     "answerValue": 120000000,
     "decompositionHint": "Around one in every 67 people alive, and the figure has more than doubled in a decade.",
+    "strategy": "population-rate",
     "source": "UNHCR global trends reports"
   },
   {
@@ -3221,6 +3602,7 @@ var QUESTIONS = [
     "unit": "elections",
     "answerValue": 60,
     "decompositionHint": "About 195 countries with terms averaging four or five years, so a predictable fraction go to the polls annually.",
+    "strategy": "divide-total",
     "source": "International electoral calendars"
   },
   {
@@ -3229,6 +3611,7 @@ var QUESTIONS = [
     "unit": "acts",
     "answerValue": 50,
     "decompositionHint": "A few dozen primary statutes, though secondary regulations made under them run into the thousands.",
+    "strategy": "rate-time",
     "source": "National legislative output records"
   },
   {
@@ -3238,6 +3621,7 @@ var QUESTIONS = [
     "unit": "emails",
     "answerValue": 120,
     "decompositionHint": "Including automated notifications and copies, which typically outnumber genuinely personal messages several times over.",
+    "strategy": "chain-multiply",
     "source": "Workplace email volume studies"
   },
   {
@@ -3247,6 +3631,7 @@ var QUESTIONS = [
     "unit": "years",
     "answerValue": 200000,
     "decompositionHint": "About 500 hours are uploaded every minute, so a year of uploads alone is far more than a lifetime of watching.",
+    "strategy": "divide-total",
     "source": "Derived from published upload rates"
   },
   {
@@ -3256,6 +3641,7 @@ var QUESTIONS = [
     "unit": "podcasts",
     "answerValue": 4000000,
     "decompositionHint": "Millions of feeds exist but only a small fraction are still actively producing episodes.",
+    "strategy": "decompose",
     "source": "Podcast directory listings"
   },
   {
@@ -3265,6 +3651,7 @@ var QUESTIONS = [
     "unit": "photographs",
     "answerValue": 4000000000,
     "decompositionHint": "Follows from roughly 5 billion social media users posting on the order of one image a day on average.",
+    "strategy": "rate-time",
     "source": "Social platform published upload figures"
   },
   {
@@ -3274,6 +3661,7 @@ var QUESTIONS = [
     "unit": "messages",
     "answerValue": 200000000000,
     "decompositionHint": "Messaging apps alone carry over a hundred billion, before SMS and in-platform direct messages are counted.",
+    "strategy": "decompose",
     "source": "Aggregated messaging platform statistics"
   },
   {
@@ -3283,6 +3671,7 @@ var QUESTIONS = [
     "unit": "copies",
     "answerValue": 200000000,
     "decompositionHint": "Down sharply from the peak but still substantial, sustained largely by markets like India and Japan where print remains strong.",
+    "strategy": "decompose",
     "source": "World Association of News Publishers circulation data"
   },
   {
@@ -3292,6 +3681,7 @@ var QUESTIONS = [
     "unit": "dogs",
     "answerValue": 900000000,
     "decompositionHint": "Counting strays and village dogs, which outnumber pets in much of the world.",
+    "strategy": "population-rate",
     "source": "Global canine population estimates"
   },
   {
@@ -3301,6 +3691,7 @@ var QUESTIONS = [
     "unit": "cats",
     "answerValue": 600000000,
     "decompositionHint": "Roughly comparable to dogs, again dominated by free roaming animals rather than housecats.",
+    "strategy": "population-rate",
     "source": "Global feline population estimates"
   },
   {
@@ -3310,6 +3701,7 @@ var QUESTIONS = [
     "unit": "elephants",
     "answerValue": 415000,
     "decompositionHint": "Down from several million a century ago. A single population estimate for a species this large is easier to pin down than most.",
+    "strategy": "population-rate",
     "source": "IUCN African elephant status reports"
   },
   {
@@ -3318,6 +3710,7 @@ var QUESTIONS = [
     "unit": "penguins",
     "answerValue": 20000000,
     "decompositionHint": "Dominated by a few enormously abundant species like Adelie and chinstrap, counted from satellite imagery of guano stains.",
+    "strategy": "population-rate",
     "source": "Antarctic seabird population surveys"
   },
   {
@@ -3326,6 +3719,7 @@ var QUESTIONS = [
     "unit": "eggs",
     "answerValue": 1500,
     "decompositionHint": "More than her own body weight daily, which is why the colony must feed her constantly.",
+    "strategy": "rate-time",
     "source": "Apiculture references"
   },
   {
@@ -3334,6 +3728,7 @@ var QUESTIONS = [
     "unit": "wingbeats",
     "answerValue": 55,
     "decompositionHint": "Fast enough to produce an audible hum, which is where the name comes from.",
+    "strategy": "rate-time",
     "source": "High speed photography of hummingbird flight"
   },
   {
@@ -3342,6 +3737,7 @@ var QUESTIONS = [
     "unit": "hours",
     "answerValue": 24,
     "decompositionHint": "The winged adult exists only to reproduce and often has no functioning mouthparts. The nymph stage underwater lasts a year or more.",
+    "strategy": "rate-time",
     "source": "Entomology references for Ephemeroptera"
   },
   {
@@ -3350,6 +3746,7 @@ var QUESTIONS = [
     "unit": "kilometres",
     "answerValue": 4000,
     "decompositionHint": "From Canada to central Mexico, a journey no single butterfly completes in both directions - it takes several generations.",
+    "strategy": "anchor-scale",
     "source": "Monarch migration tracking studies"
   },
   {
@@ -3358,6 +3755,7 @@ var QUESTIONS = [
     "unit": "seconds",
     "answerValue": 31500000,
     "decompositionHint": "A useful constant to memorise: pi times ten million is accurate to under half a percent.",
+    "strategy": "rate-time",
     "source": "Direct unit conversion"
   },
   {
@@ -3366,6 +3764,7 @@ var QUESTIONS = [
     "unit": "beats",
     "answerValue": 100000,
     "decompositionHint": "About 70 beats a minute across 1,440 minutes.",
+    "strategy": "rate-time",
     "source": "Standard resting heart rate figures"
   },
   {
@@ -3374,6 +3773,7 @@ var QUESTIONS = [
     "unit": "kilometres",
     "answerValue": 150000,
     "decompositionHint": "Roughly 7,000 steps a day at 0.75 metres, across some 75 years - enough to circle the equator three times.",
+    "strategy": "rate-time",
     "source": "Derived from typical daily step counts"
   },
   {
@@ -3382,6 +3782,7 @@ var QUESTIONS = [
     "unit": "hours",
     "answerValue": 230000,
     "decompositionHint": "About 8 hours a night across roughly 29,000 nights, which works out to a full third of life.",
+    "strategy": "chain-multiply",
     "source": "Derived from typical sleep duration"
   },
   {
@@ -3390,6 +3791,7 @@ var QUESTIONS = [
     "unit": "meals",
     "answerValue": 80000,
     "decompositionHint": "Three a day across about 29,000 days.",
+    "strategy": "rate-time",
     "source": "Derived from typical meal frequency"
   },
   {
@@ -3398,6 +3800,7 @@ var QUESTIONS = [
     "unit": "days",
     "answerValue": 29000,
     "decompositionHint": "About 80 years at 365 days. A strikingly small number when written out, which is rather the point.",
+    "strategy": "decompose",
     "source": "Direct unit conversion"
   },
   {
@@ -3406,6 +3809,7 @@ var QUESTIONS = [
     "unit": "photons",
     "answerValue": 10000000000000000000,
     "decompositionHint": "A candle radiates a few watts, but only about 0.1 watt as visible light. A visible photon carries roughly 4x10^-19 joules.",
+    "strategy": "energy-balance",
     "source": "Derived from candle luminous output and photon energy"
   },
   {
@@ -3414,6 +3818,7 @@ var QUESTIONS = [
     "unit": "photons",
     "answerValue": 1000,
     "decompositionHint": "The dark adapted eye can detect a handful of photons. A sixth magnitude star is right at that threshold across a pupil about 7 mm wide.",
+    "strategy": "rate-time",
     "source": "Visual astronomy photon flux estimates"
   },
   {
@@ -3422,6 +3827,7 @@ var QUESTIONS = [
     "unit": "seconds",
     "answerValue": 3,
     "decompositionHint": "Sound moves at about 340 metres a second, which is why counting seconds between lightning and thunder gives distance in kilometres divided by three.",
+    "strategy": "divide-total",
     "source": "Speed of sound at sea level"
   },
   {
@@ -3430,6 +3836,7 @@ var QUESTIONS = [
     "unit": "nanometres",
     "answerValue": 530,
     "decompositionHint": "Visible light spans roughly 400 nm at the violet end to 700 nm at the red end, and human vision peaks in the middle.",
+    "strategy": "decompose",
     "source": "Standard optical physics figures"
   },
   {
@@ -3438,6 +3845,7 @@ var QUESTIONS = [
     "unit": "decibels",
     "answerValue": 140,
     "decompositionHint": "Decibels are logarithmic: every 10 adds a factor of ten in intensity, so 140 dB is 10^14 times the quietest audible sound.",
+    "strategy": "chain-multiply",
     "source": "Occupational noise exposure references"
   },
   {
@@ -3446,6 +3854,7 @@ var QUESTIONS = [
     "unit": "times",
     "answerValue": 1000000000000,
     "decompositionHint": "A whisper is about 20 dB and a jet about 140 dB. Each 10 dB is a tenfold increase, so the gap of 120 dB is ten to the twelfth.",
+    "strategy": "chain-multiply",
     "source": "Derived from the decibel scale"
   },
   {
@@ -3454,6 +3863,7 @@ var QUESTIONS = [
     "unit": "frames per second",
     "answerValue": 24,
     "decompositionHint": "Low enough that the flicker had to be masked by showing each frame twice in projection.",
+    "strategy": "rate-time",
     "source": "Standard cinema frame rate"
   },
   {
@@ -3462,6 +3872,7 @@ var QUESTIONS = [
     "unit": "joules",
     "answerValue": 3.2e-11,
     "decompositionHint": "About 200 million electron volts, and one electron volt is 1.6x10^-19 joules.",
+    "strategy": "energy-balance",
     "source": "Standard nuclear fission energy release"
   },
   {
@@ -3470,6 +3881,7 @@ var QUESTIONS = [
     "unit": "grams",
     "answerValue": 0.5,
     "decompositionHint": "A household uses roughly 4,000 kWh, and fissioning a gram of uranium-235 releases around 24,000 kWh of heat before conversion losses.",
+    "strategy": "energy-balance",
     "source": "Derived from fission energy density"
   },
   {
@@ -3478,6 +3890,7 @@ var QUESTIONS = [
     "unit": "millisieverts",
     "answerValue": 3,
     "decompositionHint": "Mostly radon indoors, plus cosmic rays and potassium-40 in your own body. A chest X-ray is about 0.1 mSv.",
+    "strategy": "rate-time",
     "source": "UNSCEAR background radiation estimates"
   },
   {
@@ -3486,6 +3899,7 @@ var QUESTIONS = [
     "unit": "years",
     "answerValue": 5730,
     "decompositionHint": "Short enough that after about ten half lives, roughly 60,000 years, too little remains to date reliably.",
+    "strategy": "decompose",
     "source": "Standard radiometric dating constant"
   },
   {
@@ -3495,6 +3909,7 @@ var QUESTIONS = [
     "unit": "warheads",
     "answerValue": 12000,
     "decompositionHint": "Down from a peak above 60,000 in the 1980s, with two countries holding roughly 90% of the total.",
+    "strategy": "anchor-scale",
     "source": "Federation of American Scientists nuclear notebook"
   },
   {
@@ -3503,6 +3918,7 @@ var QUESTIONS = [
     "unit": "colours",
     "answerValue": 10000000,
     "decompositionHint": "Three cone types, each resolving perhaps a couple of hundred levels, multiplied together.",
+    "strategy": "decompose",
     "source": "Colour vision research estimates"
   },
   {
@@ -3511,6 +3927,7 @@ var QUESTIONS = [
     "unit": "smells",
     "answerValue": 1000000000000,
     "decompositionHint": "About 400 olfactory receptor types combining combinatorially, which is why the number vastly exceeds the old textbook figure of 10,000.",
+    "strategy": "decompose",
     "source": "Bushdid et al. 2014, Science"
   },
   {
@@ -3519,6 +3936,7 @@ var QUESTIONS = [
     "unit": "photoreceptors",
     "answerValue": 120000000,
     "decompositionHint": "Around 120 million rods for dim light and 6 million cones for colour, all feeding into only about a million optic nerve fibres.",
+    "strategy": "decompose",
     "source": "Standard ophthalmology references"
   },
   {
@@ -3527,6 +3945,7 @@ var QUESTIONS = [
     "unit": "milliseconds",
     "answerValue": 250,
     "decompositionHint": "Signal transduction, nerve conduction and muscle activation each cost tens of milliseconds. Sound is faster than sight by about 40 ms.",
+    "strategy": "decompose",
     "source": "Reaction time psychology research"
   },
   {
@@ -3535,6 +3954,7 @@ var QUESTIONS = [
     "unit": "bits per second",
     "answerValue": 10000000,
     "decompositionHint": "Roughly a million fibres each firing a few times a second with several bits per spike - comparable to an ethernet connection.",
+    "strategy": "rate-time",
     "source": "Koch et al. 2006, Current Biology"
   },
   {
@@ -3543,6 +3963,7 @@ var QUESTIONS = [
     "unit": "days",
     "answerValue": 10,
     "decompositionHint": "Constant turnover is why a burnt tongue recovers within a couple of weeks.",
+    "strategy": "stock-flow",
     "source": "Oral physiology references"
   },
   {
@@ -3551,6 +3972,7 @@ var QUESTIONS = [
     "unit": "particles",
     "answerValue": 6.022e+23,
     "decompositionHint": "Avogadro's number, defined so that a mole of carbon-12 weighs exactly 12 grams.",
+    "strategy": "molar",
     "source": "Avogadro constant"
   },
   {
@@ -3559,6 +3981,7 @@ var QUESTIONS = [
     "unit": "atoms",
     "answerValue": 6e+23,
     "decompositionHint": "Hydrogen's molar mass is about 1 gram, so a gram is one mole of atoms.",
+    "strategy": "molar",
     "source": "Derived from molar mass and Avogadro's number"
   },
   {
@@ -3567,6 +3990,7 @@ var QUESTIONS = [
     "unit": "elements",
     "answerValue": 94,
     "decompositionHint": "Everything up to plutonium occurs naturally at least in traces; beyond that they must be synthesised.",
+    "strategy": "decompose",
     "source": "Standard periodic table classification"
   },
   {
@@ -3575,6 +3999,7 @@ var QUESTIONS = [
     "unit": "times",
     "answerValue": 100000,
     "decompositionHint": "pH is logarithmic - each unit is a factor of ten in hydrogen ion concentration, and the gap here is five units.",
+    "strategy": "chain-multiply",
     "source": "Definition of the pH scale"
   },
   {
@@ -3583,6 +4008,7 @@ var QUESTIONS = [
     "unit": "molecules",
     "answerValue": 4.6e+46,
     "decompositionHint": "The oceans hold about 1.4x10^21 kg of water. Convert to moles using 18 grams per mole, then multiply by Avogadro's number.",
+    "strategy": "molar",
     "source": "Derived from ocean mass and molar mass of water"
   },
   {
@@ -3591,6 +4017,7 @@ var QUESTIONS = [
     "unit": "molecules",
     "answerValue": 1.5e+25,
     "decompositionHint": "About 550 litres of oxygen consumed a day. Convert to moles via 22.4 litres per mole, then multiply by Avogadro's number.",
+    "strategy": "molar",
     "source": "Derived from resting oxygen consumption"
   },
   {
@@ -3599,6 +4026,7 @@ var QUESTIONS = [
     "unit": "crystals",
     "answerValue": 100000,
     "decompositionHint": "A teaspoon holds about 4 grams, and a crystal is roughly half a millimetre across weighing well under a milligram.",
+    "strategy": "decompose",
     "source": "Derived from crystal size and teaspoon volume"
   },
   {
@@ -3607,6 +4035,7 @@ var QUESTIONS = [
     "unit": "bubbles",
     "answerValue": 1000000,
     "decompositionHint": "Dissolved carbon dioxide comes out of solution at nucleation sites on the glass until the wine goes flat.",
+    "strategy": "decompose",
     "source": "Liger-Belair champagne physics research"
   },
   {
@@ -3615,6 +4044,7 @@ var QUESTIONS = [
     "unit": "litres",
     "answerValue": 15000,
     "decompositionHint": "Two cups a day at about 250 ml, across roughly 55 adult years.",
+    "strategy": "rate-time",
     "source": "Derived from typical consumption rates"
   },
   {
@@ -3623,6 +4053,7 @@ var QUESTIONS = [
     "unit": "eggs",
     "answerValue": 15000,
     "decompositionHint": "Around 200 a year in many countries, across about 75 years.",
+    "strategy": "rate-time",
     "source": "National egg consumption statistics"
   },
   {
@@ -3631,6 +4062,7 @@ var QUESTIONS = [
     "unit": "loaves",
     "answerValue": 3000,
     "decompositionHint": "Roughly 40 to 50 loaves a year in a bread eating country, across some 70 years.",
+    "strategy": "rate-time",
     "source": "National bread consumption statistics"
   },
   {
@@ -3639,6 +4071,7 @@ var QUESTIONS = [
     "unit": "kilocalories",
     "answerValue": 60000000,
     "decompositionHint": "About 2,200 a day across roughly 29,000 days.",
+    "strategy": "energy-balance",
     "source": "Derived from daily energy intake"
   },
   {
@@ -3648,6 +4081,7 @@ var QUESTIONS = [
     "unit": "pizzas",
     "answerValue": 2500000000,
     "decompositionHint": "About 59 million people eating on the order of forty a year each, counting both restaurant and frozen.",
+    "strategy": "rate-time",
     "source": "Italian food industry consumption estimates"
   },
   {
@@ -3656,6 +4090,7 @@ var QUESTIONS = [
     "unit": "ping pong balls",
     "answerValue": 10000000,
     "decompositionHint": "The bus interior is roughly 100 cubic metres. A ball is 40 mm across, so about 6.4x10^-5 cubic metres before allowing for 26% empty space in packing.",
+    "strategy": "volume-packing",
     "source": "Classic interview Fermi problem"
   },
   {
@@ -3664,6 +4099,7 @@ var QUESTIONS = [
     "unit": "tennis balls",
     "answerValue": 40000,
     "decompositionHint": "Perhaps 3 cubic metres of usable interior, and a tennis ball occupies about 1.5x10^-4 cubic metres allowing for packing gaps.",
+    "strategy": "volume-packing",
     "source": "Classic interview Fermi problem"
   },
   {
@@ -3672,6 +4108,7 @@ var QUESTIONS = [
     "unit": "coins",
     "answerValue": 40000000,
     "decompositionHint": "A room of maybe 35 cubic metres, and a penny occupies roughly a cubic centimetre once stacking gaps are allowed for.",
+    "strategy": "volume-packing",
     "source": "Derived from coin dimensions and room volume"
   },
   {
@@ -3680,6 +4117,7 @@ var QUESTIONS = [
     "unit": "hairs",
     "answerValue": 500000000,
     "decompositionHint": "Perhaps 3,000 haircuts a year, each removing a fraction of the roughly 100,000 hairs on a head - but every hair on the head gets cut each time.",
+    "strategy": "rate-time",
     "source": "Derived from haircut volume and hair count"
   },
   {
@@ -3688,6 +4126,7 @@ var QUESTIONS = [
     "unit": "breaths",
     "answerValue": 300000,
     "decompositionHint": "Around 200 people breathing roughly 14 times a minute for two hours.",
+    "strategy": "rate-time",
     "source": "Derived from audience size and respiratory rate"
   },
   {
@@ -3696,6 +4135,7 @@ var QUESTIONS = [
     "unit": "words",
     "answerValue": 3000000000,
     "decompositionHint": "Speech runs at roughly 150 words a minute, and people are exposed to conversation, media and background talk for several hours a day.",
+    "strategy": "rate-time",
     "source": "Derived from speech rate and daily exposure"
   },
   {
@@ -3704,6 +4144,7 @@ var QUESTIONS = [
     "unit": "keystrokes",
     "answerValue": 550000,
     "decompositionHint": "About 90,000 words at roughly five letters plus a space each, before counting the deleting and rewriting.",
+    "strategy": "decompose",
     "source": "Derived from novel length and word length"
   },
   {
@@ -3712,6 +4153,7 @@ var QUESTIONS = [
     "unit": "grains",
     "answerValue": 300000,
     "decompositionHint": "Perhaps 100 grams of salt, and a single grain weighs around 0.3 milligrams.",
+    "strategy": "divide-total",
     "source": "Derived from grain mass and shaker capacity"
   },
   {
@@ -3720,6 +4162,7 @@ var QUESTIONS = [
     "unit": "sheets",
     "answerValue": 20000,
     "decompositionHint": "Each drawer holds roughly 60 cm of packed paper, and 500 sheets make a stack about 5 cm thick.",
+    "strategy": "volume-packing",
     "source": "Derived from paper thickness and drawer dimensions"
   },
   {
@@ -3728,6 +4171,7 @@ var QUESTIONS = [
     "unit": "cups",
     "answerValue": 600,
     "decompositionHint": "A bath holds around 150 litres and a cup is roughly 250 millilitres.",
+    "strategy": "decompose",
     "source": "Direct unit conversion"
   },
   {
@@ -3737,6 +4181,7 @@ var QUESTIONS = [
     "unit": "banknotes",
     "answerValue": 7000000000,
     "decompositionHint": "Most replace worn notes rather than expanding the supply. A one dollar bill lasts under seven years in circulation.",
+    "strategy": "decompose",
     "source": "US Bureau of Engraving and Printing production figures"
   },
   {
@@ -3746,6 +4191,7 @@ var QUESTIONS = [
     "unit": "coins",
     "answerValue": 150000000000,
     "decompositionHint": "Hundreds of coins per person, most sitting unused in jars and drawers rather than actually circulating.",
+    "strategy": "population-rate",
     "source": "US Mint circulating coinage estimates"
   },
   {
@@ -3755,6 +4201,7 @@ var QUESTIONS = [
     "unit": "transactions",
     "answerValue": 1500000000,
     "decompositionHint": "Several billion cards in circulation, each used on the order of once every day or two.",
+    "strategy": "decompose",
     "source": "Payment network transaction volumes"
   },
   {
@@ -3764,6 +4211,7 @@ var QUESTIONS = [
     "unit": "withdrawals",
     "answerValue": 80000000000,
     "decompositionHint": "About 3 million machines each dispensing on the order of seventy times a day.",
+    "strategy": "rate-time",
     "source": "ATM industry transaction statistics"
   },
   {
@@ -3772,6 +4220,7 @@ var QUESTIONS = [
     "unit": "bitcoin",
     "answerValue": 21000000,
     "decompositionHint": "The supply cap is fixed in the protocol, approached asymptotically as block rewards halve every four years.",
+    "strategy": "decompose",
     "source": "Bitcoin protocol supply schedule"
   },
   {
@@ -3781,6 +4230,7 @@ var QUESTIONS = [
     "unit": "cents",
     "answerValue": 25,
     "decompositionHint": "Prices have risen roughly eightfold since, tracking general inflation rather than anything specific to bread.",
+    "strategy": "decompose",
     "source": "US Bureau of Labor Statistics historical price data"
   },
   {
@@ -3790,6 +4240,7 @@ var QUESTIONS = [
     "unit": "US dollars",
     "answerValue": 420000,
     "decompositionHint": "Roughly five times median household income, up from about three times in the 1980s.",
+    "strategy": "chain-multiply",
     "source": "US existing home sales price data"
   },
   {
@@ -3799,6 +4250,7 @@ var QUESTIONS = [
     "unit": "US dollars",
     "answerValue": 1000000000000,
     "decompositionHint": "Roughly 1% of world GDP, and now more than two thirds digital.",
+    "strategy": "decompose",
     "source": "Global advertising expenditure forecasts"
   },
   {
@@ -3808,6 +4260,7 @@ var QUESTIONS = [
     "unit": "US dollars",
     "answerValue": 7000000000000,
     "decompositionHint": "Around 7% of world GDP, split roughly evenly between life and non-life cover.",
+    "strategy": "decompose",
     "source": "Swiss Re sigma insurance market reports"
   },
   {
@@ -3817,6 +4270,7 @@ var QUESTIONS = [
     "unit": "people",
     "answerValue": 3400000000,
     "decompositionHint": "Out of about 5.5 billion of working age, with participation rates around 60%.",
+    "strategy": "decompose",
     "source": "ILO global employment estimates"
   },
   {
@@ -3826,6 +4280,7 @@ var QUESTIONS = [
     "unit": "people",
     "answerValue": 850000000,
     "decompositionHint": "About a quarter of the global workforce, down from well over half in 1990 and near universal before industrialisation.",
+    "strategy": "decompose",
     "source": "ILO sectoral employment data"
   },
   {
@@ -3835,6 +4290,7 @@ var QUESTIONS = [
     "unit": "developers",
     "answerValue": 28000000,
     "decompositionHint": "Roughly one in every 120 workers, concentrated heavily in a handful of countries.",
+    "strategy": "population-rate",
     "source": "Developer population surveys"
   },
   {
@@ -3843,6 +4299,7 @@ var QUESTIONS = [
     "unit": "hours",
     "answerValue": 80000,
     "decompositionHint": "About 1,800 hours a year across roughly 45 working years.",
+    "strategy": "rate-time",
     "source": "Derived from annual working hours"
   },
   {
@@ -3852,6 +4309,7 @@ var QUESTIONS = [
     "unit": "enterprises",
     "answerValue": 3000000,
     "decompositionHint": "Counting registered industrial firms above a revenue threshold; including tiny workshops would multiply this several times.",
+    "strategy": "chain-multiply",
     "source": "China National Bureau of Statistics industrial surveys"
   },
   {
@@ -3861,6 +4319,7 @@ var QUESTIONS = [
     "unit": "meetings",
     "answerValue": 1000000000,
     "decompositionHint": "Hundreds of millions of office workers averaging a few meetings a day between them.",
+    "strategy": "rate-time",
     "source": "Order-of-magnitude estimate from workforce and meeting frequency"
   },
   {
@@ -3870,6 +4329,7 @@ var QUESTIONS = [
     "unit": "instructions",
     "answerValue": 50000000000,
     "decompositionHint": "Several billion cycles a second, several instructions per cycle, across several cores.",
+    "strategy": "rate-time",
     "source": "Typical desktop CPU throughput figures"
   },
   {
@@ -3879,6 +4339,7 @@ var QUESTIONS = [
     "unit": "transistors",
     "answerValue": 200000000,
     "decompositionHint": "Around 200 million per square millimetre at the leading nodes, up from about a million twenty years ago.",
+    "strategy": "volume-packing",
     "source": "Semiconductor process density figures"
   },
   {
@@ -3888,6 +4349,7 @@ var QUESTIONS = [
     "unit": "bytes",
     "answerValue": 2500000,
     "decompositionHint": "Images and scripts dominate. The median page has grown roughly tenfold since 2010.",
+    "strategy": "decompose",
     "source": "HTTP Archive page weight reports"
   },
   {
@@ -3897,6 +4359,7 @@ var QUESTIONS = [
     "unit": "packets",
     "answerValue": 10000000000000,
     "decompositionHint": "Global traffic of several hundred terabits a second divided by a typical packet of around 1,000 bytes.",
+    "strategy": "divide-total",
     "source": "Derived from global traffic estimates and packet size"
   },
   {
@@ -3906,6 +4369,7 @@ var QUESTIONS = [
     "unit": "lines of code",
     "answerValue": 100000000,
     "decompositionHint": "More than a passenger aircraft, spread across a hundred or more separate control units.",
+    "strategy": "decompose",
     "source": "Automotive software complexity estimates"
   },
   {
@@ -3915,6 +4379,7 @@ var QUESTIONS = [
     "unit": "bytes",
     "answerValue": 1.5e+21,
     "decompositionHint": "Well over a zettabyte, dominated by hard drives for data centres rather than consumer devices.",
+    "strategy": "decompose",
     "source": "Storage industry shipment reports"
   },
   {
@@ -3923,6 +4388,7 @@ var QUESTIONS = [
     "unit": "bits",
     "answerValue": 85000000,
     "decompositionHint": "44,100 samples a second, 16 bits each, two channels, times 60 seconds.",
+    "strategy": "unit-conversion",
     "source": "CD audio specification"
   },
   {
@@ -3931,6 +4397,7 @@ var QUESTIONS = [
     "unit": "steps",
     "answerValue": 8000,
     "decompositionHint": "The famous 10,000 figure came from a 1960s Japanese pedometer marketing campaign; research suggests benefits plateau somewhat below it.",
+    "strategy": "rate-time",
     "source": "Physical activity epidemiology research"
   },
   {
@@ -3940,6 +4407,7 @@ var QUESTIONS = [
     "unit": "adults",
     "answerValue": 590000000,
     "decompositionHint": "Roughly one adult in nine, and the figure has more than tripled since 2000.",
+    "strategy": "population-rate",
     "source": "International Diabetes Federation atlas"
   },
   {
@@ -3949,6 +4417,7 @@ var QUESTIONS = [
     "unit": "deaths",
     "answerValue": 62000000,
     "decompositionHint": "About 8 billion people with a crude death rate near 7.7 per thousand. Births exceed this by roughly 70 million, which is the annual population growth.",
+    "strategy": "population-rate",
     "source": "UN World Population Prospects"
   },
   {
@@ -3958,6 +4427,7 @@ var QUESTIONS = [
     "unit": "percent",
     "answerValue": 32,
     "decompositionHint": "Roughly 19 million cardiovascular deaths against about 62 million deaths from all causes. It is comfortably the leading cause worldwide, ahead of cancer.",
+    "strategy": "decompose",
     "source": "WHO global health estimates"
   },
   {
@@ -3967,6 +4437,7 @@ var QUESTIONS = [
     "unit": "courses",
     "answerValue": 40000000000,
     "decompositionHint": "Measured in defined daily doses this runs to tens of billions, unevenly distributed and heavily overused in some countries.",
+    "strategy": "decompose",
     "source": "Global antibiotic consumption surveillance"
   },
   {
@@ -3976,6 +4447,7 @@ var QUESTIONS = [
     "unit": "people",
     "answerValue": 4000000000,
     "decompositionHint": "Around half the world needs vision correction, though a substantial share of those who need it go without.",
+    "strategy": "decompose",
     "source": "Vision impairment prevalence studies"
   },
   {
@@ -3984,6 +4456,7 @@ var QUESTIONS = [
     "unit": "minutes",
     "answerValue": 150,
     "decompositionHint": "Usually framed as thirty minutes on five days, or half that if the activity is vigorous.",
+    "strategy": "decompose",
     "source": "WHO physical activity guidelines"
   },
   {
@@ -3992,6 +4465,7 @@ var QUESTIONS = [
     "unit": "days",
     "answerValue": 11.6,
     "decompositionHint": "86,400 seconds in a day. The contrast with a billion seconds is the point of the question.",
+    "strategy": "unit-conversion",
     "source": "Direct unit conversion"
   },
   {
@@ -4000,6 +4474,7 @@ var QUESTIONS = [
     "unit": "years",
     "answerValue": 31.7,
     "decompositionHint": "About 3.15x10^7 seconds a year. A million seconds is under a fortnight; a billion is most of a career.",
+    "strategy": "rate-time",
     "source": "Direct unit conversion"
   },
   {
@@ -4008,6 +4483,7 @@ var QUESTIONS = [
     "unit": "years",
     "answerValue": 31700,
     "decompositionHint": "A thousand times a billion seconds, taking you back well before the end of the last ice age.",
+    "strategy": "chain-multiply",
     "source": "Direct unit conversion"
   },
   {
@@ -4016,6 +4492,7 @@ var QUESTIONS = [
     "unit": "folds",
     "answerValue": 42,
     "decompositionHint": "Each fold doubles the thickness. Starting at 0.1 mm, ask what power of two exceeds 384,400 km.",
+    "strategy": "exponential",
     "source": "Classic exponential growth problem"
   },
   {
@@ -4024,6 +4501,7 @@ var QUESTIONS = [
     "unit": "grains",
     "answerValue": 18000000000000000000,
     "decompositionHint": "Two to the sixty-fourth minus one. More rice than the world has produced in all of history.",
+    "strategy": "decompose",
     "source": "The classic wheat and chessboard problem"
   },
   {
@@ -4032,6 +4510,7 @@ var QUESTIONS = [
     "unit": "metres",
     "answerValue": 0.3,
     "decompositionHint": "The Moon sits about thirty Earth diameters away, so scale that ratio onto a marble roughly a centimetre across.",
+    "strategy": "anchor-scale",
     "source": "Derived from the Earth-Moon distance ratio"
   },
   {
@@ -4040,6 +4519,7 @@ var QUESTIONS = [
     "unit": "people",
     "answerValue": 220000000,
     "decompositionHint": "384,400 km divided by an average height of about 1.7 metres.",
+    "strategy": "divide-total",
     "source": "Direct unit conversion"
   },
   {
@@ -4048,6 +4528,7 @@ var QUESTIONS = [
     "unit": "kilometres",
     "answerValue": 1,
     "decompositionHint": "A person occupies roughly 0.1 cubic metres when packed. Eight billion of those is 8x10^8 cubic metres - a cube under a kilometre on each side.",
+    "strategy": "population-rate",
     "source": "Derived from human body volume and world population"
   },
   {
@@ -4056,6 +4537,7 @@ var QUESTIONS = [
     "unit": "years",
     "answerValue": 95,
     "decompositionHint": "At roughly one number a second without sleeping - and later numbers take much longer to say than early ones.",
+    "strategy": "rate-time",
     "source": "Derived from counting rate and a billion seconds"
   },
   {
@@ -4064,6 +4546,7 @@ var QUESTIONS = [
     "unit": "folds",
     "answerValue": 51,
     "decompositionHint": "150 million kilometres from a 0.1 mm start. Each doubling adds a power of two, and 2^51 times 0.1 mm is about right.",
+    "strategy": "exponential",
     "source": "Classic exponential growth problem"
   },
   {
@@ -4072,6 +4555,7 @@ var QUESTIONS = [
     "unit": "atoms",
     "answerValue": 60000000000000000000,
     "decompositionHint": "A 0.5 mm grain of quartz weighs about 0.3 milligrams. Divide by the molar mass of silicon dioxide, multiply by Avogadro's number, then by three atoms per unit.",
+    "strategy": "molar",
     "source": "Standard chemistry calculation"
   },
   {
@@ -4080,6 +4564,7 @@ var QUESTIONS = [
     "unit": "times",
     "answerValue": 185,
     "decompositionHint": "About 3.7x10^13 cells against roughly 2x10^11 stars.",
+    "strategy": "chain-multiply",
     "source": "Derived from human cell count and Milky Way star count"
   },
   {
@@ -4088,6 +4573,7 @@ var QUESTIONS = [
     "unit": "hours",
     "answerValue": 460000,
     "decompositionHint": "About 16 waking hours across roughly 29,000 days.",
+    "strategy": "stock-flow",
     "source": "Derived from lifespan and sleep duration"
   },
   {
@@ -4096,6 +4582,7 @@ var QUESTIONS = [
     "unit": "words",
     "answerValue": 500000000,
     "decompositionHint": "An hour a day at 250 words a minute across 60 years, plus everything read incidentally.",
+    "strategy": "rate-time",
     "source": "Derived from reading speed and daily reading time"
   },
   {
@@ -4104,6 +4591,7 @@ var QUESTIONS = [
     "unit": "times",
     "answerValue": 10,
     "decompositionHint": "Sand is estimated near 7.5x10^18 grains and stars near 10^22 to 10^24, so the ratio is large but the two are closer than the cliche suggests.",
+    "strategy": "chain-multiply",
     "source": "Derived from published sand and star estimates"
   },
   {
@@ -4112,6 +4600,7 @@ var QUESTIONS = [
     "unit": "breaths",
     "answerValue": 400,
     "decompositionHint": "A cubic metre is 1,000 litres and a breath is half a litre, but you can only draw down a few percent of the oxygen before it becomes unbreathable.",
+    "strategy": "volume-packing",
     "source": "Derived from tidal volume and usable oxygen fraction"
   },
   {
@@ -4121,6 +4610,7 @@ var QUESTIONS = [
     "unit": "trees per person",
     "answerValue": 375,
     "decompositionHint": "Roughly three trillion trees against eight billion people. The ratio has fallen by nearly half since the start of human civilisation.",
+    "strategy": "population-rate",
     "source": "Crowther et al. 2015 tree count divided by world population"
   },
   {
@@ -4129,6 +4619,7 @@ var QUESTIONS = [
     "unit": "ants per person",
     "answerValue": 2500000,
     "decompositionHint": "About 2x10^16 ants against 8x10^9 people. Their combined mass rivals that of all wild birds and mammals together.",
+    "strategy": "population-rate",
     "source": "Schultheiss et al. 2022 ant estimate divided by world population"
   },
   {
@@ -4137,6 +4628,7 @@ var QUESTIONS = [
     "unit": "fraction",
     "answerValue": 0.024,
     "decompositionHint": "Around 12 million tonnes of ants against roughly 500 million tonnes of people. The old claim that ants outweigh us turns out to be wrong by a wide margin.",
+    "strategy": "decompose",
     "source": "Derived from published ant and human biomass estimates"
   },
   {
@@ -4145,6 +4637,7 @@ var QUESTIONS = [
     "unit": "raindrops",
     "answerValue": 4500000,
     "decompositionHint": "A bath holds about 150 litres and a typical raindrop is roughly 0.03 millilitres.",
+    "strategy": "decompose",
     "source": "Derived from bath volume and raindrop size"
   },
   {
@@ -4153,6 +4646,7 @@ var QUESTIONS = [
     "unit": "days",
     "answerValue": 333,
     "decompositionHint": "40,075 km at 5 km/h without stopping. Walking eight hours a day would take three times as long.",
+    "strategy": "rate-time",
     "source": "Derived from equatorial circumference and walking speed"
   },
   {
@@ -4162,6 +4656,7 @@ var QUESTIONS = [
     "unit": "US dollars",
     "answerValue": 400,
     "decompositionHint": "Around a dollar a day for basic staples in a low income country, several times that for a nutritionally adequate diet.",
+    "strategy": "rate-time",
     "source": "World Food Programme cost of diet analyses"
   },
   {
@@ -4170,6 +4665,7 @@ var QUESTIONS = [
     "unit": "litres",
     "answerValue": 60000,
     "decompositionHint": "Roughly two litres a day across some 29,000 days.",
+    "strategy": "rate-time",
     "source": "Derived from daily fluid intake"
   },
   {
@@ -4178,6 +4674,7 @@ var QUESTIONS = [
     "unit": "cubic metres",
     "answerValue": 300000,
     "decompositionHint": "About 11 cubic metres a day at rest, across roughly 29,000 days.",
+    "strategy": "volume-packing",
     "source": "Derived from tidal volume and respiratory rate"
   },
   {
@@ -4186,6 +4683,7 @@ var QUESTIONS = [
     "unit": "cells",
     "answerValue": 100000000000000000,
     "decompositionHint": "A human of 70 kg has about 3.7x10^13 cells. A whale is roughly 2,000 times heavier and made of broadly similar tissue.",
+    "strategy": "chain-multiply",
     "source": "Scaled from human cell count by body mass"
   },
   {
@@ -4194,6 +4692,7 @@ var QUESTIONS = [
     "unit": "bacteria",
     "answerValue": 1e+30,
     "decompositionHint": "Most live in soil and in the deep subsurface rather than anywhere visible. They outweigh all animals combined.",
+    "strategy": "decompose",
     "source": "Whitman et al. 1998, PNAS - prokaryote abundance estimates"
   },
   {
@@ -4202,6 +4701,7 @@ var QUESTIONS = [
     "unit": "grains of sand",
     "answerValue": 7500000000000000000,
     "decompositionHint": "Estimate the world's beach and desert area, a depth of a few metres, and roughly 5x10^9 grains per cubic metre.",
+    "strategy": "area-density",
     "source": "Commonly cited estimate of around 7.5x10^18 grains"
   }
 ]

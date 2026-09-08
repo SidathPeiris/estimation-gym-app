@@ -20,6 +20,7 @@
   var ids = ["puzzle", "streak", "asof", "prompt", "guess-form", "guess-input", "guess-go",
              "error", "result", "band", "points", "guess-line", "actual-line",
              "decades-line", "share", "hint", "source",
+             "hint-toggle", "strategy", "strategy-label", "strategy-guidance", "approach",
              "history", "history-toggle", "history-chev", "history-summary",
              "history-body", "history-list", "history-more",
              "stats", "stats-toggle", "chev", "stats-summary", "stats-body",
@@ -32,6 +33,7 @@
   var statsOpen = false
   var historyOpen = false
   var historyLimit = HISTORY_PAGE   // 0 means show every day played
+  var hintShown = false
 
   function setText(node, value) { node.textContent = value }
 
@@ -80,7 +82,8 @@
 
       var band = document.createElement("span")
       band.className = "history-band tone-" + row.tone
-      band.textContent = row.band
+      band.textContent = row.band + (row.assisted ? " ·" : "")
+      if (row.assisted) band.title = "Hint used - scored half points"
 
       // Guess against the value it was scored against, then the distance. The
       // two halves are separately unbreakable so a very wide value wraps
@@ -107,7 +110,7 @@
   }
 
   function render() {
-    var vm = viewModel(Model, state, question, today, historyLimit)
+    var vm = viewModel(Model, state, question, today, historyLimit, hintShown)
 
     setText(el.puzzle, vm.dateLabel)
     setText(el.streak, vm.streakLabel)
@@ -130,7 +133,16 @@
       setText(el["decades-line"], vm.result.decadesLine)
     }
 
+    show(el["hint-toggle"], vm.hintAvailable)
+    show(el.strategy, vm.hintRevealed)
+    if (vm.hintRevealed) {
+      setText(el["strategy-label"], vm.strategyLabel)
+      setText(el["strategy-guidance"], vm.strategyGuidance)
+    }
+
     show(el.share, vm.answered)
+    show(el.approach, Boolean(vm.answered && vm.strategyLabel))
+    if (vm.strategyLabel) setText(el.approach, vm.strategyLabel)
     show(el.hint, Boolean(vm.hint))
     if (vm.hint) setText(el.hint, vm.hint)
     show(el.source, Boolean(vm.source))
@@ -166,7 +178,7 @@
       return
     }
     show(el.error, false)
-    state = Model.recordAnswer(state, today, check.value, question.answerValue)
+    state = Model.recordAnswer(state, today, check.value, question.answerValue, hintShown)
     if (!saveState(state, window.localStorage)) {
       setText(el.error, "Scored, but your streak could not be saved on this device")
       show(el.error, true)
@@ -175,6 +187,12 @@
   }
 
   el["guess-form"].addEventListener("submit", submit)
+
+  el["hint-toggle"].addEventListener("click", function () {
+    hintShown = true
+    render()
+    el["guess-input"].focus()
+  })
 
   function flash(button, message) {
     var original = button.dataset.label || button.textContent

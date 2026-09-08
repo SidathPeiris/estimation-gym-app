@@ -28,11 +28,13 @@ function resultView(Model, entry, question) {
   // before an update must still be shown against the value it was scored
   // against rather than whatever now occupies that slot.
   var actual = typeof entry.answerValue === "number" ? entry.answerValue : question.answerValue
+  var points = Model.pointsForBand(entry.band, entry.assisted)
   return {
     band: entry.band,
     tone: toneForBand(entry.band),
-    points: Model.pointsForBand(entry.band),
-    pointsLabel: "+" + Model.pointsForBand(entry.band) + " pts",
+    assisted: !!entry.assisted,
+    points: points,
+    pointsLabel: "+" + points + " pts" + (entry.assisted ? " · hint" : ""),
     guessLine: "Your guess: " + Model.formatCompact(entry.guess) + " " + question.unit,
     actualLine: "Actual: " + Model.formatCompact(actual) + " " + question.unit,
     decadesLine: "Off by " + (decades !== null && decades !== undefined ? decades.toFixed(2) : "?") +
@@ -77,7 +79,8 @@ function historyView(Model, state, limit) {
       dateLabel: Model.formatDay(item.day),
       band: entry.band,
       tone: toneForBand(entry.band),
-      points: Model.pointsForBand(entry.band),
+      assisted: !!entry.assisted,
+      points: Model.pointsForBand(entry.band, entry.assisted),
       guessLabel: Model.formatCompact(entry.guess),
       actualLabel: scoredAgainst !== null ? Model.formatCompact(scoredAgainst) : "?",
       decadesLabel: (decades !== null && decades !== undefined) ? decades.toFixed(2) : "?"
@@ -106,7 +109,8 @@ function statsView(Model, stats) {
     totalPoints: stats.totalPoints,
     summary: stats.played + " played · " + Model.formatCompact(stats.totalPoints) + " pts",
     footer: "Best streak " + stats.bestStreak + " · median " +
-      (stats.medianDecades !== null ? stats.medianDecades.toFixed(2) : "–") + " decades off",
+      (stats.medianDecades !== null ? stats.medianDecades.toFixed(2) : "–") + " decades off" +
+      (stats.assisted > 0 ? " · " + stats.assisted + " with a hint" : ""),
     // Wording comes from the Model so the app and the Omarchy widget describe
     // a lean identically. Null until there are enough days to mean anything.
     calibration: Model.calibrationLabel(stats),
@@ -114,11 +118,14 @@ function statsView(Model, stats) {
   }
 }
 
-function viewModel(Model, state, question, day, historyLimit) {
+// `hintShown` is the live UI flag for today, not persisted state: once the day
+// is answered the entry's own `assisted` flag is what counts.
+function viewModel(Model, state, question, day, historyLimit, hintShown) {
   var answered = Model.hasAnsweredDay(state, day)
   var entry = answered ? state.history[String(day)] : null
   var stats = Model.computeStats(state)
   var limit = historyLimit === undefined ? HISTORY_PAGE : historyLimit
+  var strategy = question ? Model.strategyFor(question) : null
 
   return {
     // The calendar date rather than the day number: everyone playing on a given
@@ -134,6 +141,14 @@ function viewModel(Model, state, question, day, historyLimit) {
     placeholder: question ? "Guess (" + question.unit + ")" : "",
     answered: answered,
     result: question ? resultView(Model, entry, question) : null,
+    // The archetype names the shape of the problem. It is offered before
+    // answering (at half points) and shown afterwards regardless, because the
+    // shape is the part that transfers to the next question.
+    strategyLabel: strategy ? "Approach: " + strategy.label : null,
+    strategyGuidance: strategy ? strategy.guidance : null,
+    // Offer the button only while it can still be taken.
+    hintAvailable: !!(strategy && !answered && !hintShown),
+    hintRevealed: !!(strategy && !answered && hintShown),
     hint: question && answered ? "How to think about it: " + question.decompositionHint : null,
     source: question && answered && question.source ? "Source: " + question.source : null,
     stats: statsView(Model, stats),
@@ -155,6 +170,8 @@ function shareText(Model, state, question, day, url) {
   if (decades !== null && decades !== undefined) {
     second += " · " + decades.toFixed(2) + " decades off"
   }
+
+  if (entry.assisted) second += " · hint"
 
   var lines = ["Estimation Gym · " + Model.formatDay(day), second, "Streak " + state.streak]
   if (url) lines.push("", url)

@@ -100,17 +100,19 @@ function bandForDistance(distanceDecades) {
 
 var BAND_POINTS = { Bullseye: 100, Close: 70, Ballpark: 40, Off: 10 }
 
-function pointsForBand(band) {
-  return BAND_POINTS[band] || 0
+function pointsForBand(band, assisted) {
+  var base = BAND_POINTS[band] || 0
+  return assisted ? Math.round(base * HINT_MULTIPLIER) : base
 }
 
-function scoreGuess(guess, answerValue) {
+function scoreGuess(guess, answerValue, assisted) {
   var distanceDecades = log10Distance(guess, answerValue)
   var band = bandForDistance(distanceDecades)
   return {
     distanceDecades: distanceDecades,
     band: band,
-    points: BAND_POINTS[band]
+    points: pointsForBand(band, assisted),
+    assisted: !!assisted
   }
 }
 
@@ -122,10 +124,10 @@ function emptyState() {
 
 // Applying the same day's result twice (e.g. a shell restart re-triggering a
 // stray submit) must not double-count the streak, so this is idempotent per day.
-function recordAnswer(state, dayIdx, guess, answerValue) {
+function recordAnswer(state, dayIdx, guess, answerValue, assisted) {
   if (state.history && state.history[String(dayIdx)]) return state
 
-  var result = scoreGuess(guess, answerValue)
+  var result = scoreGuess(guess, answerValue, assisted)
   var isConsecutive = dayIdx === state.lastCompletedDay + 1
   var newStreak = result.band === "Off" ? 0 : (isConsecutive ? state.streak + 1 : 1)
 
@@ -137,6 +139,7 @@ function recordAnswer(state, dayIdx, guess, answerValue) {
     band: result.band,
     distanceDecades: result.distanceDecades
   }
+  if (assisted) newHistory[String(dayIdx)].assisted = true
 
   return {
     history: newHistory,
@@ -166,6 +169,7 @@ function computeStats(state) {
   for (var b = 0; b < BANDS.length; b++) counts[BANDS[b]] = 0
 
   var played = 0
+  var assisted = 0
   var totalPoints = 0
   var distances = []
   var signedErrors = []
@@ -175,18 +179,22 @@ function computeStats(state) {
     if (!entry || BANDS.indexOf(entry.band) < 0) continue
     played++
     counts[entry.band]++
-    totalPoints += pointsForBand(entry.band)
+    totalPoints += pointsForBand(entry.band, entry.assisted)
+    if (entry.assisted) assisted++
     if (typeof entry.distanceDecades === "number" && isFinite(entry.distanceDecades)) {
       distances.push(entry.distanceDecades)
     }
     // Recomputed from the stored guess and answer rather than persisted, so
     // history written before calibration existed still contributes.
-    var signed = signedLog10Error(entry.guess, entry.answerValue)
-    if (signed !== null) signedErrors.push(signed)
+    if (!entry.assisted) {
+      var signed = signedLog10Error(entry.guess, entry.answerValue)
+      if (signed !== null) signedErrors.push(signed)
+    }
   }
 
   return {
     played: played,
+    assisted: assisted,
     counts: counts,
     totalPoints: totalPoints,
     medianDecades: medianOf(distances),
@@ -235,6 +243,91 @@ function formatCompact(value) {
   return parts.join(".")
 }
 
+// Reasoning archetypes.
+//
+// Every question carries a `strategy` naming the shape of the reasoning it
+// wants. The guidance is written once per archetype rather than once per
+// question: a dozen texts to keep correct instead of five hundred, and what it
+// teaches transfers - recognising that a problem is population-times-rate helps
+// with every such problem, not just today's.
+//
+// These deliberately never mention the answer. They say how to think, so a
+// player who takes the hint still has to do the estimating.
+var STRATEGIES = {
+  "decompose": {
+    label: "Break it into factors",
+    guidance: "Split the quantity into two or three factors you can each guess within a factor of ten, then multiply. A chain of rough guesses usually lands closer than one bold guess at the answer, because errors in opposite directions cancel."
+  },
+  "chain-multiply": {
+    label: "Multiply a chain of estimates",
+    guidance: "This is a product of a few independent quantities. Write the chain out in units first and check that they cancel down to the unit you are asked for, then put a rough number on each link."
+  },
+  "rate-time": {
+    label: "Rate times time",
+    guidance: "Something happens at a steady rate over a span of time. Estimate the rate in whichever unit you have real intuition for - per day is usually easiest - then convert the span into that same unit and multiply."
+  },
+  "population-rate": {
+    label: "People times per-person rate",
+    guidance: "Start from how many people are involved, then how often each one does the thing. The population is usually the easy half; the per-person rate is where the uncertainty really sits, so spend your thinking there."
+  },
+  "divide-total": {
+    label: "Divide a total by one unit",
+    guidance: "Estimate a total you can actually picture - a mass, a volume, a length, a budget - then divide by the size of a single unit. The total is often much better known than the count you are being asked for."
+  },
+  "area-density": {
+    label: "Area times density",
+    guidance: "Estimate how much area or volume is involved and how densely the thing is packed into it, then multiply. A handful of densities per square metre or per litre are worth memorising; they transfer to a lot of questions."
+  },
+  "volume-packing": {
+    label: "Container volume over item volume",
+    guidance: "Work out the volume of the container and the volume of one item, then divide. Packing is never perfect - loose spheres waste roughly a quarter of the space - but that correction is small next to an order of magnitude."
+  },
+  "unit-conversion": {
+    label: "Chain the conversion factors",
+    guidance: "No real-world guessing is needed here, only conversion factors chained together. Lay them out so the units cancel, and track the powers of ten separately from the leading digits so you do not lose one."
+  },
+  "stock-flow": {
+    label: "Stock equals flow times lifetime",
+    guidance: "There is a standing stock and a rate at which it turns over. Stock equals flow times lifetime: if you know how many are made each year and how long each one lasts, you know roughly how many exist right now."
+  },
+  "energy-balance": {
+    label: "Energy per unit times units",
+    guidance: "Find the energy per unit - per kilogram, per person, per event - and multiply by how many units there are. Checking the result against something familiar, like a home using about 10 kWh a day, catches most magnitude slips."
+  },
+  "molar": {
+    label: "Mass to moles to molecules",
+    guidance: "Go from mass to moles to molecules. Divide the mass in grams by the molar mass, then multiply by Avogadro's number, about 6x10^23. Nearly every 'how many atoms' question is this same three-step path."
+  },
+  "exponential": {
+    label: "Count the doublings",
+    guidance: "Something is doubling or halving repeatedly, so count the doublings rather than the units. Ten doublings is very close to a factor of a thousand, which is the shortcut worth committing to memory."
+  },
+  "combinatorial": {
+    label: "Count the arrangements",
+    guidance: "You are counting arrangements, not measuring anything. Work out how many choices there are at each position and multiply them together. These numbers grow astronomically fast, so expect an answer far larger than it feels."
+  },
+  "anchor-scale": {
+    label: "Anchor, then scale",
+    guidance: "Anchor on something whose size you already know, then scale from it. Asking how many times bigger or smaller the target is than your anchor is far easier to judge than reaching for the absolute quantity."
+  },
+  "recall-sanity": {
+    label: "Recall, then sanity-check",
+    guidance: "This one leans on a figure you have probably met before. Pull up whatever number you half-remember, then check its magnitude against a related quantity you are confident about before committing to it."
+  }
+}
+
+// Falls back rather than returning nothing: a question with an unrecognised or
+// missing strategy still gets honest generic advice.
+function strategyFor(question) {
+  var key = question && question.strategy
+  return STRATEGIES[key] || STRATEGIES["decompose"]
+}
+
+// Taking the hint halves the points. It deliberately does not touch the streak:
+// the streak measures showing up daily, and punishing someone for wanting to
+// learn the method would be exactly the wrong incentive.
+var HINT_MULTIPLIER = 0.5
+
 // The public surface, declared once. Under node this is the module export;
 // loaded as a plain script it is a global. Callers therefore get the same
 // object either way, so a function added here cannot be missing on one surface
@@ -259,6 +352,9 @@ var ModelAPI = {
   calibrationLabel: calibrationLabel,
   CALIBRATION_MIN_PLAYS: CALIBRATION_MIN_PLAYS,
   formatCompact: formatCompact,
+  STRATEGIES: STRATEGIES,
+  strategyFor: strategyFor,
+  HINT_MULTIPLIER: HINT_MULTIPLIER,
   BANDS: BANDS,
   BAND_POINTS: BAND_POINTS
 }

@@ -185,6 +185,50 @@ const noQuestion = P.viewModel(Model, Model.emptyState(), null, 7)
 assert.equal(noQuestion.prompt, "No question available")
 assert.equal(noQuestion.result, null)
 
+// --- hints ---
+// The test question carries no strategy, so it exercises the fallback path a
+// contributed question would hit before it is tagged.
+const hintFresh = Model.emptyState()
+const hintOffered = P.viewModel(Model, hintFresh, question, 1, undefined, false)
+assert.equal(hintOffered.hintAvailable, true, "an unanswered day offers the hint")
+assert.equal(hintOffered.hintRevealed, false)
+assert.ok(hintOffered.strategyGuidance.length > 60, "there is guidance behind the offer")
+
+const hintRevealedVm = P.viewModel(Model, hintFresh, question, 1, undefined, true)
+assert.equal(hintRevealedVm.hintAvailable, false, "the offer is withdrawn once taken")
+assert.equal(hintRevealedVm.hintRevealed, true)
+
+// Once the day is answered neither the offer nor the reveal applies; the
+// archetype label is shown regardless, because the shape is what transfers.
+const hintDone = Model.recordAnswer(hintFresh, 1, 100, 100)
+const afterView = P.viewModel(Model, hintDone, question, 1, undefined, true)
+assert.equal(afterView.hintAvailable, false)
+assert.equal(afterView.hintRevealed, false)
+assert.ok(afterView.strategyLabel.startsWith("Approach: "))
+
+// A hinted day scores half and says so, in the result and in history.
+const aided = Model.recordAnswer(Model.emptyState(), 1, 100, 100, true)
+const aidedView = P.viewModel(Model, aided, question, 1)
+assert.equal(aidedView.result.points, 50)
+assert.equal(aidedView.result.assisted, true)
+assert.ok(aidedView.result.pointsLabel.includes("hint"))
+assert.equal(aidedView.history.rows[0].assisted, true)
+assert.equal(aidedView.history.rows[0].points, 50)
+
+const unaidedView = P.viewModel(Model, hintDone, question, 1)
+assert.equal(unaidedView.result.points, 100)
+assert.equal(unaidedView.result.assisted, false)
+assert.ok(!unaidedView.result.pointsLabel.includes("hint"))
+assert.equal(unaidedView.history.rows[0].assisted, false)
+
+// A shared result must not quietly pass off a hinted score as unaided.
+assert.ok(P.shareText(Model, aided, question, 1, "").includes("hint"))
+assert.ok(!P.shareText(Model, hintDone, question, 1, "").includes("hint"))
+
+// Stats mention hinted days only when there are some.
+assert.ok(P.viewModel(Model, aided, question, 1).stats.footer.includes("1 with a hint"))
+assert.ok(!P.viewModel(Model, hintDone, question, 1).stats.footer.includes("hint"))
+
 // --- every shipped question renders without throwing ---
 for (const q of QUESTIONS) {
   let s = Model.recordAnswer(Model.emptyState(), 1, q.answerValue, q.answerValue)

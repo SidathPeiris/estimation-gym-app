@@ -10,8 +10,8 @@ plugin repo and never edited here.
 
 ## Status
 
-Working single screen: today's puzzle, guess entry, scored result with points,
-and a collapsible lifetime stats panel. Ships a web manifest, icons and a
+Working single screen: today's puzzle, guess entry, an optional hint, scored
+result with points, and collapsible history and lifetime stats panels. Ships a web manifest, icons and a
 cache-first service worker, so it installs to the home screen and plays offline.
 
 Live at <https://sidathpeiris.github.io/estimation-gym-app/>. Offline play is
@@ -21,6 +21,30 @@ Note that `CacheStorage` cannot be exercised in headless Chrome — every call
 fails there with `UnknownError: Unexpected internal error` regardless of
 headless mode or sandbox flags. Offline changes therefore have to be checked on
 a real browser; an automated headless test will report a false failure.
+
+## Hints
+
+Stuck on a question, **Hint** names the *shape* of the problem and how to
+attack it — "stock equals flow times lifetime", "people times per-person rate",
+"mass to moles to molecules" — without saying anything about the answer, so you
+still have to do the estimating.
+
+Every question carries one of fifteen reasoning archetypes, and the guidance is
+written once per archetype in `Model.js` rather than once per question. That is
+both less to keep correct and more useful to learn: recognising that a problem
+is population-times-rate helps with every such problem, not just today's.
+
+Taking the hint:
+
+- **halves the day's points**, and the result and share text both say `· hint`
+  so a shared score stays honest;
+- **excludes the day from calibration**, since a hinted guess measures the hint
+  as much as it measures you;
+- **does not touch your streak.** The streak measures showing up daily, and
+  charging someone for wanting to learn the method would be exactly the wrong
+  incentive.
+
+The archetype is named on the result afterwards either way, hint or no hint.
 
 ## The Omarchy plugin
 
