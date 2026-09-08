@@ -1,5 +1,7 @@
 # Estimation Gym (app)
 
+[![app installs](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fabacus.jasoncameron.dev%2Fget%2Festimation-gym%2Fapp-installs&query=%24.value&label=app%20installs&color=blue&style=flat-square)](https://sidathpeiris.github.io/estimation-gym-app/)
+
 The daily Fermi-estimation puzzle from the
 [Omarchy bar widget](https://github.com/SidathPeiris/estimation-gym-omarchy),
 as an installable web app for the phone.
@@ -72,8 +74,8 @@ server. The stored JSON shape is identical to the widget's `state.json`, so a
 history blob can be moved across by hand if you ever want to.
 
 Your play history never leaves the device on either surface. The widget makes
-no network calls at all; this app makes one optional, anonymous request when it
-is installed, described below, and it is off by default.
+no network calls at all; this app makes one anonymous request when it is
+installed, described below, which feeds the counter badge at the top.
 
 ## Layout
 
@@ -122,14 +124,17 @@ https://sidathpeiris.github.io/estimation-gym-app/?reset=today
 Nothing about play is collected — not scores, not streaks, not answers — and
 there is no way to see who has the app or on what device.
 
-There is one optional exception: an anonymous count of installs. It is
-**disabled by default**, and while `INSTALL_PING_URL` in `app.js` is empty the
-app makes no outbound request whatsoever. Set it to a counter endpoint to turn
-it on:
+There is one exception: an anonymous count of installs, which is what the badge
+at the top of this README shows. It is a plain integer held by
+[Abacus](https://abacus.jasoncameron.dev), a no-account hit counter, and read
+back into a shields.io badge:
 
 ```js
-var INSTALL_PING_URL = "https://YOURCODE.goatcounter.com/count?p=/installed"
+var INSTALL_PING_URL = "https://abacus.jasoncameron.dev/hit/estimation-gym/app-installs"
 ```
+
+Setting `INSTALL_PING_URL` back to `""` disables it completely — with an empty
+endpoint the app makes no outbound request whatsoever.
 
 What it sends is a bare GET to that URL plus a cache-buster. No identifier, no
 history, no score, no query about the player at all. The only fact conveyed is
@@ -148,6 +153,15 @@ installs somebody actually opened rather than ones added and forgotten.
 Two things it cannot tell you. It counts **browser profiles, not people or
 devices** — one person with a phone and a laptop is two. And offline play never
 reports, which is rather the point of the app.
+
+Two caveats on the number itself, since it is displayed publicly. The counter
+has no authentication, so anyone who finds the endpoint can inflate it by
+requesting the URL; it is a marketing figure, not an audited one. And an Abacus
+key expires after roughly six months without traffic, so a long quiet spell
+would reset the badge to zero rather than hold the total.
+
+The admin key issued when the counter was created — which can reset or set the
+value — is deliberately **not** in this repo. It is in the project notes.
 
 ## Develop
 

@@ -285,7 +285,7 @@
   //
   // Disabled by default: with no endpoint configured this is a no-op and the
   // app makes no outbound request at all. Set INSTALL_PING_URL to switch it on.
-  var INSTALL_PING_URL = ""
+  var INSTALL_PING_URL = "https://abacus.jasoncameron.dev/hit/estimation-gym/app-installs"
   var INSTALL_PING_KEY = "estimation-gym-install-counted"
 
   // Two triggers, because no single one covers every platform. Chrome and the
