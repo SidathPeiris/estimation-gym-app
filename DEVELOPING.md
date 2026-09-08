@@ -172,9 +172,16 @@ stand-in for D1, so the logic is testable without deploying.
 
 ### Limits worth knowing
 
-- **Below 20 responses the endpoint withholds the breakdown** and returns only
-  the count, so the app says "too few to compare against yet" rather than
-  drawing a chart out of three answers.
+- **Below 5 responses the endpoint withholds the breakdown** (`MIN_SAMPLE` in
+  the Worker) and returns only the count, so the app says "too few to compare
+  against yet" rather than drawing a chart out of three answers.
+
+  The floor is deliberately low. Everyone playing on a given calendar date gets
+  the same question, so a day's responses all land on **one** question id
+  rather than spreading across the bank — the constraint is how many people
+  play, not dilution. But a question recurs only about every 500 days, and a
+  returning player is not counted twice, so a high floor would keep the chart
+  hidden for years on a small audience.
 - **Submissions are unauthenticated.** One per address per question is enforced,
   and the origin is checked, but a determined person could still skew a
   question. Treat the chart as indicative.
