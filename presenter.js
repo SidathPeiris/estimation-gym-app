@@ -53,18 +53,10 @@ var HISTORY_PAGE = 20
 // the bank reshuffles which question falls on which date. Naming a question
 // here would eventually name the wrong one.
 function historyView(Model, state, limit) {
-  var history = (state && state.history) || {}
-  var days = []
-
-  for (var key in history) {
-    var entry = history[key]
-    if (!entry || !entry.band) continue
-    var day = Number(key)
-    if (!isFinite(day)) continue
-    days.push({ day: day, entry: entry })
-  }
-
-  days.sort(function (a, b) { return b.day - a.day })
+  // Selection and ordering come from the Model, shared with the widget's
+  // history strip, so the two surfaces cannot disagree about which days
+  // exist. Only the formatting below is app-specific.
+  var days = Model.historyDays(state)
 
   var total = days.length
   var shown = (limit > 0 && limit < total) ? days.slice(0, limit) : days

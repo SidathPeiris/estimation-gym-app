@@ -271,4 +271,38 @@ for (const key of ["scoringIntro", "streakNote", "hintNote", "statsNote"]) {
   assert.ok(Model.HOW_TO_PLAY[key] && Model.HOW_TO_PLAY[key].length > 30, `${key} is present`)
 }
 
+// --- historyDays: shared by the app's list and the widget's strip ---
+let hist = Model.emptyState()
+hist = Model.recordAnswer(hist, 5, 100, 100)
+hist = Model.recordAnswer(hist, 7, 1, 100)
+hist = Model.recordAnswer(hist, 6, 100, 100)
+
+const ordered = Model.historyDays(hist)
+assert.deepEqual(ordered.map((d) => d.day), [7, 6, 5], "newest first")
+assert.equal(ordered[0].entry.band, "Ballpark", "entries travel with their day")
+
+// Malformed rows must be skipped rather than reaching a UI that will render
+// them: a hand-edited state file is the expected source of these.
+const messy = {
+  history: {
+    "3": { guess: 1, answerValue: 1, band: "Close", distanceDecades: 0 },
+    "4": null,
+    "5": { guess: 1 },              // no band
+    "notanumber": { band: "Close" },
+    "": { band: "Close" }
+  },
+  streak: 1, bestStreak: 1, lastCompletedDay: 3
+}
+assert.deepEqual(Model.historyDays(messy).map((d) => d.day), [3])
+
+assert.deepEqual(Model.historyDays(Model.emptyState()), [], "an unplayed state has no days")
+assert.deepEqual(Model.historyDays({}), [], "a state with no history field does not throw")
+assert.deepEqual(Model.historyDays(null), [], "nor does no state at all")
+
+// Days before the epoch sort correctly alongside later ones.
+let spanEpoch = Model.emptyState()
+spanEpoch = Model.recordAnswer(spanEpoch, 0, 100, 100)
+spanEpoch = Model.recordAnswer(spanEpoch, -1, 100, 100)
+assert.deepEqual(Model.historyDays(spanEpoch).map((d) => d.day), [0, -1])
+
 console.log("All Model.js tests passed.")

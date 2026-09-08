@@ -207,6 +207,32 @@ function computeStats(state) {
   }
 }
 
+// Past days, newest first, skipping anything malformed.
+//
+// Shared so the widget's history strip and the app's history list agree on
+// which days exist and in what order; each surface then formats them its own
+// way. Returns { day, entry } pairs rather than formatted strings, because the
+// two surfaces have very different amounts of room.
+function historyDays(state) {
+  var history = (state && state.history) || {}
+  var days = []
+
+  for (var key in history) {
+    var entry = history[key]
+    if (!entry || !entry.band) continue
+    var day = Number(key)
+    // Round-tripping the key rejects things Number() is too forgiving about:
+    // "" and " " both come back as 0, which would render a phantom day 0
+    // entry dated 1 January 2024. Hand-edited state files are the expected
+    // source of keys like these.
+    if (!isFinite(day) || String(day) !== key) continue
+    days.push({ day: day, entry: entry })
+  }
+
+  days.sort(function (a, b) { return b.day - a.day })
+  return days
+}
+
 // A lean is only worth reporting once there are enough days behind it -
 // below this a couple of unlucky guesses read as a personality trait.
 var CALIBRATION_MIN_PLAYS = 10
@@ -388,6 +414,7 @@ var ModelAPI = {
   emptyState: emptyState,
   recordAnswer: recordAnswer,
   hasAnsweredDay: hasAnsweredDay,
+  historyDays: historyDays,
   computeStats: computeStats,
   calibrationLabel: calibrationLabel,
   CALIBRATION_MIN_PLAYS: CALIBRATION_MIN_PLAYS,
