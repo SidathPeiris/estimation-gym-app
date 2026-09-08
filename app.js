@@ -20,6 +20,7 @@
   var ids = ["puzzle", "streak", "asof", "prompt", "guess-form", "guess-input", "guess-go",
              "error", "result", "band", "points", "guess-line", "actual-line",
              "decades-line", "share", "hint", "source",
+             "dist", "dist-summary", "dist-bars", "dist-note",
              "hint-toggle", "strategy", "strategy-label", "strategy-guidance", "approach",
              "build",
              "howto", "howto-toggle", "howto-chev", "howto-body",
@@ -51,6 +52,23 @@
   var historyOpen = false
   var historyLimit = HISTORY_PAGE   // 0 means show every day played
   var hintShown = false
+
+  // --- Shared distribution ------------------------------------------------
+  //
+  // Where the per-question band distribution is collected. Empty means the
+  // feature is off and the app makes no request for it at all, which is the
+  // default: nothing is shared until a destination is configured here.
+  //
+  // What gets sent is the question id and which of the four bands you landed
+  // in. Not your guess, not the answer, no identifier. See worker/ for the
+  // endpoint that receives it.
+  var DISTRIBUTION_URL = ""
+
+  // questionId -> last payload seen. Cleared on nothing: a distribution is
+  // cheap to hold and the app is a single screen.
+  var distCache = {}
+  var distInFlight = {}
+  var openHistoryDay = null
   // Open on a first visit, where "how to play" is the whole question, and
   // collapsed thereafter so it stays out of the way of the daily puzzle.
   var howToOpen = !hasAnsweredAnything(state)
@@ -72,6 +90,114 @@
     } catch (e) {
       // Not fatal - the reset already applied; the URL just stays dirty.
     }
+  }
+
+  // Submitting also returns the current picture, so answering costs one round
+  // trip rather than two. Every failure path is silent and leaves the puzzle
+  // untouched - offline play must not look broken.
+  function submitResult(questionId, band) {
+    if (!DISTRIBUTION_URL || !questionId || !band) return
+    fetch(DISTRIBUTION_URL + "/submit", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ questionId: questionId, band: band })
+    })
+      .then(function (r) { return r.ok ? r.json() : null })
+      .then(function (data) {
+        if (!data) return
+        distCache[questionId] = data
+        render()
+      })
+      .catch(function () {})
+  }
+
+  function loadDistribution(questionId) {
+    if (!DISTRIBUTION_URL || !questionId) return
+    if (distCache[questionId] || distInFlight[questionId]) return
+    distInFlight[questionId] = true
+    fetch(DISTRIBUTION_URL + "/dist?q=" + encodeURIComponent(questionId))
+      .then(function (r) { return r.ok ? r.json() : null })
+      .then(function (data) {
+        distInFlight[questionId] = false
+        if (!data) return
+        distCache[questionId] = data
+        render()
+      })
+      .catch(function () { distInFlight[questionId] = false })
+  }
+
+  function renderDistribution(view) {
+    show(el.dist, view.visible)
+    if (!view.visible) return
+
+    show(el["dist-note"], !view.enough)
+    if (!view.enough) {
+      setText(el["dist-summary"], "")
+      el["dist-bars"].replaceChildren()
+      setText(el["dist-note"], view.note)
+      return
+    }
+
+    setText(el["dist-summary"], view.summary)
+    el["dist-bars"].replaceChildren()
+    buildBars(el["dist-bars"], view)
+    show(el["dist-note"], Boolean(view.comparison))
+    if (view.comparison) setText(el["dist-note"], view.comparison)
+  }
+
+  // The same chart, drawn inside a history row.
+  function renderDistributionInto(container, view) {
+    container.replaceChildren()
+    if (!view.visible) {
+      var waiting = document.createElement("p")
+      waiting.className = "dist-note"
+      waiting.textContent = "Loading…"
+      container.appendChild(waiting)
+      return
+    }
+    if (!view.enough) {
+      var few = document.createElement("p")
+      few.className = "dist-note"
+      few.textContent = view.note
+      container.appendChild(few)
+      return
+    }
+    var head = document.createElement("p")
+    head.className = "dist-note"
+    head.textContent = view.summary
+    container.appendChild(head)
+    buildBars(container, view)
+    if (view.comparison) {
+      var cmp = document.createElement("p")
+      cmp.className = "dist-note"
+      cmp.textContent = view.comparison
+      container.appendChild(cmp)
+    }
+  }
+
+  function buildBars(container, view) {
+    view.bars.forEach(function (bar) {
+      var row = document.createElement("div")
+      row.className = "bar-row" + (bar.mine ? " mine" : "")
+
+      var label = document.createElement("span")
+      label.className = "bar-label"
+      label.textContent = bar.band + (bar.mine ? " ←" : "")
+
+      var track = document.createElement("span")
+      track.className = "bar-track"
+      var fill = document.createElement("span")
+      fill.className = "bar-fill tone-" + bar.tone
+      fill.style.width = Math.round(bar.fraction * 100) + "%"
+      track.appendChild(fill)
+
+      var tally = document.createElement("span")
+      tally.className = "bar-tally"
+      tally.textContent = Math.round(bar.fraction * 100) + "%"
+
+      row.append(label, track, tally)
+      container.appendChild(row)
+    })
   }
 
   function hasAnsweredAnything(s) {
@@ -212,6 +338,30 @@
 
       numbers.append(pair, distance)
       item.append(date, band, numbers)
+
+      // Comparable only when the day recorded which question it asked and a
+      // destination is configured. Rows without that stay plain text rather
+      // than offering something that cannot work.
+      if (DISTRIBUTION_URL && row.questionId) {
+        item.classList.add("comparable")
+        item.addEventListener("click", function () {
+          openHistoryDay = openHistoryDay === row.day ? null : row.day
+          if (openHistoryDay !== null) loadDistribution(row.questionId)
+          render()
+        })
+
+        if (openHistoryDay === row.day) {
+          item.classList.add("open")
+          var panel = document.createElement("div")
+          panel.className = "history-dist"
+          renderDistributionInto(
+            panel,
+            distributionView(Model, distCache[row.questionId] || null, row.band)
+          )
+          item.appendChild(panel)
+        }
+      }
+
       el["history-list"].appendChild(item)
     })
 
@@ -250,6 +400,15 @@
       setText(el["strategy-label"], vm.strategyLabel)
       setText(el["strategy-guidance"], vm.strategyGuidance)
     }
+
+    var todayEntry = vm.answered ? state.history[String(today)] : null
+    var todayQid = todayEntry && todayEntry.questionId
+    if (todayQid) loadDistribution(todayQid)
+    renderDistribution(distributionView(
+      Model,
+      todayQid ? distCache[todayQid] || null : null,
+      todayEntry ? todayEntry.band : null
+    ))
 
     show(el.share, vm.answered)
     show(el.approach, Boolean(vm.answered && vm.strategyLabel))
@@ -295,11 +454,14 @@
       return
     }
     show(el.error, false)
-    state = Model.recordAnswer(state, today, check.value, question.answerValue, hintShown)
+    state = Model.recordAnswer(state, today, check.value, question.answerValue, hintShown, question.id)
     if (!saveState(state, window.localStorage)) {
       setText(el.error, "Scored, but your streak could not be saved on this device")
       show(el.error, true)
     }
+    var entry = state.history[String(today)]
+    if (entry) submitResult(entry.questionId, entry.band)
+
     render()
   }
 

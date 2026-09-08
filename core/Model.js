@@ -124,7 +124,11 @@ function emptyState() {
 
 // Applying the same day's result twice (e.g. a shell restart re-triggering a
 // stray submit) must not double-count the streak, so this is idempotent per day.
-function recordAnswer(state, dayIdx, guess, answerValue, assisted) {
+// questionId is recorded so a past day can be tied back to the question it
+// actually asked. It cannot be recovered later: growing the bank reshuffles
+// which question falls on which date, so the day number alone would eventually
+// name the wrong one - the same trap that once showed the wrong answer value.
+function recordAnswer(state, dayIdx, guess, answerValue, assisted, questionId) {
   if (state.history && state.history[String(dayIdx)]) return state
 
   var result = scoreGuess(guess, answerValue, assisted)
@@ -140,6 +144,9 @@ function recordAnswer(state, dayIdx, guess, answerValue, assisted) {
     distanceDecades: result.distanceDecades
   }
   if (assisted) newHistory[String(dayIdx)].assisted = true
+  // Only written when known, so entries recorded before this existed stay
+  // valid and simply have nothing to link to.
+  if (questionId) newHistory[String(dayIdx)].questionId = questionId
 
   return {
     history: newHistory,

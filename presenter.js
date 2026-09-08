@@ -72,6 +72,10 @@ function historyView(Model, state, limit) {
       band: entry.band,
       tone: toneForBand(entry.band),
       assisted: !!entry.assisted,
+      // Present only on days recorded since questionId began being stored.
+      // Older rows simply cannot be compared - the question they asked is not
+      // recoverable, because growing the bank reshuffles day to question.
+      questionId: entry.questionId || null,
       points: Model.pointsForBand(entry.band, entry.assisted),
       guessLabel: Model.formatCompact(entry.guess),
       actualLabel: scoredAgainst !== null ? Model.formatCompact(scoredAgainst) : "?",
@@ -80,6 +84,65 @@ function historyView(Model, state, limit) {
   })
 
   return { visible: total > 0, rows: rows, total: total, shown: rows.length }
+}
+
+// How everyone else did on the same question, as bars in the same visual
+// language as the personal stats panel.
+//
+// `dist` is whatever the distribution endpoint returned, or null when the
+// feature is switched off, the request failed, or the app is offline. Every
+// one of those is an ordinary state rather than an error: the puzzle does not
+// depend on it.
+function distributionView(Model, dist, myBand) {
+  if (!dist) return { visible: false }
+
+  if (!dist.enough) {
+    return {
+      visible: true,
+      enough: false,
+      n: dist.n || 0,
+      note: (dist.n || 0) === 1
+        ? "1 person has answered this one so far - too few to compare against yet."
+        : (dist.n || 0) + " people have answered this one so far - too few to compare against yet."
+    }
+  }
+
+  var counts = dist.counts || {}
+  var total = 0
+  for (var i = 0; i < Model.BANDS.length; i++) total += counts[Model.BANDS[i]] || 0
+  if (!total) return { visible: false }
+
+  var bars = Model.BANDS.map(function (band) {
+    var tally = counts[band] || 0
+    return {
+      band: band,
+      tone: toneForBand(band),
+      tally: tally,
+      fraction: tally / total,
+      mine: band === myBand
+    }
+  })
+
+  // Bands run best to worst, so everyone in a later band did worse than you.
+  // Deliberately "better than", not a percentile: it does not claim to break
+  // ties inside your own band.
+  var beaten = 0
+  var seenMine = false
+  for (var j = 0; j < Model.BANDS.length; j++) {
+    if (seenMine) beaten += counts[Model.BANDS[j]] || 0
+    if (Model.BANDS[j] === myBand) seenMine = true
+  }
+
+  return {
+    visible: true,
+    enough: true,
+    n: total,
+    bars: bars,
+    summary: total + " people have answered this",
+    comparison: myBand
+      ? "You did better than " + Math.round((beaten / total) * 100) + "% of them"
+      : null
+  }
 }
 
 function statsView(Model, stats) {
@@ -199,6 +262,7 @@ if (typeof module !== "undefined") {
     validateGuess: validateGuess,
     viewModel: viewModel,
     historyView: historyView,
+    distributionView: distributionView,
     howToPlayView: howToPlayView,
     shareText: shareText,
     BAND_EMOJI: BAND_EMOJI,

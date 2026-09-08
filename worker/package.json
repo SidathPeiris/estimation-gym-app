@@ -1,0 +1,11 @@
+{
+  "name": "estimation-gym-distribution",
+  "private": true,
+  "type": "module",
+  "description": "Cloudflare Worker collecting per-question band distributions for the app.",
+  "scripts": {
+    "test": "node worker.test.mjs",
+    "deploy": "wrangler deploy",
+    "schema": "wrangler d1 execute estimation-gym --remote --file=./schema.sql"
+  }
+}

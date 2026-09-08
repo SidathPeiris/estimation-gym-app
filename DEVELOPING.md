@@ -123,6 +123,65 @@ half is read from the **live service worker cache name**, not from a constant,
 so it reports what is actually running rather than what the source claims. The
 date half is the puzzle currently on screen. One glance confirms both.
 
+## Comparison chart
+
+Shows how everyone did on the same question, as a bar chart over the four
+scoring bands, with your own band marked. Reachable from the result and from
+any history row recorded since `questionId` began being stored.
+
+**Off by default.** `DISTRIBUTION_URL` in `app.js` is empty, and with no
+endpoint the app makes no request for it. Point it at a deployed Worker to
+switch it on:
+
+```js
+var DISTRIBUTION_URL = "https://estimation-gym-distribution.<subdomain>.workers.dev"
+```
+
+### What is stored
+
+Four counters per question, one per band. No guess, no answer, no identifier,
+no play timestamp. The submission body is exactly:
+
+```json
+{ "questionId": "piano-tuners-chicago", "band": "Close" }
+```
+
+### Keyed on question id, never on the day
+
+Growing the bank reshuffles which question falls on which date. A distribution
+keyed by day number would silently attach itself to the wrong question later —
+the same trap that once made the result panel show the wrong actual value. This
+is why history entries now record `questionId`, and why rows written before
+that cannot be compared: the question they asked is not recoverable.
+
+### Deploying the Worker
+
+```bash
+cd worker
+npm install -g wrangler          # once
+wrangler login                   # your Cloudflare account
+wrangler d1 create estimation-gym         # paste the id into wrangler.toml
+wrangler d1 execute estimation-gym --remote --file=./schema.sql
+wrangler deploy
+```
+
+Then set `DISTRIBUTION_URL` in `app.js` to the deployed URL and bump `CACHE`.
+
+`node worker/worker.test.mjs` exercises the endpoint against an in-memory
+stand-in for D1, so the logic is testable without deploying.
+
+### Limits worth knowing
+
+- **Below 20 responses the endpoint withholds the breakdown** and returns only
+  the count, so the app says "too few to compare against yet" rather than
+  drawing a chart out of three answers.
+- **Submissions are unauthenticated.** One per address per question is enforced,
+  and the origin is checked, but a determined person could still skew a
+  question. Treat the chart as indicative.
+- **Offline play never reports**, so the counts under-represent installed users.
+- The stored client key is a **hash of address plus question id**, so the table
+  holds no bare IP addresses.
+
 ## Updating the app after deploy
 
 The service worker is cache-first, so a returning visitor is served the cached

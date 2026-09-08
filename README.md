@@ -74,9 +74,18 @@ Your play history — guesses, scores, streaks, answers — **never leaves your
 device**. It lives in your browser's local storage. There is no account, no
 server storing your results, and no way for anyone to see how you are doing.
 
-The one exception is a single anonymous request when the app is installed,
-which increments the counter at the top of this page. It carries no identifier
-and nothing about you or your play. That is the entire extent of it.
+Two things do leave the device, both anonymous, and neither carries an
+identifier or anything that could single you out:
+
+- **An install count** — one request the first time the app is installed, which
+  feeds the counter at the top of this page.
+- **Which band you landed in** — *if* the comparison chart is switched on. That
+  is the question's id and one of the four band names, so the app can show you
+  how everyone did on the same question. **Not** your guess, **not** the answer,
+  **not** when you played.
+
+The comparison chart is **off unless a collection endpoint is configured**; with
+none set the app makes no request for it at all.
 
 ## Also for the Omarchy desktop bar
 

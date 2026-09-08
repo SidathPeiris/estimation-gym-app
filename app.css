@@ -344,3 +344,45 @@ body {
   text-align: right;
   letter-spacing: 0.02em;
 }
+
+/* --- how everyone else did --- */
+.dist {
+  margin-top: 1rem;
+  padding: 0.85rem 0.95rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+}
+
+.dist-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.dist-title { font-size: 0.85rem; font-weight: 700 }
+.dist-summary { font-size: 0.75rem; color: var(--dim) }
+
+.dist-note {
+  margin: 0.55rem 0 0;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--dim);
+}
+
+/* Your own band, so the comparison is findable at a glance. */
+.bar-row.mine .bar-label { color: var(--fg); font-weight: 700 }
+
+/* History rows that can show a chart. */
+.history-row.comparable { cursor: pointer }
+.history-row.comparable:hover .history-date { color: var(--fg) }
+.history-row.open { background: color-mix(in srgb, var(--fg) 4%, transparent) }
+
+.history-dist {
+  grid-column: 1 / -1;
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--line);
+}

@@ -358,4 +358,21 @@ for (const q of questionBank) {
   assert.ok(shown.indexOf("-") < 0, `${q.id}: asOf renders as "${shown}"`)
 }
 
+// --- questionId on history entries ---
+// Needed to tie a past day back to the question it actually asked; the day
+// number cannot do it, because growing the bank reshuffles the mapping.
+const withId = Model.recordAnswer(Model.emptyState(), 3, 100, 100, false, "piano-tuners-chicago")
+assert.equal(withId.history["3"].questionId, "piano-tuners-chicago")
+
+// Absent when not supplied, so entries written before this existed stay valid
+// and simply have nothing to link to.
+const withoutId = Model.recordAnswer(Model.emptyState(), 3, 100, 100)
+assert.ok(!("questionId" in withoutId.history["3"]))
+
+// It must not disturb anything else about the entry.
+assert.equal(withId.history["3"].band, "Bullseye")
+assert.equal(withId.streak, 1)
+assert.equal(Model.computeStats(withId).played, 1)
+assert.equal(Model.historyDays(withId)[0].entry.questionId, "piano-tuners-chicago")
+
 console.log("All Model.js tests passed.")

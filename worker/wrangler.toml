@@ -1,0 +1,16 @@
+name = "estimation-gym-distribution"
+main = "src/index.js"
+compatibility_date = "2026-01-01"
+
+# Created with:
+#   npx wrangler d1 create estimation-gym
+# then paste the returned database_id here.
+[[d1_databases]]
+binding = "DB"
+database_name = "estimation-gym"
+database_id = "PASTE_YOUR_D1_DATABASE_ID_HERE"
+
+# The app's origin. Requests from anywhere else are refused, so the endpoint is
+# not trivially usable as someone else's free counter.
+[vars]
+ALLOWED_ORIGIN = "https://sidathpeiris.github.io"
