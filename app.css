@@ -133,6 +133,21 @@ body {
 .line { font-size: .9375rem; margin-top: 8px }
 .decades { font-size: .8125rem; color: var(--dim); margin-top: 10px }
 
+.share {
+  margin-top: 16px;
+  width: 100%;
+  padding: 13px 20px;
+  border-radius: 10px;
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  color: var(--accent);
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.share:active { transform: translateY(1px) }
+
 .hint, .source { font-size: .8125rem; color: var(--dim); margin-top: 18px }
 .source { font-style: italic }
 

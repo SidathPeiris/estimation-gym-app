@@ -72,6 +72,17 @@ assert.ok(Math.abs(bullseye.fraction - 1 / 3) < 1e-9, "fraction is share of days
 assert.equal(vm.stats.bars.find((b) => b.band === "Ballpark").fraction, 0, "unused bands render an empty bar")
 assert.equal(vm.stats.summary, "3 played · 180 pts")
 
+// --- the result reflects what you were scored against, not today's bank ---
+// Growing the question bank reshuffles day-to-question mapping, so a result
+// recorded earlier must not be redisplayed against a different question's answer.
+let recorded = Model.recordAnswer(Model.emptyState(), 981, 60, 100)
+const swapped = Object.assign({}, question, { answerValue: 999999, prompt: "A different question?" })
+const afterSwap = P.viewModel(Model, recorded, swapped, 981)
+assert.ok(afterSwap.result.actualLine.includes("100"),
+  "the actual value comes from the stored entry, not from whatever question now occupies the day")
+assert.ok(!afterSwap.result.actualLine.includes("999,999"))
+assert.equal(afterSwap.result.band, "Bullseye", "the band recorded at the time still stands")
+
 // --- asOf year ---
 assert.equal(before.asOfLabel, null, "a timeless question carries no year")
 const datedQuestion = Object.assign({}, question, { asOf: 2025 })
@@ -91,6 +102,32 @@ let leaning = Model.emptyState()
 for (let d = 1; d <= Model.CALIBRATION_MIN_PLAYS; d++) leaning = Model.recordAnswer(leaning, d, 10, 100)
 const leaningVm = P.viewModel(Model, leaning, question, Model.CALIBRATION_MIN_PLAYS)
 assert.ok(leaningVm.stats.calibration.includes("low"), "a consistent low lean is reported once earned")
+
+// --- share text ---
+const spoiler = { ...question, answerValue: 137, unit: "widgets" }
+assert.equal(P.shareText(Model, Model.emptyState(), spoiler, 981, "https://example.test"), null,
+  "nothing to share before answering")
+
+let shared = Model.recordAnswer(Model.emptyState(), 981, 61, 137)
+const text = P.shareText(Model, shared, spoiler, 981, "https://example.test")
+assert.ok(text.includes("Estimation Gym #981"), "names the puzzle")
+assert.ok(text.includes("Close"), "names the band")
+assert.ok(text.includes("decades off"), "says how close")
+assert.ok(text.includes("Streak 1"), "includes the streak")
+assert.ok(text.includes("https://example.test"), "links back to the app")
+
+// The whole point of a shared result is that it can be posted before other
+// people have played, so it must not leak the answer or the guess.
+assert.ok(!text.includes("137"), "does not reveal the true value")
+assert.ok(!text.includes("61"), "does not reveal the guess")
+assert.ok(!text.includes(spoiler.prompt), "does not reveal the question itself")
+
+// A URL is optional so the same function serves a native share sheet.
+assert.ok(!P.shareText(Model, shared, spoiler, 981).includes("http"))
+
+// Every band produces a distinct emoji so the shared line is scannable.
+assert.equal(new Set(Object.values(P.BAND_EMOJI)).size, Model.BANDS.length)
+for (const band of Model.BANDS) assert.ok(P.BAND_EMOJI[band], `${band} has an emoji`)
 
 // --- a missing question must not throw (empty or failed bank load) ---
 const noQuestion = P.viewModel(Model, Model.emptyState(), null, 7)

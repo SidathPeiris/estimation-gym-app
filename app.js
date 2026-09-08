@@ -36,9 +36,9 @@
   var el = {}
   var ids = ["puzzle", "streak", "asof", "prompt", "guess-form", "guess-input", "guess-go",
              "error", "result", "band", "points", "guess-line", "actual-line",
-             "decades-line", "hint", "source", "stats", "stats-toggle", "chev",
-             "stats-summary", "stats-body", "bars", "stats-footer", "calibration",
-             "export"]
+             "decades-line", "share", "hint", "source", "stats", "stats-toggle",
+             "chev", "stats-summary", "stats-body", "bars", "stats-footer",
+             "calibration", "export"]
   ids.forEach(function (id) { el[id] = document.getElementById(id) })
 
   var today = Model.dayIndex(new Date())
@@ -104,6 +104,7 @@
       setText(el["decades-line"], vm.result.decadesLine)
     }
 
+    show(el.share, vm.answered)
     show(el.hint, Boolean(vm.hint))
     if (vm.hint) setText(el.hint, vm.hint)
     show(el.source, Boolean(vm.source))
@@ -140,6 +141,30 @@
 
   el["guess-form"].addEventListener("submit", submit)
 
+  function flash(button, message) {
+    var original = button.dataset.label || button.textContent
+    button.dataset.label = original
+    button.textContent = message
+    setTimeout(function () { button.textContent = button.dataset.label }, 1600)
+  }
+
+  el.share.addEventListener("click", function () {
+    var text = shareText(Model, state, question, today, location.origin + location.pathname)
+    if (!text) return
+
+    // On a phone this opens the OS share sheet, which is the whole point.
+    // Everywhere else fall back to the clipboard.
+    if (navigator.share) {
+      navigator.share({ text: text }).catch(function () {})
+      return
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text)
+        .then(function () { flash(el.share, "Copied") })
+        .catch(function () { flash(el.share, "Could not copy") })
+    }
+  })
+
   el["stats-toggle"].addEventListener("click", function () {
     statsOpen = !statsOpen
     render()
@@ -148,10 +173,9 @@
   el.export.addEventListener("click", function () {
     var blob = exportState(state)
     if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(blob).then(function () {
-        el.export.textContent = "Copied"
-        setTimeout(function () { el.export.textContent = "Copy my history" }, 1600)
-      })
+      navigator.clipboard.writeText(blob)
+        .then(function () { flash(el.export, "Copied") })
+        .catch(function () { flash(el.export, "Could not copy") })
     }
   })
 

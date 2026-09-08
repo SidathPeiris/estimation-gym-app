@@ -23,13 +23,18 @@ function validateGuess(text) {
 function resultView(Model, entry, question) {
   if (!entry) return null
   var decades = entry.distanceDecades
+  // The answer comes from the stored entry, not from today's question. Growing
+  // the bank reshuffles which question falls on which day, so a guess recorded
+  // before an update must still be shown against the value it was scored
+  // against rather than whatever now occupies that slot.
+  var actual = typeof entry.answerValue === "number" ? entry.answerValue : question.answerValue
   return {
     band: entry.band,
     tone: toneForBand(entry.band),
     points: Model.pointsForBand(entry.band),
     pointsLabel: "+" + Model.pointsForBand(entry.band) + " pts",
     guessLine: "Your guess: " + Model.formatCompact(entry.guess) + " " + question.unit,
-    actualLine: "Actual: " + Model.formatCompact(question.answerValue) + " " + question.unit,
+    actualLine: "Actual: " + Model.formatCompact(actual) + " " + question.unit,
     decadesLine: "Off by " + (decades !== null && decades !== undefined ? decades.toFixed(2) : "?") +
       " orders of magnitude"
   }
@@ -84,10 +89,32 @@ function viewModel(Model, state, question, day) {
   }
 }
 
+var BAND_EMOJI = { Bullseye: "🎯", Close: "🟢", Ballpark: "🟡", Off: "🔴" }
+
+// Deliberately omits both the guess and the true value. A shared result has to
+// be safe to post before other people have played, and the decade distance
+// conveys how it went without giving the answer away.
+function shareText(Model, state, question, day, url) {
+  if (!Model.hasAnsweredDay(state, day)) return null
+
+  var entry = state.history[String(day)]
+  var decades = entry.distanceDecades
+  var second = (BAND_EMOJI[entry.band] || "") + " " + entry.band
+  if (decades !== null && decades !== undefined) {
+    second += " · " + decades.toFixed(2) + " decades off"
+  }
+
+  var lines = ["Estimation Gym #" + day, second, "Streak " + state.streak]
+  if (url) lines.push("", url)
+  return lines.join("\n")
+}
+
 if (typeof module !== "undefined") {
   module.exports = {
     toneForBand: toneForBand,
     validateGuess: validateGuess,
-    viewModel: viewModel
+    viewModel: viewModel,
+    shareText: shareText,
+    BAND_EMOJI: BAND_EMOJI
   }
 }
