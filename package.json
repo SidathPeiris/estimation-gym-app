@@ -1,6 +1,6 @@
 {
   "name": "estimation-gym-app",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "private": true,
   "description": "Daily Fermi-estimation puzzle as an installable web app, sharing its scoring logic and question bank with the Omarchy bar widget.",
   "license": "AGPL-3.0-or-later",

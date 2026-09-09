@@ -110,6 +110,16 @@ your history:
   reminded to do something you have already done. Turning the reminder off
   deletes it.
 
+The three above are the whole of it **for the app**. One page is different: the
+[install page](https://sidathpeiris.github.io/estimation-gym-app/install/),
+which explains how to add the app to a phone, carries Cloudflare Web Analytics.
+It counts page views and where visitors arrived from, sets no cookies, and
+Cloudflare states it does not track individual people across sites. It is there
+so it is possible to tell whether anyone is finding the app at all.
+
+That script is on the install page and nowhere else. Once you are playing, it
+is not loaded and never has been.
+
 The reminder is **off unless you switch it on**, and the comparison chart is
 off unless a collection endpoint is configured.
 
