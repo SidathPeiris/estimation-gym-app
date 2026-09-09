@@ -276,7 +276,7 @@ var PLUGIN_VERSION = "0.1.0"
 //
 // Widen it as the bank grows: the cost is only that fewer questions are
 // available to practise on.
-var PRACTICE_RESERVE_DAYS = 180
+var PRACTICE_RESERVE_DAYS = 365
 
 // The questions the daily puzzle is about to use, which practice must leave
 // alone. Derived from the same deterministic rotation the daily uses, so it
