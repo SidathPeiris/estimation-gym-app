@@ -473,3 +473,40 @@ body {
   resize: vertical;
 }
 .restore-input:focus { outline: none; border-color: var(--accent) }
+
+/* --- which shapes of problem you are good at --- */
+.arch {
+  margin-top: 0.9rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid var(--line);
+}
+
+.arch-headline {
+  margin: 0 0 0.5rem;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  font-weight: 700;
+}
+
+.arch-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: baseline;
+  gap: 0.6rem;
+  font-size: 0.78rem;
+  padding: 0.18rem 0;
+}
+
+.arch-label { color: var(--fg) }
+.arch-played { color: var(--dim); font-size: 0.72rem }
+.arch-median { color: var(--dim); text-align: right; white-space: nowrap }
+
+/* Too few plays to rank: shown, but visibly not part of the comparison. */
+.arch-row.thin .arch-label { color: var(--dim) }
+
+.arch-note {
+  margin: 0.6rem 0 0;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--dim);
+}

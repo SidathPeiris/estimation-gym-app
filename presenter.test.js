@@ -238,6 +238,48 @@ assert.ok(!P.shareText(Model, hintDone, question, 1, "").includes("hint"))
 assert.ok(P.viewModel(Model, aided, question, 1).stats.footer.includes("1 with a hint"))
 assert.ok(!P.viewModel(Model, hintDone, question, 1).stats.footer.includes("hint"))
 
+// --- archetype breakdown ---
+{
+  const pop = QUESTIONS.filter((q) => q.strategy === "population-rate").slice(0, 4)
+  const vol = QUESTIONS.filter((q) => q.strategy === "volume-packing").slice(0, 4)
+  const day = 700
+  const vm = (s) => P.viewModel(Model, s, question, 1, 20, false, QUESTIONS).archetypes
+
+  // Nothing to say yet, and it does not pretend otherwise.
+  assert.equal(vm(Model.emptyState()).visible, false)
+
+  // One play each: both shown, neither ranked, no headline.
+  let thin = Model.recordAnswer(Model.emptyState(), day, pop[0].answerValue, pop[0].answerValue, false, pop[0].id)
+  thin = Model.recordAnswer(thin, day + 1, vol[0].answerValue * 50, vol[0].answerValue, false, vol[0].id)
+  const thinView = vm(thin)
+  assert.equal(thinView.visible, true)
+  assert.equal(thinView.headline, null, "two single plays are not a comparison")
+  assert.ok(thinView.rows.every((r) => !r.ranked))
+  assert.ok(thinView.note.length > 0)
+
+  // Enough of each: the headline names the best and worst shape.
+  let rich = Model.emptyState()
+  let d = day
+  for (const q of pop) rich = Model.recordAnswer(rich, d++, q.answerValue, q.answerValue, false, q.id)
+  for (const q of vol) rich = Model.recordAnswer(rich, d++, q.answerValue * 1000, q.answerValue, false, q.id)
+  const richView = vm(rich)
+  assert.match(richView.headline, /^Strongest on /)
+  assert.match(richView.headline, /Weakest on /)
+  assert.ok(richView.headline.includes("people times per-person rate"))
+  assert.ok(richView.headline.includes("container volume over item volume"))
+  assert.equal(richView.note, null, "nothing to caveat when every day is attributed")
+  assert.equal(richView.rows[0].medianLabel, "0.00 dec")
+
+  // Days predating questionId are called out rather than silently missing.
+  const withLegacy = vm(Model.recordAnswer(rich, 900, 100, 100))
+  assert.match(withLegacy.note, /1 earlier day is not included/)
+
+  // The bank must be passed in; without it the view stays quiet rather than
+  // throwing or inventing attribution.
+  const noBank = P.viewModel(Model, rich, question, 1, 20, false).archetypes
+  assert.equal(noBank.rows.length, 0)
+}
+
 // --- every shipped question renders without throwing ---
 for (const q of QUESTIONS) {
   let s = Model.recordAnswer(Model.emptyState(), 1, q.answerValue, q.answerValue)

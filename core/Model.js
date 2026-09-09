@@ -256,6 +256,74 @@ function formatAsOf(year) {
 // point of showing a version is that it is trustworthy.
 var PLUGIN_VERSION = "0.1.0"
 
+// How the player does on each shape of problem.
+//
+// The whole point of the archetypes is that recognising the shape transfers,
+// so knowing which shapes you are weak on is the most actionable thing the
+// stats can say. Attribution needs the questionId recorded on the entry, which
+// older days predate - they are counted as unattributed rather than guessed at.
+//
+// `bank` is the question list; strategies are looked up rather than stored on
+// the entry, so re-tagging a question re-attributes past days automatically.
+function archetypeStats(state, bank, minPlays) {
+  var floor = typeof minPlays === "number" ? minPlays : 3
+  var byId = {}
+  for (var i = 0; i < bank.length; i++) byId[bank[i].id] = bank[i]
+
+  var groups = {}
+  var attributed = 0
+  var unattributed = 0
+
+  var days = historyDays(state)
+  for (var d = 0; d < days.length; d++) {
+    var entry = days[d].entry
+    var question = entry.questionId ? byId[entry.questionId] : null
+    if (!question || !question.strategy) { unattributed++; continue }
+    attributed++
+
+    var key = question.strategy
+    if (!groups[key]) groups[key] = { strategy: key, played: 0, distances: [] }
+    groups[key].played++
+    if (typeof entry.distanceDecades === "number" && isFinite(entry.distanceDecades)) {
+      groups[key].distances.push(entry.distanceDecades)
+    }
+  }
+
+  var rows = []
+  for (var k in groups) {
+    var g = groups[k]
+    var median = medianOf(g.distances)
+    rows.push({
+      strategy: g.strategy,
+      label: (STRATEGIES[g.strategy] && STRATEGIES[g.strategy].label) || g.strategy,
+      played: g.played,
+      medianDecades: median,
+      // Only rank a shape once there is enough of it to mean anything; below
+      // the floor it is shown but never called a strength or a weakness.
+      ranked: g.played >= floor && median !== null
+    })
+  }
+
+  // Best first: closest median, then most played to break a tie.
+  rows.sort(function (a, b) {
+    if (a.ranked !== b.ranked) return a.ranked ? -1 : 1
+    if (a.medianDecades === b.medianDecades) return b.played - a.played
+    if (a.medianDecades === null) return 1
+    if (b.medianDecades === null) return -1
+    return a.medianDecades - b.medianDecades
+  })
+
+  var ranked = rows.filter(function (r) { return r.ranked })
+  return {
+    rows: rows,
+    attributed: attributed,
+    unattributed: unattributed,
+    // Named only when there are at least two ranked shapes to compare.
+    best: ranked.length >= 2 ? ranked[0] : null,
+    worst: ranked.length >= 2 ? ranked[ranked.length - 1] : null
+  }
+}
+
 // A lean is only worth reporting once there are enough days behind it -
 // below this a couple of unlucky guesses read as a personality trait.
 var CALIBRATION_MIN_PLAYS = 10
@@ -438,6 +506,7 @@ var ModelAPI = {
   recordAnswer: recordAnswer,
   hasAnsweredDay: hasAnsweredDay,
   historyDays: historyDays,
+  archetypeStats: archetypeStats,
   PLUGIN_VERSION: PLUGIN_VERSION,
   formatAsOf: formatAsOf,
   computeStats: computeStats,

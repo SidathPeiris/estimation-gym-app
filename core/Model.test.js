@@ -375,4 +375,64 @@ assert.equal(withId.streak, 1)
 assert.equal(Model.computeStats(withId).played, 1)
 assert.equal(Model.historyDays(withId)[0].entry.questionId, "piano-tuners-chicago")
 
+// --- archetypeStats: which shapes of problem you are weak on ---
+{
+  const pop = questionBank.filter((q) => q.strategy === "population-rate").slice(0, 3)
+  const vol = questionBank.filter((q) => q.strategy === "volume-packing").slice(0, 3)
+
+  let s = Model.emptyState()
+  let day = 200
+  for (const q of pop) s = Model.recordAnswer(s, day++, q.answerValue, q.answerValue, false, q.id)
+  for (const q of vol) s = Model.recordAnswer(s, day++, q.answerValue * 1000, q.answerValue, false, q.id)
+
+  const a = Model.archetypeStats(s, questionBank)
+  assert.equal(a.attributed, 6)
+  assert.equal(a.unattributed, 0)
+  assert.equal(a.rows.length, 2)
+  assert.equal(a.best.strategy, "population-rate", "the shape answered exactly is the strongest")
+  assert.equal(a.worst.strategy, "volume-packing", "the shape answered 1000x out is the weakest")
+  assert.equal(a.best.medianDecades, 0)
+  assert.equal(a.worst.medianDecades, 3)
+  assert.ok(a.rows[0].label.length > 3, "rows carry the human label, not just the key")
+
+  // Days recorded before questionId existed cannot be attributed, and are
+  // counted as such rather than being guessed at or silently dropped.
+  const legacy = Model.recordAnswer(s, 300, 100, 100)
+  const withLegacy = Model.archetypeStats(legacy, questionBank)
+  assert.equal(withLegacy.attributed, 6)
+  assert.equal(withLegacy.unattributed, 1)
+
+  // A questionId that is no longer in the bank is unattributed too, rather
+  // than throwing.
+  const removed = Model.recordAnswer(s, 301, 100, 100, false, "no-such-question-any-more")
+  assert.equal(Model.archetypeStats(removed, questionBank).unattributed, 1)
+
+  // Below the floor a shape is listed but never called best or worst.
+  let thin = Model.emptyState()
+  thin = Model.recordAnswer(thin, 400, pop[0].answerValue, pop[0].answerValue, false, pop[0].id)
+  thin = Model.recordAnswer(thin, 401, vol[0].answerValue * 100, vol[0].answerValue, false, vol[0].id)
+  const thinStats = Model.archetypeStats(thin, questionBank)
+  assert.equal(thinStats.rows.length, 2, "both shapes are still shown")
+  assert.ok(thinStats.rows.every((r) => !r.ranked), "one play each is not enough to rank")
+  assert.equal(thinStats.best, null)
+  assert.equal(thinStats.worst, null)
+
+  // One ranked shape is not a comparison either.
+  let single = Model.emptyState()
+  let d2 = 500
+  for (const q of pop) single = Model.recordAnswer(single, d2++, q.answerValue, q.answerValue, false, q.id)
+  assert.equal(Model.archetypeStats(single, questionBank).best, null, "needs two shapes to name a best and worst")
+
+  // An empty history does not throw.
+  const none = Model.archetypeStats(Model.emptyState(), questionBank)
+  assert.deepEqual(none.rows, [])
+  assert.equal(none.best, null)
+
+  // Strategies are looked up from the bank, not stored on the entry, so
+  // re-tagging a question re-attributes past days.
+  const retagged = questionBank.map((q) => q.id === pop[0].id ? Object.assign({}, q, { strategy: "molar" }) : q)
+  const afterRetag = Model.archetypeStats(s, retagged)
+  assert.ok(afterRetag.rows.some((r) => r.strategy === "molar"), "a re-tagged question moves shape")
+}
+
 console.log("All Model.js tests passed.")

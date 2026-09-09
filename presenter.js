@@ -156,6 +156,53 @@ function distributionView(Model, dist, myBand) {
   }
 }
 
+// Which shapes of problem the player is strong and weak on, ready to render.
+//
+// Deliberately quiet when it has nothing trustworthy to say: no headline until
+// two shapes have enough plays to compare, and a plain note when older days
+// cannot be attributed at all.
+function archetypeView(Model, state, bank) {
+  var a = Model.archetypeStats(state, bank)
+
+  if (!a.rows.length) {
+    return {
+      visible: a.unattributed > 0,
+      headline: null,
+      note: a.unattributed > 0
+        ? "Your earlier days were recorded before the app tracked which question was which, so they cannot be broken down by type. Days from here on will be."
+        : null,
+      rows: []
+    }
+  }
+
+  var rows = a.rows.map(function (r) {
+    return {
+      label: r.label,
+      played: r.played,
+      ranked: r.ranked,
+      medianLabel: r.medianDecades === null ? "–" : r.medianDecades.toFixed(2) + " dec",
+      detail: r.played === 1 ? "1 played" : r.played + " played"
+    }
+  })
+
+  var headline = null
+  if (a.best && a.worst && a.best.strategy !== a.worst.strategy) {
+    headline = "Strongest on " + a.best.label.toLowerCase() +
+      ". Weakest on " + a.worst.label.toLowerCase() + "."
+  }
+
+  var note = null
+  if (!headline) {
+    note = "Play a few more days and this will tell you which kinds of question you are best and worst at."
+  } else if (a.unattributed > 0) {
+    note = a.unattributed === 1
+      ? "1 earlier day is not included — it predates the app recording which question was asked."
+      : a.unattributed + " earlier days are not included — they predate the app recording which question was asked."
+  }
+
+  return { visible: true, headline: headline, note: note, rows: rows }
+}
+
 function statsView(Model, stats) {
   var bars = []
   for (var i = 0; i < Model.BANDS.length; i++) {
@@ -206,7 +253,7 @@ function howToPlayView(Model) {
   }
 }
 
-function viewModel(Model, state, question, day, historyLimit, hintShown) {
+function viewModel(Model, state, question, day, historyLimit, hintShown, bank) {
   var answered = Model.hasAnsweredDay(state, day)
   var entry = answered ? state.history[String(day)] : null
   var stats = Model.computeStats(state)
@@ -240,6 +287,9 @@ function viewModel(Model, state, question, day, historyLimit, hintShown) {
     hint: question && answered ? "How to think about it: " + question.decompositionHint : null,
     source: question && answered && question.source ? "Source: " + question.source : null,
     stats: statsView(Model, stats),
+    // The bank is passed in rather than reached for, so this file stays
+    // free of globals and testable on its own.
+    archetypes: archetypeView(Model, state, bank || []),
     history: historyView(Model, state, limit),
     howToPlay: howToPlayView(Model)
   }
@@ -274,6 +324,7 @@ if (typeof module !== "undefined") {
     viewModel: viewModel,
     historyView: historyView,
     distributionView: distributionView,
+    archetypeView: archetypeView,
     howToPlayView: howToPlayView,
     shareText: shareText,
     BAND_EMOJI: BAND_EMOJI,

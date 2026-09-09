@@ -30,7 +30,8 @@
              "history-body", "history-list", "history-more",
              "stats", "stats-toggle", "chev", "stats-summary", "stats-body",
              "bars", "stats-footer", "calibration", "export",
-             "restore-toggle", "restore-panel", "restore-input", "restore-go", "restore-note"]
+             "restore-toggle", "restore-panel", "restore-input", "restore-go", "restore-note",
+             "arch", "arch-headline", "arch-rows", "arch-note"]
   ids.forEach(function (id) { el[id] = document.getElementById(id) })
 
   // Recomputed whenever the app comes back to the foreground, not fixed for
@@ -453,6 +454,38 @@
     })
   }
 
+  function renderArchetypes(view) {
+    show(el.arch, view.visible)
+    if (!view.visible) return
+
+    show(el["arch-headline"], Boolean(view.headline))
+    if (view.headline) setText(el["arch-headline"], view.headline)
+
+    el["arch-rows"].replaceChildren()
+    view.rows.forEach(function (row) {
+      var line = document.createElement("div")
+      line.className = "arch-row" + (row.ranked ? "" : " thin")
+
+      var label = document.createElement("span")
+      label.className = "arch-label"
+      label.textContent = row.label
+
+      var played = document.createElement("span")
+      played.className = "arch-played"
+      played.textContent = row.detail
+
+      var median = document.createElement("span")
+      median.className = "arch-median"
+      median.textContent = row.medianLabel
+
+      line.append(label, played, median)
+      el["arch-rows"].appendChild(line)
+    })
+
+    show(el["arch-note"], Boolean(view.note))
+    if (view.note) setText(el["arch-note"], view.note)
+  }
+
   function renderHistory(history) {
     el["history-list"].replaceChildren()
 
@@ -518,7 +551,7 @@
   }
 
   function render() {
-    var vm = viewModel(Model, state, question, today, historyLimit, hintShown)
+    var vm = viewModel(Model, state, question, today, historyLimit, hintShown, QUESTIONS)
 
     setText(el.puzzle, vm.dateLabel)
     setText(el.streak, vm.streakLabel)
@@ -587,6 +620,7 @@
     show(el.calibration, Boolean(vm.stats.calibration))
     if (vm.stats.calibration) setText(el.calibration, vm.stats.calibration)
     renderBars(vm.stats.bars)
+    renderArchetypes(vm.archetypes)
 
     setText(el.chev, statsOpen ? "▾" : "▸")
     el["stats-toggle"].setAttribute("aria-expanded", String(statsOpen))
@@ -738,7 +772,7 @@
   })
 
   // Static content, built once rather than on every render.
-  renderHowToPlay(viewModel(Model, state, question, today, 0, false).howToPlay)
+  renderHowToPlay(viewModel(Model, state, question, today, 0, false, QUESTIONS).howToPlay)
   render()
 
   // --- Anonymous install counter -----------------------------------------
