@@ -180,8 +180,11 @@
   }
 
   function renderRemind() {
+    var on = remindEnabled()
     show(el.remind, pushSupported())
-    setText(el["remind-state"], remindEnabled() ? "On" : "Off")
+    setText(el["remind-state"], on ? "On" : "Off")
+    // Drives the accent styling, so "On" is visible at a glance in the corner.
+    el.remind.setAttribute("data-on", String(on))
   }
 
   function enableReminder() {

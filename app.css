@@ -54,6 +54,15 @@ body {
   gap: 12px;
   flex-wrap: wrap;
 }
+
+/* The date belongs with the title it dates, not adrift in the corner. */
+.hero-title {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+  min-width: 0;
+}
 .hero h1 { font-size: 1.5rem; font-weight: 700; letter-spacing: .3px }
 .puzzle { font-size: .875rem; color: var(--dim) }
 .streak { font-size: .8125rem; color: var(--dim); margin-top: 6px }
@@ -423,30 +432,31 @@ body {
 #exp:hover, #exp:focus-visible { color: var(--fg); border-color: var(--dim) }
 #exp:active { background: color-mix(in srgb, var(--fg) 8%, transparent) }
 
-/* --- daily reminder toggle --- */
+/* --- daily reminder, in the header corner --- */
 .remind {
-  display: flex;
+  display: inline-flex;
   align-items: baseline;
-  justify-content: space-between;
-  gap: 0.75rem;
-  width: 100%;
-  margin-top: 1.1rem;
-  padding: 0.6rem 0.85rem;
-  background: var(--panel);
+  gap: 6px;
+  flex: 0 0 auto;
+  padding: 0.3rem 0.6rem;
+  background: transparent;
   border: 1px solid var(--line);
-  border-radius: 8px;
-  color: inherit;
+  border-radius: 999px;
+  color: var(--dim);
   font: inherit;
-  font-size: 0.85rem;
-  text-align: left;
+  font-size: 0.75rem;
+  line-height: 1;
   cursor: pointer;
 }
-.remind:hover { border-color: var(--dim) }
-.remind-label { font-weight: 700 }
-.remind-state { color: var(--accent); font-weight: 700 }
+.remind:hover { border-color: var(--dim); color: var(--fg) }
+.remind-bell { font-size: 0.85em }
+.remind-state { font-weight: 700 }
+
+/* On is worth seeing at a glance; Off should stay quiet. */
+.remind[data-on="true"] { border-color: var(--accent); color: var(--accent) }
 
 .remind-note {
-  margin: 0.45rem 0 0;
+  margin: 0.5rem 0 0;
   font-size: 0.78rem;
   line-height: 1.5;
   color: var(--dim);

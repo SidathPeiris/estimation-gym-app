@@ -18,9 +18,17 @@
 
 <main class="app">
   <header class="hero">
-    <h1>Estimation Gym</h1>
-    <span class="puzzle" id="puzzle">—</span>
+    <div class="hero-title">
+      <h1>Estimation Gym</h1>
+      <span class="puzzle" id="puzzle">—</span>
+    </div>
+    <button type="button" class="remind" id="remind"
+            aria-label="Daily reminder" title="Daily reminder" hidden>
+      <span class="remind-bell" aria-hidden="true">&#128276;</span>
+      <span class="remind-state" id="remind-state">Off</span>
+    </button>
   </header>
+  <p class="remind-note" id="remind-note" hidden></p>
   <p class="streak" id="streak">Streak 0 · Best 0</p>
 
   <p class="asof" id="asof" hidden></p>
@@ -163,12 +171,6 @@
       </div>
     </div>
   </section>
-
-  <button type="button" class="remind" id="remind" hidden>
-    <span class="remind-label">Daily reminder</span>
-    <span class="remind-state" id="remind-state">Off</span>
-  </button>
-  <p class="remind-note" id="remind-note" hidden></p>
 
   <p class="suggest">
     Got a good question for the bank?
