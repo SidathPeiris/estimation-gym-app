@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Install Estimation Gym</title>
+<meta name="description" content="A daily estimation puzzle. One question a day, scored on how close you get in powers of ten. No account, works offline.">
+<meta name="theme-color" content="#1a1b26">
+
+<meta property="og:title" content="Estimation Gym">
+<meta property="og:description" content="A daily estimation puzzle. One question a day, scored on how close you get in powers of ten.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://sidathpeiris.github.io/estimation-gym-app/install/">
+
+<link rel="icon" href="../icons/icon-192.png">
+<link rel="apple-touch-icon" href="../icons/icon-192.png">
+
+<style>
+  /* Same tokens as the app, so this page and the thing it installs look like
+     one product. Kept self-contained rather than importing app.css, which is
+     full of styles that only make sense inside the puzzle. */
+  :root {
+    --bg: #1a1b26;
+    --panel: #1f2335;
+    --line: #2f3550;
+    --fg: #c0caf5;
+    --dim: #7681a8;
+    --accent: #7aa2f7;
+    --mono: ui-monospace, "Cascadia Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #eef1f8;
+      --panel: #ffffff;
+      --line: #d3dae9;
+      --fg: #1f2335;
+      --dim: #5a6484;
+      --accent: #2e5db8;
+    }
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box }
+
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--mono);
+    line-height: 1.6;
+    padding: 2rem 1.1rem 3rem;
+  }
+
+  main { max-width: 34rem; margin: 0 auto }
+
+  h1 { font-size: 1.5rem; letter-spacing: -0.01em }
+
+  .tagline { color: var(--dim); font-size: 0.9rem; margin-top: 0.5rem }
+
+  .play {
+    display: block;
+    margin: 1.6rem 0 0.5rem;
+    padding: 0.95rem 1rem;
+    text-align: center;
+    background: var(--accent);
+    color: var(--bg);
+    font-weight: 700;
+    font-size: 1rem;
+    text-decoration: none;
+    border-radius: 10px;
+  }
+  .play:hover { filter: brightness(1.08) }
+
+  .play-note { text-align: center; font-size: 0.76rem; color: var(--dim) }
+
+  h2 {
+    font-size: 0.95rem;
+    margin: 2rem 0 0.15rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 0.9rem 1.1rem;
+    margin-top: 0.7rem;
+  }
+
+  ol { padding-left: 1.2rem; font-size: 0.88rem }
+  li { margin: 0.35rem 0 }
+  li::marker { color: var(--dim) }
+
+  kbd {
+    background: color-mix(in srgb, var(--fg) 10%, transparent);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 0.05rem 0.35rem;
+    font: inherit;
+    font-size: 0.85em;
+    white-space: nowrap;
+  }
+
+  .warn {
+    margin-top: 0.7rem;
+    font-size: 0.8rem;
+    color: var(--fg);
+    border-left: 2px solid var(--accent);
+    padding: 0.15rem 0 0.15rem 0.65rem;
+  }
+
+  .why { margin-top: 2rem; font-size: 0.84rem; color: var(--dim) }
+  .why p { margin-top: 0.6rem }
+
+  footer {
+    margin-top: 2.4rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--line);
+    font-size: 0.76rem;
+    color: var(--dim);
+    text-align: center;
+  }
+  footer a { color: var(--accent) }
+
+  /* Both platforms are shown by default, so the page is complete with no
+     JavaScript at all. The script below only narrows it to the one you need. */
+  .hidden { display: none }
+</style>
+</head>
+<body>
+<main>
+  <h1>Estimation Gym</h1>
+  <p class="tagline">
+    One question a day, the same one for everyone. You are scored on how close
+    you get in <strong>powers of ten</strong>, not on being exact. Takes about
+    a minute.
+  </p>
+
+  <a class="play" href="../">Play now</a>
+  <p class="play-note">No account. Nothing from an app store.</p>
+
+  <section id="ios">
+    <h2>📱 On iPhone or iPad</h2>
+    <div class="card">
+      <ol>
+        <li>Open this page in <strong>Safari</strong>.</li>
+        <li>Tap <strong>Play now</strong> above.</li>
+        <li>Tap the <strong>Share</strong> button — the square with an arrow
+          pointing up, <kbd>&#9633;&#8593;</kbd>.</li>
+        <li>Scroll down and tap <strong>Add to Home Screen</strong>.</li>
+        <li>Tap <strong>Add</strong>.</li>
+      </ol>
+      <p class="warn">
+        It has to be Safari. Chrome and Firefox on iPhone cannot add apps to
+        the home screen — that is an Apple restriction, not a fault in the game.
+      </p>
+    </div>
+  </section>
+
+  <section id="android">
+    <h2>🤖 On Android</h2>
+    <div class="card">
+      <ol>
+        <li>Open this page in <strong>Chrome</strong>.</li>
+        <li>Tap <strong>Play now</strong> above.</li>
+        <li>Tap the <kbd>&#8942;</kbd> menu, top right.</li>
+        <li>Tap <strong>Install app</strong>, or <strong>Add to Home screen</strong>
+          if that is what yours says.</li>
+      </ol>
+      <p class="warn">
+        Chrome may offer to install it by itself, in a bar along the bottom.
+        Taking that offer does the same thing.
+      </p>
+    </div>
+  </section>
+
+  <section id="desktop">
+    <h2>💻 On a computer</h2>
+    <div class="card">
+      <ol>
+        <li>Just tap <strong>Play now</strong> — it works in the browser.</li>
+        <li>In Chrome or Edge you can also click the <strong>install icon</strong>
+          in the address bar to keep it in its own window.</li>
+      </ol>
+    </div>
+  </section>
+
+  <div class="why">
+    <h2>Why bother installing?</h2>
+    <p>
+      It opens like a normal app, with no browser bars, and it
+      <strong>works offline</strong> — the questions travel with it, so it plays
+      on a plane or underground.
+    </p>
+    <p>
+      Your streak and history stay on your own device. There is no account and
+      no sign-up, and nothing about how you play leaves your phone.
+    </p>
+  </div>
+
+  <footer>
+    Also runs as a widget for the
+    <a href="https://github.com/SidathPeiris/estimation-gym-omarchy">Omarchy desktop bar</a>.
+  </footer>
+</main>
+
+<script>
+  // Progressive enhancement: everything above is already visible and correct
+  // without this. All it does is hide the two sections you do not need, so a
+  // phone is not asked to scroll past instructions for other devices.
+  (function () {
+    try {
+      var ua = navigator.userAgent || "";
+      var isIOS = /iPad|iPhone|iPod/.test(ua) ||
+        // iPadOS 13+ reports itself as a Mac, but a touchscreen gives it away.
+        (/Macintosh/.test(ua) && typeof document.ontouchend !== "undefined");
+      var isAndroid = /Android/.test(ua);
+      if (!isIOS && !isAndroid) return;   // desktop: leave everything shown
+
+      var hide = isIOS ? ["android", "desktop"] : ["ios", "desktop"];
+      hide.forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el) el.classList.add("hidden");
+      });
+    } catch (e) {
+      // Any failure just leaves all three sets of instructions visible, which
+      // is the correct page, only longer.
+    }
+  })();
+</script>
+</body>
+</html>

@@ -17,8 +17,14 @@ No account. No sign-up. Works offline.
 
 ## Install it on your phone
 
+**Step-by-step instructions, with pictures of which buttons to press:**
+**<https://sidathpeiris.github.io/estimation-gym-app/install/>**
+
+The short version:
+
 - **iPhone / Safari:** open the link above, then Share → **Add to Home Screen**.
-  iOS never shows an install prompt, so this has to be done by hand.
+  It has to be Safari — Chrome and Firefox on iOS cannot add apps to the home
+  screen, which is an Apple restriction rather than a fault in the app.
 - **Android / Chrome:** open the link above, then **Install app** from the menu.
 
 Once installed it plays fully offline — the questions travel with the app.
