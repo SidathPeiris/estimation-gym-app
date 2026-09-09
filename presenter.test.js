@@ -349,4 +349,41 @@ for (const q of QUESTIONS) {
   assert.ok(rendered.result.actualLine.includes(q.unit), `${q.id}: actual line names the unit`)
 }
 
+
+// --- the confession count ------------------------------------------------
+//
+// The answers ship with the app so it can play offline, so anyone willing to
+// read the source can have them. Rather than pretend otherwise, an exact
+// match is asked about in fun and the honest answers are counted.
+
+assert.equal(P.confessionNote(0), null, "nothing to say when nobody has owned up")
+assert.equal(P.confessionNote(undefined), null, "an older Worker sends no field at all")
+assert.equal(P.confessionNote(1), "1 person has owned up to looking this one up.")
+assert.equal(P.confessionNote(3), "3 people have owned up to looking this one up.")
+
+// It rides along on the view whether or not the chart is drawable yet.
+{
+  const few = P.distributionView(Model, { n: 0, enough: false, confessed: 2 }, null)
+  assert.equal(few.confessed, "2 people have owned up to looking this one up.")
+
+  const many = P.distributionView(
+    Model,
+    { n: 4, enough: true, counts: { Bullseye: 1, Close: 1, Ballpark: 1, Off: 1 }, confessed: 1 },
+    "Close"
+  )
+  assert.equal(many.confessed, "1 person has owned up to looking this one up.")
+
+  // A confession is counted separately from the bands, so it must not move the
+  // chart it sits under - someone who peeked still answered.
+  assert.equal(many.n, 4, "the confession does not inflate the response count")
+  assert.deepEqual(many.bars.map((b) => b.tally), [1, 1, 1, 1])
+
+  const none = P.distributionView(
+    Model,
+    { n: 1, enough: true, counts: { Bullseye: 1, Close: 0, Ballpark: 0, Off: 0 } },
+    "Bullseye"
+  )
+  assert.equal(none.confessed, null, "silent when the field is absent")
+}
+console.log("confession count  -> counted apart from the bands, silent at zero")
 console.log(`All presenter tests passed (${QUESTIONS.length} questions rendered).`)

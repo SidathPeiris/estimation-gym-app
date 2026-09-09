@@ -587,3 +587,66 @@ body {
 }
 .source-offer a { color: inherit }
 .source-offer a:hover { color: var(--fg) }
+
+/* --- the confession --- */
+/* An exact-to-the-digit guess is essentially unreachable by estimating, so it
+   gets asked, in fun, whether they looked it up. The answers ship with the app
+   so it can play offline - anyone can read them, and pretending otherwise
+   would be sillier than joking about it. */
+.confess {
+  margin-top: 1.4rem;
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--accent);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+}
+
+.confess-title {
+  margin: 0;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--accent);
+}
+
+.confess-body {
+  margin: 0.4rem 0 0;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--fg);
+}
+
+.confess-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 0.9rem;
+}
+
+.confess-actions button {
+  padding: 9px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: none;
+  color: var(--dim);
+  font: inherit;
+  font-size: 0.8125rem;
+  cursor: pointer;
+}
+
+.confess-actions button:hover { color: var(--fg); border-color: var(--dim) }
+.confess-actions button:active { transform: translateY(1px) }
+
+/* The honest answer is the one worth making easy to press. Specificity rather
+   than !important, so it stays overridable. */
+.confess-actions .confess-yes {
+  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  color: var(--accent);
+}
+
+.dist-confessed {
+  margin: 0.5rem 0 0;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--dim);
+  font-style: italic;
+}

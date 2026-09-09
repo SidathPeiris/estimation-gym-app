@@ -25,6 +25,7 @@
              "hint-toggle", "strategy", "strategy-label", "strategy-guidance", "approach",
              "build", "remind", "remind-state", "remind-note",
              "howto", "howto-toggle", "howto-chev", "howto-body",
+             "confess", "confess-body", "confess-yes", "confess-no", "dist-confessed",
              "suggest", "suggest-toggle", "suggest-chev", "suggest-body", "suggest-form",
              "suggest-prompt", "suggest-answer", "suggest-unit", "suggest-source",
              "suggest-note", "suggest-exp", "suggest-go", "suggest-note-out",
@@ -110,6 +111,7 @@
   // collapsed thereafter so it stays out of the way of the daily puzzle.
   var howToOpen = !hasAnsweredAnything(state)
   var suggestOpen = false
+  var confessQuestionId = null
 
   function applyReset() {
     var mode = null
@@ -348,6 +350,42 @@
     show(el["suggest-note-out"], Boolean(text))
   }
 
+  // Exact to the digit, which estimating does not usually produce. The answers
+  // ship with the app so it can play offline, so anyone who wants them can read
+  // them - this treats that as a joke rather than pretending otherwise.
+  //
+  // Deliberately not the Bullseye band, which is 0.3 decades wide and reached
+  // honestly every day. An earlier version also demanded a non-round answer, to
+  // avoid asking someone who typed 12000 and happened to be right - but that
+  // skipped most of the bank, today included, and the round numbers are exactly
+  // the ones a peeker would copy. Being asked wrongly costs a tap on "No", and
+  // only self-reported peeks are ever counted.
+  function looksLikeAPeek(guess, answerValue) {
+    return guess === answerValue
+  }
+
+  function maybeAskAboutCheating(guess, question) {
+    if (!question || !looksLikeAPeek(guess, question.answerValue)) return
+    confessQuestionId = question.id
+    setText(el["confess-body"],
+      "You got it exactly right — " + Model.formatCompact(question.answerValue) + " " +
+      question.unit + ", to the digit. Either that is the finest estimating we have " +
+      "ever seen, or you found the answers in the code. Which was it?")
+    show(el.confess, true)
+  }
+
+  function answerConfession(peeked) {
+    show(el.confess, false)
+    if (!peeked || !confessQuestionId) { confessQuestionId = null; return }
+    var id = confessQuestionId
+    confessQuestionId = null
+    tellWorker("/confess", { questionId: id }).then(function () {
+      // Re-read so the count under the chart includes the confession just made.
+      distFetchedAt[id] = 0
+      loadDistribution(id)
+    })
+  }
+
   function canFetch() {
     return typeof fetch === "function"
   }
@@ -399,6 +437,11 @@
   function renderDistribution(view) {
     show(el.dist, view.visible)
     if (!view.visible) return
+
+    // Shown in both branches: the count is worth seeing even before there are
+    // enough responses to draw the chart.
+    show(el["dist-confessed"], Boolean(view.confessed))
+    if (view.confessed) setText(el["dist-confessed"], view.confessed)
 
     show(el["dist-note"], !view.enough)
     if (!view.enough) {
@@ -908,6 +951,7 @@
     var entry = state.history[String(today)]
     if (entry) submitResult(entry.questionId, entry.band)
     reportPlayed(today)
+    maybeAskAboutCheating(check.value, question)
   }
 
   el["guess-form"].addEventListener("submit", submit)
@@ -964,6 +1008,9 @@
         .catch(function () { flash(el.share, "Could not copy") })
     }
   })
+
+  el["confess-yes"].addEventListener("click", function () { answerConfession(true) })
+  el["confess-no"].addEventListener("click", function () { answerConfession(false) })
 
   el["suggest-toggle"].addEventListener("click", function () {
     suggestOpen = !suggestOpen

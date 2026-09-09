@@ -63,3 +63,19 @@ CREATE TABLE IF NOT EXISTS suggestions (
 
 CREATE INDEX IF NOT EXISTS suggestions_status ON suggestions (status, at);
 CREATE INDEX IF NOT EXISTS suggestions_client ON suggestions (client, at);
+
+-- People who owned up to looking the answer up.
+--
+-- The answers ship with the app so it can play offline, which means anyone
+-- willing to open the source can read them - that is inherent, not a hole to
+-- be plugged. Rather than pretend otherwise, an exact-to-the-digit guess gets
+-- asked, in fun, whether they peeked, and the honest answers are counted here.
+--
+-- One row per person per question, so the primary key does the deduplicating.
+-- The client is the same hashed address used everywhere else, never a bare IP.
+CREATE TABLE IF NOT EXISTS confessions (
+  question_id TEXT    NOT NULL,
+  client      TEXT    NOT NULL,
+  at          INTEGER NOT NULL,
+  PRIMARY KEY (question_id, client)
+);

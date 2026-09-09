@@ -9,6 +9,7 @@ import worker from "./src/index.js";
 function fakeDB() {
   const responses = new Map();   // "qid\u0000band" -> tally
   const suggestions = [];        // rows, in insertion order
+  const confessions = new Set(); // "qid|client"
   const seen = new Set();        // "qid\u0000client"
 
   function statement(sql, args = []) {
@@ -17,6 +18,11 @@ function fakeDB() {
       async first() {
         if (sql.startsWith("SELECT 1 FROM seen")) {
           return seen.has(args[0] + "\u0000" + args[1]) ? { 1: 1 } : null;
+        }
+        if (sql.startsWith("SELECT COUNT(*) AS n FROM confessions")) {
+          let n = 0;
+          for (const k of confessions) if (k.split("|")[0] === args[0]) n++;
+          return { n };
         }
         if (sql.startsWith("SELECT COUNT(*) AS n FROM suggestions")) {
           const [client, since] = args;
@@ -42,6 +48,9 @@ function fakeDB() {
           const k = args[0] + "\u0000" + args[1];
           responses.set(k, (responses.get(k) || 0) + 1);
         }
+        if (sql.startsWith("INSERT OR IGNORE INTO confessions")) {
+          confessions.add(args[0] + "|" + args[1]);
+        }
         if (sql.startsWith("INSERT INTO suggestions")) {
           const [id, prompt, unit, answer, source, note, client, at] = args;
           suggestions.push({ id, prompt, unit, answer, source, note, status: "pending", client, at });
@@ -54,7 +63,8 @@ function fakeDB() {
     prepare: (sql) => statement(sql),
     async batch(stmts) { for (const s of stmts) s._apply(); },
     _responses: responses,
-    _suggestions: suggestions
+    _suggestions: suggestions,
+    _confessions: confessions
   };
 }
 
@@ -257,4 +267,57 @@ const foreignSuggest = new Request("https://w.dev/suggest", {
 assert.equal((await worker.fetch(foreignSuggest, env())).status, 403);
 console.log("foreign origin    -> 403 on /suggest too");
 
+
+// --- confessions ---------------------------------------------------------
+//
+// The answers ship with the app so it can play offline, so anyone who reads
+// the source has them. An exact match is asked about in fun, and the honest
+// answers land here - counted apart from the bands, so owning up never moves
+// the chart it sits under.
+
+const confess = (body, ip = "1.2.3.4") =>
+  new Request("https://w.dev/confess", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Origin: ORIGIN, "CF-Connecting-IP": ip },
+    body: JSON.stringify(body)
+  });
+
+e = env();
+let c = await worker.fetch(confess({ questionId: "sheep-in-new-zealand" }), e);
+assert.equal(c.status, 200);
+assert.deepEqual(await c.json(), { ok: true, confessed: 1 });
+assert.equal(e.DB._confessions.size, 1);
+console.log("confession        -> counted");
+
+// Owning up twice is still one confession; the primary key sees to it.
+await worker.fetch(confess({ questionId: "sheep-in-new-zealand" }), e);
+assert.equal((await (await worker.fetch(confess({ questionId: "sheep-in-new-zealand" }), e)).json()).confessed, 1);
+assert.equal(e.DB._confessions.size, 1, "the same person cannot inflate the count");
+
+// Someone else can, though.
+assert.equal((await (await worker.fetch(confess({ questionId: "sheep-in-new-zealand" }, "8.8.8.8"), e)).json()).confessed, 2);
+console.log("repeat confession -> ignored; a second person counts");
+
+// It rides along on /dist without touching the response counts.
+await worker.fetch(post({ questionId: "sheep-in-new-zealand", band: "Bullseye" }, "3.3.3.3"), e);
+const withConfessions = await (await worker.fetch(get("sheep-in-new-zealand"), e)).json();
+assert.equal(withConfessions.confessed, 2);
+assert.equal(withConfessions.n, 1, "two confessions did not become two responses");
+assert.deepEqual(withConfessions.counts, { Bullseye: 1, Close: 0, Ballpark: 0, Off: 0 });
+console.log("dist payload      -> confessed=2 alongside n=1, bands untouched");
+
+// A question nobody has owned up to reports zero rather than nothing.
+assert.equal((await (await worker.fetch(get("cars-in-us"), e)).json()).confessed, 0);
+
+// Junk is refused, same as everywhere else.
+for (const bad of [{ questionId: "Not Kebab" }, { questionId: "../../etc/passwd" }, {}]) {
+  assert.equal((await worker.fetch(confess(bad), e)).status, 400, "rejected: " + JSON.stringify(bad));
+}
+const foreignConfess = new Request("https://w.dev/confess", {
+  method: "POST",
+  headers: { "Content-Type": "application/json", Origin: "https://someone-elses-site.example" },
+  body: JSON.stringify({ questionId: "sheep-in-new-zealand" })
+});
+assert.equal((await worker.fetch(foreignConfess, env())).status, 403);
+console.log("bad confession    -> 400, foreign origin -> 403");
 console.log("\nAll worker tests passed.");

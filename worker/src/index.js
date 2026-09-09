@@ -66,6 +66,34 @@ function validQuestionId(id) {
   return typeof id === "string" && /^[a-z0-9]+(-[a-z0-9]+)*$/.test(id) && id.length <= 80;
 }
 
+// How many people owned up to looking this one up. Counted separately from the
+// bands so a confession never distorts the distribution it sits under - someone
+// who peeked still answered, and their band still stands.
+async function readConfessions(env, questionId) {
+  const row = await env.DB.prepare(
+    "SELECT COUNT(*) AS n FROM confessions WHERE question_id = ?"
+  ).bind(questionId).first();
+  return (row && row.n) || 0;
+}
+
+async function handleConfess(request, env) {
+  let body;
+  try { body = await request.json(); } catch (e) { return json({ error: "bad json" }, env, 400); }
+  if (!validQuestionId(body && body.questionId)) return json({ error: "bad question id" }, env, 400);
+
+  const ip = request.headers.get("CF-Connecting-IP") || "unknown";
+  const client = await hash("confess:" + ip + ":" + body.questionId);
+
+  // The primary key does the deduplicating, so owning up twice is still one
+  // confession. INSERT OR IGNORE rather than read-then-write: there is nothing
+  // to tell the confessor either way.
+  await env.DB.prepare(
+    "INSERT OR IGNORE INTO confessions (question_id, client, at) VALUES (?, ?, ?)"
+  ).bind(body.questionId, client, Date.now()).run();
+
+  return json({ ok: true, confessed: await readConfessions(env, body.questionId) }, env);
+}
+
 async function readDistribution(env, questionId) {
   const { results } = await env.DB.prepare(
     "SELECT band, tally FROM responses WHERE question_id = ?"
@@ -151,8 +179,9 @@ async function handleGet(request, env, url) {
 
   // Withhold the breakdown until it means something, rather than letting the
   // client draw a chart from three responses.
-  if (n < MIN_SAMPLE) return json({ questionId, n, enough: false, minimum: MIN_SAMPLE }, env);
-  return json({ questionId, n, enough: true, counts }, env);
+  const confessed = await readConfessions(env, questionId);
+  if (n < MIN_SAMPLE) return json({ questionId, n, enough: false, minimum: MIN_SAMPLE, confessed }, env);
+  return json({ questionId, n, enough: true, counts, confessed }, env);
 }
 
 async function handlePost(request, env) {
@@ -191,9 +220,10 @@ async function handlePost(request, env) {
 
   // Hand back the current picture so submitting and reading is one round trip.
   const { n, counts } = await readDistribution(env, questionId);
+  const confessed = await readConfessions(env, questionId);
   return n < MIN_SAMPLE
-    ? json({ questionId, n, enough: false, minimum: MIN_SAMPLE, counted: !already }, env)
-    : json({ questionId, n, enough: true, counts, counted: !already }, env);
+    ? json({ questionId, n, enough: false, minimum: MIN_SAMPLE, counted: !already, confessed }, env)
+    : json({ questionId, n, enough: true, counts, counted: !already, confessed }, env);
 }
 
 // --- question suggestions ---
@@ -311,6 +341,9 @@ export default {
     }
     if (url.pathname === "/suggest" && request.method === "POST") {
       return handleSuggest(request, env);
+    }
+    if (url.pathname === "/confess" && request.method === "POST") {
+      return handleConfess(request, env);
     }
     return json({ error: "not found" }, env, 404);
   },

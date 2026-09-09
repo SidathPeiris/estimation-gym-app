@@ -93,14 +93,26 @@ function historyView(Model, state, limit) {
 // feature is switched off, the request failed, or the app is offline. Every
 // one of those is an ordinary state rather than an error: the puzzle does not
 // depend on it.
+// How the confession count reads. Kept here rather than in app.js so the
+// wording is testable, and phrased lightly - the whole point of asking is that
+// it is a joke, not an accusation.
+function confessionNote(n) {
+  if (!n) return null
+  return n === 1
+    ? "1 person has owned up to looking this one up."
+    : n + " people have owned up to looking this one up."
+}
+
 function distributionView(Model, dist, myBand) {
   if (!dist) return { visible: false }
+  var confessed = confessionNote(dist.confessed)
 
   if (!dist.enough) {
     return {
       visible: true,
       enough: false,
       n: dist.n || 0,
+      confessed: confessed,
       note: (dist.n || 0) === 1
         ? "1 person has answered this one so far - too few to compare against yet."
         : (dist.n || 0) + " people have answered this one so far - too few to compare against yet."
@@ -144,6 +156,7 @@ function distributionView(Model, dist, myBand) {
     enough: true,
     n: total,
     solo: solo,
+    confessed: confessed,
     bars: bars,
     summary: solo
       ? "You are the first to answer this one"
@@ -373,6 +386,7 @@ if (typeof module !== "undefined") {
     viewModel: viewModel,
     historyView: historyView,
     distributionView: distributionView,
+    confessionNote: confessionNote,
     archetypeView: archetypeView,
     howToPlayView: howToPlayView,
     shareText: shareText,
