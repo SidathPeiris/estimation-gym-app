@@ -123,6 +123,50 @@ half is read from the **live service worker cache name**, not from a constant,
 so it reports what is actually running rather than what the source claims. The
 date half is the puzzle currently on screen. One glance confirms both.
 
+## Daily reminder
+
+Opt-in Web Push. Off unless the player turns it on, and the toggle is hidden
+entirely on a browser without push support.
+
+### Payload-less on purpose
+
+The push carries **no body**. That removes the AES128GCM content encryption a
+normal Web Push needs, which in turn means the `p256dh`/`auth` keys a
+subscription usually carries never have to be stored. The notification wording
+lives in `sw.js` instead. Less code, and less held about anyone.
+
+What is still required is VAPID — a signed assertion that the push came from
+the holder of the application server key the browser subscribed with.
+`worker/src/push.js` builds that JWT with WebCrypto: ES256 over P-256, whose
+raw `r||s` output is already the shape JWS wants, so no DER unwrapping.
+
+### Keys
+
+- `VAPID_PUBLIC_KEY` is a plain var in `wrangler.toml` and inlined in `app.js`.
+  It is meant to be public — it says who may push, and is useless alone.
+- `VAPID_PRIVATE_KEY` is a Worker secret, set with
+  `npx wrangler secret put VAPID_PRIVATE_KEY`, holding the key as JWK.
+
+Rotating them invalidates every existing subscription; everyone would have to
+turn the reminder back on.
+
+### Timing, across timezones
+
+The cron runs **hourly**. Each run pushes only to subscribers for whom it has
+just turned `REMINDER_HOUR` (9am) locally, computed from the stored
+`getTimezoneOffset()`. Every subscriber matches exactly once per UTC day
+whatever their offset, so one schedule covers the world without waking anyone
+at 3am. `push.test.mjs` pins that, including a half-hour offset.
+
+A device also reports the day it last played, so someone who has already
+answered is not told to go and answer.
+
+### Dead subscriptions
+
+A push service replying 404 or 410 means the subscription is gone for good, so
+the row is deleted. Any other failure is left alone and retried tomorrow — a
+transient 500 must not throw away someone's reminder.
+
 ## Comparison chart
 
 Shows how everyone did on the same question, as a bar chart over the four

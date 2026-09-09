@@ -23,7 +23,7 @@
              "decades-line", "share", "hint", "source",
              "dist", "dist-summary", "dist-bars", "dist-note",
              "hint-toggle", "strategy", "strategy-label", "strategy-guidance", "approach",
-             "build",
+             "build", "remind", "remind-state", "remind-note",
              "howto", "howto-toggle", "howto-chev", "howto-body",
              "howto-steps", "howto-intro", "howto-scoring", "howto-notes",
              "history", "history-toggle", "history-chev", "history-summary",
@@ -65,6 +65,12 @@
   // endpoint that receives it.
   var DISTRIBUTION_URL = "https://estimation-gym-distribution.estimationgym.workers.dev"
 
+  // The application server key the browser is given when subscribing. Public
+  // by design: it says who may push, and is useless without the private half,
+  // which only the Worker holds.
+  var VAPID_PUBLIC_KEY = "BHoIQ7xp8tGkF9-AoMc9_uN7e610XZ1GxXCYjk495Z_CBLeHO0YZIk0OjXgFn8bxs1mvxY5dANO6XDjN8BDdEZ0"
+  var REMIND_KEY = "estimation-gym-reminder"
+
   // questionId -> last payload seen. Cleared on nothing: a distribution is
   // cheap to hold and the app is a single screen.
   var distCache = {}
@@ -104,6 +110,120 @@
   // Submitting also returns the current picture, so answering costs one round
   // trip rather than two. Every failure path is silent and leaves the puzzle
   // untouched - offline play must not look broken.
+  // --- Daily reminder ------------------------------------------------------
+  //
+  // Entirely opt-in, and off unless someone turns it on. What is sent is the
+  // push endpoint the browser generates and the device's timezone offset, so
+  // the nudge lands in the morning rather than the middle of the night. No
+  // guess, no score, no history.
+
+  function pushSupported() {
+    return !!(DISTRIBUTION_URL && VAPID_PUBLIC_KEY &&
+      typeof Notification !== "undefined" &&
+      typeof navigator !== "undefined" && "serviceWorker" in navigator &&
+      typeof PushManager !== "undefined")
+  }
+
+  // base64url, as subscribe() wants it: raw bytes.
+  function vapidKeyBytes(key) {
+    var padded = key + "===".slice(0, (4 - key.length % 4) % 4)
+    var raw = atob(padded.replace(/-/g, "+").replace(/_/g, "/"))
+    var out = new Uint8Array(raw.length)
+    for (var i = 0; i < raw.length; i++) out[i] = raw.charCodeAt(i)
+    return out
+  }
+
+  function remindEnabled() {
+    try { return window.localStorage.getItem(REMIND_KEY) === "on" } catch (e) { return false }
+  }
+
+  function setRemindEnabled(on) {
+    try { window.localStorage.setItem(REMIND_KEY, on ? "on" : "off") } catch (e) {}
+  }
+
+  function tellWorker(path, body) {
+    if (!DISTRIBUTION_URL || !canFetch()) return Promise.resolve(false)
+    return fetch(DISTRIBUTION_URL + path, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body)
+    }).then(function (r) { return r.ok }).catch(function () { return false })
+  }
+
+  function currentSubscription() {
+    if (!pushSupported()) return Promise.resolve(null)
+    return navigator.serviceWorker.ready
+      .then(function (reg) { return reg.pushManager.getSubscription() })
+      .catch(function () { return null })
+  }
+
+  function setRemindNote(text) {
+    setText(el["remind-note"], text)
+    show(el["remind-note"], !!text)
+  }
+
+  function renderRemind() {
+    show(el.remind, pushSupported())
+    setText(el["remind-state"], remindEnabled() ? "On" : "Off")
+  }
+
+  function enableReminder() {
+    setRemindNote("Asking your browser for permission\u2026")
+    return Notification.requestPermission().then(function (permission) {
+      if (permission !== "granted") {
+        setRemindEnabled(false)
+        setRemindNote(permission === "denied"
+          ? "Notifications are blocked for this site. You would have to allow them in your browser settings."
+          : "Not enabled \u2014 permission was not granted.")
+        renderRemind()
+        return
+      }
+      return navigator.serviceWorker.ready.then(function (reg) {
+        return reg.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: vapidKeyBytes(VAPID_PUBLIC_KEY)
+        })
+      }).then(function (sub) {
+        return tellWorker("/subscribe", {
+          endpoint: sub.endpoint,
+          tzOffset: new Date().getTimezoneOffset()
+        })
+      }).then(function (ok) {
+        setRemindEnabled(!!ok)
+        setRemindNote(ok
+          ? "One nudge a day, around 9am, and none on a day you have already played."
+          : "Could not reach the reminder service. Try again later.")
+        renderRemind()
+      })
+    }).catch(function () {
+      setRemindEnabled(false)
+      setRemindNote("Could not turn reminders on.")
+      renderRemind()
+    })
+  }
+
+  function disableReminder() {
+    return currentSubscription().then(function (sub) {
+      if (!sub) return true
+      var endpoint = sub.endpoint
+      return sub.unsubscribe().catch(function () { return false })
+        .then(function () { return tellWorker("/unsubscribe", { endpoint: endpoint }) })
+    }).then(function () {
+      setRemindEnabled(false)
+      setRemindNote("Reminders off.")
+      renderRemind()
+    })
+  }
+
+  // Lets the reminder be skipped on a day already played. Only ever sent by a
+  // device that asked to be reminded in the first place.
+  function reportPlayed(day) {
+    if (!remindEnabled()) return
+    currentSubscription().then(function (sub) {
+      if (sub) tellWorker("/played", { endpoint: sub.endpoint, day: day })
+    })
+  }
+
   function canFetch() {
     return typeof fetch === "function"
   }
@@ -445,6 +565,7 @@
     if (vm.source) setText(el.source, vm.source)
 
     renderBuild()
+    renderRemind()
 
     setText(el["howto-chev"], howToOpen ? "▾" : "▸")
     el["howto-toggle"].setAttribute("aria-expanded", String(howToOpen))
@@ -489,6 +610,7 @@
 
     var entry = state.history[String(today)]
     if (entry) submitResult(entry.questionId, entry.band)
+    reportPlayed(today)
   }
 
   el["guess-form"].addEventListener("submit", submit)
@@ -526,6 +648,11 @@
     } catch (e) {
       // Focus handling is a convenience; the character is already inserted.
     }
+  })
+
+  el.remind.addEventListener("click", function () {
+    if (remindEnabled()) disableReminder()
+    else enableReminder()
   })
 
   el["hint-toggle"].addEventListener("click", function () {

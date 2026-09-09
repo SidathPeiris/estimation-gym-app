@@ -80,18 +80,23 @@ Your play history — guesses, scores, streaks, answers — **never leaves your
 device**. It lives in your browser's local storage. There is no account, no
 server storing your results, and no way for anyone to see how you are doing.
 
-Two things do leave the device, both anonymous, and neither carries an
-identifier or anything that could single you out:
+Three things do leave the device. None carries your guesses, your scores or
+your history:
 
 - **An install count** — one request the first time the app is installed, which
   feeds the counter at the top of this page.
-- **Which band you landed in** — *if* the comparison chart is switched on. That
-  is the question's id and one of the four band names, so the app can show you
-  how everyone did on the same question. **Not** your guess, **not** the answer,
-  **not** when you played.
+- **Which band you landed in** — the question's id and one of the four band
+  names, so the app can show how everyone did on the same question. Not your
+  guess, not the answer, not when you played.
+- **A reminder subscription** — *only if you turn the daily reminder on.* This
+  is the one thing that identifies a device: the push address your browser
+  generates, plus your timezone offset so the nudge arrives in the morning
+  rather than at 3am, plus the day number you last played so you are not
+  reminded to do something you have already done. Turning the reminder off
+  deletes it.
 
-The comparison chart is **off unless a collection endpoint is configured**; with
-none set the app makes no request for it at all.
+The reminder is **off unless you switch it on**, and the comparison chart is
+off unless a collection endpoint is configured.
 
 ## Also for the Omarchy desktop bar
 

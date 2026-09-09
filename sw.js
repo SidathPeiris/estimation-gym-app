@@ -11,7 +11,7 @@
 // Note this caches code only. Play history lives in localStorage, which the
 // cache never touches, so a version bump can never cost anyone their streak.
 
-var CACHE = "estimation-gym-v23"
+var CACHE = "estimation-gym-v25"
 
 var ASSETS = [
   "./",
@@ -71,6 +71,41 @@ self.addEventListener("fetch", function (event) {
         if (event.request.mode === "navigate") return caches.match("./index.html")
         return Response.error()
       })
+    })
+  )
+})
+
+// --- Daily reminder ---------------------------------------------------------
+//
+// The push carries no payload, so the wording lives here rather than being
+// sent over the wire. That keeps the subscription record down to an endpoint
+// and a timezone, with no message content in transit and no encryption keys
+// stored server-side.
+self.addEventListener("push", function (event) {
+  event.waitUntil(
+    self.registration.showNotification("Estimation Gym", {
+      body: "Today's question is ready.",
+      icon: "./icons/icon-192.png",
+      badge: "./icons/icon-192.png",
+      // A single reminder replaces an unread one rather than stacking, so
+      // missing a few days never leaves a pile of notifications.
+      tag: "estimation-gym-daily",
+      renotify: false
+    })
+  )
+})
+
+self.addEventListener("notificationclick", function (event) {
+  event.notification.close()
+  event.waitUntil(
+    self.clients.matchAll({ type: "window", includeUncontrolled: true }).then(function (windows) {
+      // Reuse an already-open copy rather than stacking another window.
+      for (var i = 0; i < windows.length; i++) {
+        if (windows[i].url.indexOf("estimation-gym-app") >= 0 && "focus" in windows[i]) {
+          return windows[i].focus()
+        }
+      }
+      if (self.clients.openWindow) return self.clients.openWindow("./")
     })
   )
 })

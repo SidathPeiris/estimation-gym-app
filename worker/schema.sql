@@ -18,3 +18,20 @@ CREATE TABLE IF NOT EXISTS seen (
   at          INTEGER NOT NULL,
   PRIMARY KEY (question_id, client)
 );
+
+-- Devices that asked to be reminded.
+--
+-- Deliberately minimal. Payload-less push is used, so the encryption keys a
+-- normal subscription carries (p256dh/auth) are not needed and are not stored;
+-- the notification text lives in the service worker instead. What is here is
+-- the push endpoint, which is what the browser gives out and what the reminder
+-- is sent to, and enough to send it at a sensible local hour without nagging
+-- someone who has already played.
+CREATE TABLE IF NOT EXISTS subscriptions (
+  endpoint        TEXT    PRIMARY KEY,
+  -- Minutes, exactly as Date.getTimezoneOffset() reports: positive west of UTC.
+  tz_offset       INTEGER NOT NULL,
+  -- Day index this device last answered, so the nudge is skipped once played.
+  last_played_day INTEGER,
+  created_at      INTEGER NOT NULL
+);

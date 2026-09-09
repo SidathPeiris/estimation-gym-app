@@ -10,7 +10,13 @@
 //   npx wrangler d1 execute estimation-gym --remote --file=./schema.sql
 //   npx wrangler deploy
 
+import { sendPush, localHour, localDayIndex } from "./push.js";
+
 const BANDS = ["Bullseye", "Close", "Ballpark", "Off"];
+
+// The local hour a reminder aims for. The cron runs hourly and each subscriber
+// matches exactly once a day, whatever their offset.
+const REMINDER_HOUR = 9;
 
 // The breakdown is released from the very first response.
 //
@@ -79,6 +85,62 @@ async function readDistribution(env, questionId) {
 
 function band_known(band) {
   return BANDS.indexOf(band) >= 0;
+}
+
+// A push endpoint is a URL the browser hands out. Anything else is refused
+// rather than stored, so the table cannot be filled with junk or pointed at
+// somewhere that is not a push service.
+function validEndpoint(value) {
+  if (typeof value !== "string" || value.length > 1000) return false;
+  try {
+    return new URL(value).protocol === "https:";
+  } catch (e) {
+    return false;
+  }
+}
+
+// Minutes, as Date.getTimezoneOffset() reports. Real offsets run -840..+720.
+function validOffset(value) {
+  return typeof value === "number" && Number.isInteger(value) && value >= -840 && value <= 720;
+}
+
+async function handleSubscribe(request, env) {
+  let body;
+  try { body = await request.json(); } catch (e) { return json({ error: "bad json" }, env, 400); }
+
+  if (!validEndpoint(body && body.endpoint)) return json({ error: "bad endpoint" }, env, 400);
+  if (!validOffset(body && body.tzOffset)) return json({ error: "bad tzOffset" }, env, 400);
+
+  await env.DB.prepare(
+    "INSERT INTO subscriptions (endpoint, tz_offset, last_played_day, created_at) VALUES (?, ?, NULL, ?) " +
+    "ON CONFLICT(endpoint) DO UPDATE SET tz_offset = excluded.tz_offset"
+  ).bind(body.endpoint, body.tzOffset, Date.now()).run();
+
+  return json({ ok: true }, env);
+}
+
+async function handleUnsubscribe(request, env) {
+  let body;
+  try { body = await request.json(); } catch (e) { return json({ error: "bad json" }, env, 400); }
+  if (!validEndpoint(body && body.endpoint)) return json({ error: "bad endpoint" }, env, 400);
+
+  await env.DB.prepare("DELETE FROM subscriptions WHERE endpoint = ?").bind(body.endpoint).run();
+  return json({ ok: true }, env);
+}
+
+// Lets a device say it has played, so the reminder can be skipped rather than
+// telling someone to do a thing they have already done.
+async function handlePlayed(request, env) {
+  let body;
+  try { body = await request.json(); } catch (e) { return json({ error: "bad json" }, env, 400); }
+  if (!validEndpoint(body && body.endpoint)) return json({ error: "bad endpoint" }, env, 400);
+  if (typeof body.day !== "number" || !Number.isInteger(body.day)) return json({ error: "bad day" }, env, 400);
+
+  await env.DB.prepare(
+    "UPDATE subscriptions SET last_played_day = ? WHERE endpoint = ?"
+  ).bind(body.day, body.endpoint).run();
+
+  return json({ ok: true }, env);
 }
 
 async function handleGet(request, env, url) {
@@ -155,6 +217,47 @@ export default {
     if (url.pathname === "/submit" && request.method === "POST") {
       return handlePost(request, env);
     }
+    if (url.pathname === "/subscribe" && request.method === "POST") {
+      return handleSubscribe(request, env);
+    }
+    if (url.pathname === "/unsubscribe" && request.method === "POST") {
+      return handleUnsubscribe(request, env);
+    }
+    if (url.pathname === "/played" && request.method === "POST") {
+      return handlePlayed(request, env);
+    }
     return json({ error: "not found" }, env, 404);
+  },
+
+  // Hourly. Each run reminds only the subscribers for whom it has just turned
+  // REMINDER_HOUR, so one cron covers every timezone without anyone getting
+  // woken at three in the morning.
+  async scheduled(event, env, ctx) {
+    const now = event.scheduledTime || Date.now();
+    const utcHour = new Date(now).getUTCHours();
+
+    const { results } = await env.DB.prepare(
+      "SELECT endpoint, tz_offset, last_played_day FROM subscriptions"
+    ).all();
+
+    const due = (results || []).filter(function (row) {
+      if (localHour(utcHour, row.tz_offset) !== REMINDER_HOUR) return false;
+      // Already answered today where they are: say nothing.
+      return row.last_played_day !== localDayIndex(now, row.tz_offset);
+    });
+
+    const gone = [];
+    for (const row of due) {
+      const outcome = await sendPush(row.endpoint, env);
+      if (outcome === "gone") gone.push(row.endpoint);
+    }
+
+    // A subscription the push service reports as dead is never coming back, so
+    // it is dropped rather than retried every hour forever.
+    for (const endpoint of gone) {
+      await env.DB.prepare("DELETE FROM subscriptions WHERE endpoint = ?").bind(endpoint).run();
+    }
+
+    console.log("reminder run: utcHour=" + utcHour + " due=" + due.length + " removed=" + gone.length);
   }
 };
