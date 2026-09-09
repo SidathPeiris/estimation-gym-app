@@ -295,24 +295,54 @@ function viewModel(Model, state, question, day, historyLimit, hintShown, bank) {
   }
 }
 
-var BAND_EMOJI = { Bullseye: "🎯", Close: "🟢", Ballpark: "🟡", Off: "🔴" }
+var BAND_EMOJI = { Bullseye: "\uD83C\uDFAF", Close: "\uD83D\uDFE2", Ballpark: "\uD83D\uDFE1", Off: "\uD83D\uDD34" }
+
+// A day inside the shared window that was not played.
+var MISSED_EMOJI = "\u2B1C"
+
+// How many calendar days the shared run covers.
+var SHARE_WINDOW = 7
+
+// The run of recent days, oldest to newest, as band squares.
+//
+// Calendar days rather than played days, so a gap reads as a gap instead of
+// being quietly closed up - the streak is the point, and hiding the misses
+// would misrepresent it. Leading gaps are trimmed, so someone sharing their
+// first ever day posts one square rather than six blanks and a square.
+function shareRun(state, day, windowDays) {
+  var span = windowDays || SHARE_WINDOW
+  var squares = []
+
+  for (var offset = span - 1; offset >= 0; offset--) {
+    var entry = state.history && state.history[String(day - offset)]
+    squares.push(entry && entry.band ? (BAND_EMOJI[entry.band] || MISSED_EMOJI) : null)
+  }
+
+  while (squares.length && squares[0] === null) squares.shift()
+  return squares.map(function (s) { return s === null ? MISSED_EMOJI : s }).join("")
+}
 
 // Deliberately omits both the guess and the true value. A shared result has to
-// be safe to post before other people have played, and the decade distance
-// conveys how it went without giving the answer away.
+// be safe to post before other people have played, and a band conveys how it
+// went without giving the answer away.
 function shareText(Model, state, question, day, url) {
   if (!Model.hasAnsweredDay(state, day)) return null
 
   var entry = state.history[String(day)]
   var decades = entry.distanceDecades
-  var second = (BAND_EMOJI[entry.band] || "") + " " + entry.band
+
+  var today = (BAND_EMOJI[entry.band] || "") + " " + entry.band
   if (decades !== null && decades !== undefined) {
-    second += " · " + decades.toFixed(2) + " decades off"
+    today += " \u00b7 " + decades.toFixed(2) + " decades off"
   }
+  if (entry.assisted) today += " \u00b7 hint"
 
-  if (entry.assisted) second += " · hint"
-
-  var lines = ["Estimation Gym · " + Model.formatDay(day), second, "Streak " + state.streak]
+  var lines = [
+    "Estimation Gym \u00b7 " + Model.formatDay(day),
+    shareRun(state, day),
+    today,
+    "Streak " + state.streak
+  ]
   if (url) lines.push("", url)
   return lines.join("\n")
 }
@@ -327,6 +357,8 @@ if (typeof module !== "undefined") {
     archetypeView: archetypeView,
     howToPlayView: howToPlayView,
     shareText: shareText,
+    shareRun: shareRun,
+    SHARE_WINDOW: SHARE_WINDOW,
     BAND_EMOJI: BAND_EMOJI,
     HISTORY_PAGE: HISTORY_PAGE
   }

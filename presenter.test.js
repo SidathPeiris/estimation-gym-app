@@ -280,6 +280,65 @@ assert.ok(!P.viewModel(Model, hintDone, question, 1).stats.footer.includes("hint
   assert.equal(noBank.rows.length, 0)
 }
 
+// --- the shared run of squares ---
+{
+  const day = 800
+  const BULLSEYE = "🎯", GREEN = "🟢", RED = "🔴", BLANK = "⬜"
+
+  // A first ever day shares one square, not six blanks and a square.
+  const first = Model.recordAnswer(Model.emptyState(), day, 100, 100, false, "q")
+  assert.equal(P.shareRun(first, day), BULLSEYE)
+
+  // A full week reads oldest to newest.
+  let week = Model.emptyState()
+  for (let i = 0; i < 7; i++) {
+    // Day-6 is an Off, the rest are Bullseyes, so position is checkable.
+    const guess = i === 0 ? 1e9 : 100
+    week = Model.recordAnswer(week, day - 6 + i, guess, 100, false, "q" + i)
+  }
+  const run = P.shareRun(week, day)
+  assert.equal([...run].length, 7, "seven days, seven squares")
+  assert.ok(run.startsWith(RED), "the oldest day comes first")
+  assert.ok(run.endsWith(BULLSEYE), "today comes last")
+
+  // A gap in the middle stays a gap: closing it up would misrepresent a streak.
+  let gappy = Model.recordAnswer(Model.emptyState(), day - 5, 100, 100, false, "a")
+  gappy = Model.recordAnswer(gappy, day, 100, 100, false, "b")
+  const gapRun = P.shareRun(gappy, day)
+  assert.equal([...gapRun].length, 6, "trimmed to the first played day, gaps kept")
+  assert.equal([...gapRun].filter((c) => c === BLANK).length, 4)
+
+  // A day with no history at all shares nothing.
+  assert.equal(P.shareRun(Model.emptyState(), day), "")
+}
+
+// --- the full share text ---
+{
+  const day = 810
+  let s = Model.recordAnswer(Model.emptyState(), day - 1, 100, 100, false, "a")
+  s = Model.recordAnswer(s, day, 60, 100, false, "b")
+  const text = P.shareText(Model, s, question, day, "https://example.test/")
+  const lines = text.split("\n")
+
+  assert.match(lines[0], /^Estimation Gym · /)
+  assert.equal([...lines[1]].length, 2, "the run is its own line")
+  assert.match(lines[2], /decades off/)
+  assert.match(lines[3], /^Streak /)
+  assert.equal(lines[4], "")
+  assert.equal(lines[5], "https://example.test/")
+
+  // Still spoiler-free: neither the guess nor the answer may appear anywhere.
+  assert.ok(!text.includes("60"), "the guess must not be shared")
+  assert.ok(!text.includes("100"), "the answer must not be shared")
+
+  // A hinted day still says so.
+  const hinted = Model.recordAnswer(Model.emptyState(), day, 100, 100, true, "b")
+  assert.ok(P.shareText(Model, hinted, question, day, "").includes("hint"))
+
+  // Nothing to share before answering.
+  assert.equal(P.shareText(Model, Model.emptyState(), question, day, ""), null)
+}
+
 // --- every shipped question renders without throwing ---
 for (const q of QUESTIONS) {
   let s = Model.recordAnswer(Model.emptyState(), 1, q.answerValue, q.answerValue)
