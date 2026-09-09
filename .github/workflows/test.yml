@@ -1,0 +1,32 @@
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Read-only: this workflow checks the code, it never writes to the repo.
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      # No install step, and none is missing: the app has no dependencies on
+      # purpose, so every suite is plain node and runs here exactly as it runs
+      # locally. Adding `npm ci` would fail - there is no lockfile to install.
+      - name: Scoring, question bank, presenter, storage, version
+        run: npm test
+
+      # The Worker is tested against an in-memory stand-in for D1, so this
+      # needs no Cloudflare credentials and touches nothing that is deployed.
+      - name: Worker endpoints
+        run: node worker/worker.test.mjs
