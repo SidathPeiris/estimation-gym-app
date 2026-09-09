@@ -251,6 +251,35 @@ stand-in for D1, so the logic is testable without deploying.
 - The stored client key is a **hash of address plus question id**, so the table
   holds no bare IP addresses.
 
+## Versioning
+
+`major.minor.patch`, declared once in `package.json`:
+
+| Field | Bumped when |
+| --- | --- |
+| **major** | A full release - the app is meaningfully a new thing |
+| **minor** | A feature is added within that release |
+| **patch** | A fix or a small change within that feature set |
+
+No padding. `01.02.03` reads tidily but is not a valid version: leading zeros
+are forbidden, every field would cap at 99, and anything that parses versions
+either rejects it or sorts it wrongly. `version.test.js` enforces the format.
+
+### Bump the patch for every deploy, however small
+
+The service worker cache is named `estimation-gym-v<version>`, and a changed
+cache name is the entire mechanism by which a deploy replaces someone's old
+copy instead of stranding them on stale files. Ship twice under one version
+and everyone who already fetched the first one keeps it, silently.
+
+`version.test.js` pins the cache name to `package.json` so the two cannot
+drift, but it cannot know what is already live - that part is discipline.
+
+This replaced a bare counter that reached v37 while `package.json` sat at
+0.1.0 and never moved. The panel reads its build stamp out of the live cache
+name rather than a constant, so it still reports what is actually running
+rather than what a constant claims.
+
 ## Updating the app after deploy
 
 The service worker is cache-first, so a returning visitor is served the cached

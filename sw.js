@@ -1,8 +1,10 @@
 // Cache-first service worker. The whole app is static and offline play is the
 // point, so every asset is precached on install and served from the cache
-// thereafter. Bump CACHE whenever any asset changes -- with a versioned cache
-// name plus skipWaiting/claim, a deploy replaces the old copy on next launch
-// rather than stranding people on a stale build.
+// thereafter. The cache is named for the app version, so bump the version in
+// package.json for every deploy however small -- with a versioned cache name
+// plus skipWaiting/claim, a deploy replaces the old copy on next launch rather
+// than stranding people on a stale build. version.test.js pins the two
+// together; shipping twice under one version is the failure it cannot catch.
 //
 // Bumping CACHE is necessary but not sufficient: the precache itself has to
 // bypass the HTTP cache, or the new version is filled with old files. See the
@@ -11,7 +13,7 @@
 // Note this caches code only. Play history lives in localStorage, which the
 // cache never touches, so a version bump can never cost anyone their streak.
 
-var CACHE = "estimation-gym-v37"
+var CACHE = "estimation-gym-v1.0.0"
 
 var ASSETS = [
   "./",

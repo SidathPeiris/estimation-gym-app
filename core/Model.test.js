@@ -359,6 +359,18 @@ assert.equal(Model.computeStats(handEdited).totalPoints, 100 + 40, "points follo
   }
 }
 
+// --- the version is three numbers, and none of them may be padded ---
+// major.minor.patch, meaning: a full release, a feature added within that
+// release, and a fix or small change within that. Padding a field to two
+// digits ("01.02.03") reads tidily but is not a valid version - leading zeros
+// are forbidden, every field would cap at 99, and anything that parses
+// versions either rejects it or sorts it wrongly.
+assert.match(
+  Model.PLUGIN_VERSION,
+  /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/,
+  `version "${Model.PLUGIN_VERSION}" must be major.minor.patch with no leading zeros`
+)
+
 // --- formatAsOf: BC years are stored negative but must not be shown that way ---
 assert.equal(Model.formatAsOf(2025), "2025")
 assert.equal(Model.formatAsOf(1800), "1800")

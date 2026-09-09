@@ -251,7 +251,7 @@ function formatAsOf(year) {
 // Mirrors "version" in manifest.json. Model.test.js asserts the two match, so
 // this cannot quietly drift from what the plugin actually declares - the whole
 // point of showing a version is that it is trustworthy.
-var PLUGIN_VERSION = "0.1.0"
+var PLUGIN_VERSION = "0.4.0"
 
 // Practice: questions to attempt outside the daily puzzle.
 //
