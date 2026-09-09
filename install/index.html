@@ -125,6 +125,26 @@
   /* Both platforms are shown by default, so the page is complete with no
      JavaScript at all. The script below only narrows it to the one you need. */
   .hidden { display: none }
+
+  .tour {
+    margin: 1.6rem 0 0;
+    text-align: center;
+  }
+
+  .tour-video {
+    width: 100%;
+    max-width: 270px;
+    height: auto;
+    border-radius: 14px;
+    border: 1px solid var(--line);
+    background: #000;
+  }
+
+  .tour figcaption {
+    margin-top: 0.5rem;
+    font-size: 0.78rem;
+    opacity: 0.7;
+  }
 </style>
 </head>
 <body>
@@ -138,6 +158,21 @@
 
   <a class="play" href="../">Play now</a>
   <p class="play-note">No account. Nothing from an app store.</p>
+
+  <figure class="tour">
+    <video
+      class="tour-video"
+      src="media/tour.mp4"
+      controls
+      preload="metadata"
+      playsinline
+      width="270"
+      aria-label="A short tour of Estimation Gym">
+      Your browser cannot play this video.
+      <a href="media/tour.mp4">Download it instead</a>.
+    </video>
+    <figcaption>Fifty seconds, if you would rather see it than read about it.</figcaption>
+  </figure>
 
   <section id="ios">
     <h2>📱 On iPhone or iPad</h2>
