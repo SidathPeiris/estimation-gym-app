@@ -245,6 +245,57 @@
     })
   }
 
+  // Whether reminders are on is remembered in localStorage, but the thing
+  // that actually delivers one is a row on the Worker - and those two drift
+  // apart silently.
+  //
+  // Observed on 10 September: four stale endpoints for one phone were reported
+  // dead by the push service and correctly deleted, which left the panel still
+  // saying "on" with nothing on the server to send to. No nudge could ever
+  // arrive, and nothing in the app said so. Browsers also rotate push
+  // endpoints on their own, which produces the same silence.
+  //
+  // So the subscription is re-asserted every time the app opens. /subscribe is
+  // idempotent and permission has already been granted, so this is invisible
+  // when nothing is wrong and self-healing when something is.
+  function reassertReminder() {
+    if (!remindEnabled() || !pushSupported()) return
+
+    // Permission can be revoked in browser settings without the app hearing
+    // about it. Say so rather than going on claiming reminders are on.
+    if (Notification.permission !== "granted") {
+      setRemindEnabled(false)
+      setRemindNote("Notifications are no longer allowed for this site, so the daily reminder is off.")
+      renderRemind()
+      return
+    }
+
+    navigator.serviceWorker.ready.then(function (reg) {
+      return reg.pushManager.getSubscription().then(function (existing) {
+        if (existing) return existing
+        // The browser dropped it. Permission still stands, so this does not
+        // prompt - it re-establishes what the panel already claims.
+        return reg.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: vapidKeyBytes(VAPID_PUBLIC_KEY)
+        })
+      })
+    }).then(function (sub) {
+      if (!sub) return
+      return tellWorker("/subscribe", {
+        endpoint: sub.endpoint,
+        tzOffset: new Date().getTimezoneOffset()
+      }).then(function (ok) {
+        // A healed subscription must not earn a nudge for a day already done.
+        if (ok && Model.hasAnsweredDay(state, today)) {
+          return tellWorker("/played", { endpoint: sub.endpoint, day: today })
+        }
+      })
+    }).catch(function () {
+      // Deliberately silent. The panel is unchanged and the next open retries.
+    })
+  }
+
   function disableReminder() {
     return currentSubscription().then(function (sub) {
       if (!sub) return true
@@ -964,6 +1015,7 @@
     render()
     if (pendingReload) applyUpdate()
     requestUpdate()
+    reassertReminder()
   })
 
   // The numeric keypad a phone shows for inputmode="decimal" has no "e", so
@@ -1183,7 +1235,11 @@
     // showing. Absent on http:// origins other than localhost, and in browsers
     // with service workers disabled.
     window.addEventListener("load", function () {
-      navigator.serviceWorker.register("./sw.js").catch(function () {})
+      navigator.serviceWorker.register("./sw.js")
+        // Only after registration: reassertReminder needs serviceWorker.ready,
+        // and on a first visit there is nothing to be ready for yet.
+        .then(function () { reassertReminder() })
+        .catch(function () {})
     })
   }
 })()
