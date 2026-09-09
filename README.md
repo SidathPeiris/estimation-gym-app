@@ -130,5 +130,14 @@ the desktop widget makes no network connection whatsoever.
 
 ## License
 
-MIT
+[GNU Affero General Public License v3.0 or later](LICENSE).
+
+You are free to use, study, share and modify this. If you run a modified
+version as a service that other people can use, the AGPL requires you to offer
+them its source too.
+
+`core/` is vendored from the [Omarchy plugin
+repo](https://github.com/SidathPeiris/estimation-gym-omarchy), which is MIT
+licensed. MIT code may be included in an AGPL project, so the combined work is
+AGPL while those files remain available under MIT at their source.
 

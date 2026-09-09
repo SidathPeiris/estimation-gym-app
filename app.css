@@ -566,3 +566,16 @@ body {
 }
 
 .howto-reminder .howto-steps { margin-top: 0.55rem }
+
+/* --- AGPL source offer --- */
+/* Section 13 requires that people using this over a network are offered its
+   source, so the link is in the app rather than only in the repository. */
+.source-offer {
+  margin: 1rem 0 0;
+  font-size: 0.72rem;
+  color: var(--dim);
+  opacity: 0.75;
+  text-align: center;
+}
+.source-offer a { color: inherit }
+.source-offer a:hover { color: var(--fg) }
