@@ -376,9 +376,12 @@
       label.className = "bar-label"
       label.textContent = bar.band + (bar.mine ? " ←" : "")
 
-      var track = document.createElement("span")
+      // Divs, not spans: a span fill stays inline, and width does not apply to
+      // an inline box, so the bar renders invisible. The track happens to
+      // survive as a grid item; its child does not.
+      var track = document.createElement("div")
       track.className = "bar-track"
-      var fill = document.createElement("span")
+      var fill = document.createElement("div")
       fill.className = "bar-fill tone-" + bar.tone
       fill.style.width = Math.round(bar.fraction * 100) + "%"
       track.appendChild(fill)

@@ -217,12 +217,15 @@ body {
 }
 .bar-label { font-size: .8125rem; color: var(--dim) }
 .bar-track {
+  /* Explicitly block: width and height do not apply to an inline box, and
+     these have been built from spans before now. */
+  display: block;
   height: 8px;
   border-radius: 4px;
   background: color-mix(in srgb, var(--fg) 14%, transparent);
   overflow: hidden;
 }
-.bar-fill { height: 100%; border-radius: 4px; background: var(--accent) }
+.bar-fill { display: block; height: 100%; border-radius: 4px; background: var(--accent) }
 .bar-fill.tone-accent  { background: var(--accent) }
 .bar-fill.tone-neutral { background: var(--fg) }
 .bar-fill.tone-urgent  { background: var(--urgent) }
