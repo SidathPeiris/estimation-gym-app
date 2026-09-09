@@ -69,6 +69,14 @@
   // cheap to hold and the app is a single screen.
   var distCache = {}
   var distInFlight = {}
+  var distFetchedAt = {}
+
+  // How long a fetched distribution is treated as current. Coming back to the
+  // app re-reads it if it is older than this, so the count reflects people who
+  // answered while you were away rather than freezing at whatever it was when
+  // the page first loaded. Long enough that flicking between apps does not
+  // produce a request per switch.
+  var DIST_MAX_AGE_MS = 60000
   var openHistoryDay = null
   // Open on a first visit, where "how to play" is the whole question, and
   // collapsed thereafter so it stays out of the way of the daily puzzle.
@@ -112,6 +120,7 @@
       .then(function (data) {
         if (!data) return
         distCache[questionId] = data
+        distFetchedAt[questionId] = Date.now()
         render()
       })
       .catch(function () {})
@@ -122,8 +131,12 @@
 
   function loadDistribution(questionId) {
     if (!DISTRIBUTION_URL || !questionId || !canFetch()) return
-    if (distCache[questionId] || distInFlight[questionId]) return
+    if (distInFlight[questionId]) return
+    // Cached is fine while it is fresh; past that, go and look again.
+    if (distCache[questionId] &&
+        Date.now() - (distFetchedAt[questionId] || 0) < DIST_MAX_AGE_MS) return
     distInFlight[questionId] = true
+    distFetchedAt[questionId] = Date.now()
     try {
     fetch(DISTRIBUTION_URL + "/dist?q=" + encodeURIComponent(questionId))
       .then(function (r) { return r.ok ? r.json() : null })
@@ -482,7 +495,10 @@
 
   document.addEventListener("visibilitychange", function () {
     if (document.hidden) return
-    if (refreshDay()) render()
+    refreshDay()
+    // Unconditional: render() is a DOM update and is cheap, and it is what
+    // triggers a re-read of a distribution that has gone stale.
+    render()
     if (pendingReload) applyUpdate()
     requestUpdate()
   })

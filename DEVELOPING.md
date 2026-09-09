@@ -146,6 +146,17 @@ no play timestamp. The submission body is exactly:
 { "questionId": "piano-tuners-chicago", "band": "Close" }
 ```
 
+### How often it refreshes
+
+A distribution is fetched when the question first needs one, and cached. Coming
+back to the app re-reads it if the cached copy is older than `DIST_MAX_AGE_MS`
+(60s), so the count reflects people who answered while you were away instead of
+freezing at whatever it was when the page loaded. Inside that window a resume
+costs nothing, so flicking between apps does not produce a request per switch.
+
+Submitting a result also refreshes it, since the POST returns the current
+picture - answering costs one round trip rather than two.
+
 ### Keyed on question id, never on the day
 
 Growing the bank reshuffles which question falls on which date. A distribution
