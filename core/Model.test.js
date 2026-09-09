@@ -435,4 +435,46 @@ assert.equal(Model.historyDays(withId)[0].entry.questionId, "piano-tuners-chicag
   assert.ok(afterRetag.rows.some((r) => r.strategy === "molar"), "a re-tagged question moves shape")
 }
 
+// --- practice must not spoil an upcoming daily ---
+{
+  const today = 1000
+
+  const pool = Model.practicePool(questionBank, Model.emptyState(), [], today)
+  assert.ok(pool.length > 0, "there is still something to practise on")
+
+  // The property that matters: nothing the daily is about to serve.
+  const upcoming = new Set()
+  for (let d = today; d < today + Model.PRACTICE_RESERVE_DAYS; d++) {
+    upcoming.add(Model.questionForDay(d, questionBank).id)
+  }
+  const leaked = pool.filter((q) => upcoming.has(q.id))
+  assert.equal(leaked.length, 0, `practice offered ${leaked.length} question(s) due within the reserve window`)
+
+  // Tomorrow's question in particular, which was the worst case.
+  const tomorrow = Model.questionForDay(today + 1, questionBank).id
+  assert.ok(!pool.some((q) => q.id === tomorrow), "practice must never hand over tomorrow's puzzle")
+
+  // Reserving must not swallow the whole bank.
+  assert.ok(pool.length > questionBank.length * 0.3, "a useful fraction is still practisable")
+
+  // Already answered and already practised are still excluded.
+  let played = Model.recordAnswer(Model.emptyState(), today - 400, 1, 1, false, pool[0].id)
+  const afterPlay = Model.practicePool(questionBank, played, [], today)
+  assert.ok(!afterPlay.some((q) => q.id === pool[0].id), "a question played as a daily is not offered")
+  const afterPractice = Model.practicePool(questionBank, Model.emptyState(), [pool[1].id], today)
+  assert.ok(!afterPractice.some((q) => q.id === pool[1].id), "a question already practised is not offered again")
+
+  // pickPractice honours the same reserve.
+  const picked = Model.pickPractice(questionBank, Model.emptyState(), [], today, () => 0)
+  assert.ok(picked && !upcoming.has(picked.id), "the picked question is not one that is due soon")
+
+  // A reserve wider than the bank must not leave nothing to play.
+  const huge = Model.practicePool(questionBank, Model.emptyState(), [], today, 99999)
+  assert.ok(huge.length > 0, "an over-wide reserve falls back rather than offering nothing")
+
+  // With no day supplied nothing is reserved, and it still works.
+  assert.equal(Object.keys(Model.reservedForDaily(questionBank, undefined)).length, 0)
+  assert.ok(Model.practicePool(questionBank, Model.emptyState(), []).length > 0)
+}
+
 console.log("All Model.js tests passed.")

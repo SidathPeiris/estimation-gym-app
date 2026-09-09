@@ -266,7 +266,36 @@ var PLUGIN_VERSION = "0.1.0"
 //
 // Nothing here touches the streak, the stats or the shared distribution. It is
 // deliberately a separate pool and a separate verb.
-function practicePool(bank, state, alreadyPractised) {
+// How far ahead the daily rotation is protected from practice.
+//
+// Every question becomes a daily eventually - the rotation cycles through the
+// whole bank - so practising anything would otherwise spoil a future puzzle,
+// and the soonest collision is tomorrow. Questions scheduled inside this
+// window are simply not offered, which pushes any repeat far enough away to be
+// a fair re-test rather than a spoiler.
+//
+// Widen it as the bank grows: the cost is only that fewer questions are
+// available to practise on.
+var PRACTICE_RESERVE_DAYS = 180
+
+// The questions the daily puzzle is about to use, which practice must leave
+// alone. Derived from the same deterministic rotation the daily uses, so it
+// needs no stored state.
+function reservedForDaily(bank, todayIdx, reserveDays) {
+  var days = typeof reserveDays === "number" ? reserveDays : PRACTICE_RESERVE_DAYS
+  var reserved = {}
+  if (!bank.length || days <= 0 || typeof todayIdx !== "number") return reserved
+
+  // Never reserve the whole bank, or there would be nothing left to practise.
+  var span = Math.min(days, bank.length - 1)
+  for (var offset = 0; offset < span; offset++) {
+    var q = questionForDay(todayIdx + offset, bank)
+    if (q) reserved[q.id] = true
+  }
+  return reserved
+}
+
+function practicePool(bank, state, alreadyPractised, todayIdx, reserveDays) {
   var answered = {}
   var days = historyDays(state)
   for (var i = 0; i < days.length; i++) {
@@ -279,11 +308,24 @@ function practicePool(bank, state, alreadyPractised) {
     for (var p = 0; p < alreadyPractised.length; p++) practised[alreadyPractised[p]] = true
   }
 
+  var reserved = reservedForDaily(bank, todayIdx, reserveDays)
+
   var pool = []
   for (var b = 0; b < bank.length; b++) {
     var q = bank[b]
-    if (answered[q.id] || practised[q.id]) continue
+    if (answered[q.id] || practised[q.id] || reserved[q.id]) continue
     pool.push(q)
+  }
+
+  // If reserving has left nothing, fall back to ignoring the reserve rather
+  // than offering nothing at all. Only reachable on a tiny bank or once
+  // almost everything has been played.
+  if (!pool.length) {
+    for (var f = 0; f < bank.length; f++) {
+      var alt = bank[f]
+      if (answered[alt.id] || practised[alt.id]) continue
+      pool.push(alt)
+    }
   }
   return pool
 }
@@ -291,8 +333,8 @@ function practicePool(bank, state, alreadyPractised) {
 // Picks one at random. `random` is injectable so a test can be deterministic.
 // Returns null once the pool is empty, which the caller should present as
 // having worked through everything rather than as a failure.
-function pickPractice(bank, state, alreadyPractised, random) {
-  var pool = practicePool(bank, state, alreadyPractised)
+function pickPractice(bank, state, alreadyPractised, todayIdx, random) {
+  var pool = practicePool(bank, state, alreadyPractised, todayIdx)
   if (!pool.length) return null
   var r = typeof random === "function" ? random() : Math.random()
   var index = Math.floor(r * pool.length)
@@ -553,6 +595,8 @@ var ModelAPI = {
   historyDays: historyDays,
   archetypeStats: archetypeStats,
   practicePool: practicePool,
+  reservedForDaily: reservedForDaily,
+  PRACTICE_RESERVE_DAYS: PRACTICE_RESERVE_DAYS,
   pickPractice: pickPractice,
   PLUGIN_VERSION: PLUGIN_VERSION,
   formatAsOf: formatAsOf,

@@ -595,7 +595,9 @@
 
   function nextPractice() {
     practiceResult = null
-    practiceQuestion = Model.pickPractice(QUESTIONS, state, practisedIds())
+    // today is passed so the reserve applies: practice must not offer a
+    // question the daily puzzle is about to use.
+    practiceQuestion = Model.pickPractice(QUESTIONS, state, practisedIds(), today)
     el["practice-input"].value = ""
     show(el["practice-error"], false)
     renderPractice()
