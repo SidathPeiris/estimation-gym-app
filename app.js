@@ -31,7 +31,12 @@
              "stats", "stats-toggle", "chev", "stats-summary", "stats-body",
              "bars", "stats-footer", "calibration", "export",
              "restore-toggle", "restore-panel", "restore-input", "restore-go", "restore-note",
-             "arch", "arch-headline", "arch-rows", "arch-note"]
+             "arch", "arch-headline", "arch-rows", "arch-note",
+             "practice", "practice-toggle", "practice-chev", "practice-body", "practice-intro",
+             "practice-prompt", "practice-asof", "practice-form", "practice-input", "practice-exp",
+             "practice-go", "practice-error", "practice-result", "practice-band", "practice-points",
+             "practice-guess-line", "practice-actual-line", "practice-decades",
+             "practice-approach", "practice-hint", "practice-source", "practice-next"]
   ids.forEach(function (id) { el[id] = document.getElementById(id) })
 
   // Recomputed whenever the app comes back to the foreground, not fixed for
@@ -55,6 +60,16 @@
   var historyOpen = false
   var historyLimit = HISTORY_PAGE   // 0 means show every day played
   var hintShown = false
+
+  // --- Practice ------------------------------------------------------------
+  //
+  // A separate pool and a separate verb. Nothing here is recorded against the
+  // streak, the stats or the shared distribution - it exists so a new player
+  // is not limited to one go a day while deciding whether they like this.
+  var PRACTICE_KEY = "estimation-gym-practised"
+  var practiceOpen = false
+  var practiceQuestion = null
+  var practiceResult = null
 
   // --- Shared distribution ------------------------------------------------
   //
@@ -224,6 +239,30 @@
     currentSubscription().then(function (sub) {
       if (sub) tellWorker("/played", { endpoint: sub.endpoint, day: day })
     })
+  }
+
+  // The numeric keypad a phone shows for inputmode="decimal" has no "e", so
+  // scientific notation - which the guide tells people to use, and which the
+  // answers genuinely need, spanning 10^-11 to 10^80 - would be unreachable on
+  // the device most people play on. Shared by the daily field and practice.
+  function insertExponent(input) {
+    var value = String(input.value)
+
+    // One exponent only; "3e4e5" is not a number and the field would just
+    // reject it later with no explanation.
+    if (value.toLowerCase().indexOf("e") >= 0) return
+
+    var start = typeof input.selectionStart === "number" ? input.selectionStart : value.length
+    var end = typeof input.selectionEnd === "number" ? input.selectionEnd : value.length
+    input.value = value.slice(0, start) + "e" + value.slice(end)
+
+    // Keep the keypad up and the caret after the "e", ready for the exponent.
+    try {
+      input.focus()
+      if (input.setSelectionRange) input.setSelectionRange(start + 1, start + 1)
+    } catch (e) {
+      // Focus handling is a convenience; the character is already inserted.
+    }
   }
 
   function canFetch() {
@@ -486,6 +525,113 @@
     if (view.note) setText(el["arch-note"], view.note)
   }
 
+  // --- Practice behaviour ---------------------------------------------------
+
+  function practisedIds() {
+    try {
+      var raw = window.localStorage.getItem(PRACTICE_KEY)
+      var parsed = raw ? JSON.parse(raw) : []
+      return Array.isArray(parsed) ? parsed : []
+    } catch (e) {
+      return []
+    }
+  }
+
+  function rememberPractised(id) {
+    try {
+      var list = practisedIds()
+      if (list.indexOf(id) < 0) list.push(id)
+      window.localStorage.setItem(PRACTICE_KEY, JSON.stringify(list))
+    } catch (e) {
+      // Not being able to remember only means a question may come round again.
+    }
+  }
+
+  function nextPractice() {
+    practiceResult = null
+    practiceQuestion = Model.pickPractice(QUESTIONS, state, practisedIds())
+    el["practice-input"].value = ""
+    show(el["practice-error"], false)
+    renderPractice()
+    if (practiceQuestion) el["practice-input"].focus()
+  }
+
+  function submitPractice() {
+    if (!practiceQuestion) return
+    var check = validateGuess(el["practice-input"].value)
+    if (!check.ok) {
+      setText(el["practice-error"], check.message)
+      show(el["practice-error"], true)
+      return
+    }
+    show(el["practice-error"], false)
+
+    // Scored the same way, recorded nowhere. The only thing kept is that this
+    // question has now been seen, so it does not come round again.
+    practiceResult = Model.scoreGuess(check.value, practiceQuestion.answerValue)
+    practiceResult.guess = check.value
+    rememberPractised(practiceQuestion.id)
+    renderPractice()
+  }
+
+  function renderPractice() {
+    setText(el["practice-chev"], practiceOpen ? "▾" : "▸")
+    el["practice-toggle"].setAttribute("aria-expanded", String(practiceOpen))
+    show(el["practice-body"], practiceOpen)
+    if (!practiceOpen) return
+
+    var exhausted = !practiceQuestion
+    var answered = !!practiceResult
+
+    setText(el["practice-intro"], exhausted
+      ? "You have worked through every question the daily puzzle has not used yet. Nothing left to practise on — which is quite the achievement."
+      : "A question the daily puzzle has not given you. Scored the same way, but it does not touch your streak, your stats, or what other players see.")
+
+    show(el["practice-prompt"], !exhausted)
+    show(el["practice-form"], !exhausted && !answered)
+    show(el["practice-next"], !exhausted && answered)
+
+    if (exhausted) {
+      show(el["practice-asof"], false)
+      show(el["practice-result"], false)
+      show(el["practice-approach"], false)
+      show(el["practice-hint"], false)
+      show(el["practice-source"], false)
+      return
+    }
+
+    setText(el["practice-prompt"], practiceQuestion.prompt)
+    el["practice-input"].placeholder = "Guess (" + practiceQuestion.unit + ")"
+
+    var dated = practiceQuestion.asOf !== undefined
+    show(el["practice-asof"], dated)
+    if (dated) setText(el["practice-asof"], "as of " + Model.formatAsOf(practiceQuestion.asOf))
+
+    show(el["practice-result"], answered)
+    show(el["practice-approach"], answered)
+    show(el["practice-hint"], answered)
+    show(el["practice-source"], answered && Boolean(practiceQuestion.source))
+
+    if (!answered) return
+
+    var tone = toneForBand(practiceResult.band)
+    el["practice-result"].className = "result tone-" + tone
+    setText(el["practice-band"], practiceResult.band)
+    // Deliberately not points: practice earns none, and showing a number would
+    // suggest otherwise.
+    setText(el["practice-points"], "practice")
+    setText(el["practice-guess-line"], "Your guess: " + Model.formatCompact(practiceResult.guess) + " " + practiceQuestion.unit)
+    setText(el["practice-actual-line"], "Actual: " + Model.formatCompact(practiceQuestion.answerValue) + " " + practiceQuestion.unit)
+    setText(el["practice-decades"], "Off by " +
+      (practiceResult.distanceDecades !== null ? practiceResult.distanceDecades.toFixed(2) : "?") +
+      " orders of magnitude")
+
+    var strategy = Model.strategyFor(practiceQuestion)
+    setText(el["practice-approach"], "Approach: " + strategy.label)
+    setText(el["practice-hint"], "How to think about it: " + practiceQuestion.decompositionHint)
+    if (practiceQuestion.source) setText(el["practice-source"], "Source: " + practiceQuestion.source)
+  }
+
   function renderHistory(history) {
     el["history-list"].replaceChildren()
 
@@ -621,6 +767,7 @@
     if (vm.stats.calibration) setText(el.calibration, vm.stats.calibration)
     renderBars(vm.stats.bars)
     renderArchetypes(vm.archetypes)
+    renderPractice()
 
     setText(el.chev, statsOpen ? "▾" : "▸")
     el["stats-toggle"].setAttribute("aria-expanded", String(statsOpen))
@@ -665,24 +812,7 @@
   // answers genuinely need, spanning 10^-11 to 10^80 - was unreachable on the
   // device most people play on. This inserts it without giving up the keypad.
   el.exp.addEventListener("click", function () {
-    var input = el["guess-input"]
-    var value = String(input.value)
-
-    // One exponent only; "3e4e5" is not a number and the field would just
-    // reject it later with no explanation.
-    if (value.toLowerCase().indexOf("e") >= 0) return
-
-    var start = typeof input.selectionStart === "number" ? input.selectionStart : value.length
-    var end = typeof input.selectionEnd === "number" ? input.selectionEnd : value.length
-    input.value = value.slice(0, start) + "e" + value.slice(end)
-
-    // Keep the keypad up and the caret after the "e", ready for the exponent.
-    try {
-      input.focus()
-      if (input.setSelectionRange) input.setSelectionRange(start + 1, start + 1)
-    } catch (e) {
-      // Focus handling is a convenience; the character is already inserted.
-    }
+    insertExponent(el["guess-input"])
   })
 
   el.remind.addEventListener("click", function () {
@@ -733,6 +863,23 @@
   el["history-more"].addEventListener("click", function () {
     historyLimit = 0
     render()
+  })
+
+  el["practice-toggle"].addEventListener("click", function () {
+    practiceOpen = !practiceOpen
+    if (practiceOpen && !practiceQuestion && !practiceResult) nextPractice()
+    else renderPractice()
+  })
+
+  el["practice-form"].addEventListener("submit", function (event) {
+    event.preventDefault()
+    submitPractice()
+  })
+
+  el["practice-next"].addEventListener("click", nextPractice)
+
+  el["practice-exp"].addEventListener("click", function () {
+    insertExponent(el["practice-input"])
   })
 
   el["restore-toggle"].addEventListener("click", function () {

@@ -510,3 +510,31 @@ body {
   line-height: 1.5;
   color: var(--dim);
 }
+
+/* --- practice --- */
+.practice { margin-top: 1.1rem }
+
+.practice-intro {
+  margin: 0.3rem 0 0.8rem;
+  font-size: 0.8rem;
+  line-height: 1.55;
+  color: var(--dim);
+}
+
+.practice-prompt {
+  margin: 0.6rem 0 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+/* Practice earns no points, so the slot says so rather than showing a number. */
+#practice-points {
+  font-size: 0.72rem;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+#practice-next { margin-top: 0.9rem }

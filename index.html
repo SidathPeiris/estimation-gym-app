@@ -76,6 +76,43 @@
   <p class="hint" id="hint" hidden></p>
   <p class="source" id="source" hidden></p>
 
+  <section class="practice" id="practice">
+    <button type="button" class="stats-toggle" id="practice-toggle" aria-expanded="false" aria-controls="practice-body">
+      <span class="stats-title"><span class="chev" id="practice-chev">&#9656;</span> Practice</span>
+      <span class="stats-summary">doesn't affect your streak</span>
+    </button>
+    <div class="stats-body" id="practice-body" hidden>
+      <p class="practice-intro" id="practice-intro"></p>
+
+      <p class="practice-prompt" id="practice-prompt" hidden></p>
+      <p class="asof" id="practice-asof" hidden></p>
+
+      <form class="guess" id="practice-form" novalidate hidden>
+        <input id="practice-input" type="text" inputmode="decimal" autocomplete="off"
+               autocapitalize="off" spellcheck="false" aria-label="Your practice estimate">
+        <button type="button" id="practice-exp" aria-label="Insert scientific notation">&times;10<sup>n</sup></button>
+        <button type="submit" id="practice-go">Go</button>
+      </form>
+      <p class="error" id="practice-error" role="alert" hidden></p>
+
+      <section class="result" id="practice-result" hidden>
+        <div class="result-head">
+          <span class="band" id="practice-band"></span>
+          <span class="points" id="practice-points"></span>
+        </div>
+        <p class="line" id="practice-guess-line"></p>
+        <p class="line" id="practice-actual-line"></p>
+        <p class="decades" id="practice-decades"></p>
+      </section>
+
+      <p class="strategy-label" id="practice-approach" hidden></p>
+      <p class="hint" id="practice-hint" hidden></p>
+      <p class="source" id="practice-source" hidden></p>
+
+      <button type="button" class="export" id="practice-next" hidden>Another question</button>
+    </div>
+  </section>
+
   <section class="howto" id="howto">
     <button class="stats-toggle" id="howto-toggle" aria-expanded="false" aria-controls="howto-body">
       <span class="stats-title"><span class="chev" id="howto-chev">&#9656;</span> How to play</span>

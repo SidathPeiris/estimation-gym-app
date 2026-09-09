@@ -59,6 +59,16 @@ Taking it:
 - **does not break your streak.** The streak is for showing up, and charging
   you for wanting to learn the method would be the wrong incentive.
 
+## Practice
+
+One question a day is the point, but it is a slow way to find out whether you
+like something. **Practice** gives you a question the daily puzzle has not used
+yet, scored exactly the same way — and it does not touch your streak, your
+stats, or what other players see.
+
+Questions you have practised do not come round again, and neither do ones you
+have already had as a daily.
+
 ## Stats
 
 Expand **Stats** for lifetime totals: how your guesses are distributed across

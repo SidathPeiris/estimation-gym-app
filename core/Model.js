@@ -256,6 +256,51 @@ function formatAsOf(year) {
 // point of showing a version is that it is trustworthy.
 var PLUGIN_VERSION = "0.1.0"
 
+// Practice: questions to attempt outside the daily puzzle.
+//
+// A new player can otherwise have exactly one go and then wait a day, which is
+// a poor way to discover whether you like something. Practice draws from the
+// questions the daily has not used on this device, so it never spoils an
+// upcoming day's puzzle for the person playing it, and never repeats one they
+// have already had.
+//
+// Nothing here touches the streak, the stats or the shared distribution. It is
+// deliberately a separate pool and a separate verb.
+function practicePool(bank, state, alreadyPractised) {
+  var answered = {}
+  var days = historyDays(state)
+  for (var i = 0; i < days.length; i++) {
+    var id = days[i].entry.questionId
+    if (id) answered[id] = true
+  }
+
+  var practised = {}
+  if (alreadyPractised) {
+    for (var p = 0; p < alreadyPractised.length; p++) practised[alreadyPractised[p]] = true
+  }
+
+  var pool = []
+  for (var b = 0; b < bank.length; b++) {
+    var q = bank[b]
+    if (answered[q.id] || practised[q.id]) continue
+    pool.push(q)
+  }
+  return pool
+}
+
+// Picks one at random. `random` is injectable so a test can be deterministic.
+// Returns null once the pool is empty, which the caller should present as
+// having worked through everything rather than as a failure.
+function pickPractice(bank, state, alreadyPractised, random) {
+  var pool = practicePool(bank, state, alreadyPractised)
+  if (!pool.length) return null
+  var r = typeof random === "function" ? random() : Math.random()
+  var index = Math.floor(r * pool.length)
+  if (index < 0) index = 0
+  if (index >= pool.length) index = pool.length - 1
+  return pool[index]
+}
+
 // How the player does on each shape of problem.
 //
 // The whole point of the archetypes is that recognising the shape transfers,
@@ -507,6 +552,8 @@ var ModelAPI = {
   hasAnsweredDay: hasAnsweredDay,
   historyDays: historyDays,
   archetypeStats: archetypeStats,
+  practicePool: practicePool,
+  pickPractice: pickPractice,
   PLUGIN_VERSION: PLUGIN_VERSION,
   formatAsOf: formatAsOf,
   computeStats: computeStats,
