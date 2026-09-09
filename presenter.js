@@ -249,7 +249,26 @@ function howToPlayView(Model) {
         pointsLabel: row.points + " pts"
       }
     }),
-    notes: [guide.streakNote, guide.hintNote, guide.statsNote]
+    notes: [guide.streakNote, guide.hintNote, guide.statsNote],
+
+    // App-only, and deliberately not in Model.HOW_TO_PLAY: that guide is
+    // shared with the Omarchy widget, which has no notifications and would be
+    // describing something it cannot do.
+    reminder: {
+      title: "The daily reminder",
+      intro: "Tap the 🔔 in the top right to get one nudge a day. Tap it again to stop.",
+      steps: [
+        "Install the app to your home screen first. On iPhone this is required — Apple only allows notifications for web apps that have been added to the Home Screen, so a browser tab will never get one.",
+        "Open it from the home screen and tap the 🔔 in the top right.",
+        "Say yes when your browser asks permission. The bell turns blue and reads On."
+      ],
+      notes: [
+        "It arrives around 9am your time, wherever you are — the app remembers your timezone, not your location.",
+        "You will not be nudged on a day you have already played. It is a reminder, not a nag.",
+        "If you say no by accident, your browser will not ask twice. You would have to allow notifications for this site in your browser settings, then tap the bell again.",
+        "Turning it off deletes the subscription. Nothing about your guesses, scores or streak is ever sent with it."
+      ]
+    }
   }
 }
 

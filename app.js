@@ -26,6 +26,8 @@
              "build", "remind", "remind-state", "remind-note",
              "howto", "howto-toggle", "howto-chev", "howto-body",
              "howto-steps", "howto-intro", "howto-scoring", "howto-notes",
+             "howto-reminder", "howto-reminder-title", "howto-reminder-intro",
+             "howto-reminder-steps", "howto-reminder-notes",
              "history", "history-toggle", "history-chev", "history-summary",
              "history-body", "history-list", "history-more",
              "stats", "stats-toggle", "chev", "stats-summary", "stats-body",
@@ -493,6 +495,29 @@
       p.className = "howto-note"
       p.textContent = note
       el["howto-notes"].appendChild(p)
+    })
+
+    // Only explain the reminder where it can actually be switched on.
+    var canRemind = pushSupported()
+    show(el["howto-reminder"], canRemind)
+    if (!canRemind) return
+
+    setText(el["howto-reminder-title"], guide.reminder.title)
+    setText(el["howto-reminder-intro"], guide.reminder.intro)
+
+    el["howto-reminder-steps"].replaceChildren()
+    guide.reminder.steps.forEach(function (step) {
+      var li = document.createElement("li")
+      li.textContent = step
+      el["howto-reminder-steps"].appendChild(li)
+    })
+
+    el["howto-reminder-notes"].replaceChildren()
+    guide.reminder.notes.forEach(function (note) {
+      var p = document.createElement("p")
+      p.className = "howto-note"
+      p.textContent = note
+      el["howto-reminder-notes"].appendChild(p)
     })
   }
 
