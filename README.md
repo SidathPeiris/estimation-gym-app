@@ -17,7 +17,7 @@ No account. No sign-up. Works offline.
 
 ## Install it on your phone
 
-**Step-by-step instructions, with pictures of which buttons to press:**
+**Step-by-step instructions for your device:**
 **<https://sidathpeiris.github.io/estimation-gym-app/install/>**
 
 The short version:
