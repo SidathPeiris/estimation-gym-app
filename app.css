@@ -417,17 +417,22 @@ body {
 
 .suggest-label em { font-style: normal; opacity: 0.7 }
 
-/* The answer field carries the exponent helper beside it, so it needs to sit
-   on a row rather than fill the width on its own. */
-#suggest-answer { display: inline-block; width: auto; flex: 1 1 auto }
+/* Mirrors .guess: the field grows, the exponent button keeps its own width. */
+#suggest-answer {
+  flex: 1;
+  min-width: 0;
+  width: auto;
+  padding: 14px 16px;
+  font-size: 1.0625rem;
+}
 
-.suggest-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem }
+.suggest-row { display: flex; flex-wrap: wrap; gap: 10px }
 .suggest-row .suggest-label { flex: 1 0 100%; margin-bottom: 0 }
 
 /* --- scientific-notation helper --- */
 /* The phone keypad has no "e"; this puts one within reach without swapping
    the keypad for a full keyboard. */
-#exp {
+.exp {
   flex: 0 0 auto;
   padding: 0 0.7rem;
   background: transparent;
@@ -440,9 +445,9 @@ body {
   cursor: pointer;
 }
 
-#exp sup { font-size: 0.7em }
-#exp:hover, #exp:focus-visible { color: var(--fg); border-color: var(--dim) }
-#exp:active { background: color-mix(in srgb, var(--fg) 8%, transparent) }
+.exp sup { font-size: 0.7em }
+.exp:hover, .exp:focus-visible { color: var(--fg); border-color: var(--dim) }
+.exp:active { background: color-mix(in srgb, var(--fg) 8%, transparent) }
 
 /* --- daily reminder, in the header corner --- */
 .remind {

@@ -13,7 +13,7 @@
 // Note this caches code only. Play history lives in localStorage, which the
 // cache never touches, so a version bump can never cost anyone their streak.
 
-var CACHE = "estimation-gym-v1.1.0"
+var CACHE = "estimation-gym-v1.1.1"
 
 var ASSETS = [
   "./",
