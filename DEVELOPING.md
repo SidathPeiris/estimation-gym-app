@@ -251,6 +251,51 @@ stand-in for D1, so the logic is testable without deploying.
 - The stored client key is a **hash of address plus question id**, so the table
   holds no bare IP addresses.
 
+## Suggested questions
+
+Players can suggest a question from inside the app. It posts to the Worker
+and lands in the `suggestions` table as `pending`.
+
+**Nothing submitted is ever served to a player.** The only path into the game
+is being appended to the bank by hand. That is deliberate: the bank carries
+the answers, so an unchecked question is worse than no question - it would
+mark a correct guess as wrong and discredit the scoring.
+
+Review them locally:
+
+```bash
+node scripts/suggestions.mjs list           # everything still pending
+node scripts/suggestions.mjs show <id>
+node scripts/suggestions.mjs accept <id>    # prints a bank entry to append
+node scripts/suggestions.mjs reject <id>
+```
+
+`accept` marks the row and hands back a ready-shaped entry with the strategy
+and the decomposition hint left as TODO. Check the answer against the source
+before it goes anywhere near the bank; the number in that entry is the
+submitter's claim and nothing more.
+
+### Why there is no admin page
+
+A hosted review screen would mean another public endpoint holding another
+secret, guarding data only one person ever reads. The script reaches the same
+rows through wrangler, which is already authenticated as you. The cost is that
+review only happens at a desktop.
+
+### What the endpoint refuses
+
+This is the only place submissions are filtered, so the refusals are the
+feature rather than an afterthought:
+
+| Refused | Why |
+| --- | --- |
+| `<` or `>` anywhere | The widget renders prompts through Qt's `Text`, which treats HTML-shaped input as rich text unless pinned. The widget *is* pinned - this is the second line of defence |
+| Control characters | No place in a sentence, and a standard way past a later check |
+| An answer that is not a positive finite number | An unparseable answer is not a claim anyone can verify |
+| A prompt under 15 or over 200 characters | |
+| More than 5 a day from one address | Hashed, so the table never holds a bare IP |
+| A foreign `Origin` | Same rule the rest of the Worker follows |
+
 ## Versioning
 
 `major.minor.patch`, declared once in `package.json`:

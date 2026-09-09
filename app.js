@@ -25,6 +25,9 @@
              "hint-toggle", "strategy", "strategy-label", "strategy-guidance", "approach",
              "build", "remind", "remind-state", "remind-note",
              "howto", "howto-toggle", "howto-chev", "howto-body",
+             "suggest", "suggest-toggle", "suggest-chev", "suggest-body", "suggest-form",
+             "suggest-prompt", "suggest-answer", "suggest-unit", "suggest-source",
+             "suggest-note", "suggest-exp", "suggest-go", "suggest-note-out",
              "howto-steps", "howto-intro", "howto-scoring", "howto-notes",
              "howto-reminder", "howto-reminder-title", "howto-reminder-intro",
              "howto-reminder-steps", "howto-reminder-notes",
@@ -106,6 +109,7 @@
   // Open on a first visit, where "how to play" is the whole question, and
   // collapsed thereafter so it stays out of the way of the daily puzzle.
   var howToOpen = !hasAnsweredAnything(state)
+  var suggestOpen = false
 
   function applyReset() {
     var mode = null
@@ -283,6 +287,65 @@
     } catch (e) {
       // Focus handling is a convenience; the character is already inserted.
     }
+  }
+
+  // Sends a suggested question to the Worker, where it lands as pending. It
+  // is never served to anyone from here - every suggestion is checked and
+  // appended to the bank by hand, because the bank carries the answers and an
+  // unchecked one would mark a correct guess as wrong.
+  //
+  // Unlike tellWorker, the reply body matters: the endpoint explains what it
+  // refused and why, and repeating that is far more use than "failed".
+  function sendSuggestion(event) {
+    if (event) event.preventDefault()
+    if (!DISTRIBUTION_URL || !canFetch()) {
+      return setSuggestNote("No connection - suggestions need one.")
+    }
+
+    var payload = {
+      prompt: el["suggest-prompt"].value,
+      answer: el["suggest-answer"].value,
+      unit: el["suggest-unit"].value,
+      source: el["suggest-source"].value,
+      note: el["suggest-note"].value
+    }
+
+    // Checked here as well as at the endpoint, so the common mistakes are
+    // answered instantly rather than after a round trip. The endpoint is
+    // still the one that decides - this is a courtesy, not the guard.
+    var missing = !payload.prompt.trim() || !payload.unit.trim() ||
+      !payload.answer.trim() || !payload.source.trim()
+    if (missing) return setSuggestNote("Question, answer, unit and source are all needed.")
+    if (!(Number(payload.answer.trim()) > 0)) {
+      return setSuggestNote("The answer has to be a positive number. Use the ×10ⁿ button for big ones.")
+    }
+
+    el["suggest-go"].disabled = true
+    setSuggestNote("Sending…")
+
+    fetch(DISTRIBUTION_URL + "/suggest", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    }).then(function (r) {
+      return r.json().catch(function () { return {} })
+    }).then(function (data) {
+      el["suggest-go"].disabled = false
+      if (data && data.ok) {
+        el["suggest-form"].reset()
+        setSuggestNote("Thank you — it is in the queue to be checked.")
+      } else {
+        setSuggestNote((data && data.error) || "That did not go through. Try again later.")
+      }
+    }).catch(function () {
+      el["suggest-go"].disabled = false
+      setSuggestNote("That did not go through. Try again later.")
+    })
+  }
+
+  function setSuggestNote(text) {
+    setText(el["suggest-note-out"], text)
+    show(el["suggest-note-out"], Boolean(text))
   }
 
   function canFetch() {
@@ -795,6 +858,10 @@
     renderBuild()
     renderRemind()
 
+    setText(el["suggest-chev"], suggestOpen ? "▾" : "▸")
+    el["suggest-toggle"].setAttribute("aria-expanded", String(suggestOpen))
+    show(el["suggest-body"], suggestOpen)
+
     setText(el["howto-chev"], howToOpen ? "▾" : "▸")
     el["howto-toggle"].setAttribute("aria-expanded", String(howToOpen))
     show(el["howto-body"], howToOpen)
@@ -897,6 +964,17 @@
         .catch(function () { flash(el.share, "Could not copy") })
     }
   })
+
+  el["suggest-toggle"].addEventListener("click", function () {
+    suggestOpen = !suggestOpen
+    render()
+  })
+
+  el["suggest-exp"].addEventListener("click", function () {
+    insertExponent(el["suggest-answer"])
+  })
+
+  el["suggest-form"].addEventListener("submit", sendSuggestion)
 
   el["howto-toggle"].addEventListener("click", function () {
     howToOpen = !howToOpen

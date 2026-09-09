@@ -179,12 +179,52 @@
     </div>
   </section>
 
-  <p class="suggest">
-    Got a good question for the bank?
-    <a href="https://github.com/SidathPeiris/estimation-gym-omarchy/issues/new?template=suggest-a-question.yml"
-       target="_blank" rel="noopener noreferrer">Suggest one</a>
-    <span class="suggest-caveat">(needs a GitHub account)</span>
-  </p>
+  <section class="howto" id="suggest">
+    <button class="stats-toggle" id="suggest-toggle" aria-expanded="false" aria-controls="suggest-body">
+      <span class="stats-title"><span class="chev" id="suggest-chev">&#9656;</span> Suggest a question</span>
+    </button>
+    <div class="stats-body" id="suggest-body" hidden>
+      <p class="howto-note">Good questions can be reasoned out from things you roughly know,
+        rather than recalled. Every suggestion is checked by hand before it can appear,
+        so an answer and a source are both needed.</p>
+
+      <form id="suggest-form" novalidate>
+        <label class="suggest-field">
+          <span class="suggest-label">Question</span>
+          <input class="restore-input" id="suggest-prompt" type="text" maxlength="200"
+                 placeholder="How many bricks are in the Great Wall of China?" autocomplete="off">
+        </label>
+
+        <label class="suggest-field suggest-row">
+          <span class="suggest-label">Answer</span>
+          <input class="restore-input" id="suggest-answer" type="text" inputmode="decimal"
+                 maxlength="40" placeholder="3.9e9" autocomplete="off">
+          <button type="button" class="exp" id="suggest-exp" title="Insert an exponent">×10ⁿ</button>
+        </label>
+
+        <label class="suggest-field">
+          <span class="suggest-label">Unit</span>
+          <input class="restore-input" id="suggest-unit" type="text" maxlength="40"
+                 placeholder="bricks" autocomplete="off">
+        </label>
+
+        <label class="suggest-field">
+          <span class="suggest-label">Source</span>
+          <input class="restore-input" id="suggest-source" type="text" maxlength="200"
+                 placeholder="Wall length and typical brick dimensions" autocomplete="off">
+        </label>
+
+        <label class="suggest-field">
+          <span class="suggest-label">How would you work it out? <em>(optional)</em></span>
+          <textarea class="restore-input" id="suggest-note" rows="3" maxlength="500"
+                    spellcheck="false" placeholder="Length times cross-section, divided by the volume of one brick."></textarea>
+        </label>
+
+        <button type="submit" class="export" id="suggest-go">Send it in</button>
+        <p class="restore-note" id="suggest-note-out" hidden></p>
+      </form>
+    </div>
+  </section>
 
   <p class="source-offer">
     Free software —

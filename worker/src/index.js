@@ -196,6 +196,89 @@ async function handlePost(request, env) {
     : json({ questionId, n, enough: true, counts, counted: !already }, env);
 }
 
+// --- question suggestions ---
+//
+// Nothing submitted here is ever served to a player. A suggestion lands as
+// `pending` and stays that way until it is reviewed off-line and appended to
+// the bank by hand, which is the only path into the game. That is deliberate:
+// the bank carries the answers, so a question nobody has checked is worse than
+// no question at all - it would mark a correct guess as wrong.
+const SUGGEST_MAX_PER_DAY = 5;
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+// Free text written by strangers, so the limits are about what can safely be
+// stored rather than about being generous. Angle brackets are refused
+// outright: the widget renders prompts through Qt's Text, which treats
+// anything HTML-shaped as rich text unless told otherwise, and the bank
+// validator refuses them for the same reason. Control characters go too - they
+// have no place in a sentence and are a standard way to smuggle something past
+// a later check.
+function cleanText(value, min, max) {
+  if (typeof value !== "string") return null;
+  const trimmed = value.trim();
+  if (trimmed.length < min || trimmed.length > max) return null;
+  if (/[<>]/.test(trimmed)) return null;
+  // Checked by codepoint rather than by regex: a control-character class is
+  // easy to write, easy to get subtly wrong, and unreadable afterwards.
+  for (const ch of trimmed) {
+    const code = ch.codePointAt(0);
+    if (code < 0x20 || code === 0x7f) return null;
+  }
+  return trimmed;
+}
+
+// The submitter's claimed answer. Stored as a number, because a value that
+// cannot be parsed is not a claim anyone could check. Number() rather than
+// parseFloat, which would quietly accept "5e9 or so" - and scientific notation
+// has to work, since the bank spans 10^-37 to 10^80.
+function parsedAnswer(value) {
+  const n = typeof value === "number" ? value : Number(String(value).trim());
+  if (!isFinite(n) || n <= 0) return null;
+  return n;
+}
+
+async function handleSuggest(request, env) {
+  let body;
+  try {
+    body = await request.json();
+  } catch (e) {
+    return json({ error: "bad json" }, env, 400);
+  }
+
+  const prompt = cleanText(body && body.prompt, 15, 200);
+  const unit = cleanText(body && body.unit, 1, 40);
+  const source = cleanText(body && body.source, 4, 200);
+  const answer = parsedAnswer(body && body.answer);
+  // Optional: absent is fine, present but unusable is not.
+  const note = body && body.note ? cleanText(body.note, 1, 500) : "";
+
+  if (!prompt) return json({ error: "prompt must be 15-200 characters, without < or >" }, env, 400);
+  if (!unit) return json({ error: "unit must be 1-40 characters" }, env, 400);
+  if (answer === null) return json({ error: "answer must be a positive number" }, env, 400);
+  if (!source) return json({ error: "source must be 4-200 characters" }, env, 400);
+  if (note === null) return json({ error: "note must be under 500 characters" }, env, 400);
+
+  // Rate limited per address per day, hashed so the table never holds a bare
+  // IP - the same treatment the response counter gives it.
+  const ip = request.headers.get("CF-Connecting-IP") || "unknown";
+  const client = await hash("suggest:" + ip);
+
+  const recent = await env.DB.prepare(
+    "SELECT COUNT(*) AS n FROM suggestions WHERE client = ? AND at > ?"
+  ).bind(client, Date.now() - DAY_MS).first();
+
+  if (recent && recent.n >= SUGGEST_MAX_PER_DAY) {
+    return json({ error: "that is enough for today - thank you, try again tomorrow" }, env, 429);
+  }
+
+  await env.DB.prepare(
+    "INSERT INTO suggestions (id, prompt, unit, answer, source, note, status, client, at) " +
+    "VALUES (?, ?, ?, ?, ?, ?, 'pending', ?, ?)"
+  ).bind(crypto.randomUUID(), prompt, unit, answer, source, note, client, Date.now()).run();
+
+  return json({ ok: true }, env);
+}
+
 async function hash(value) {
   const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value));
   return [...new Uint8Array(digest)].map((b) => b.toString(16).padStart(2, "0")).join("");
@@ -225,6 +308,9 @@ export default {
     }
     if (url.pathname === "/played" && request.method === "POST") {
       return handlePlayed(request, env);
+    }
+    if (url.pathname === "/suggest" && request.method === "POST") {
+      return handleSuggest(request, env);
     }
     return json({ error: "not found" }, env, 404);
   },

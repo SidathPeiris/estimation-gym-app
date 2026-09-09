@@ -8,6 +8,7 @@ import worker from "./src/index.js";
 
 function fakeDB() {
   const responses = new Map();   // "qid\u0000band" -> tally
+  const suggestions = [];        // rows, in insertion order
   const seen = new Set();        // "qid\u0000client"
 
   function statement(sql, args = []) {
@@ -16,6 +17,10 @@ function fakeDB() {
       async first() {
         if (sql.startsWith("SELECT 1 FROM seen")) {
           return seen.has(args[0] + "\u0000" + args[1]) ? { 1: 1 } : null;
+        }
+        if (sql.startsWith("SELECT COUNT(*) AS n FROM suggestions")) {
+          const [client, since] = args;
+          return { n: suggestions.filter((s) => s.client === client && s.at > since).length };
         }
         return null;
       },
@@ -37,6 +42,10 @@ function fakeDB() {
           const k = args[0] + "\u0000" + args[1];
           responses.set(k, (responses.get(k) || 0) + 1);
         }
+        if (sql.startsWith("INSERT INTO suggestions")) {
+          const [id, prompt, unit, answer, source, note, client, at] = args;
+          suggestions.push({ id, prompt, unit, answer, source, note, status: "pending", client, at });
+        }
       }
     };
   }
@@ -44,7 +53,8 @@ function fakeDB() {
   return {
     prepare: (sql) => statement(sql),
     async batch(stmts) { for (const s of stmts) s._apply(); },
-    _responses: responses
+    _responses: responses,
+    _suggestions: suggestions
   };
 }
 
@@ -141,5 +151,110 @@ for (const leak of ["10.0.0", "9.9.9.9", "client", "ip", "at"]) {
   assert.ok(!payload.includes(leak), "response leaked " + leak);
 }
 console.log("payload           -> counts only, no identifiers");
+
+
+// --- suggestions ---------------------------------------------------------
+//
+// Free text written by strangers, on its way to a bank whose contents get
+// rendered by a QML widget. The endpoint is the only place this is filtered,
+// so the refusals below are the point of the feature, not an afterthought.
+
+const suggest = (body, ip = "1.2.3.4") =>
+  new Request("https://w.dev/suggest", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Origin: ORIGIN, "CF-Connecting-IP": ip },
+    body: JSON.stringify(body)
+  });
+
+const GOOD = {
+  prompt: "How many bricks are in the Great Wall of China?",
+  unit: "bricks",
+  answer: "3.9e9",
+  source: "Wall length and typical brick dimensions",
+  note: "Length times cross-section, divided by the volume of one brick."
+};
+
+// --- a well-formed suggestion is stored as pending ---
+e = env();
+let sres = await worker.fetch(suggest(GOOD), e);
+assert.equal(sres.status, 200);
+assert.deepEqual(await sres.json(), { ok: true });
+assert.equal(e.DB._suggestions.length, 1);
+assert.equal(e.DB._suggestions[0].status, "pending", "never anything but pending on arrival");
+assert.equal(e.DB._suggestions[0].answer, 3.9e9, "scientific notation survives as a number");
+assert.ok(e.DB._suggestions[0].client.length === 64, "the address is stored hashed, not bare");
+assert.ok(
+  !JSON.stringify(e.DB._suggestions[0]).includes("1.2.3.4"),
+  "the submitter's address is nowhere in the row"
+);
+console.log("good suggestion   -> stored pending, address hashed");
+
+// --- markup is refused, because the widget would render it ---
+//
+// Qt's Text treats anything HTML-shaped as rich text unless pinned to
+// PlainText. The widget is pinned, but defence in depth: a prompt carrying
+// angle brackets never enters the system in the first place.
+e = env();
+for (const bad of [
+  { ...GOOD, prompt: "How many <b>bricks</b> are in the Great Wall?" },
+  { ...GOOD, prompt: "How many bricks <img src=x onerror=alert(1)> are there?" },
+  { ...GOOD, unit: "<script>" },
+  { ...GOOD, source: "see <a href=evil>here</a>" },
+  { ...GOOD, note: "first <hr> then" }
+]) {
+  const r = await worker.fetch(suggest(bad), e);
+  assert.equal(r.status, 400, "markup rejected: " + JSON.stringify(bad).slice(0, 60));
+}
+assert.equal(e.DB._suggestions.length, 0, "no markup reached the table");
+console.log("markup            -> 400, table untouched");
+
+// --- and so is everything else that is not a usable question ---
+e = env();
+for (const bad of [
+  { ...GOOD, prompt: "too short?" },
+  { ...GOOD, prompt: "x".repeat(201) },
+  { ...GOOD, unit: "" },
+  { ...GOOD, answer: "about a billion" },
+  { ...GOOD, answer: "0" },
+  { ...GOOD, answer: "-5" },
+  { ...GOOD, answer: "Infinity" },
+  { ...GOOD, source: "" },
+  { ...GOOD, note: "n".repeat(501) },
+  {}
+]) {
+  const r = await worker.fetch(suggest(bad), e);
+  assert.equal(r.status, 400, "rejected: " + JSON.stringify(bad).slice(0, 60));
+}
+assert.equal(e.DB._suggestions.length, 0);
+console.log("unusable input    -> 400, table untouched");
+
+// --- the note is genuinely optional ---
+e = env();
+const { note, ...noNote } = GOOD;
+assert.equal((await worker.fetch(suggest(noNote), e)).status, 200);
+assert.equal(e.DB._suggestions[0].note, "", "a missing note is stored as empty, not as null junk");
+console.log("no note           -> accepted");
+
+// --- one address cannot flood the queue ---
+e = env();
+for (let i = 0; i < 5; i++) {
+  assert.equal((await worker.fetch(suggest(GOOD, "5.5.5.5"), e)).status, 200, "submission " + i);
+}
+const flooded = await worker.fetch(suggest(GOOD, "5.5.5.5"), e);
+assert.equal(flooded.status, 429, "the sixth in a day is refused");
+assert.equal(e.DB._suggestions.length, 5);
+
+// but someone else is unaffected by their neighbour's limit
+assert.equal((await worker.fetch(suggest(GOOD, "6.6.6.6"), e)).status, 200);
+console.log("rate limit        -> 5/day per address, others unaffected");
+
+// --- a foreign origin cannot post suggestions either ---
+const foreignSuggest = new Request("https://w.dev/suggest", {
+  method: "POST",
+  headers: { "Content-Type": "application/json", Origin: "https://someone-elses-site.example" },
+  body: JSON.stringify(GOOD)
+});
+assert.equal((await worker.fetch(foreignSuggest, env())).status, 403);
+console.log("foreign origin    -> 403 on /suggest too");
 
 console.log("\nAll worker tests passed.");

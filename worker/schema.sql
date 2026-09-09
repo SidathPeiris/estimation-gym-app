@@ -35,3 +35,31 @@ CREATE TABLE IF NOT EXISTS subscriptions (
   last_played_day INTEGER,
   created_at      INTEGER NOT NULL
 );
+
+-- Questions people have suggested from inside the app.
+--
+-- Nothing here is ever served to a player. A row lands as 'pending' and stays
+-- that way until it is reviewed and appended to the bank by hand, which is the
+-- only path into the game. The bank carries the answers, so an unchecked
+-- question is worse than no question: it would mark a correct guess as wrong.
+--
+-- The text is written by strangers. It is validated at the endpoint - length
+-- capped, angle brackets and control characters refused - but it is still
+-- untrusted input and should be read as data, never pasted anywhere that
+-- executes it.
+CREATE TABLE IF NOT EXISTS suggestions (
+  id      TEXT    PRIMARY KEY,   -- random, so a row is not guessable
+  prompt  TEXT    NOT NULL,
+  unit    TEXT    NOT NULL,
+  answer  REAL    NOT NULL,      -- the submitter's claim, not a verified value
+  source  TEXT    NOT NULL,
+  note    TEXT,                  -- optional: how they would decompose it
+  status  TEXT    NOT NULL DEFAULT 'pending',  -- pending | accepted | rejected
+  -- Hashed address, for rate limiting only. Never a bare IP, the same
+  -- treatment the response counter gives it.
+  client  TEXT    NOT NULL,
+  at      INTEGER NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS suggestions_status ON suggestions (status, at);
+CREATE INDEX IF NOT EXISTS suggestions_client ON suggestions (client, at);
