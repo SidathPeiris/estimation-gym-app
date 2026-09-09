@@ -29,7 +29,8 @@
              "history", "history-toggle", "history-chev", "history-summary",
              "history-body", "history-list", "history-more",
              "stats", "stats-toggle", "chev", "stats-summary", "stats-body",
-             "bars", "stats-footer", "calibration", "export"]
+             "bars", "stats-footer", "calibration", "export",
+             "restore-toggle", "restore-panel", "restore-input", "restore-go", "restore-note"]
   ids.forEach(function (id) { el[id] = document.getElementById(id) })
 
   // Recomputed whenever the app comes back to the foreground, not fixed for
@@ -697,6 +698,28 @@
 
   el["history-more"].addEventListener("click", function () {
     historyLimit = 0
+    render()
+  })
+
+  el["restore-toggle"].addEventListener("click", function () {
+    var opening = el["restore-panel"].hasAttribute("hidden")
+    show(el["restore-panel"], opening)
+    if (opening) el["restore-input"].focus()
+  })
+
+  el["restore-go"].addEventListener("click", function () {
+    var result = importState(Model, state, el["restore-input"].value)
+    setText(el["restore-note"], result.message)
+    show(el["restore-note"], true)
+    if (!result.ok) return
+
+    state = result.state
+    if (!saveState(state, window.localStorage)) {
+      setText(el["restore-note"], "Restored on screen, but it could not be saved on this device.")
+      render()
+      return
+    }
+    el["restore-input"].value = ""
     render()
   })
 

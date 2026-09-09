@@ -92,4 +92,77 @@ assert.deepEqual(emptied.history, {})
 // Removing a day that was never answered changes nothing meaningful.
 assert.equal(S.forgetDay(run, 999).streak, 3)
 
+// --- importState: restoring an exported history ---
+// Export existed with no import at all, so a copied blob could never be put
+// back. These pin the behaviour that makes it worth copying.
+
+// A clean restore onto an empty device.
+let donor = Model.emptyState()
+donor = Model.recordAnswer(donor, 10, 100, 100, false, "q-a")
+donor = Model.recordAnswer(donor, 11, 100, 100, false, "q-b")
+donor = Model.recordAnswer(donor, 12, 100, 100, false, "q-c")
+const blob = S.exportState(donor)
+
+let restored = S.importState(Model, Model.emptyState(), blob)
+assert.equal(restored.ok, true)
+assert.equal(restored.added, 3)
+assert.equal(Object.keys(restored.state.history).length, 3)
+assert.equal(restored.state.streak, 3, "the streak is rebuilt, not taken on trust")
+assert.equal(restored.state.lastCompletedDay, 12)
+
+// An existing day always wins, so importing an older export cannot delete
+// anything played since it was taken.
+let newer = Model.emptyState()
+newer = Model.recordAnswer(newer, 12, 999, 100, false, "q-c")   // different guess
+newer = Model.recordAnswer(newer, 13, 100, 100, false, "q-d")
+const onto = S.importState(Model, newer, blob)
+assert.equal(onto.ok, true)
+assert.equal(onto.added, 2, "days 10 and 11 come back")
+assert.equal(onto.skipped, 1, "day 12 is already here and is left alone")
+assert.equal(onto.state.history["12"].guess, 999, "the day already on this device is untouched")
+assert.equal(onto.state.history["13"].guess, 100, "and nothing already here is lost")
+assert.deepEqual(Object.keys(onto.state.history).sort(), ["10", "11", "12", "13"])
+assert.equal(onto.state.streak, 4, "the merged run is recomputed across the join")
+
+// A best streak is a record of something that happened.
+const keepsBest = S.importState(Model, { history: {}, streak: 0, bestStreak: 9, lastCompletedDay: -1 }, blob)
+assert.equal(keepsBest.state.bestStreak, 9, "an existing best streak is not lowered by an import")
+
+// Rubbish in is refused rather than half-applied.
+for (const junk of ["", "not json", "[]", "null", '{"nope":1}', '{"history":"no"}']) {
+  const res = S.importState(Model, Model.emptyState(), junk)
+  assert.equal(res.ok, false, "should refuse: " + junk)
+  assert.ok(res.message.length > 0)
+}
+
+// Malformed days inside an otherwise valid export are skipped, not stored.
+const messyBlob = JSON.stringify({
+  history: {
+    "20": { guess: 1, answerValue: 1, band: "Close", distanceDecades: 0 },
+    "": { band: "Close" },
+    "notanumber": { band: "Close" },
+    "21": null,
+    "22": { guess: 1 }
+  },
+  streak: 5, bestStreak: 5, lastCompletedDay: 22
+})
+const messyResult = S.importState(Model, Model.emptyState(), messyBlob)
+assert.equal(messyResult.added, 1, "only the one usable day is taken")
+assert.deepEqual(Object.keys(messyResult.state.history), ["20"])
+assert.equal(messyResult.state.streak, 1, "and the streak reflects what was actually restored, not the claim of 5")
+
+// Importing the same export twice adds nothing the second time.
+const once = S.importState(Model, Model.emptyState(), blob)
+const twice = S.importState(Model, once.state, blob)
+assert.equal(twice.ok, false)
+assert.match(twice.message, /already here/)
+
+// A miss breaks the rebuilt streak exactly as it would going forwards.
+let withMiss = Model.emptyState()
+withMiss = Model.recordAnswer(withMiss, 30, 1, 100000000, false, "q-x")   // Off
+withMiss = Model.recordAnswer(withMiss, 31, 100, 100, false, "q-y")
+withMiss = Model.recordAnswer(withMiss, 32, 100, 100, false, "q-z")
+const afterMiss = S.importState(Model, Model.emptyState(), S.exportState(withMiss))
+assert.equal(afterMiss.state.streak, 2, "the run stops at the Off, it does not count through it")
+
 console.log("All storage tests passed.")

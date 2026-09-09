@@ -68,6 +68,11 @@ played ten days — which way you lean, e.g. *"You tend to guess low, by about
 
 **History** lists your past days, newest first.
 
+**Copy my history** and **Restore a history** move a streak between devices, or
+bring one back after clearing your browser data. Restoring only ever *adds*
+days — anything already on the device is kept exactly as it is, so restoring an
+old copy cannot wipe out days you have played since.
+
 ## Updates
 
 The app updates itself. A new version is fetched in the background and takes

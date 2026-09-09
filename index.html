@@ -109,6 +109,15 @@
       <p class="stats-footer" id="stats-footer"></p>
       <p class="calibration" id="calibration" hidden></p>
       <button type="button" class="export" id="export">Copy my history</button>
+      <button type="button" class="export" id="restore-toggle">Restore a history</button>
+      <div id="restore-panel" hidden>
+        <p class="restore-help">Paste a history you copied from another device. Days already
+          on this device are kept as they are, so this can only add days back.</p>
+        <textarea id="restore-input" class="restore-input" rows="4" spellcheck="false"
+          placeholder="Paste the copied history here"></textarea>
+        <button type="button" class="export" id="restore-go">Restore</button>
+        <p class="restore-note" id="restore-note" hidden></p>
+      </div>
     </div>
   </section>
 

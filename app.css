@@ -451,3 +451,25 @@ body {
   line-height: 1.5;
   color: var(--dim);
 }
+
+/* --- restore a history --- */
+.restore-help, .restore-note {
+  margin: 0.6rem 0 0;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--dim);
+}
+
+.restore-input {
+  width: 100%;
+  margin-top: 0.5rem;
+  padding: 0.55rem 0.7rem;
+  background: var(--bg);
+  color: var(--fg);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font: inherit;
+  font-size: 0.78rem;
+  resize: vertical;
+}
+.restore-input:focus { outline: none; border-color: var(--accent) }
