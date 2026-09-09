@@ -28,3 +28,18 @@ VAPID_SUBJECT = "https://sidathpeiris.github.io/estimation-gym-app/"
 [triggers]
 crons = ["0 * * * *"]
 
+
+# Retains what the Worker logs so a cron run can be checked after the fact.
+#
+# Without this, console.log goes nowhere unless someone happens to be running
+# `wrangler tail` at that moment - which is no use for a job that fires at 9am
+# local and is the one part of the reminder system that has never been
+# observed working. The scheduled() handler already reports how many
+# subscribers were due and how many dead endpoints it removed; this is what
+# makes that readable tomorrow morning instead of inferred from the database.
+#
+# head_sampling_rate = 1 logs every invocation. The cron runs hourly and the
+# endpoints see very little traffic, so there is nothing to sample down.
+[observability]
+enabled = true
+head_sampling_rate = 1
