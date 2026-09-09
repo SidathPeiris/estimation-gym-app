@@ -33,40 +33,37 @@ function formatDay(dayIdx) {
   return WEEKDAYS[d.getUTCDay()] + " " + d.getUTCDate() + " " + MONTHS[d.getUTCMonth()]
 }
 
-// Deterministic small PRNG (mulberry32) so a given seed always produces the
-// same shuffle - needed because Math.random() would make different players
-// (or the same player after a restart) see different question orders.
-function seededRandom(seed) {
-  var state = seed >>> 0
-  return function() {
-    state = (state + 0x6D2B79F5) >>> 0
-    var t = state
-    t = Math.imul(t ^ (t >>> 15), t | 1)
-    t ^= t + Math.imul(t ^ (t >>> 7), t | 61)
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
-  }
-}
+// The daily schedule is the bank's own order: day N gets bank[N - SCHEDULE_ORIGIN].
+//
+// This used to be a seeded shuffle keyed on the bank's length, which had a
+// trap in it. Every input to that shuffle - the cycle, the position and the
+// permutation itself - changed when the bank grew, so adding questions
+// re-dealt every day's puzzle, including days already played. Going from 500
+// to 1000 questions did exactly that, changing the question mid-day under
+// anyone who had the app open.
+//
+// Reading the schedule straight off the array makes growth safe: appending a
+// question cannot move one that is already scheduled. The rule that keeps it
+// that way is that content/questions.js is APPEND-ONLY - never insert,
+// reorder or delete. questions.test.js pins the scheduled span so breaking
+// that rule fails the build instead of silently rewriting people's calendars.
+//
+// The origin is the day the schedule was frozen. Days are still counted from
+// the 2024 epoch so stored history and streaks keep their keys; only the
+// question lookup is re-anchored.
+var SCHEDULE_ORIGIN = dayIndex(new Date(2026, 8, 9))
 
-function shuffledIndices(length, seed) {
-  var indices = []
-  for (var i = 0; i < length; i++) indices.push(i)
-  var rand = seededRandom(seed)
-  for (var j = length - 1; j > 0; j--) {
-    var k = Math.floor(rand() * (j + 1))
-    var tmp = indices[j]
-    indices[j] = indices[k]
-    indices[k] = tmp
-  }
-  return indices
-}
-
-// Cycles through every question in the bank (in a shuffled order) before any
-// repeat, and reshuffles (with a new deterministic seed) for the next pass.
 function pickQuestionIndex(dayIdx, bankLength) {
   if (bankLength <= 0) return -1
-  var cycle = Math.floor(dayIdx / bankLength)
-  var position = ((dayIdx % bankLength) + bankLength) % bankLength
-  return shuffledIndices(bankLength, cycle)[position]
+  var offset = dayIdx - SCHEDULE_ORIGIN
+
+  // The frozen span. Every appended question extends it by another day.
+  if (offset >= 0 && offset < bankLength) return offset
+
+  // Outside it, wrap. Both ends are far from any day in play: before the
+  // origin is the past, which is read from stored history rather than
+  // recomputed, and past the end is a full bank's worth of days away.
+  return ((offset % bankLength) + bankLength) % bankLength
 }
 
 function questionForDay(dayIdx, bank) {
@@ -580,8 +577,7 @@ var ModelAPI = {
   dayIndex: dayIndex,
   dateForDay: dateForDay,
   formatDay: formatDay,
-  seededRandom: seededRandom,
-  shuffledIndices: shuffledIndices,
+  SCHEDULE_ORIGIN: SCHEDULE_ORIGIN,
   pickQuestionIndex: pickQuestionIndex,
   questionForDay: questionForDay,
   log10Distance: log10Distance,

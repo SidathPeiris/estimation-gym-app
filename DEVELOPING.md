@@ -203,11 +203,14 @@ picture - answering costs one round trip rather than two.
 
 ### Keyed on question id, never on the day
 
-Growing the bank reshuffles which question falls on which date. A distribution
-keyed by day number would silently attach itself to the wrong question later —
-the same trap that once made the result panel show the wrong actual value. This
-is why history entries now record `questionId`, and why rows written before
-that cannot be compared: the question they asked is not recoverable.
+A distribution keyed by day number would risk attaching itself to the wrong
+question — the trap that once made the result panel show the wrong actual
+value, back when growing the bank re-dealt every date. The schedule is frozen
+now (see below), but keying on the question rather than the day is still the
+honest way to store it: it says what was actually asked instead of relying on
+the calendar never moving again. This is why history entries record
+`questionId`, and why rows written before that cannot be compared — the
+question they asked is not recoverable.
 
 ### Deploying the Worker
 
@@ -282,6 +285,37 @@ load.
 
 The cache holds code only — play history lives in `localStorage` and is never
 touched by a version bump.
+
+## The daily schedule is the bank's own order
+
+Day *N* is served `QUESTIONS[N - SCHEDULE_ORIGIN]`, where the origin is
+2026-09-09. There is no shuffle at read time.
+
+It used to be a seeded shuffle keyed on the bank's length, and that was a bug
+waiting to happen. Every input to it — the cycle, the position, and the
+permutation itself — depended on how many questions existed, so **adding
+questions re-dealt every single day**, past and future. Growing the bank from
+500 to 1000 did exactly that: the question changed underneath anyone who had
+the app open that day.
+
+Reading the schedule straight off the array makes growth safe, but only while
+the entries already scheduled stay where they are. Hence one rule:
+
+> **`questions.js` is append-only.** New questions go at the end. Never
+> insert, reorder or delete.
+
+Appending extends the schedule by a day at the far end and moves nothing.
+`core/questions.test.js` pins the order of the scheduled span by checksum, so
+breaking the rule fails the tests instead of quietly rewriting every player's
+calendar. Editing a question's *value*, prompt or source does not trip it —
+only moving entries does.
+
+Two consequences worth knowing:
+
+- Days **before** the origin are not covered and fall back to wrapping. That is
+  fine: past days are read from stored history, never recomputed.
+- Once the bank has been worked all the way through — currently 2029-06-05 —
+  the order repeats. Every question added pushes that out by another day.
 
 ## Updating the question bank
 

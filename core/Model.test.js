@@ -26,10 +26,11 @@ for (const [y, m, d, expected] of [
 // name a different day than the puzzle it describes.
 assert.notEqual(Model.formatDay(500), Model.formatDay(501))
 
-// --- question selection: deterministic, covers full bank before repeating ---
+// --- question selection: deterministic, covers full bank, stable under growth ---
 const bank = ["a", "b", "c", "d", "e"]
+const origin = Model.SCHEDULE_ORIGIN
 const seenInFirstPass = new Set()
-for (let day = 0; day < bank.length; day++) {
+for (let day = origin; day < origin + bank.length; day++) {
   const idx = Model.pickQuestionIndex(day, bank.length)
   assert.ok(idx >= 0 && idx < bank.length, "index in range")
   assert.ok(!seenInFirstPass.has(idx), "no repeat within first pass")
@@ -40,14 +41,30 @@ assert.equal(seenInFirstPass.size, bank.length, "every question seen exactly onc
 // Same day always yields the same index (determinism across restarts).
 assert.equal(Model.pickQuestionIndex(3, bank.length), Model.pickQuestionIndex(3, bank.length))
 
-// A different cycle (second full pass) should reorder rather than repeat pass 1's order.
-const pass1 = []
-const pass2 = []
-for (let i = 0; i < bank.length; i++) {
-  pass1.push(Model.pickQuestionIndex(i, bank.length))
-  pass2.push(Model.pickQuestionIndex(i + bank.length, bank.length))
+// The property the whole schedule exists to guarantee: growing the bank must
+// not move a question that is already scheduled. This is what the old
+// length-seeded shuffle got wrong - it re-dealt every day, including days
+// already played, so a player mid-day saw their question swapped underneath
+// them. Days before the origin are exempt: they are read from stored history,
+// never recomputed.
+for (let grown = bank.length; grown <= bank.length + 20; grown++) {
+  for (let day = origin; day < origin + bank.length; day++) {
+    assert.equal(
+      Model.pickQuestionIndex(day, grown),
+      Model.pickQuestionIndex(day, bank.length),
+      "day " + (day - origin) + " moved when the bank grew to " + grown
+    )
+  }
 }
-assert.notDeepEqual(pass1, pass2, "second pass reshuffles rather than repeating the exact same order")
+
+// Each appended question extends the frozen span by exactly one day, rather
+// than being scattered through it.
+assert.equal(Model.pickQuestionIndex(origin + bank.length, bank.length + 1), bank.length)
+
+// The origin is a real day, not a magic number: 2026-09-09, when the schedule
+// was frozen. Days keep counting from the 2024 epoch so history keys survive.
+assert.equal(origin, Model.dayIndex(new Date(2026, 8, 9)))
+assert.equal(Model.formatDay(origin), "Wed 9 Sep")
 
 // --- scoring bands ---
 assert.equal(Model.scoreGuess(100, 100).band, "Bullseye")
