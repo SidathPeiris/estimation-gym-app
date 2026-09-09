@@ -201,14 +201,29 @@
         return
       }
       return navigator.serviceWorker.ready.then(function (reg) {
-        return reg.pushManager.subscribe({
-          userVisibleOnly: true,
-          applicationServerKey: vapidKeyBytes(VAPID_PUBLIC_KEY)
+        // Reuse the subscription this browser already has rather than asking
+        // for another. Subscribing repeatedly can mint a fresh endpoint each
+        // time, and every one left behind is another copy of the same
+        // reminder arriving on the same phone.
+        return reg.pushManager.getSubscription().then(function (existing) {
+          if (existing) return existing
+          return reg.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: vapidKeyBytes(VAPID_PUBLIC_KEY)
+          })
         })
       }).then(function (sub) {
         return tellWorker("/subscribe", {
           endpoint: sub.endpoint,
           tzOffset: new Date().getTimezoneOffset()
+        }).then(function (ok) {
+          // Turning the reminder on after already playing should not earn a
+          // nudge for a day that is done. The Worker only learns this when a
+          // day is answered, which has already happened by now.
+          if (ok && Model.hasAnsweredDay(state, today)) {
+            return tellWorker("/played", { endpoint: sub.endpoint, day: today }).then(function () { return ok })
+          }
+          return ok
         })
       }).then(function (ok) {
         setRemindEnabled(!!ok)
