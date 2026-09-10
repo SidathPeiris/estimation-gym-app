@@ -115,8 +115,17 @@ assert.equal(reminderTitle({ streak: 1, lastPlayedDay: 999 }, TODAY), GENERIC)
 
 // From two days, it says where they are - and it says the day they are ABOUT
 // to play, not the one behind them.
-assert.equal(reminderTitle({ streak: 2, lastPlayedDay: 999 }, TODAY), "Day 3 of your streak")
-assert.equal(reminderTitle({ streak: 29, lastPlayedDay: 999 }, TODAY), "Day 30 of your streak")
+assert.equal(reminderTitle({ streak: 2, lastPlayedDay: 999 }, TODAY), "Day 3")
+assert.equal(reminderTitle({ streak: 29, lastPlayedDay: 999 }, TODAY), "Day 30")
+
+// It has to survive the title row, which on a collapsed Android notification
+// is about fourteen characters - "Today's question" was observed truncating at
+// sixteen on a real phone. A streak title that loses its number would be worse
+// than no streak title.
+for (const streak of [2, 9, 99, 364, 1000]) {
+  const t = reminderTitle({ streak, lastPlayedDay: 999 }, TODAY)
+  assert.ok(t.length <= 14, `title "${t}" is ${t.length} chars, too long for the title row`)
+}
 
 // The part most worth getting right: a streak that is already broken must not
 // be announced. Someone who last played three days ago has no run to continue,

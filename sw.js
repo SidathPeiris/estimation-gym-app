@@ -13,7 +13,7 @@
 // Note this caches code only. Play history lives in localStorage, which the
 // cache never touches, so a version bump can never cost anyone their streak.
 
-var CACHE = "estimation-gym-v1.6.2"
+var CACHE = "estimation-gym-v1.6.3"
 
 // A second cache, deliberately unversioned, holding one small record the
 // service worker needs but cannot otherwise reach: the streak.
@@ -156,15 +156,22 @@ function progress() {
 //
 // A reminder that treats day 1 and day 30 identically wastes the strongest
 // reason anyone has to come back. Only claimed from two days onward, because
-// "day 1 of your streak" is not an achievement, and only when yesterday was
-// actually played - otherwise the streak is already broken and saying a number
-// out loud would be wrong.
+// "day 1" is not an achievement, and only when yesterday was actually played -
+// otherwise the streak is already broken and saying a number out loud would be
+// wrong.
+//
+// Kept to a handful of characters. The title shares its row with the app name,
+// the timestamp and the expand chevron, so a collapsed Android notification
+// gives it around fourteen characters - observed on a real device, where even
+// "Today's question" came through as "Today's questi...". That truncation is
+// still readable; "Day 12 of your streak" would have arrived as "Day 12 of
+// your..." and lost the only word carrying the meaning.
 function reminderTitle(state, today) {
   if (!state || typeof state.streak !== "number" || state.streak < 2) {
     return "Today's question"
   }
   if (state.lastPlayedDay !== today - 1) return "Today's question"
-  return "Day " + (state.streak + 1) + " of your streak"
+  return "Day " + (state.streak + 1)
 }
 
 self.addEventListener("push", function (event) {
