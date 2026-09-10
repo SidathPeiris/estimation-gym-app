@@ -161,7 +161,13 @@ body {
 .source { font-style: italic }
 
 /* ---------- history ---------- */
-.history { margin-top: 28px; border-top: 1px solid var(--line); padding-top: 18px }
+/* The collapsible sections - practice, how to play, history, stats, suggest -
+   are one list of the same kind of control, so they share one separator. */
+.practice, .howto, .history, .stats {
+  margin-top: 28px;
+  border-top: 1px solid var(--line);
+  padding-top: 18px;
+}
 
 .history-list { list-style: none; margin-top: 6px }
 
@@ -186,7 +192,6 @@ body {
 .history-numbers .nowrap { white-space: nowrap }
 
 /* ---------- stats ---------- */
-.stats { margin-top: 28px; border-top: 1px solid var(--line); padding-top: 18px }
 
 .stats-toggle {
   width: 100%;
@@ -299,7 +304,6 @@ body {
 #approach { margin: 0.9rem 0 0; }
 
 /* --- how to play --- */
-.howto { margin-top: 1.1rem }
 
 .howto-steps {
   margin: 0.2rem 0 0;
@@ -533,7 +537,6 @@ body {
 }
 
 /* --- practice --- */
-.practice { margin-top: 1.1rem }
 
 .practice-intro {
   margin: 0.3rem 0 0.8rem;

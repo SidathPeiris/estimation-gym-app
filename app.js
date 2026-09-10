@@ -111,7 +111,6 @@
   // collapsed thereafter so it stays out of the way of the daily puzzle.
   var howToOpen = !hasAnsweredAnything(state)
   var suggestOpen = false
-  var confessQuestionId = null
 
   function applyReset() {
     var mode = null
@@ -415,21 +414,56 @@
     return guess === answerValue
   }
 
-  function maybeAskAboutCheating(guess, question) {
-    if (!question || !looksLikeAPeek(guess, question.answerValue)) return
-    confessQuestionId = question.id
-    setText(el["confess-body"],
-      "You got it exactly right — " + Model.formatCompact(question.answerValue) + " " +
+  // Which question is waiting on an answer, remembered rather than held in a
+  // variable. Closing the app used to dismiss the question by default, which
+  // makes owning up the only option that costs anything - so the honest answer
+  // was the expensive one. It now survives a reload and asks again.
+  var CONFESS_KEY = "estimation-gym-confess"
+
+  function pendingConfession() {
+    try { return window.localStorage.getItem(CONFESS_KEY) || null } catch (e) { return null }
+  }
+
+  function setPendingConfession(id) {
+    try {
+      if (id) window.localStorage.setItem(CONFESS_KEY, id)
+      else window.localStorage.removeItem(CONFESS_KEY)
+    } catch (e) {}
+  }
+
+  function confessionPrompt(question) {
+    return "You got it exactly right — " + Model.formatCompact(question.answerValue) + " " +
       question.unit + ", to the digit. Either that is the finest estimating we have " +
-      "ever seen, or you found the answers in the code. Which was it?")
+      "ever seen, or you found the answers in the code. Which was it?"
+  }
+
+  // Shown from render(), so it comes back on every reload until it is answered.
+  //
+  // Only ever for the question currently on screen: a prompt about yesterday's
+  // answer sitting above today's question would be nonsense, so a pending
+  // confession that outlives its day is dropped rather than carried over.
+  function renderConfession(question) {
+    var id = pendingConfession()
+    if (!id || !question || id !== question.id) {
+      if (id && question && id !== question.id) setPendingConfession(null)
+      show(el.confess, false)
+      return
+    }
+    setText(el["confess-body"], confessionPrompt(question))
     show(el.confess, true)
   }
 
+  function maybeAskAboutCheating(guess, question) {
+    if (!question || !looksLikeAPeek(guess, question.answerValue)) return
+    setPendingConfession(question.id)
+    renderConfession(question)
+  }
+
   function answerConfession(peeked) {
+    var id = pendingConfession()
+    setPendingConfession(null)
     show(el.confess, false)
-    if (!peeked || !confessQuestionId) { confessQuestionId = null; return }
-    var id = confessQuestionId
-    confessQuestionId = null
+    if (!peeked || !id) return
     tellWorker("/confess", { questionId: id }).then(function () {
       // Re-read so the count under the chart includes the confession just made.
       distFetchedAt[id] = 0
@@ -971,6 +1005,8 @@
       setText(el["strategy-label"], vm.strategyLabel)
       setText(el["strategy-guidance"], vm.strategyGuidance)
     }
+
+    renderConfession(question)
 
     var todayEntry = vm.answered ? state.history[String(today)] : null
     var todayQid = todayEntry && todayEntry.questionId
