@@ -79,3 +79,20 @@ CREATE TABLE IF NOT EXISTS confessions (
   at          INTEGER NOT NULL,
   PRIMARY KEY (question_id, client)
 );
+
+-- How far off people were, in whole decades.
+--
+-- The bands alone cannot answer the question that matters: "Off" covers
+-- everything past 100x, so it lumps a respectable 2.5 decades in with someone
+-- who typed 5 meaning five billion. Those need different responses - one is a
+-- hard question working as intended, the other is an input problem wearing a
+-- difficulty costume.
+--
+-- Stored as the floor of the decade distance, capped, so it is coarser than
+-- the guess and carries no more about a person than the band already did.
+CREATE TABLE IF NOT EXISTS decade_errors (
+  question_id TEXT    NOT NULL,
+  decade      INTEGER NOT NULL,   -- 0 = within 10x, 1 = within 100x, ... 20 = capped
+  tally       INTEGER NOT NULL DEFAULT 0,
+  PRIMARY KEY (question_id, decade)
+);

@@ -111,6 +111,15 @@ async function readDistribution(env, questionId) {
   return { n, counts };
 }
 
+// Whole decades off, as the client reports it. Optional: a client that has not
+// updated simply sends nothing and only its band is counted, so this can never
+// reject a submission that would otherwise have been recorded.
+const DECADE_CAP = 20;
+function validDecade(value) {
+  return typeof value === "number" && Number.isInteger(value) &&
+    value >= 0 && value <= DECADE_CAP;
+}
+
 function band_known(band) {
   return BANDS.indexOf(band) >= 0;
 }
@@ -216,6 +225,16 @@ async function handlePost(request, env) {
         "ON CONFLICT(question_id, band) DO UPDATE SET tally = tally + 1"
       ).bind(questionId, band)
     ]);
+
+    // Counted separately and only when sent, so the band tallies stay exactly
+    // what they were and an older client is never penalised for not knowing
+    // about this.
+    if (validDecade(body && body.decades)) {
+      await env.DB.prepare(
+        "INSERT INTO decade_errors (question_id, decade, tally) VALUES (?, ?, 1) " +
+        "ON CONFLICT(question_id, decade) DO UPDATE SET tally = tally + 1"
+      ).bind(questionId, body.decades).run();
+    }
   }
 
   // Hand back the current picture so submitting and reading is one round trip.

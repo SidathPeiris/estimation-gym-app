@@ -10,6 +10,7 @@ function fakeDB() {
   const responses = new Map();   // "qid\u0000band" -> tally
   const suggestions = [];        // rows, in insertion order
   const confessions = new Set(); // "qid|client"
+  const decades = new Map();     // "qid|decade" -> tally
   const seen = new Set();        // "qid\u0000client"
 
   function statement(sql, args = []) {
@@ -48,6 +49,10 @@ function fakeDB() {
           const k = args[0] + "\u0000" + args[1];
           responses.set(k, (responses.get(k) || 0) + 1);
         }
+        if (sql.startsWith("INSERT INTO decade_errors")) {
+          const k = args[0] + "|" + args[1];
+          decades.set(k, (decades.get(k) || 0) + 1);
+        }
         if (sql.startsWith("INSERT OR IGNORE INTO confessions")) {
           confessions.add(args[0] + "|" + args[1]);
         }
@@ -64,7 +69,8 @@ function fakeDB() {
     async batch(stmts) { for (const s of stmts) s._apply(); },
     _responses: responses,
     _suggestions: suggestions,
-    _confessions: confessions
+    _confessions: confessions,
+    _decades: decades
   };
 }
 
@@ -320,4 +326,49 @@ const foreignConfess = new Request("https://w.dev/confess", {
 });
 assert.equal((await worker.fetch(foreignConfess, env())).status, 403);
 console.log("bad confession    -> 400, foreign origin -> 403");
+
+// --- how far off, not just which band -------------------------------------
+//
+// "Off" spans everything past 100x, so it cannot distinguish a hard question
+// from someone who typed 5 meaning five billion. The decade is counted
+// alongside the band so those can be told apart later.
+
+e = env();
+await worker.fetch(post({ questionId: "cars-in-us", band: "Off", decades: 7 }, "20.0.0.1"), e);
+assert.equal(e.DB._decades.get("cars-in-us|7"), 1, "the decade was recorded");
+assert.equal(e.DB._responses.get("cars-in-us\u0000Off"), 1, "and the band still is");
+
+// Two people equally wrong accumulate on one row.
+await worker.fetch(post({ questionId: "cars-in-us", band: "Off", decades: 7 }, "20.0.0.2"), e);
+assert.equal(e.DB._decades.get("cars-in-us|7"), 2);
+console.log("decade error     -> counted alongside the band");
+
+// --- an older client sends no decade and is still counted ---
+//
+// This must never be a reason to reject a submission that would otherwise
+// have been recorded.
+e = env();
+const noDecade = await worker.fetch(post({ questionId: "cars-in-us", band: "Close" }, "21.0.0.1"), e);
+assert.equal(noDecade.status, 200);
+assert.equal(e.DB._responses.get("cars-in-us\u0000Close"), 1, "band recorded without a decade");
+assert.equal(e.DB._decades.size, 0, "nothing invented for a client that did not send one");
+console.log("older client     -> band still counted, no decade invented");
+
+// --- junk decades are dropped, the band survives ---
+e = env();
+for (const bad of [-1, 21, 2.5, "7", null, NaN, Infinity]) {
+  const r = await worker.fetch(post({ questionId: "cars-in-us", band: "Off", decades: bad }, "22.0.0." + Math.random()), e);
+  assert.equal(r.status, 200, "a bad decade must not fail the submission: " + bad);
+}
+assert.equal(e.DB._decades.size, 0, "no junk decade reached the table");
+assert.ok(e.DB._responses.get("cars-in-us\u0000Off") >= 1, "the bands were still counted");
+console.log("junk decade      -> ignored, submission still counted");
+
+// The cap is inclusive at both ends.
+e = env();
+await worker.fetch(post({ questionId: "cars-in-us", band: "Off", decades: 0 }, "23.0.0.1"), e);
+await worker.fetch(post({ questionId: "cars-in-us", band: "Off", decades: 20 }, "23.0.0.2"), e);
+assert.equal(e.DB._decades.get("cars-in-us|0"), 1);
+assert.equal(e.DB._decades.get("cars-in-us|20"), 1);
+console.log("decade bounds    -> 0 and 20 both accepted");
 console.log("\nAll worker tests passed.");

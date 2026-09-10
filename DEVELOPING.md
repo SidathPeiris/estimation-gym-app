@@ -296,6 +296,21 @@ feature rather than an afterthought:
 | More than 5 a day from one address | Hashed, so the table never holds a bare IP |
 | A foreign `Origin` | Same rule the rest of the Worker follows |
 
+## Reading how far off people are
+
+`Off` is every guess past 100x, so the band alone cannot separate a hard
+question from someone who typed `5` meaning five billion. The whole number of
+decades is counted alongside it:
+
+```bash
+cd worker && npx wrangler d1 execute estimation-gym --remote --command \
+  "SELECT decade, SUM(tally) AS n FROM decade_errors GROUP BY decade ORDER BY decade"
+```
+
+A pile at 2-3 is the game working as intended. A pile at 6 or more is an input
+problem wearing a difficulty costume, and worth fixing in the client rather
+than in the question bank.
+
 ## Brand assets
 
 `tools/banner.html` is the source for the YouTube channel banner, rendered

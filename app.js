@@ -441,13 +441,29 @@
     return typeof fetch === "function"
   }
 
-  function submitResult(questionId, band) {
+  // Whole decades off, floored and capped, sent alongside the band.
+  //
+  // The band alone cannot tell a hard question from a typo: "Off" is everything
+  // past 100x, so a respectable 2.5 decades and someone who typed 5 meaning
+  // five billion land in the same bucket and want opposite responses. This is
+  // coarser than the guess and says no more about a person than the band did.
+  function decadesOff(entry) {
+    var d = entry && entry.distanceDecades
+    if (typeof d !== "number" || !isFinite(d) || d < 0) return null
+    return Math.min(Math.floor(d), 20)
+  }
+
+  function submitResult(questionId, band, decades) {
     if (!DISTRIBUTION_URL || !questionId || !band || !canFetch()) return
     try {
     fetch(DISTRIBUTION_URL + "/submit", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ questionId: questionId, band: band })
+      body: JSON.stringify(
+        typeof decades === "number"
+          ? { questionId: questionId, band: band, decades: decades }
+          : { questionId: questionId, band: band }
+      )
     })
       .then(function (r) { return r.ok ? r.json() : null })
       .then(function (data) {
@@ -1000,7 +1016,7 @@
     render()
 
     var entry = state.history[String(today)]
-    if (entry) submitResult(entry.questionId, entry.band)
+    if (entry) submitResult(entry.questionId, entry.band, decadesOff(entry))
     reportPlayed(today)
     maybeAskAboutCheating(check.value, question)
   }

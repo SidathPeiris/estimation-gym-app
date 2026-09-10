@@ -112,9 +112,11 @@ your history:
 
 - **An install count** — one request the first time the app is installed, which
   feeds the counter at the top of this page.
-- **Which band you landed in** — the question's id and one of the four band
-  names, so the app can show how everyone did on the same question. Not your
-  guess, not the answer, not when you played.
+- **Which band you landed in, and roughly how far off** — the question's id,
+  one of the four band names, and the whole number of powers of ten between
+  your guess and the answer. Not your guess, not the answer, not when you
+  played. The second number exists because "Off" covers everything past 100x,
+  which cannot tell a hard question from a mistyped one.
 - **A reminder subscription** — *only if you turn the daily reminder on.* This
   is the one thing that identifies a device: the push address your browser
   generates, plus your timezone offset so the nudge arrives in the morning
