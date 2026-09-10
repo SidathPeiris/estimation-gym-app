@@ -13,7 +13,7 @@
 // Note this caches code only. Play history lives in localStorage, which the
 // cache never touches, so a version bump can never cost anyone their streak.
 
-var CACHE = "estimation-gym-v1.2.6"
+var CACHE = "estimation-gym-v1.3.0"
 
 var ASSETS = [
   "./",
@@ -27,6 +27,7 @@ var ASSETS = [
   "./manifest.webmanifest",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
+  "./icons/badge-96.png",
   "./icons/icon-192-maskable.png",
   "./icons/icon-512-maskable.png"
 ]
@@ -83,16 +84,70 @@ self.addEventListener("fetch", function (event) {
 // sent over the wire. That keeps the subscription record down to an endpoint
 // and a timezone, with no message content in transit and no encryption keys
 // stored server-side.
+// The day the schedule was frozen, and the arithmetic that turns a date into
+// a day number. Both are duplicated from Model.js because a service worker
+// cannot import it - importScripts would run on every worker startup and take
+// the fetch handler down with it if it ever failed, which would cost offline
+// play to save a notification. sw.test.mjs pins these to Model.js so the copy
+// cannot drift.
+var SCHEDULE_ORIGIN = 982
+var EPOCH_MS = Date.UTC(2024, 0, 1)
+var DAY_MS = 24 * 60 * 60 * 1000
+
+function todayIndex() {
+  var d = new Date()
+  return Math.floor((Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) - EPOCH_MS) / DAY_MS)
+}
+
+// Today's question, read out of the cached bank.
+//
+// The push carries no payload - that is deliberate, and it is why no
+// encryption keys are stored for any subscriber - so the text has to be built
+// here. Naming the actual question turns the reminder from an errand into a
+// hook, and it gives nothing away: seeing the question early is no help,
+// because the whole game is working the number out.
+function todaysQuestion() {
+  return caches.open(CACHE)
+    .then(function (cache) { return cache.match("./core/questions.js") })
+    .then(function (res) { return res ? res.text() : null })
+    .then(function (text) {
+      if (!text) return null
+      // The bank is written as `var QUESTIONS = [ ...json... ]`, so the array
+      // slices out as valid JSON. Parsed, never evaluated - this is untrusted
+      // in principle and eval in a service worker is not worth the risk.
+      var start = text.indexOf("[")
+      var end = text.lastIndexOf("]")
+      if (start < 0 || end <= start) return null
+      var bank = JSON.parse(text.slice(start, end + 1))
+      if (!bank.length) return null
+      var offset = todayIndex() - SCHEDULE_ORIGIN
+      var i = (offset >= 0 && offset < bank.length)
+        ? offset
+        : ((offset % bank.length) + bank.length) % bank.length
+      return bank[i] || null
+    })
+    .catch(function () { return null })
+}
+
 self.addEventListener("push", function (event) {
   event.waitUntil(
-    self.registration.showNotification("Estimation Gym", {
-      body: "Today's question is ready.",
-      icon: "./icons/icon-192.png",
-      badge: "./icons/icon-192.png",
-      // A single reminder replaces an unread one rather than stacking, so
-      // missing a few days never leaves a pile of notifications.
-      tag: "estimation-gym-daily",
-      renotify: false
+    todaysQuestion().then(function (q) {
+      // The question goes in the body rather than the title: the median prompt
+      // is 61 characters and Android truncates a title at roughly 40, while a
+      // body wraps to two lines and expands. The title stays short and is not
+      // the app name, which Android already prints in the header above it.
+      return self.registration.showNotification("Today's question", {
+        body: q ? q.prompt : "One question, about a minute.",
+        icon: "./icons/icon-192.png",
+        // Monochrome silhouette on transparency. Android masks this to its
+        // alpha and fills it white, so the full-colour icon rendered as a
+        // solid white square in the status bar.
+        badge: "./icons/badge-96.png",
+        // A single reminder replaces an unread one rather than stacking, so
+        // missing a few days never leaves a pile of notifications.
+        tag: "estimation-gym-daily",
+        renotify: false
+      })
     })
   )
 })

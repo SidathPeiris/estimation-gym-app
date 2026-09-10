@@ -1,11 +1,11 @@
 {
   "name": "estimation-gym-app",
-  "version": "1.2.6",
+  "version": "1.3.0",
   "private": true,
   "description": "Daily Fermi-estimation puzzle as an installable web app, sharing its scoring logic and question bank with the Omarchy bar widget.",
   "license": "AGPL-3.0-or-later",
   "scripts": {
-    "test": "node core/Model.test.js && node core/questions.test.js && node presenter.test.js && node storage.test.js && node version.test.js",
+    "test": "node core/Model.test.js && node core/questions.test.js && node presenter.test.js && node storage.test.js && node version.test.js && node sw.test.js",
     "serve": "node scripts/serve.mjs",
     "sync-core": "node scripts/sync-core.mjs"
   }
