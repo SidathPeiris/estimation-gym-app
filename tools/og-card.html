@@ -1,0 +1,33 @@
+<style>
+  * { margin:0; padding:0; box-sizing:border-box }
+  html, body { width:1200px; height:630px; overflow:hidden }
+  body {
+    background:#1a1b26; display:grid; place-items:center;
+    font-family:"Segoe UI Variable Display","Segoe UI",system-ui,sans-serif;
+    color:#c0caf5; position:relative;
+  }
+  .wash {
+    position:absolute; left:50%; top:50%; width:1100px; height:620px;
+    transform:translate(-50%,-50%);
+    background:radial-gradient(ellipse at center,
+      rgba(122,162,247,0.15) 0%, rgba(122,162,247,0.05) 40%, rgba(122,162,247,0) 72%);
+  }
+  .inner { position:relative; text-align:center; padding:0 70px }
+  .mark { position:relative; width:150px; height:150px; margin:0 auto 34px }
+  .mark i { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+            border-radius:50%; display:block }
+  .r-outer { width:150px; height:150px; border:13px solid #414868 }
+  .r-mid   { width:100px; height:100px; border:13px solid #5872ae }
+  .dot     { width:40px;  height:40px;  background:#7aa2f7 }
+  h1 { font-size:76px; line-height:1; font-weight:700; letter-spacing:-2px }
+  h1 span { color:#7aa2f7 }
+  p { margin-top:26px; font-size:31px; font-weight:400; color:#8d96b8; line-height:1.4 }
+  .foot { margin-top:30px; font-size:23px; color:#565f89 }
+</style>
+<div class="wash"></div>
+<div class="inner">
+  <div class="mark"><i class="r-outer"></i><i class="r-mid"></i><i class="dot"></i></div>
+  <h1>Estimation <span>Gym</span></h1>
+  <p>One question a day. You do not have to be right &mdash;<br>you have to be roughly right.</p>
+  <div class="foot">Free &middot; no account &middot; works offline</div>
+</div>
