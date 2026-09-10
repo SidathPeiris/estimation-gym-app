@@ -632,7 +632,7 @@
       return
     }
     window.caches.keys().then(function (names) {
-      var mine = names.filter(function (n) { return n.indexOf("estimation-gym-") === 0 })
+      var mine = names.filter(function (n) { return n.indexOf("estimation-gym-v") === 0 })
       setText(el.build, mine.length
         ? mine[0].replace("estimation-gym-", "") + " · " + dayPart
         : dayPart)
