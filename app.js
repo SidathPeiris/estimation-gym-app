@@ -437,6 +437,30 @@
     })
   }
 
+  // Mirrors the streak into a cache the service worker can read.
+  //
+  // The reminder is built inside the worker while the app is closed, so it
+  // cannot reach localStorage and has no client to ask. Written after every
+  // answer rather than on a schedule, because the only moment the number
+  // changes is the moment it is worth telling.
+  //
+  // Best-effort throughout: CacheStorage is unavailable in a few contexts and
+  // absent on http origins, and a reminder that falls back to its generic
+  // title is a much smaller loss than a failed submission.
+  function saveProgress() {
+    if (!(window.caches && window.caches.open)) return
+    try {
+      window.caches.open("estimation-gym-progress").then(function (cache) {
+        return cache.put("./progress", new Response(JSON.stringify({
+          streak: state.streak,
+          lastPlayedDay: Model.historyDays(state).length
+            ? Math.max.apply(null, Model.historyDays(state).map(function (d) { return d.day }))
+            : null
+        }), { headers: { "Content-Type": "application/json" } }))
+      }).catch(function () {})
+    } catch (e) {}
+  }
+
   function canFetch() {
     return typeof fetch === "function"
   }
@@ -1018,6 +1042,7 @@
     var entry = state.history[String(today)]
     if (entry) submitResult(entry.questionId, entry.band, decadesOff(entry))
     reportPlayed(today)
+    saveProgress()
     maybeAskAboutCheating(check.value, question)
   }
 

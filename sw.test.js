@@ -86,6 +86,49 @@ const todaysQuestion = workerPick(Model.dayIndex(new Date()))
 assert.equal(todaysQuestion.prompt, Model.questionForDay(Model.dayIndex(new Date()), QUESTIONS).prompt)
 assert.ok(todaysQuestion.prompt.length > 0, "today's prompt is empty")
 
+
+// --- what the reminder's title says --------------------------------------
+//
+// The title carries where the player is in their run, the body carries the
+// question. reminderTitle is lifted out of sw.js and run here rather than
+// re-described, so the test cannot drift from the thing it is testing.
+
+const titleSrc = sw.slice(
+  sw.indexOf("function reminderTitle"),
+  sw.indexOf("self.addEventListener(\"push\"")
+)
+assert.ok(titleSrc.includes("Day "), "reminderTitle not found in sw.js")
+const reminderTitle = new Function(titleSrc + "; return reminderTitle")()
+
+const TODAY = 1000
+const GENERIC = "Today's question"
+
+// Nothing known about the player - first visit, or they have not opened the
+// app since this shipped. Must not guess.
+assert.equal(reminderTitle(null, TODAY), GENERIC)
+assert.equal(reminderTitle({}, TODAY), GENERIC)
+assert.equal(reminderTitle({ streak: "3", lastPlayedDay: 999 }, TODAY), GENERIC)
+
+// One day is not a run worth announcing.
+assert.equal(reminderTitle({ streak: 0, lastPlayedDay: null }, TODAY), GENERIC)
+assert.equal(reminderTitle({ streak: 1, lastPlayedDay: 999 }, TODAY), GENERIC)
+
+// From two days, it says where they are - and it says the day they are ABOUT
+// to play, not the one behind them.
+assert.equal(reminderTitle({ streak: 2, lastPlayedDay: 999 }, TODAY), "Day 3 of your streak")
+assert.equal(reminderTitle({ streak: 29, lastPlayedDay: 999 }, TODAY), "Day 30 of your streak")
+
+// The part most worth getting right: a streak that is already broken must not
+// be announced. Someone who last played three days ago has no run to continue,
+// and telling them they are on day 7 would simply be false.
+assert.equal(reminderTitle({ streak: 6, lastPlayedDay: 997 }, TODAY), GENERIC)
+assert.equal(reminderTitle({ streak: 6, lastPlayedDay: null }, TODAY), GENERIC)
+
+// Already played today - they should have been skipped by the cron entirely,
+// but if a send slips through it must not claim a day they have not started.
+assert.equal(reminderTitle({ streak: 6, lastPlayedDay: TODAY }, TODAY), GENERIC)
+
+console.log("reminder title    -> streak only when it is real and unbroken")
 console.log(
   `service worker agrees with Model on ${days.length} days; ` +
   `today's notification would read "${todaysQuestion.prompt}"`

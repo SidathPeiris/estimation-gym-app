@@ -13,7 +13,16 @@
 // Note this caches code only. Play history lives in localStorage, which the
 // cache never touches, so a version bump can never cost anyone their streak.
 
-var CACHE = "estimation-gym-v1.4.0"
+var CACHE = "estimation-gym-v1.5.0"
+
+// A second cache, deliberately unversioned, holding one small record the
+// service worker needs but cannot otherwise reach: the streak.
+//
+// The streak lives in localStorage, which a service worker cannot read, and
+// when a push arrives the app is closed so there are no clients to ask. This
+// is the smallest place both sides can see. It survives version bumps - the
+// activate handler below exempts it - because it is state, not an asset.
+var STATE_CACHE = "estimation-gym-progress"
 
 var ASSETS = [
   "./",
@@ -55,7 +64,11 @@ self.addEventListener("activate", function (event) {
     caches.keys()
       .then(function (names) {
         return Promise.all(names.map(function (name) {
-          return name === CACHE ? null : caches.delete(name)
+          // STATE_CACHE is exempt: it holds progress, not a stale copy of the
+          // app, and wiping it on every deploy would silently reset what the
+          // reminder knows.
+          if (name === CACHE || name === STATE_CACHE) return null
+          return caches.delete(name)
         }))
       })
       .then(function () { return self.clients.claim() })
@@ -129,14 +142,41 @@ function todaysQuestion() {
     .catch(function () { return null })
 }
 
+// What the app last told us about the player's run. Absent on a first visit,
+// and absent for anyone who has not opened the app since this shipped, so
+// every read has to cope with nothing being there.
+function progress() {
+  return caches.open(STATE_CACHE)
+    .then(function (cache) { return cache.match("./progress") })
+    .then(function (res) { return res ? res.json() : null })
+    .catch(function () { return null })
+}
+
+// The title carries where they are, the body carries the question.
+//
+// A reminder that treats day 1 and day 30 identically wastes the strongest
+// reason anyone has to come back. Only claimed from two days onward, because
+// "day 1 of your streak" is not an achievement, and only when yesterday was
+// actually played - otherwise the streak is already broken and saying a number
+// out loud would be wrong.
+function reminderTitle(state, today) {
+  if (!state || typeof state.streak !== "number" || state.streak < 2) {
+    return "Today's question"
+  }
+  if (state.lastPlayedDay !== today - 1) return "Today's question"
+  return "Day " + (state.streak + 1) + " of your streak"
+}
+
 self.addEventListener("push", function (event) {
   event.waitUntil(
-    todaysQuestion().then(function (q) {
+    Promise.all([todaysQuestion(), progress()]).then(function (both) {
+      var q = both[0]
+      var title = reminderTitle(both[1], todayIndex())
       // The question goes in the body rather than the title: the median prompt
       // is 61 characters and Android truncates a title at roughly 40, while a
       // body wraps to two lines and expands. The title stays short and is not
       // the app name, which Android already prints in the header above it.
-      return self.registration.showNotification("Today's question", {
+      return self.registration.showNotification(title, {
         body: q ? q.prompt : "One question, about a minute.",
         icon: "./icons/icon-192.png",
         // Monochrome silhouette on transparency. Android masks this to its
