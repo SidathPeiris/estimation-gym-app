@@ -29,6 +29,18 @@ The short version:
 
 Once installed it plays fully offline — the questions travel with the app.
 
+## A longer walkthrough
+
+<a href="https://youtu.be/3xvcWVqtHKY">
+  <img src="https://img.youtube.com/vi/3xvcWVqtHKY/maxresdefault.jpg"
+       alt="Estimation Gym: a daily Fermi estimation puzzle, explained"
+       width="480">
+</a>
+
+Seven minutes on what the game is, why scoring in powers of ten makes a
+better puzzle than scoring exactly, and how to reason a question out. Not
+needed to play — the game explains itself in about a minute.
+
 ## How scoring works
 
 | Band | How close | Points |
