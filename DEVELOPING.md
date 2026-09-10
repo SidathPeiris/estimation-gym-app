@@ -296,6 +296,26 @@ feature rather than an afterthought:
 | More than 5 a day from one address | Hashed, so the table never holds a bare IP |
 | A foreign `Origin` | Same rule the rest of the Worker follows |
 
+## Brand assets
+
+`tools/banner.html` is the source for the YouTube channel banner, rendered
+with headless Chrome rather than hand-drawn so the wordmark uses a real
+typeface. The render command is in the file. The same convention as the
+plugin repo's `tools/preview.html`.
+
+Only the source is committed. The PNG is half a megabyte, nothing in the app
+serves it, and this file reproduces it byte for byte.
+
+**The part that is easy to get wrong:** YouTube crops a banner differently on
+every device - 2560x1440 on a TV, 2560x423 on desktop, and only the centre
+1546x423 on a phone. Everything legible has to live inside that centre box.
+A longer tagline is exactly the kind of edit that silently pushes text out of
+the mobile crop, so measure the render rather than eyeballing it.
+
+The app icons under `icons/` are the other brand asset. They are referenced
+by `manifest.webmanifest` at 192 and 512, in plain and maskable variants; the
+maskable ones carry extra padding so Android can crop them to any shape.
+
 ## Versioning
 
 `major.minor.patch`, declared once in `package.json`:

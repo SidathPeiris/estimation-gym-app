@@ -1,0 +1,119 @@
+<!--
+  Source for the YouTube channel banner.
+
+  Rendered rather than hand-drawn so the wordmark uses a real typeface, and
+  kept here rather than as a one-off export so it can be regenerated after any
+  change to the palette or the tagline:
+
+    chrome --headless --disable-gpu --hide-scrollbars
+           --force-device-scale-factor=1
+           --window-size=2560,1440
+           --screenshot=banner.png
+           tools/banner.html
+
+  (one line in a shell; wrapped here only to stay readable)
+
+  Only the PNG is uploaded to YouTube; it is not committed, because nothing in
+  the app serves it and it is half a megabyte. This file is the source of
+  truth and reproduces it exactly.
+
+  THE THING THAT MATTERS: YouTube crops a banner differently on every device.
+
+    TV       2560 x 1440   all of it
+    Desktop  2560 x  423   a horizontal band
+    Mobile   1546 x  423   the centre of that band
+
+  So everything legible lives inside the centre 1546 x 423 and the corners
+  carry nothing but colour. The last render measured at 1432 x 299 centred to
+  within 2px, which leaves about 57px of margin left and right. Check the
+  render after any edit - a longer tagline is exactly the kind of change that
+  silently pushes text outside the mobile crop, where most people will see it.
+
+  The mark is the app icon geometry at banner scale, and the palette is the
+  same Tokyo Night set the app and the widget use, so the icon, the channel
+  and the home screen all show one mark.
+-->
+<style>
+  /* YouTube crops a banner hard, and differently per device:
+       TV      2560 x 1440  (everything)
+       Desktop 2560 x  423  (a horizontal band)
+       Mobile  1546 x  423  (the centre of that band)
+     So the wordmark and the mark itself live entirely inside the centre
+     1546 x 423, and the corners carry nothing but colour. */
+  * { margin: 0; padding: 0; box-sizing: border-box }
+  html, body { width: 2560px; height: 1440px; overflow: hidden }
+  body {
+    background: #1a1b26;
+    display: grid;
+    place-items: center;
+    font-family: "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif;
+    color: #c0caf5;
+  }
+
+  /* A wide, very soft glow behind the mark so the flat background does not
+     read as an empty rectangle on a TV. */
+  .wash {
+    position: absolute;
+    left: 50%; top: 50%;
+    width: 2200px; height: 1100px;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(ellipse at center,
+      rgba(122,162,247,0.13) 0%,
+      rgba(122,162,247,0.05) 38%,
+      rgba(122,162,247,0) 70%);
+  }
+
+  .safe {
+    position: relative;
+    width: 1546px; height: 423px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 64px;
+  }
+
+  /* The same bullseye as the app icon, same palette, drawn at banner scale. */
+  .mark { position: relative; width: 300px; height: 300px; flex: 0 0 auto }
+  .mark i {
+    position: absolute; left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    display: block;
+  }
+  .r-outer { width: 300px; height: 300px; border: 25px solid #414868 }
+  .r-mid   { width: 200px; height: 200px; border: 25px solid #5872ae }
+  .dot     { width:  80px; height:  80px; background: #7aa2f7 }
+
+  .words { flex: 0 1 auto }
+
+  h1 {
+    font-size: 150px;
+    line-height: 0.95;
+    font-weight: 700;
+    letter-spacing: -3px;
+    color: #c0caf5;
+    white-space: nowrap;
+  }
+  h1 span { color: #7aa2f7 }
+
+  p {
+    margin-top: 22px;
+    font-size: 42px;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+    color: #565f89;
+    white-space: nowrap;
+  }
+</style>
+<div class="wash"></div>
+<div class="safe">
+  <div class="mark">
+    <i class="r-outer"></i>
+    <i class="r-mid"></i>
+    <i class="dot"></i>
+  </div>
+  <div class="words">
+    <h1>Estimation <span>Gym</span></h1>
+    <p>One question a day. Being roughly right is the whole skill.</p>
+  </div>
+</div>
