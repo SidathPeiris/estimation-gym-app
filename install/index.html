@@ -24,9 +24,9 @@
 <link rel="apple-touch-icon" href="../icons/icon-192.png">
 
 <style>
-  /* Same tokens as the app, so this page and the thing it installs look like
-     one product. Kept self-contained rather than importing app.css, which is
-     full of styles that only make sense inside the puzzle. */
+  /* Same tokens and the same monospace as the app, so this page and the thing
+     it installs read as one product. Kept self-contained rather than importing
+     app.css, which is full of styles that only make sense inside the puzzle. */
   :root {
     --bg: #1a1b26;
     --panel: #1f2335;
@@ -59,13 +59,29 @@
 
   main { max-width: 34rem; margin: 0 auto }
 
-  h1 { font-size: 1.5rem; letter-spacing: -0.01em }
+  /* The mark is drawn rather than served from icons/. The icon PNG has the
+     page background baked into it, so on this page it disappears entirely and
+     leaves the rings floating. Same geometry, no plate. */
+  .mark { position: relative; width: 76px; height: 76px; margin: 0 auto 1rem }
+  .mark i {
+    position: absolute; left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%; display: block;
+  }
+  .m1 { width: 76px; height: 76px; border: 7px solid #414868 }
+  .m2 { width: 50px; height: 50px; border: 7px solid #5872ae }
+  .m3 { width: 20px; height: 20px; background: var(--accent) }
 
-  .tagline { color: var(--dim); font-size: 0.9rem; margin-top: 0.5rem }
+  h1 { font-size: 1.5rem; letter-spacing: -0.01em; text-align: center }
+
+  .tagline {
+    color: var(--dim); font-size: 0.86rem; margin-top: 0.6rem; text-align: center;
+  }
+  .tagline strong { color: var(--fg) }
 
   .play {
     display: block;
-    margin: 1.6rem 0 0.5rem;
+    margin: 1.3rem 0 0.5rem;
     padding: 0.95rem 1rem;
     text-align: center;
     background: var(--accent);
@@ -79,20 +95,81 @@
 
   .play-note { text-align: center; font-size: 0.76rem; color: var(--dim) }
 
+  /* The objections people have before installing anything, answered up front
+     rather than in prose at the bottom. */
+  .chips { display: flex; flex-wrap: wrap; gap: 0.35rem; justify-content: center; margin-top: 1rem }
+  .chip {
+    font-size: 0.7rem; color: var(--dim);
+    border: 1px solid var(--line); border-radius: 999px; padding: 0.15rem 0.6rem;
+  }
+
+  .lbl {
+    font-size: 0.7rem; color: var(--dim); letter-spacing: 0.08em;
+    text-transform: uppercase; margin: 2rem 0 0.5rem;
+  }
+
+  /* A still of the actual game. Someone arriving from a video otherwise has to
+     install before finding out what the thing is. */
+  .demo {
+    background: var(--panel); border: 1px solid var(--line);
+    border-radius: 12px; padding: 1rem;
+  }
+  .demo-q { font-size: 0.92rem; line-height: 1.45 }
+  .demo-row { display: flex; gap: 0.5rem; margin-top: 0.8rem }
+  .demo-input {
+    flex: 1; border: 1px solid var(--line); border-radius: 8px;
+    padding: 0.55rem 0.65rem; font-size: 0.82rem; color: var(--dim); background: var(--bg);
+  }
+  .demo-go {
+    border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent);
+    background: color-mix(in srgb, var(--accent) 16%, transparent);
+    color: var(--accent); border-radius: 8px;
+    padding: 0.55rem 0.8rem; font-size: 0.82rem; font-weight: 700;
+  }
+  .bands { display: flex; gap: 0.3rem; margin-top: 0.8rem }
+  .band {
+    flex: 1; text-align: center; font-size: 0.62rem; line-height: 1.35;
+    border: 1px solid var(--line); border-radius: 6px; padding: 0.3rem 0.1rem; color: var(--dim);
+  }
+  .band.hit {
+    border-color: var(--accent); color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+  }
+  .demo-note { font-size: 0.72rem; color: var(--dim); margin-top: 0.6rem; text-align: center }
+
+  .tour { margin-top: 0.6rem; text-align: center }
+  .tour-video {
+    width: 100%; max-width: 270px; height: auto;
+    border-radius: 14px; border: 1px solid var(--line); background: #000;
+  }
+  .tour figcaption { margin-top: 0.5rem; font-size: 0.76rem; color: var(--dim) }
+
+  /* One row per thing to watch, so the seven-minute video is discoverable
+     without competing with the install steps. */
+  .watch {
+    display: flex; gap: 0.7rem; align-items: center;
+    background: var(--panel); border: 1px solid var(--line);
+    border-radius: 10px; padding: 0.75rem 0.85rem; margin-top: 0.55rem;
+    text-decoration: none; color: inherit;
+  }
+  .watch:hover { border-color: var(--dim) }
+  .watch-mark {
+    width: 34px; height: 34px; border-radius: 8px; flex: 0 0 auto;
+    display: grid; place-items: center; font-size: 0.7rem;
+    background: #f7768e; color: #fff;
+  }
+  .watch-t { font-size: 0.82rem }
+  .watch-s { font-size: 0.72rem; color: var(--dim) }
+
   h2 {
     font-size: 0.95rem;
     margin: 2rem 0 0.15rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+    display: flex; align-items: center; gap: 0.5rem;
   }
 
   .card {
-    background: var(--panel);
-    border: 1px solid var(--line);
-    border-radius: 10px;
-    padding: 0.9rem 1.1rem;
-    margin-top: 0.7rem;
+    background: var(--panel); border: 1px solid var(--line);
+    border-radius: 10px; padding: 0.9rem 1.1rem; margin-top: 0.7rem;
   }
 
   ol { padding-left: 1.2rem; font-size: 0.88rem }
@@ -101,78 +178,76 @@
 
   kbd {
     background: color-mix(in srgb, var(--fg) 10%, transparent);
-    border: 1px solid var(--line);
-    border-radius: 4px;
-    padding: 0.05rem 0.35rem;
-    font: inherit;
-    font-size: 0.85em;
-    white-space: nowrap;
+    border: 1px solid var(--line); border-radius: 4px;
+    padding: 0.05rem 0.35rem; font: inherit; font-size: 0.85em; white-space: nowrap;
   }
 
   .warn {
-    margin-top: 0.7rem;
-    font-size: 0.8rem;
-    color: var(--fg);
-    border-left: 2px solid var(--accent);
-    padding: 0.15rem 0 0.15rem 0.65rem;
+    margin-top: 0.7rem; font-size: 0.8rem; color: var(--fg);
+    border-left: 2px solid var(--accent); padding: 0.15rem 0 0.15rem 0.65rem;
   }
 
   .why { margin-top: 2rem; font-size: 0.84rem; color: var(--dim) }
   .why p { margin-top: 0.6rem }
 
   footer {
-    margin-top: 2.4rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--line);
-    font-size: 0.76rem;
-    color: var(--dim);
-    text-align: center;
+    margin-top: 2.4rem; padding-top: 1rem; border-top: 1px solid var(--line);
+    font-size: 0.76rem; color: var(--dim); text-align: center;
   }
   footer a { color: var(--accent) }
 
   /* Both platforms are shown by default, so the page is complete with no
      JavaScript at all. The script below only narrows it to the one you need. */
   .hidden { display: none }
-
-  .tour {
-    margin: 1.6rem 0 0;
-    text-align: center;
-  }
-
-  .tour-video {
-    width: 100%;
-    max-width: 270px;
-    height: auto;
-    border-radius: 14px;
-    border: 1px solid var(--line);
-    background: #000;
-  }
-
-  .tour figcaption {
-    margin-top: 0.5rem;
-    font-size: 0.78rem;
-    opacity: 0.7;
-  }
 </style>
 </head>
 <body>
 <main>
+  <div class="mark"><i class="m1"></i><i class="m2"></i><i class="m3"></i></div>
   <h1>Estimation Gym</h1>
   <p class="tagline">
-    One question a day, the same one for everyone. You are scored on how close
-    you get in <strong>powers of ten</strong>, not on being exact. Takes about
-    a minute.
+    One question a day, the same one for everyone. You do not have to be right
+    &mdash; <strong>you have to be roughly right.</strong>
   </p>
 
   <a class="play" href="../">Play now</a>
-  <p class="play-note">No account. Nothing from an app store.</p>
+  <p class="play-note">Takes about a minute. Nothing from an app store.</p>
 
+  <div class="chips">
+    <span class="chip">Free</span>
+    <span class="chip">No account</span>
+    <span class="chip">Works offline</span>
+    <span class="chip">No ads</span>
+    <span class="chip">Open source</span>
+  </div>
+
+  <!-- A still of the real thing. The question here is deliberately NOT in the
+       bank, so nobody's daily puzzle is spoiled by an install page.
+       install.test.js fails if it ever becomes a real one. -->
+  <div class="lbl">What you are installing</div>
+  <div class="demo">
+    <p class="demo-q">How many jellybeans fit in a one-litre jar?</p>
+    <div class="demo-row">
+      <div class="demo-input">Guess (jellybeans)</div>
+      <div class="demo-go">Go</div>
+    </div>
+    <div class="bands">
+      <div class="band hit">Bullseye<br>2&times;</div>
+      <div class="band">Close<br>10&times;</div>
+      <div class="band">Ballpark<br>100&times;</div>
+      <div class="band">Off</div>
+    </div>
+    <p class="demo-note">An example &mdash; not one of the real questions.</p>
+  </div>
+
+  <div class="lbl">See it first</div>
   <figure class="tour">
     <video
       class="tour-video"
       src="media/tour.mp4"
+      poster="media/tour-poster.png"
       controls
-      preload="metadata"
+      preload="none"
       playsinline
       width="270"
       aria-label="A short tour of Estimation Gym">
@@ -181,6 +256,14 @@
     </video>
     <figcaption>Fifty seconds, if you would rather see it than read about it.</figcaption>
   </figure>
+
+  <a class="watch" href="https://youtu.be/3xvcWVqtHKY" target="_blank" rel="noopener noreferrer">
+    <span class="watch-mark">&#9654;</span>
+    <span>
+      <span class="watch-t">Seven-minute walkthrough</span><br>
+      <span class="watch-s">On YouTube &mdash; why powers of ten make a better puzzle</span>
+    </span>
+  </a>
 
   <section id="ios">
     <h2>📱 On iPhone or iPad</h2>
@@ -242,8 +325,8 @@
   </div>
 
   <footer>
-    Also runs as a widget for the
-    <a href="https://github.com/SidathPeiris/estimation-gym-omarchy">Omarchy desktop bar</a>.
+    <a href="https://github.com/SidathPeiris/estimation-gym-app">Source</a>
+    &middot; AGPL-3.0
   </footer>
 </main>
 
@@ -271,12 +354,5 @@
     }
   })();
 </script>
-
-<!-- Cloudflare Web Analytics. Install page only: this page exists to measure
-     whether people arrive and install, and the token below is a public site
-     identifier, not a secret. The app itself carries no analytics of any kind
-     - see the Privacy section of the README. -->
-<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js"
-        data-cf-beacon='{"token": "a6ade7a18c5b4092af5cd9eee26910a0"}'></script>
 </body>
 </html>
