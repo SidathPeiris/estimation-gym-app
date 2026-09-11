@@ -13,7 +13,7 @@
 // Note this caches code only. Play history lives in localStorage, which the
 // cache never touches, so a version bump can never cost anyone their streak.
 
-var CACHE = "estimation-gym-v1.8.3"
+var CACHE = "estimation-gym-v1.8.4"
 
 // A second cache, deliberately unversioned, holding one small record the
 // service worker needs but cannot otherwise reach: the streak.
@@ -25,8 +25,16 @@ var CACHE = "estimation-gym-v1.8.3"
 var STATE_CACHE = "estimation-gym-progress"
 
 var ASSETS = [
+  // "./" is the URL the app is actually opened at, and it is what a navigation
+  // matches. "./index.html" used to sit here too, harmlessly, because GitHub
+  // Pages served it as 200.
+  //
+  // Cloudflare redirects /index.html to / with a 307, and cache.addAll rejects
+  // the whole batch on a non-ok response - so the worker never finished
+  // installing, and Chrome will not offer to install an app whose service
+  // worker has not activated. One redundant entry made the app uninstallable
+  // on the new host while the page itself worked perfectly.
   "./",
-  "./index.html",
   "./app.css",
   "./app.js",
   "./presenter.js",
