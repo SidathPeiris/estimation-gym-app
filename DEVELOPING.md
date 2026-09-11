@@ -331,6 +331,26 @@ The app icons under `icons/` are the other brand asset. They are referenced
 by `manifest.webmanifest` at 192 and 512, in plain and maskable variants; the
 maskable ones carry extra padding so Android can crop them to any shape.
 
+## How the site deploys
+
+Pushing to `main` builds and deploys the site. Cloudflare runs
+`npx wrangler deploy` at the repository root, which picks up `wrangler.jsonc`
+and uploads everything not listed in `.assetsignore`.
+
+**Do not deploy the site by hand.** A bare `wrangler deploy` is ambiguous now
+that two configs live here: run from `worker/` it picked up the ROOT config,
+deployed the site under the Worker's name, and left the Worker untouched while
+reporting success. That has already happened once, and the only symptom was a
+request still being refused afterwards.
+
+| File | Deploys | How |
+| --- | --- | --- |
+| `wrangler.jsonc` | the static site | automatically, on push to `main` |
+| `worker/wrangler.toml` | the distribution Worker | `npm --prefix worker run deploy` |
+
+The Worker command names its config explicitly, so it cannot pick up the wrong
+one. The site needs no command at all.
+
 ## Versioning
 
 `major.minor.patch`, declared once in `package.json`:
