@@ -664,7 +664,13 @@ body {
   background: color-mix(in srgb, var(--accent) 10%, transparent);
 }
 
-.moved-title { margin: 0; font-weight: 700; font-size: 0.95rem; color: var(--accent) }
+.moved-title {
+  margin: 0;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--accent);
+  text-align: center;
+}
 
 .moved-body {
   margin: 0.4rem 0 0;
