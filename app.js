@@ -512,6 +512,19 @@
   // handing over a broken half.
   var MOVE_LIMIT = 30000
 
+  // Whether to announce the move on the old address.
+  //
+  // Parked at false: the app would not finish installing from
+  // estimationgym.app on an Android handset, so sending people there would
+  // have sent them somewhere they could not install from. Installs keep
+  // running off this address until that is understood.
+  //
+  // Nothing else is switched off. The banner markup, its wording and its
+  // styling are untouched, and acceptMovedHistory below still runs on the
+  // new address - any link already handed out keeps working. Turning this
+  // back to true is the whole of putting the announcement back.
+  var MOVE_ANNOUNCED = false
+
   function onOldHost() {
     try { return window.location.hostname === OLD_HOST } catch (e) { return false }
   }
@@ -543,7 +556,7 @@
   }
 
   function renderMoveBanner() {
-    if (!onOldHost()) { show(el.moved, false); return }
+    if (!MOVE_ANNOUNCED || !onOldHost()) { show(el.moved, false); return }
     show(el.moved, true)
     var href = moveLink()
     if (href) {

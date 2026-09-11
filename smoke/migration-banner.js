@@ -11,7 +11,7 @@ const initiallyHidden = new Set(
 const M = require(root + "core/Model.js");
 const Q = require(root + "core/questions.js");
 
-function run({ store = {}, host = "estimationgym.app", hash = "", reply = () => Promise.resolve({ ok: false, json: () => Promise.resolve({}) }) } = {}) {
+function run({ store = {}, host = "estimationgym.app", hash = "", announce = null, reply = () => Promise.resolve({ ok: false, json: () => Promise.resolve({}) }) } = {}) {
   const calls = [];
   const listeners = {};
   const makeEl = (id) => ({
@@ -56,8 +56,21 @@ function run({ store = {}, host = "estimationgym.app", hash = "", reply = () => 
   sandbox.window.window = sandbox.window;
   sandbox.caches = sandbox.window.caches;
   vm.createContext(sandbox);
-  for (const f of ["core/Model.js", "core/questions.js", "storage.js", "presenter.js", "app.js"])
-    vm.runInContext(fs.readFileSync(root + f, "utf8"), sandbox, { filename: f });
+  for (const f of ["core/Model.js", "core/questions.js", "storage.js", "presenter.js", "app.js"]) {
+    let src = fs.readFileSync(root + f, "utf8");
+    // The announcement is parked behind a flag while installs stay on the old
+    // address. Overriding it here means the banner keeps being tested in full
+    // while it is switched off, so it cannot quietly rot before it goes back.
+    if (f === "app.js" && announce !== null) {
+      const flag = /var MOVE_ANNOUNCED = (?:true|false)/;
+      // Not "did the text change": asking for the value it already has is a
+      // legitimate run, and treating that as a missing flag failed the moment
+      // the override matched what was shipped.
+      if (!flag.test(src)) throw new Error("could not find the MOVE_ANNOUNCED flag in app.js");
+      src = src.replace(flag, "var MOVE_ANNOUNCED = " + String(announce));
+    }
+    vm.runInContext(src, sandbox, { filename: f });
+  }
   const fire = (id, ev) => (listeners[id + ":" + ev] || []).forEach((f) => f({ preventDefault() {} }));
   return { els, store, fire, calls };
 }
@@ -93,21 +106,37 @@ const NEW = "estimationgym.app";
 
 void (async function () {
   // 1. The new address must never show it. Anyone arriving there has arrived.
-  let r = run({ host: NEW });
+  let r = run({ host: NEW, announce: true });
   if (!r.els.moved.hidden) throw new Error("the new address is showing a move notice");
   console.log("on the new host    -> no banner");
 
-  // 2. The old address always shows it, played or not.
-  r = run({ host: OLD });
+  // 2. Announced, the old address shows it, played or not.
+  r = run({ host: OLD, announce: true });
   if (r.els.moved.hidden) throw new Error("the old address is not warning anyone");
   console.log("on the old host    -> banner shown");
 
+  // 2b. Parked, it shows nowhere at all - including the old address, which is
+  //     the only place it would ever appear.
+  r = run({ host: OLD, announce: false });
+  if (!r.els.moved.hidden) throw new Error("the announcement is parked but the old address still shows it");
+  console.log("parked             -> no banner on either host");
+
+  // 2c. And whichever way the flag is shipped, the app agrees with it.
+  const shipped = /var MOVE_ANNOUNCED = (true|false)/.exec(
+    fs.readFileSync(root + "app.js", "utf8"));
+  if (!shipped) throw new Error("app.js has no MOVE_ANNOUNCED flag");
+  const live = run({ host: OLD });
+  if (live.els.moved.hidden !== (shipped[1] === "false")) {
+    throw new Error("shipped flag says " + shipped[1] + " but the old address disagrees");
+  }
+  console.log("as shipped         -> MOVE_ANNOUNCED = " + shipped[1]);
+
   // 3. With a history, the link carries it.
   const store = {};
-  let played = run({ store, host: OLD });
+  let played = run({ store, host: OLD, announce: true });
   played.els["guess-input"].value = "12000";
   played.fire("guess-form", "submit");
-  played = run({ store, host: OLD });
+  played = run({ store, host: OLD, announce: true });
 
   const href = played.els["moved-go"].attrs.href;
   if (!href || href.indexOf("https://" + NEW) !== 0) throw new Error("the link does not point at the new address: " + href);
