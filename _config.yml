@@ -1,0 +1,51 @@
+# GitHub Pages serves everything in the repository, which meant the site was
+# handing out the Worker source, the database schema, wrangler.toml, every test
+# and every build tool to anyone who guessed a path. None of it is secret - the
+# repository is public and deliberately so - but the *site* has no business
+# serving files that exist only for development.
+#
+# This is tidying rather than a fix: nothing below is a vulnerability, and the
+# one item with any sensitivity, the D1 database id in wrangler.toml, is
+# useless without account credentials. The point is that the attack surface of
+# a page should be the page.
+#
+# Excluding from the site does not remove anything from the repository. All of
+# it stays readable on GitHub, which the AGPL and the in-app source link both
+# promise.
+#
+# Careful: anything the app loads at runtime must NOT be listed here. That is
+# index.html, app.js, app.css, presenter.js, storage.js, sw.js, core/Model.js,
+# core/questions.js, manifest.webmanifest, icons/ and install/.
+
+exclude:
+  # The Cloudflare Worker: source, schema, and its config
+  - worker/
+
+  # Tests. None of this runs in a browser.
+  - smoke/
+  - presenter.test.js
+  - storage.test.js
+  - version.test.js
+  - sw.test.js
+  - install.test.js
+  - markup.test.js
+  - core/Model.test.js
+  - core/questions.test.js
+
+  # Build and maintenance tooling
+  - scripts/
+  - tools/
+  - package.json
+  - package-lock.json
+
+  # Developer documentation. The README stays: it is the landing page, and
+  # LICENSE stays because the app links to it.
+  - DEVELOPING.md
+
+  # Jekyll's own defaults, which setting `exclude` would otherwise replace
+  - node_modules/
+  - vendor/
+  - Gemfile
+  - Gemfile.lock
+  - .sass-cache/
+  - .jekyll-cache/

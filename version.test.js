@@ -53,3 +53,57 @@ assert.equal(
 assert.ok(declared.startsWith("estimation-gym-v"), "cache name keeps its prefix")
 
 console.log(`version ${pkg.version}, cache ${declared} - all version checks passed.`)
+
+// --- the site must not exclude anything the app loads -------------------
+//
+// _config.yml stops GitHub Pages serving the Worker source, the tests and the
+// build tooling. That list is edited by hand, and excluding a runtime asset
+// would not fail anything here or in CI - it would simply take the live site
+// down, quietly, on the next deploy.
+//
+// So every asset the service worker precaches is checked against it. Those are
+// exactly the files the app cannot start without.
+
+const configPath = path.join(__dirname, "_config.yml")
+if (require("node:fs").existsSync(configPath)) {
+  const config = readFileSync(configPath, "utf8")
+
+  const excluded = config
+    .split("\n")
+    .map((line) => (line.match(/^\s*-\s+(.+?)\s*$/) || [])[1])
+    .filter(Boolean)
+    .filter((entry) => !entry.startsWith("#"))
+
+  assert.ok(excluded.length > 5, "the exclude list looks empty - did the format change?")
+
+  // The precache list is the definition of "needed to run".
+  const assets = (sw.match(/var ASSETS = \[([\s\S]*?)\]/) || [])[1]
+  assert.ok(assets, "could not find the precache list in sw.js")
+
+  const needed = [...assets.matchAll(/"\.\/([^"]*)"/g)]
+    .map((m) => m[1])
+    .filter(Boolean)
+
+  assert.ok(needed.length >= 10, `expected the precache list to be substantial, found ${needed.length}`)
+
+  for (const asset of needed) {
+    for (const entry of excluded) {
+      const blocked = entry.endsWith("/")
+        ? asset.startsWith(entry)
+        : asset === entry
+      assert.ok(
+        !blocked,
+        `_config.yml excludes "${entry}", which would stop Pages serving ` +
+        `"${asset}" - the app precaches that and will not start without it`
+      )
+    }
+  }
+
+  // And the page itself, which is not in the precache list by that name.
+  for (const entry of excluded) {
+    assert.notEqual(entry, "index.html", "excluding index.html would serve an empty site")
+    assert.notEqual(entry, "install/", "the install page is the one people are sent to")
+  }
+
+  console.log(`_config.yml hides ${excluded.length} dev paths, none of them needed at runtime`)
+}
