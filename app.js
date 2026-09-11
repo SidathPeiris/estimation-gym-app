@@ -25,6 +25,7 @@
              "hint-toggle", "strategy", "strategy-label", "strategy-guidance", "approach",
              "build", "remind", "remind-state", "remind-note",
              "howto", "howto-toggle", "howto-chev", "howto-body",
+             "moved", "moved-go", "moved-note",
              "confess", "confess-body", "confess-yes", "confess-no", "dist-confessed",
              "suggest", "suggest-toggle", "suggest-chev", "suggest-body", "suggest-form",
              "suggest-prompt", "suggest-answer", "suggest-unit", "suggest-source",
@@ -456,6 +457,8 @@
   function maybeAskAboutCheating(guess, question) {
     if (!question || !looksLikeAPeek(guess, question.answerValue)) return
     setPendingConfession(question.id)
+    renderMoveBanner()
+
     renderConfession(question)
   }
 
@@ -493,6 +496,70 @@
         }), { headers: { "Content-Type": "application/json" } }))
       }).catch(function () {})
     } catch (e) {}
+  }
+
+  // --- moving to estimationgym.app -------------------------------------
+  //
+  // History and streaks live in localStorage, which is per-origin, so changing
+  // domain would otherwise reset everyone who has played. exportState and
+  // importState already exist for moving a history between devices; this
+  // reuses them to move one between origins.
+  //
+  // The data travels in the URL fragment, which browsers never send to a
+  // server - so a history crosses without touching the network.
+  var OLD_HOST = "sidathpeiris.github.io"
+  var NEW_HOME = "https://estimationgym.app/"
+  // Fragments are not formally capped but very long URLs get truncated in the
+  // wild. Beyond this, ask them to use the export box instead of silently
+  // handing over a broken half.
+  var MOVE_LIMIT = 30000
+
+  function onOldHost() {
+    try { return window.location.hostname === OLD_HOST } catch (e) { return false }
+  }
+
+  function moveLink() {
+    var payload = exportState(state)
+    var packed
+    try { packed = window.btoa(unescape(encodeURIComponent(payload))) } catch (e) { return null }
+    if (packed.length > MOVE_LIMIT) return null
+    return NEW_HOME + "#move=" + packed
+  }
+
+  // On the new domain: take a history handed over in the fragment, then strip
+  // it, so a reload or a shared link cannot re-import or leak it.
+  function acceptMovedHistory() {
+    var hash = ""
+    try { hash = window.location.hash || "" } catch (e) { return }
+    if (hash.indexOf("#move=") !== 0) return
+    try {
+      window.history.replaceState(null, "", window.location.pathname + window.location.search)
+    } catch (e) {}
+    var raw
+    try { raw = decodeURIComponent(escape(window.atob(hash.slice(6)))) } catch (e) { return }
+    var result = importState(Model, state, raw)
+    if (!result || !result.state) return
+    state = result.state
+    saveState(state, window.localStorage)
+    render()
+  }
+
+  function renderMoveBanner() {
+    if (!onOldHost()) { show(el.moved, false); return }
+    show(el.moved, true)
+    var href = moveLink()
+    if (href) {
+      el["moved-go"].setAttribute("href", href)
+      show(el["moved-note"], false)
+      return
+    }
+    // Too much history to carry in a URL, or the browser refused to encode it.
+    // The export box downstairs does the same job without a length limit.
+    el["moved-go"].setAttribute("href", NEW_HOME)
+    setText(el["moved-note"],
+      "Your history is too long to carry in a link. Use Export below, then " +
+      "Restore it on the new site.")
+    show(el["moved-note"], true)
   }
 
   function canFetch() {
@@ -1304,6 +1371,8 @@
     reloading = true
     window.location.reload()
   }
+
+  acceptMovedHistory()
 
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker.addEventListener("controllerchange", applyUpdate)

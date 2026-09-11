@@ -1,0 +1,13 @@
+{
+  // The static site. Separate from worker/wrangler.toml, which is the
+  // distribution Worker and deploys on its own - this one only serves files.
+  //
+  // The name must match the project name in the Cloudflare dashboard exactly,
+  // or the build fails.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "estimation-gym-app",
+  "compatibility_date": "2026-09-11",
+  "assets": {
+    "directory": "./"
+  }
+}

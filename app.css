@@ -653,3 +653,36 @@ body {
   color: var(--dim);
   font-style: italic;
 }
+
+/* --- the move to estimationgym.app --- */
+/* Only ever shown on the old host. The new domain never renders this. */
+.moved {
+  margin-bottom: 20px;
+  padding: 14px 16px;
+  border: 1px solid var(--accent);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+.moved-title { margin: 0; font-weight: 700; font-size: 0.95rem; color: var(--accent) }
+
+.moved-body {
+  margin: 0.4rem 0 0;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--fg);
+}
+
+.moved-go {
+  display: inline-block;
+  margin-top: 0.8rem;
+  padding: 0.6rem 0.9rem;
+  border-radius: 8px;
+  background: var(--accent);
+  color: var(--bg);
+  font-weight: 700;
+  font-size: 0.82rem;
+  text-decoration: none;
+}
+
+.moved-note { margin: 0.6rem 0 0; font-size: 0.76rem; color: var(--dim) }

@@ -63,7 +63,7 @@ An installed copy opens at `start_url` with no query string, so use these from a
 normal browser tab rather than from the home screen:
 
 ```
-https://sidathpeiris.github.io/estimation-gym-app/?reset=today
+https://estimationgym.app/?reset=today
 ```
 
 ## Install counter

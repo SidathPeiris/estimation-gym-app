@@ -18,12 +18,12 @@
        every result a player shares is rendered from these tags - without an
        og:image the card is a bare grey box, which is a poor showing for the
        one growth loop a daily puzzle has. -->
-  <link rel="canonical" href="https://sidathpeiris.github.io/estimation-gym-app/">
+  <link rel="canonical" href="https://estimationgym.app/">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://sidathpeiris.github.io/estimation-gym-app/">
+  <meta property="og:url" content="https://estimationgym.app/">
   <meta property="og:title" content="Estimation Gym">
   <meta property="og:description" content="A daily Fermi-estimation puzzle. One question a day, scored on how close you get in powers of ten. Free, no account, works offline.">
-  <meta property="og:image" content="https://sidathpeiris.github.io/estimation-gym-app/icons/og-card.png">
+  <meta property="og:image" content="https://estimationgym.app/icons/og-card.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="Estimation Gym - one question a day, you have to be roughly right">
@@ -31,11 +31,23 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Estimation Gym">
   <meta name="twitter:description" content="A daily Fermi-estimation puzzle. One question a day, scored on how close you get in powers of ten. Free, no account, works offline.">
-  <meta name="twitter:image" content="https://sidathpeiris.github.io/estimation-gym-app/icons/og-card.png">
+  <meta name="twitter:image" content="https://estimationgym.app/icons/og-card.png">
 </head>
 <body>
 
 <main class="app">
+
+  <div class="moved" id="moved" hidden>
+    <p class="moved-title">Estimation Gym has a new home</p>
+    <p class="moved-body">
+      This address still works for now, but the app has moved to
+      <strong>estimationgym.app</strong>. Your streak does not come with it on
+      its own &mdash; this button carries it across.
+    </p>
+    <a class="moved-go" id="moved-go" href="https://estimationgym.app/">Move my streak across</a>
+    <p class="moved-note" id="moved-note" hidden></p>
+  </div>
+
   <header class="hero">
     <div class="hero-title">
       <h1>Estimation Gym</h1>

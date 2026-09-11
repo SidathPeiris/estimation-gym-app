@@ -10,15 +10,15 @@
 <meta property="og:title" content="Estimation Gym">
 <meta property="og:description" content="A daily estimation puzzle. One question a day, scored on how close you get in powers of ten.">
 <meta property="og:type" content="website">
-<meta property="og:image" content="https://sidathpeiris.github.io/estimation-gym-app/icons/og-card.png">
+<meta property="og:image" content="https://estimationgym.app/icons/og-card.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Estimation Gym - one question a day, you have to be roughly right">
 <meta property="og:site_name" content="Estimation Gym">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://sidathpeiris.github.io/estimation-gym-app/icons/og-card.png">
-<link rel="canonical" href="https://sidathpeiris.github.io/estimation-gym-app/install/">
-<meta property="og:url" content="https://sidathpeiris.github.io/estimation-gym-app/install/">
+<meta name="twitter:image" content="https://estimationgym.app/icons/og-card.png">
+<link rel="canonical" href="https://estimationgym.app/install/">
+<meta property="og:url" content="https://estimationgym.app/install/">
 
 <link rel="icon" href="../icons/icon-192.png">
 <link rel="apple-touch-icon" href="../icons/icon-192.png">
@@ -330,29 +330,6 @@
   </footer>
 </main>
 
-<script>
-  // Progressive enhancement: everything above is already visible and correct
-  // without this. All it does is hide the two sections you do not need, so a
-  // phone is not asked to scroll past instructions for other devices.
-  (function () {
-    try {
-      var ua = navigator.userAgent || "";
-      var isIOS = /iPad|iPhone|iPod/.test(ua) ||
-        // iPadOS 13+ reports itself as a Mac, but a touchscreen gives it away.
-        (/Macintosh/.test(ua) && typeof document.ontouchend !== "undefined");
-      var isAndroid = /Android/.test(ua);
-      if (!isIOS && !isAndroid) return;   // desktop: leave everything shown
-
-      var hide = isIOS ? ["android", "desktop"] : ["ios", "desktop"];
-      hide.forEach(function (id) {
-        var el = document.getElementById(id);
-        if (el) el.classList.add("hidden");
-      });
-    } catch (e) {
-      // Any failure just leaves all three sets of instructions visible, which
-      // is the correct page, only longer.
-    }
-  })();
-</script>
+<script src="platform.js"></script>
 </body>
 </html>

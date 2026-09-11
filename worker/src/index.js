@@ -33,31 +33,47 @@ const REMINDER_HOUR = 9;
 // comparison against themselves.
 const MIN_SAMPLE = 1;
 
-function corsHeaders(env) {
+// The app is moving from sidathpeiris.github.io to estimationgym.app, and both
+// are live at once while people reinstall - so this takes a list. Each origin
+// is echoed back individually rather than as a set, because
+// Access-Control-Allow-Origin may only ever name one.
+function allowedOrigins(env) {
+  return (env.ALLOWED_ORIGIN || "").split(",").map(function (o) { return o.trim(); }).filter(Boolean);
+}
+
+function corsHeaders(env, request) {
+  const allowed = allowedOrigins(env);
+  const asked = request && request.headers.get("Origin");
+  const echo = allowed.length === 0
+    ? "*"
+    : (allowed.indexOf(asked) >= 0 ? asked : allowed[0]);
   return {
-    "Access-Control-Allow-Origin": env.ALLOWED_ORIGIN || "*",
+    "Access-Control-Allow-Origin": echo,
+    // The answer varies by request origin now, so caches must not share it.
+    "Vary": "Origin",
     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type",
     "Access-Control-Max-Age": "86400"
   };
 }
 
-function json(body, env, status) {
+function json(body, env, status, request) {
   return new Response(JSON.stringify(body), {
     status: status || 200,
     headers: Object.assign(
       { "Content-Type": "application/json", "Cache-Control": "no-store" },
-      corsHeaders(env)
+      corsHeaders(env, request)
     )
   });
 }
 
 function originAllowed(request, env) {
-  if (!env.ALLOWED_ORIGIN) return true;
+  const allowed = allowedOrigins(env);
+  if (!allowed.length) return true;
   const origin = request.headers.get("Origin");
   // A same-origin or non-browser request carries no Origin; allow those so the
   // endpoint stays testable with curl.
-  return !origin || origin === env.ALLOWED_ORIGIN;
+  return !origin || allowed.indexOf(origin) >= 0;
 }
 
 // Question ids are kebab-case by contract, enforced by questions.test.js.
@@ -78,8 +94,8 @@ async function readConfessions(env, questionId) {
 
 async function handleConfess(request, env) {
   let body;
-  try { body = await request.json(); } catch (e) { return json({ error: "bad json" }, env, 400); }
-  if (!validQuestionId(body && body.questionId)) return json({ error: "bad question id" }, env, 400);
+  try { body = await request.json(); } catch (e) { return json({ error: "bad json" }, env, 400, request); }
+  if (!validQuestionId(body && body.questionId)) return json({ error: "bad question id" }, env, 400, request);
 
   const ip = request.headers.get("CF-Connecting-IP") || "unknown";
   const client = await hash("confess:" + ip + ":" + body.questionId);
@@ -91,7 +107,7 @@ async function handleConfess(request, env) {
     "INSERT OR IGNORE INTO confessions (question_id, client, at) VALUES (?, ?, ?)"
   ).bind(body.questionId, client, Date.now()).run();
 
-  return json({ ok: true, confessed: await readConfessions(env, body.questionId) }, env);
+  return json({ ok: true, confessed: await readConfessions(env, body.questionId) }, env, null, request);
 }
 
 async function readDistribution(env, questionId) {
@@ -143,54 +159,54 @@ function validOffset(value) {
 
 async function handleSubscribe(request, env) {
   let body;
-  try { body = await request.json(); } catch (e) { return json({ error: "bad json" }, env, 400); }
+  try { body = await request.json(); } catch (e) { return json({ error: "bad json" }, env, 400, request); }
 
-  if (!validEndpoint(body && body.endpoint)) return json({ error: "bad endpoint" }, env, 400);
-  if (!validOffset(body && body.tzOffset)) return json({ error: "bad tzOffset" }, env, 400);
+  if (!validEndpoint(body && body.endpoint)) return json({ error: "bad endpoint" }, env, 400, request);
+  if (!validOffset(body && body.tzOffset)) return json({ error: "bad tzOffset" }, env, 400, request);
 
   await env.DB.prepare(
     "INSERT INTO subscriptions (endpoint, tz_offset, last_played_day, created_at) VALUES (?, ?, NULL, ?) " +
     "ON CONFLICT(endpoint) DO UPDATE SET tz_offset = excluded.tz_offset"
   ).bind(body.endpoint, body.tzOffset, Date.now()).run();
 
-  return json({ ok: true }, env);
+  return json({ ok: true }, env, null, request);
 }
 
 async function handleUnsubscribe(request, env) {
   let body;
-  try { body = await request.json(); } catch (e) { return json({ error: "bad json" }, env, 400); }
-  if (!validEndpoint(body && body.endpoint)) return json({ error: "bad endpoint" }, env, 400);
+  try { body = await request.json(); } catch (e) { return json({ error: "bad json" }, env, 400, request); }
+  if (!validEndpoint(body && body.endpoint)) return json({ error: "bad endpoint" }, env, 400, request);
 
   await env.DB.prepare("DELETE FROM subscriptions WHERE endpoint = ?").bind(body.endpoint).run();
-  return json({ ok: true }, env);
+  return json({ ok: true }, env, null, request);
 }
 
 // Lets a device say it has played, so the reminder can be skipped rather than
 // telling someone to do a thing they have already done.
 async function handlePlayed(request, env) {
   let body;
-  try { body = await request.json(); } catch (e) { return json({ error: "bad json" }, env, 400); }
-  if (!validEndpoint(body && body.endpoint)) return json({ error: "bad endpoint" }, env, 400);
-  if (typeof body.day !== "number" || !Number.isInteger(body.day)) return json({ error: "bad day" }, env, 400);
+  try { body = await request.json(); } catch (e) { return json({ error: "bad json" }, env, 400, request); }
+  if (!validEndpoint(body && body.endpoint)) return json({ error: "bad endpoint" }, env, 400, request);
+  if (typeof body.day !== "number" || !Number.isInteger(body.day)) return json({ error: "bad day" }, env, 400, request);
 
   await env.DB.prepare(
     "UPDATE subscriptions SET last_played_day = ? WHERE endpoint = ?"
   ).bind(body.day, body.endpoint).run();
 
-  return json({ ok: true }, env);
+  return json({ ok: true }, env, null, request);
 }
 
 async function handleGet(request, env, url) {
   const questionId = url.searchParams.get("q");
-  if (!validQuestionId(questionId)) return json({ error: "bad question id" }, env, 400);
+  if (!validQuestionId(questionId)) return json({ error: "bad question id" }, env, 400, request);
 
   const { n, counts } = await readDistribution(env, questionId);
 
   // Withhold the breakdown until it means something, rather than letting the
   // client draw a chart from three responses.
   const confessed = await readConfessions(env, questionId);
-  if (n < MIN_SAMPLE) return json({ questionId, n, enough: false, minimum: MIN_SAMPLE, confessed }, env);
-  return json({ questionId, n, enough: true, counts, confessed }, env);
+  if (n < MIN_SAMPLE) return json({ questionId, n, enough: false, minimum: MIN_SAMPLE, confessed }, env, null, request);
+  return json({ questionId, n, enough: true, counts, confessed }, env, null, request);
 }
 
 async function handlePost(request, env) {
@@ -198,13 +214,13 @@ async function handlePost(request, env) {
   try {
     body = await request.json();
   } catch (e) {
-    return json({ error: "bad json" }, env, 400);
+    return json({ error: "bad json" }, env, 400, request);
   }
 
   const questionId = body && body.questionId;
   const band = body && body.band;
-  if (!validQuestionId(questionId)) return json({ error: "bad question id" }, env, 400);
-  if (!band_known(band)) return json({ error: "bad band" }, env, 400);
+  if (!validQuestionId(questionId)) return json({ error: "bad question id" }, env, 400, request);
+  if (!band_known(band)) return json({ error: "bad band" }, env, 400, request);
 
   // One submission per question per address. Cloudflare supplies the address;
   // it is hashed with the question id so the table never holds a bare IP.
@@ -241,8 +257,8 @@ async function handlePost(request, env) {
   const { n, counts } = await readDistribution(env, questionId);
   const confessed = await readConfessions(env, questionId);
   return n < MIN_SAMPLE
-    ? json({ questionId, n, enough: false, minimum: MIN_SAMPLE, counted: !already, confessed }, env)
-    : json({ questionId, n, enough: true, counts, counted: !already, confessed }, env);
+    ? json({ questionId, n, enough: false, minimum: MIN_SAMPLE, counted: !already, confessed }, env, null, request)
+    : json({ questionId, n, enough: true, counts, counted: !already, confessed }, env, null, request);
 }
 
 // --- question suggestions ---
@@ -291,7 +307,7 @@ async function handleSuggest(request, env) {
   try {
     body = await request.json();
   } catch (e) {
-    return json({ error: "bad json" }, env, 400);
+    return json({ error: "bad json" }, env, 400, request);
   }
 
   const prompt = cleanText(body && body.prompt, 15, 200);
@@ -301,11 +317,11 @@ async function handleSuggest(request, env) {
   // Optional: absent is fine, present but unusable is not.
   const note = body && body.note ? cleanText(body.note, 1, 500) : "";
 
-  if (!prompt) return json({ error: "prompt must be 15-200 characters, without < or >" }, env, 400);
-  if (!unit) return json({ error: "unit must be 1-40 characters" }, env, 400);
-  if (answer === null) return json({ error: "answer must be a positive number" }, env, 400);
-  if (!source) return json({ error: "source must be 4-200 characters" }, env, 400);
-  if (note === null) return json({ error: "note must be under 500 characters" }, env, 400);
+  if (!prompt) return json({ error: "prompt must be 15-200 characters, without < or >" }, env, 400, request);
+  if (!unit) return json({ error: "unit must be 1-40 characters" }, env, 400, request);
+  if (answer === null) return json({ error: "answer must be a positive number" }, env, 400, request);
+  if (!source) return json({ error: "source must be 4-200 characters" }, env, 400, request);
+  if (note === null) return json({ error: "note must be under 500 characters" }, env, 400, request);
 
   // Rate limited per address per day, hashed so the table never holds a bare
   // IP - the same treatment the response counter gives it.
@@ -317,7 +333,7 @@ async function handleSuggest(request, env) {
   ).bind(client, Date.now() - DAY_MS).first();
 
   if (recent && recent.n >= SUGGEST_MAX_PER_DAY) {
-    return json({ error: "that is enough for today - thank you, try again tomorrow" }, env, 429);
+    return json({ error: "that is enough for today - thank you, try again tomorrow" }, env, 429, request);
   }
 
   await env.DB.prepare(
@@ -325,7 +341,7 @@ async function handleSuggest(request, env) {
     "VALUES (?, ?, ?, ?, ?, ?, 'pending', ?, ?)"
   ).bind(crypto.randomUUID(), prompt, unit, answer, source, note, client, Date.now()).run();
 
-  return json({ ok: true }, env);
+  return json({ ok: true }, env, null, request);
 }
 
 async function hash(value) {
@@ -338,10 +354,10 @@ export default {
     const url = new URL(request.url);
 
     if (request.method === "OPTIONS") {
-      return new Response(null, { status: 204, headers: corsHeaders(env) });
+      return new Response(null, { status: 204, headers: corsHeaders(env, request) });
     }
     if (!originAllowed(request, env)) {
-      return json({ error: "origin not allowed" }, env, 403);
+      return json({ error: "origin not allowed" }, env, 403, request);
     }
     if (url.pathname === "/dist" && request.method === "GET") {
       return handleGet(request, env, url);
@@ -364,7 +380,7 @@ export default {
     if (url.pathname === "/confess" && request.method === "POST") {
       return handleConfess(request, env);
     }
-    return json({ error: "not found" }, env, 404);
+    return json({ error: "not found" }, env, 404, request);
   },
 
   // Hourly. Each run reminds only the subscribers for whom it has just turned

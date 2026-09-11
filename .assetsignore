@@ -1,0 +1,34 @@
+# Workers uploads everything under the assets directory, which here is the
+# repository root. This keeps development files out of the deployed site.
+#
+# Same job the Jekyll `exclude:` list did on GitHub Pages - kept in step with
+# _config.yml by pages.test.js, because the two are now both live at once and
+# drifting apart would quietly re-expose something.
+#
+# Nothing the app loads at runtime may appear here. version.test.js checks the
+# service worker's precache list against both files.
+
+# The Cloudflare Worker: source, schema, config
+worker/
+
+# Tests
+smoke/
+*.test.js
+core/Model.test.js
+core/questions.test.js
+
+# Build and maintenance tooling
+scripts/
+tools/
+package.json
+package-lock.json
+node_modules/
+
+# Developer documentation. README and LICENSE stay - the app links to LICENSE.
+DEVELOPING.md
+
+# Config that belongs to the deploy, not to the site
+wrangler.jsonc
+_config.yml
+.assetsignore
+.github/

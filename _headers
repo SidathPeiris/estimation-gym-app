@@ -1,0 +1,51 @@
+# Response headers for the static site. Parsed by Workers, not served.
+#
+# This file is the reason moving off GitHub Pages was worth anything: Pages
+# cannot set headers at all, so none of the below was possible there.
+#
+# The Content-Security-Policy is strict because it can be. Neither page has an
+# inline script - the install page's was moved to platform.js precisely so this
+# could say 'self' with no hashes to keep in step. If you ever add an inline
+# <script>, it will silently stop running: move it to a file instead of
+# loosening this.
+
+/*
+  # No inline script, and only two hosts may serve code at all: this origin,
+  # and the analytics beacon on the install page.
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self'; font-src 'self'; connect-src 'self' https://estimation-gym-distribution.estimationgym.workers.dev https://cloudflareinsights.com; worker-src 'self'; manifest-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'; object-src 'none'; upgrade-insecure-requests
+
+  # 'unsafe-inline' above applies to styles only. Both pages carry a <style>
+  # block, and inline styles cannot execute code - the risk is defacement, not
+  # takeover. Removing it would mean two more requests on first paint for a
+  # game that is meant to open instantly.
+
+  # Nobody has any business framing this.
+  X-Frame-Options: DENY
+
+  # Stop browsers guessing a type and running something as script.
+  X-Content-Type-Options: nosniff
+
+  # Send the origin, never the path. A shared result should not leak which
+  # question someone was on.
+  Referrer-Policy: strict-origin-when-cross-origin
+
+  # Nothing here needs any of these. Refusing them up front means a future
+  # dependency cannot quietly start asking.
+  Permissions-Policy: accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()
+
+  # .app is HSTS-preloaded at the TLD level, so this is belt and braces - but it
+  # also covers the two-year window if the site ever moves to another TLD.
+  Strict-Transport-Security: max-age=63072000; includeSubDomains
+
+# The question bank and the logic are cached hard by the service worker
+# already, and their names do not change between versions - so let the browser
+# revalidate rather than hold a stale copy the worker cannot see.
+/core/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+# The video is large, never changes, and is only fetched when someone taps it.
+/install/media/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/icons/*
+  Cache-Control: public, max-age=604800

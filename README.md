@@ -1,11 +1,11 @@
 # Estimation Gym
 
-[![app installs](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fabacus.jasoncameron.dev%2Fget%2Festimation-gym%2Fapp-installs&query=%24.value&label=app%20installs&color=blue&style=flat-square)](https://sidathpeiris.github.io/estimation-gym-app/)
+[![app installs](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fabacus.jasoncameron.dev%2Fget%2Festimation-gym%2Fapp-installs&query=%24.value&label=app%20installs&color=blue&style=flat-square)](https://estimationgym.app/)
 
 **A daily Fermi-estimation puzzle. One question a day, scored on how close you
 get in powers of ten.**
 
-### ▶ [Play it](https://sidathpeiris.github.io/estimation-gym-app/)
+### ▶ [Play it](https://estimationgym.app/)
 
 Every calendar day everyone gets the same question — a real-world quantity you
 have to estimate, like *"how many piano tuners work in Chicago?"* You are scored
@@ -18,7 +18,7 @@ No account. No sign-up. Works offline.
 ## Install it on your phone
 
 **Step-by-step instructions for your device:**
-**<https://sidathpeiris.github.io/estimation-gym-app/install/>**
+**<https://estimationgym.app/install/>**
 
 The short version:
 
@@ -125,7 +125,7 @@ your history:
   deletes it.
 
 The three above are the whole of it **for the app**. One page is different: the
-[install page](https://sidathpeiris.github.io/estimation-gym-app/install/),
+[install page](https://estimationgym.app/install/),
 which explains how to add the app to a phone, carries Cloudflare Web Analytics.
 It counts page views and where visitors arrived from, sets no cookies, and
 Cloudflare states it does not track individual people across sites. It is there

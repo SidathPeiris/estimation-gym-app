@@ -371,4 +371,50 @@ await worker.fetch(post({ questionId: "cars-in-us", band: "Off", decades: 20 }, 
 assert.equal(e.DB._decades.get("cars-in-us|0"), 1);
 assert.equal(e.DB._decades.get("cars-in-us|20"), 1);
 console.log("decade bounds    -> 0 and 20 both accepted");
+
+// --- two origins at once, while the app moves ----------------------------
+//
+// estimationgym.app and sidathpeiris.github.io are both live until everyone
+// has reinstalled. Access-Control-Allow-Origin may only ever name one origin,
+// so the header has to echo whichever asked rather than list both.
+
+const NEW = "https://estimationgym.app";
+const OLD = "https://sidathpeiris.github.io";
+const bothEnv = () => ({ DB: fakeDB(), ALLOWED_ORIGIN: NEW + "," + OLD });
+
+for (const origin of [NEW, OLD]) {
+  const req = new Request("https://w.dev/dist?q=cars-in-us", { headers: { Origin: origin } });
+  const res = await worker.fetch(req, bothEnv());
+  assert.equal(res.status, 200, origin + " should be allowed");
+  assert.equal(
+    res.headers.get("Access-Control-Allow-Origin"), origin,
+    "the header must echo the origin that asked, not the other one"
+  );
+  assert.equal(res.headers.get("Vary"), "Origin", "the answer varies by origin, so caches must not share it");
+}
+console.log("both origins    -> allowed, each echoed back to itself");
+
+// Anyone else is still refused.
+const stranger = new Request("https://w.dev/dist?q=cars-in-us", {
+  headers: { Origin: "https://someone-elses-site.example" }
+});
+assert.equal((await worker.fetch(stranger, bothEnv())).status, 403);
+console.log("a third origin  -> still 403");
+
+// Spaces around the comma are tolerated, since this is typed by hand in
+// wrangler.toml and a stray space would silently lock everyone out.
+const spaced = { DB: fakeDB(), ALLOWED_ORIGIN: NEW + " , " + OLD };
+assert.equal(
+  (await worker.fetch(new Request("https://w.dev/dist?q=cars-in-us", { headers: { Origin: OLD } }), spaced)).status,
+  200
+);
+console.log("spaced list     -> tolerated");
+
+// The preflight has to agree with the request that follows it, or the browser
+// blocks the real call.
+const pre = new Request("https://w.dev/submit", { method: "OPTIONS", headers: { Origin: NEW } });
+const preRes = await worker.fetch(pre, bothEnv());
+assert.equal(preRes.status, 204);
+assert.equal(preRes.headers.get("Access-Control-Allow-Origin"), NEW, "preflight must echo the same origin");
+console.log("preflight       -> echoes the same origin as the request");
 console.log("\nAll worker tests passed.");

@@ -13,7 +13,9 @@ database_id = "9f7deb91-5df5-41a0-9477-309d71e010cf"
 # The app's origin. Requests from anywhere else are refused, so the endpoint is
 # not trivially usable as someone else's free counter.
 [vars]
-ALLOWED_ORIGIN = "https://sidathpeiris.github.io"
+# Both are live while people reinstall on the new domain. The old one comes
+# out once the subscriptions and installs have moved across.
+ALLOWED_ORIGIN = "https://estimationgym.app,https://sidathpeiris.github.io"
 
 # The VAPID public key is meant to be public - the browser is given it when it
 # subscribes. The matching private key is a secret, set with:
@@ -22,7 +24,7 @@ VAPID_PUBLIC_KEY = "BHoIQ7xp8tGkF9-AoMc9_uN7e610XZ1GxXCYjk495Z_CBLeHO0YZIk0OjXgF
 
 # Identifies the sender to the push service. An https URL is allowed by the
 # spec and avoids publishing an email address in a public repo.
-VAPID_SUBJECT = "https://sidathpeiris.github.io/estimation-gym-app/"
+VAPID_SUBJECT = "https://estimationgym.app/"
 # Hourly. Each run reminds only the subscribers for whom it has just turned
 # 9am locally, so one schedule covers every timezone.
 [triggers]

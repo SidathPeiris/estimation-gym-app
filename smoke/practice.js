@@ -127,19 +127,33 @@ console.log("pool exhausted     -> " + r.els["practice-intro"].textContent.slice
 {
   const upcoming = new Set();
   for (let d = today; d < today + M.PRACTICE_RESERVE_DAYS; d++) upcoming.add(M.questionForDay(d, Q).id);
-  const upcomingPrompts = new Set([...upcoming].map((id) => (Q.find((q) => q.id === id) || {}).prompt));
+  // Keyed on prompt AND the as-of year, not the prompt alone. Six questions in
+  // the bank share two prompts - four askings of "What was the world's total
+  // human population?" and two of the life-expectancy one - and they are
+  // distinguished by their year, which both the daily and the practice panel
+  // display. Matching on prompt alone made this fail whenever the reserve
+  // window happened to contain one twin while another sat in the pool, which
+  // depends on the date and so looked like flakiness.
+  const key = (prompt, asof) => prompt + " | " + (asof || "");
+  const upcomingKeys = new Set([...upcoming].map((id) => {
+    const q = Q.find((x) => x.id === id) || {};
+    return key(q.prompt, q.asOf === undefined ? "" : "as of " + M.formatAsOf(q.asOf));
+  }));
 
   const seen = [];
   for (let i = 0; i < 40; i++) {
     const probe = run();
     probe.fire("practice-toggle", "click");
     const shown = probe.els["practice-prompt"].textContent;
-    if (shown) seen.push(shown);
+    const asof = probe.els["practice-asof"].hidden ? "" : probe.els["practice-asof"].textContent;
+    if (shown) seen.push({ prompt: shown, key: key(shown, asof) });
   }
-  const spoiled = seen.filter((prompt) => upcomingPrompts.has(prompt));
+  const spoiled = seen.filter((s) => upcomingKeys.has(s.key));
   console.log("drew " + seen.length + " practice questions -> due within " + M.PRACTICE_RESERVE_DAYS + " days: " + spoiled.length);
   if (spoiled.length) throw new Error("practice offered a question the daily is about to use");
-  if (seen.includes(M.questionForDay(today + 1, Q).prompt)) throw new Error("practice offered the next day puzzle");
+  const tomorrow = M.questionForDay(today + 1, Q);
+  const tomorrowKey = key(tomorrow.prompt, tomorrow.asOf === undefined ? "" : "as of " + M.formatAsOf(tomorrow.asOf));
+  if (seen.some((s) => s.key === tomorrowKey)) throw new Error("practice offered the next day puzzle");
   console.log("next day question  -> never offered");
 }
 
