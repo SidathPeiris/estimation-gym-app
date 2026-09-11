@@ -7,6 +7,14 @@
 #
 # Nothing the app loads at runtime may appear here. version.test.js checks the
 # service worker's precache list against both files.
+#
+# TWO WRANGLER CONFIGS NOW LIVE HERE: wrangler.jsonc at the root for the static
+# site, and worker/wrangler.toml for the distribution Worker. A bare
+# `wrangler deploy` run from worker/ picked up the ROOT config, deployed the
+# site under the Worker's name and left the Worker itself untouched - a very
+# quiet way to fail, because it reports success. worker/package.json now passes
+# --config on every command: deploy the Worker with
+# `npm --prefix worker run deploy`, never a bare wrangler command.
 
 # The Cloudflare Worker: source, schema, config
 worker/
