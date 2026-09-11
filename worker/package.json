@@ -5,7 +5,7 @@
   "description": "Cloudflare Worker collecting per-question band distributions for the app.",
   "scripts": {
     "test": "node worker.test.mjs",
-    "deploy": "wrangler deploy --config wrangler.toml",
-    "schema": "wrangler d1 execute estimation-gym --remote --config wrangler.toml --file=./schema.sql"
+    "deploy": "npx --yes wrangler deploy --config wrangler.toml",
+    "schema": "npx --yes wrangler d1 execute estimation-gym --remote --config wrangler.toml --file=./schema.sql"
   }
 }
