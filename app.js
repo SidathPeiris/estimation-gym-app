@@ -514,16 +514,16 @@
 
   // Whether to announce the move on the old address.
   //
-  // Parked at false: the app would not finish installing from
-  // estimationgym.app on an Android handset, so sending people there would
-  // have sent them somewhere they could not install from. Installs keep
-  // running off this address until that is understood.
+  // This was parked at false for a while because the app would not finish
+  // installing from estimationgym.app on an Android handset - the WebAPK
+  // mint never completed and no entry was ever written - and there was no
+  // sense sending people somewhere they could not install from.
   //
-  // Nothing else is switched off. The banner markup, its wording and its
-  // styling are untouched, and acceptMovedHistory below still runs on the
-  // new address - any link already handed out keeps working. Turning this
-  // back to true is the whole of putting the announcement back.
-  var MOVE_ANNOUNCED = false
+  // It turned out to be the handset, not the site: a reboot cleared a stuck
+  // install queue and the same address minted first try, with nothing here
+  // having changed. The flag stays because it is the cheap way to pull the
+  // announcement without touching any of the markup around it.
+  var MOVE_ANNOUNCED = true
 
   function onOldHost() {
     try { return window.location.hostname === OLD_HOST } catch (e) { return false }
