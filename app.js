@@ -457,8 +457,6 @@
   function maybeAskAboutCheating(guess, question) {
     if (!question || !looksLikeAPeek(guess, question.answerValue)) return
     setPendingConfession(question.id)
-    renderMoveBanner()
-
     renderConfession(question)
   }
 
@@ -1074,6 +1072,8 @@
     }
 
     renderConfession(question)
+
+    renderMoveBanner()
 
     var todayEntry = vm.answered ? state.history[String(today)] : null
     var todayQid = todayEntry && todayEntry.questionId

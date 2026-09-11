@@ -686,3 +686,14 @@ body {
 }
 
 .moved-note { margin: 0.6rem 0 0; font-size: 0.76rem; color: var(--dim) }
+
+.moved-steps {
+  margin: 0.8rem 0 0;
+  padding-left: 1.15rem;
+  font-size: 0.8rem;
+  line-height: 1.55;
+}
+.moved-steps li { margin: 0.55rem 0 }
+.moved-steps li::marker { color: var(--accent) }
+.moved-steps a:not(.moved-go) { color: var(--accent) }
+.moved-steps .moved-go { margin-top: 0.45rem }
