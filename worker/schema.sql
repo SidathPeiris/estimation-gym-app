@@ -96,3 +96,27 @@ CREATE TABLE IF NOT EXISTS decade_errors (
   tally       INTEGER NOT NULL DEFAULT 0,
   PRIMARY KEY (question_id, decade)
 );
+
+-- How many people played each day, split by which address they played on.
+--
+-- Added while the app runs at two addresses at once. Nothing else here
+-- records where a request came from - the tables are deliberately about
+-- questions, not about people or places - so there was no way to tell
+-- whether anyone was still on the old address, and therefore no way to know
+-- when it is safe to retire it. That is the only question this answers.
+--
+-- It carries no more than the tables beside it: a counter, a date, and one of
+-- a fixed set of addresses. The origin is written only if it is one the
+-- Worker already allows, and anything else is filed as 'other', so a caller
+-- cannot put a string of their choosing into this table.
+--
+-- The day is the server's UTC day on the same epoch the app counts from
+-- (day 0 = 2024-01-01). A player's own calendar date can differ by one
+-- either side of UTC midnight, which is close enough to answer "is anyone
+-- still over there" and not close enough to time anybody's evening.
+CREATE TABLE IF NOT EXISTS origin_days (
+  day    INTEGER NOT NULL,
+  origin TEXT    NOT NULL,
+  tally  INTEGER NOT NULL DEFAULT 0,
+  PRIMARY KEY (day, origin)
+);

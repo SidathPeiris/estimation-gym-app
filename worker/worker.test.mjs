@@ -12,6 +12,7 @@ function fakeDB() {
   const confessions = new Set(); // "qid|client"
   const decades = new Map();     // "qid|decade" -> tally
   const seen = new Set();        // "qid\u0000client"
+  const originDays = new Map();  // "day|origin" -> tally
 
   function statement(sql, args = []) {
     return {
@@ -49,6 +50,10 @@ function fakeDB() {
           const k = args[0] + "\u0000" + args[1];
           responses.set(k, (responses.get(k) || 0) + 1);
         }
+        if (sql.startsWith("INSERT INTO origin_days")) {
+          const k = args[0] + "|" + args[1];
+          originDays.set(k, (originDays.get(k) || 0) + 1);
+        }
         if (sql.startsWith("INSERT INTO decade_errors")) {
           const k = args[0] + "|" + args[1];
           decades.set(k, (decades.get(k) || 0) + 1);
@@ -70,7 +75,8 @@ function fakeDB() {
     _responses: responses,
     _suggestions: suggestions,
     _confessions: confessions,
-    _decades: decades
+    _decades: decades,
+    _originDays: originDays
   };
 }
 
@@ -417,4 +423,56 @@ const preRes = await worker.fetch(pre, bothEnv());
 assert.equal(preRes.status, 204);
 assert.equal(preRes.headers.get("Access-Control-Allow-Origin"), NEW, "preflight must echo the same origin");
 console.log("preflight       -> echoes the same origin as the request");
+
+// --- which address a play came from --------------------------------------
+//
+// The only reason this exists: both addresses serve the same app while people
+// move across, and nothing else recorded tells them apart, so there was no way
+// to know when the old one had emptied out.
+
+const DAY = Math.floor((Date.now() - Date.UTC(2024, 0, 1)) / 86400000);
+const tallies = (x) => Object.fromEntries(
+  [...x.DB._originDays].map(([k, v]) => [k.slice(k.indexOf("|") + 1), v]));
+
+function postFrom(origin, body, ip) {
+  const headers = { "Content-Type": "application/json", "CF-Connecting-IP": ip };
+  if (origin) headers.Origin = origin;
+  return new Request("https://w.dev/submit", {
+    method: "POST", headers, body: JSON.stringify(body)
+  });
+}
+
+e = bothEnv();
+await worker.fetch(postFrom(OLD, { questionId: "cars-in-us", band: "Close" }, "1.1.1.1"), e);
+await worker.fetch(postFrom(OLD, { questionId: "cars-in-us", band: "Off" }, "1.1.1.2"), e);
+await worker.fetch(postFrom(NEW, { questionId: "cars-in-us", band: "Close" }, "1.1.1.3"), e);
+assert.deepEqual(tallies(e), { [OLD]: 2, [NEW]: 1 });
+assert.ok(e.DB._originDays.has(DAY + "|" + OLD), "counted against today UTC");
+console.log("origin counter  -> old 2, new 1, on day " + DAY);
+
+// A second submission from an address already counted must not count again:
+// this is a headcount, not a request count.
+await worker.fetch(postFrom(OLD, { questionId: "cars-in-us", band: "Bullseye" }, "1.1.1.1"), e);
+assert.deepEqual(tallies(e), { [OLD]: 2, [NEW]: 1 }, "a repeat does not count twice");
+console.log("repeat play     -> not counted again");
+
+// A different question from the same address is a different play, and does.
+await worker.fetch(postFrom(OLD, { questionId: "piano-tuners-chicago", band: "Close" }, "1.1.1.1"), e);
+assert.deepEqual(tallies(e), { [OLD]: 3, [NEW]: 1 });
+console.log("next question   -> counted again");
+
+// No Origin header at all - a non-browser client - is filed as "other" rather
+// than being invented as one of the real addresses.
+e = bothEnv();
+await worker.fetch(postFrom(null, { questionId: "cars-in-us", band: "Close" }, "2.2.2.2"), e);
+assert.deepEqual(tallies(e), { other: 1 });
+console.log("no origin       -> filed as other, not guessed");
+
+// And a foreign origin never reaches the counter, because it is refused before
+// the handler runs. Nothing a stranger sends can pick the label.
+e = bothEnv();
+const refused = await worker.fetch(postFrom("https://evil.example", { questionId: "cars-in-us", band: "Close" }, "3.3.3.3"), e);
+assert.equal(refused.status, 403);
+assert.equal(e.DB._originDays.size, 0, "a refused origin wrote nothing");
+console.log("foreign origin  -> 403, nothing written");
 console.log("\nAll worker tests passed.");

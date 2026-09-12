@@ -209,6 +209,31 @@ async function handleGet(request, env, url) {
   return json({ questionId, n, enough: true, counts, confessed }, env, null, request);
 }
 
+// Which address a play came from, and on what day.
+//
+// Only ever one of the origins the Worker already allows, or "other" for a
+// request that carried no Origin at all - so nothing a caller writes reaches
+// the table. Same epoch the app counts days from, on UTC.
+const EPOCH_MS = Date.UTC(2024, 0, 1);
+const DAY_LENGTH_MS = 24 * 60 * 60 * 1000;
+
+function originLabel(request, env) {
+  const asked = request.headers.get("Origin");
+  if (!asked) return "other";
+  return allowedOrigins(env).indexOf(asked) >= 0 ? asked : "other";
+}
+
+function utcDayIndex(now) {
+  return Math.floor((now - EPOCH_MS) / DAY_LENGTH_MS);
+}
+
+function countOriginDay(env, request) {
+  return env.DB.prepare(
+    "INSERT INTO origin_days (day, origin, tally) VALUES (?, ?, 1) " +
+    "ON CONFLICT(day, origin) DO UPDATE SET tally = tally + 1"
+  ).bind(utcDayIndex(Date.now()), originLabel(request, env));
+}
+
 async function handlePost(request, env) {
   let body;
   try {
@@ -239,7 +264,10 @@ async function handlePost(request, env) {
       env.DB.prepare(
         "INSERT INTO responses (question_id, band, tally) VALUES (?, ?, 1) " +
         "ON CONFLICT(question_id, band) DO UPDATE SET tally = tally + 1"
-      ).bind(questionId, band)
+      ).bind(questionId, band),
+      // Inside the dedupe, so this counts people rather than requests, and in
+      // the same batch so a play is either counted everywhere or nowhere.
+      countOriginDay(env, request)
     ]);
 
     // Counted separately and only when sent, so the band tallies stay exactly
