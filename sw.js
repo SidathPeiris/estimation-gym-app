@@ -13,7 +13,7 @@
 // Note this caches code only. Play history lives in localStorage, which the
 // cache never touches, so a version bump can never cost anyone their streak.
 
-var CACHE = "estimation-gym-v1.8.8"
+var CACHE = "estimation-gym-v1.8.9"
 
 // A second cache, deliberately unversioned, holding one small record the
 // service worker needs but cannot otherwise reach: the streak.
@@ -212,8 +212,14 @@ self.addEventListener("notificationclick", function (event) {
   event.waitUntil(
     self.clients.matchAll({ type: "window", includeUncontrolled: true }).then(function (windows) {
       // Reuse an already-open copy rather than stacking another window.
+      // Matched on the literal string "estimation-gym-app" until the app got
+      // its own address, where that substring does not appear at all -
+      // "estimationgym.app" has no hyphens - so every reminder opened a new
+      // window instead of focusing the one already there. The scope is the
+      // right thing to compare against: it is whatever address this worker
+      // was installed from, so it cannot go stale the next time that moves.
       for (var i = 0; i < windows.length; i++) {
-        if (windows[i].url.indexOf("estimation-gym-app") >= 0 && "focus" in windows[i]) {
+        if (windows[i].url.indexOf(self.registration.scope) === 0 && "focus" in windows[i]) {
           return windows[i].focus()
         }
       }

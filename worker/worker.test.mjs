@@ -13,6 +13,7 @@ function fakeDB() {
   const decades = new Map();     // "qid|decade" -> tally
   const seen = new Set();        // "qid\u0000client"
   const originDays = new Map();  // "day|origin" -> tally
+  const subs = new Map();        // endpoint -> row
 
   function statement(sql, args = []) {
     return {
@@ -50,6 +51,10 @@ function fakeDB() {
           const k = args[0] + "\u0000" + args[1];
           responses.set(k, (responses.get(k) || 0) + 1);
         }
+        if (sql.startsWith("INSERT INTO subscriptions")) {
+          const [endpoint, tz, at, origin] = args;
+          subs.set(endpoint, { endpoint, tz, at, origin });
+        }
         if (sql.startsWith("INSERT INTO origin_days")) {
           const k = args[0] + "|" + args[1];
           originDays.set(k, (originDays.get(k) || 0) + 1);
@@ -76,7 +81,8 @@ function fakeDB() {
     _suggestions: suggestions,
     _confessions: confessions,
     _decades: decades,
-    _originDays: originDays
+    _originDays: originDays,
+    _subs: subs
   };
 }
 
@@ -475,4 +481,41 @@ const refused = await worker.fetch(postFrom("https://evil.example", { questionId
 assert.equal(refused.status, 403);
 assert.equal(e.DB._originDays.size, 0, "a refused origin wrote nothing");
 console.log("foreign origin  -> 403, nothing written");
+
+// --- a reminder remembers which address it was set up from ----------------
+//
+// A push subscription is per-origin, so somebody who installs from both ends
+// up with two, and is reminded twice a day by two apps that look identical.
+// Nothing recorded told them apart, which is also why "why did the old app
+// notify me and not the new one" had no answer.
+
+function subscribeFrom(origin, endpoint) {
+  const headers = { "Content-Type": "application/json" };
+  if (origin) headers.Origin = origin;
+  return new Request("https://w.dev/subscribe", {
+    method: "POST", headers,
+    body: JSON.stringify({ endpoint, tzOffset: -600 })
+  });
+}
+
+e = bothEnv();
+await worker.fetch(subscribeFrom(OLD, "https://fcm.googleapis.com/fcm/send/aaa"), e);
+await worker.fetch(subscribeFrom(NEW, "https://fcm.googleapis.com/fcm/send/bbb"), e);
+assert.equal(e.DB._subs.get("https://fcm.googleapis.com/fcm/send/aaa").origin, OLD);
+assert.equal(e.DB._subs.get("https://fcm.googleapis.com/fcm/send/bbb").origin, NEW);
+console.log("subscribe       -> each reminder tagged with its own address");
+
+// Re-subscribing the same endpoint from the other address moves it, rather
+// than leaving it filed under where it used to live.
+await worker.fetch(subscribeFrom(NEW, "https://fcm.googleapis.com/fcm/send/aaa"), e);
+assert.equal(e.DB._subs.get("https://fcm.googleapis.com/fcm/send/aaa").origin, NEW);
+assert.equal(e.DB._subs.size, 2, "moving one does not make a second row");
+console.log("re-subscribe    -> moves address, does not duplicate");
+
+// And a stranger still cannot write an address of their choosing.
+e = bothEnv();
+const noSub = await worker.fetch(subscribeFrom("https://evil.example", "https://fcm.googleapis.com/fcm/send/ccc"), e);
+assert.equal(noSub.status, 403);
+assert.equal(e.DB._subs.size, 0);
+console.log("foreign subscribe -> 403, nothing written");
 console.log("\nAll worker tests passed.");

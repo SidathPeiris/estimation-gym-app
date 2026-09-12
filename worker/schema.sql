@@ -27,13 +27,23 @@ CREATE TABLE IF NOT EXISTS seen (
 -- the push endpoint, which is what the browser gives out and what the reminder
 -- is sent to, and enough to send it at a sensible local hour without nagging
 -- someone who has already played.
+-- The origin column was added after the fact. On a database that already
+-- exists this file will not add it, because CREATE TABLE IF NOT EXISTS leaves
+-- an existing table alone - that was a one-off:
+--   wrangler d1 execute estimation-gym --remote --config wrangler.toml
+--     --command "ALTER TABLE subscriptions ADD COLUMN origin TEXT"
+-- Rows predating it have origin NULL, which means "subscribed before anyone
+-- was counting", not "unknown address".
 CREATE TABLE IF NOT EXISTS subscriptions (
   endpoint        TEXT    PRIMARY KEY,
   -- Minutes, exactly as Date.getTimezoneOffset() reports: positive west of UTC.
   tz_offset       INTEGER NOT NULL,
   -- Day index this device last answered, so the nudge is skipped once played.
   last_played_day INTEGER,
-  created_at      INTEGER NOT NULL
+  created_at      INTEGER NOT NULL,
+  -- Which address it was set up from. One of the origins the Worker allows,
+  -- or NULL for a row that predates the column.
+  origin          TEXT
 );
 
 -- Questions people have suggested from inside the app.

@@ -164,10 +164,15 @@ async function handleSubscribe(request, env) {
   if (!validEndpoint(body && body.endpoint)) return json({ error: "bad endpoint" }, env, 400, request);
   if (!validOffset(body && body.tzOffset)) return json({ error: "bad tzOffset" }, env, 400, request);
 
+  // The address this reminder belongs to. A push subscription is per-origin,
+  // so somebody who installs from both ends up with two of them and is
+  // reminded twice a day by two apps that look identical. Without this there
+  // is no way to tell which is which, or to stop reminding the old one once
+  // everybody has moved.
   await env.DB.prepare(
-    "INSERT INTO subscriptions (endpoint, tz_offset, last_played_day, created_at) VALUES (?, ?, NULL, ?) " +
-    "ON CONFLICT(endpoint) DO UPDATE SET tz_offset = excluded.tz_offset"
-  ).bind(body.endpoint, body.tzOffset, Date.now()).run();
+    "INSERT INTO subscriptions (endpoint, tz_offset, last_played_day, created_at, origin) VALUES (?, ?, NULL, ?, ?) " +
+    "ON CONFLICT(endpoint) DO UPDATE SET tz_offset = excluded.tz_offset, origin = excluded.origin"
+  ).bind(body.endpoint, body.tzOffset, Date.now(), originLabel(request, env)).run();
 
   return json({ ok: true }, env, null, request);
 }
