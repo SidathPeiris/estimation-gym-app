@@ -25,7 +25,7 @@
              "hint-toggle", "strategy", "strategy-label", "strategy-guidance", "approach",
              "build", "remind", "remind-state", "remind-note",
              "howto", "howto-toggle", "howto-chev", "howto-body",
-             "moved", "moved-go", "moved-note",
+             "moved", "moved-go", "moved-note", "dist-percentile",
              "confess", "confess-body", "confess-yes", "confess-no", "dist-confessed",
              "suggest", "suggest-toggle", "suggest-chev", "suggest-body", "suggest-form",
              "suggest-prompt", "suggest-answer", "suggest-unit", "suggest-source",
@@ -637,6 +637,14 @@
     }
   }
 
+  // Where this guess landed among everyone else. Needs the raw decade value
+  // rather than the band, which is the same number already sent on submit.
+  function renderPercentile(dist, entry) {
+    var view = percentileView(dist, decadesOff(entry))
+    show(el["dist-percentile"], Boolean(view))
+    if (view) setText(el["dist-percentile"], view.text)
+  }
+
   function renderDistribution(view) {
     show(el.dist, view.visible)
     if (!view.visible) return
@@ -1091,11 +1099,13 @@
     var todayEntry = vm.answered ? state.history[String(today)] : null
     var todayQid = todayEntry && todayEntry.questionId
     if (todayQid) loadDistribution(todayQid)
+    var todayDist = todayQid ? distCache[todayQid] || null : null
     renderDistribution(distributionView(
       Model,
-      todayQid ? distCache[todayQid] || null : null,
+      todayDist,
       todayEntry ? todayEntry.band : null
     ))
+    renderPercentile(todayDist, todayEntry)
 
     show(el.share, vm.answered)
     show(el.approach, Boolean(vm.answered && vm.strategyLabel))

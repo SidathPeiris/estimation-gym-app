@@ -128,21 +128,27 @@
     </div>
   </div>
 
+  <!-- How to get there. This used to sit below the share button, under the
+       distribution, where almost nobody scrolled - so the one part of the
+       screen that teaches anything arrived last, after people had already
+       shared and closed the app. It belongs with the result. -->
+  <p class="strategy-label" id="approach" hidden></p>
+  <p class="hint" id="hint" hidden></p>
+  <p class="source" id="source" hidden></p>
+
   <section class="dist" id="dist" hidden>
     <div class="dist-head">
       <span class="dist-title">How everyone did</span>
       <span class="dist-summary" id="dist-summary"></span>
     </div>
     <div id="dist-bars"></div>
+    <p class="dist-percentile" id="dist-percentile" hidden></p>
     <p class="dist-note" id="dist-note" hidden></p>
     <p class="dist-confessed" id="dist-confessed" hidden></p>
   </section>
 
   <button type="button" class="share" id="share" hidden>Share result</button>
 
-  <p class="strategy-label" id="approach" hidden></p>
-  <p class="hint" id="hint" hidden></p>
-  <p class="source" id="source" hidden></p>
 
   <section class="practice" id="practice">
     <button type="button" class="stats-toggle" id="practice-toggle" aria-expanded="false" aria-controls="practice-body">

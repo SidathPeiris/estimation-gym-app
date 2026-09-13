@@ -386,4 +386,66 @@ assert.equal(P.confessionNote(3), "3 people have owned up to looking this one up
   assert.equal(none.confessed, null, "silent when the field is absent")
 }
 console.log("confession count  -> counted apart from the bands, silent at zero")
+
+// --- where a guess landed among everyone --------------------------------
+//
+// The four bands are too coarse to answer "how did I do": Ballpark spans 10x
+// to 100x, so two people in the same bar can be an order of magnitude apart.
+
+{
+  const spread = { 0: 2, 1: 4, 2: 3, 3: 1 };   // 10 people
+  const dist = { enough: true, decades: spread, decadeSample: 10 };
+
+  // Two decades off. Beaten: the three at 3+... no: strictly further off are
+  // decade 3 only (1 person). Others = 9.
+  let v = P.percentileView(dist, 2);
+  assert.equal(v.beaten, 1);
+  assert.equal(v.others, 9);
+  assert.equal(v.percent, 11);
+
+  // Right at the front: everyone at 1, 2 and 3 is further off = 8 of 9.
+  v = P.percentileView(dist, 0);
+  assert.equal(v.beaten, 8);
+  assert.equal(v.percent, 89);
+  console.log("percentile      -> ranks within the spread, not the band");
+}
+
+{
+  // Ties must not count as beaten. Five people all exactly one decade off:
+  // nobody beat anybody.
+  const dist = { enough: true, decades: { 1: 5 }, decadeSample: 5 };
+  const v = P.percentileView(dist, 1);
+  assert.equal(v.beaten, 0);
+  assert.equal(v.tied, 4, "the other four, not including me");
+  assert.equal(v.others, 4);
+  assert.match(v.text, /Everyone else got closer|Closer than 0%/);
+  console.log("all tied        -> nobody is beaten, no inflated score");
+}
+
+{
+  // Best of the group reads as a sentence, not "closer than 100%".
+  const dist = { enough: true, decades: { 0: 1, 2: 5 }, decadeSample: 6 };
+  const v = P.percentileView(dist, 0);
+  assert.equal(v.beaten, 5);
+  assert.equal(v.others, 5);
+  assert.equal(v.text, "Closer than everyone else who answered.");
+  console.log("best of the lot -> phrased, not a bare 100%");
+}
+
+{
+  // Too few people is arithmetic dressed up as a ranking.
+  assert.equal(P.percentileView({ enough: true, decades: { 1: 4 }, decadeSample: 4 }, 1), null);
+  assert.equal(P.percentileView({ enough: true, decades: { 1: 5 }, decadeSample: 5 }, 1).others, 4);
+  console.log("small samples   -> withheld below " + P.PERCENTILE_MIN);
+}
+
+{
+  // Everything that could be missing, is.
+  assert.equal(P.percentileView(null, 1), null);
+  assert.equal(P.percentileView({ enough: false, decades: { 1: 9 } }, 1), null, "not released before the bars are");
+  assert.equal(P.percentileView({ enough: true, decadeSample: 0 }, 1), null, "no spread recorded yet");
+  assert.equal(P.percentileView({ enough: true, decades: { 1: 9 } }, null), null, "an older entry has no decade value");
+  assert.equal(P.percentileView({ enough: true, decades: { 1: 9 } }, NaN), null);
+  console.log("missing pieces  -> each returns null rather than throwing");
+}
 console.log(`All presenter tests passed (${QUESTIONS.length} questions rendered).`)

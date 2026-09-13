@@ -127,6 +127,29 @@ async function readDistribution(env, questionId) {
   return { n, counts };
 }
 
+// The spread of how far off people were, so a player can be told where they
+// landed among everyone rather than only which of four buckets they hit. The
+// bands are coarse - "Ballpark" spans 10x to 100x - so "closer than 68% of
+// players" carries information the bars cannot.
+//
+// Aggregate counts only, exactly like the band tallies: this adds no new
+// collection, it reads a table that has been filling since the decade errors
+// were first recorded.
+async function readDecades(env, questionId) {
+  const { results } = await env.DB.prepare(
+    "SELECT decade, tally FROM decade_errors WHERE question_id = ?"
+  ).bind(questionId).all();
+
+  const decades = {};
+  let decadeSample = 0;
+  for (const row of results || []) {
+    if (!validDecade(row.decade)) continue;
+    decades[row.decade] = row.tally;
+    decadeSample += row.tally;
+  }
+  return { decades, decadeSample };
+}
+
 // Whole decades off, as the client reports it. Optional: a client that has not
 // updated simply sends nothing and only its band is counted, so this can never
 // reject a submission that would otherwise have been recorded.
@@ -211,7 +234,8 @@ async function handleGet(request, env, url) {
   // client draw a chart from three responses.
   const confessed = await readConfessions(env, questionId);
   if (n < MIN_SAMPLE) return json({ questionId, n, enough: false, minimum: MIN_SAMPLE, confessed }, env, null, request);
-  return json({ questionId, n, enough: true, counts, confessed }, env, null, request);
+  const spread = await readDecades(env, questionId);
+  return json({ questionId, n, enough: true, counts, confessed, ...spread }, env, null, request);
 }
 
 // Which address a play came from, and on what day.
@@ -289,9 +313,11 @@ async function handlePost(request, env) {
   // Hand back the current picture so submitting and reading is one round trip.
   const { n, counts } = await readDistribution(env, questionId);
   const confessed = await readConfessions(env, questionId);
-  return n < MIN_SAMPLE
-    ? json({ questionId, n, enough: false, minimum: MIN_SAMPLE, counted: !already, confessed }, env, null, request)
-    : json({ questionId, n, enough: true, counts, counted: !already, confessed }, env, null, request);
+  if (n < MIN_SAMPLE) {
+    return json({ questionId, n, enough: false, minimum: MIN_SAMPLE, counted: !already, confessed }, env, null, request);
+  }
+  const spread = await readDecades(env, questionId);
+  return json({ questionId, n, enough: true, counts, counted: !already, confessed, ...spread }, env, null, request);
 }
 
 // --- question suggestions ---

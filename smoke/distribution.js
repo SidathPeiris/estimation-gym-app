@@ -131,5 +131,32 @@ const settle = () => new Promise((r) => setImmediate(r));
   if (!r.els.dist.hidden) throw new Error("chart should stay hidden when the request fails");
   console.log("endpoint down     -> result still shown, chart hidden, no error surfaced");
 
+  // 6. The spread: a percentile line under the bars, from the decade data the
+  //    server now hands back. This is the element-wiring layer, which is the
+  //    part that has broken before - the logic itself is covered in
+  //    presenter.test.js.
+  const spread = {
+    questionId: "x", n: 12, enough: true,
+    counts: { Bullseye: 1, Close: 4, Ballpark: 5, Off: 2 },
+    decades: { 0: 1, 1: 4, 2: 5, 3: 2 }, decadeSample: 12
+  };
+  r = run({ endpoint: "https://w.example", serverCounts: spread });
+  r.submit("1000");
+  await settle(); await settle();
+  if (r.els["dist-percentile"].hidden) throw new Error("the percentile line did not render");
+  if (!/Closer than|Everyone else/.test(r.els["dist-percentile"].textContent)) {
+    throw new Error("unexpected percentile text: " + r.els["dist-percentile"].textContent);
+  }
+  console.log("spread            -> " + r.els["dist-percentile"].textContent);
+
+  // 6b. A server that sends no spread - an older Worker, or a question nobody
+  //     has reported a decade for - must leave the line off rather than
+  //     rendering an empty one.
+  r = run({ endpoint: "https://w.example", serverCounts: { questionId: "x", n: 12, enough: true, counts: { Bullseye: 1, Close: 4, Ballpark: 5, Off: 2 } } });
+  r.submit("1000");
+  await settle(); await settle();
+  if (!r.els["dist-percentile"].hidden) throw new Error("drew a percentile with no spread to draw it from");
+  console.log("no spread sent    -> line stays off");
+
   console.log("\nsmoke6 passed");
 })();

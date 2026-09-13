@@ -103,6 +103,66 @@ function confessionNote(n) {
     : n + " people have owned up to looking this one up."
 }
 
+// Where a guess landed among everyone who answered the same question.
+//
+// The four bands are too coarse to answer "how did I do" honestly - Ballpark
+// covers everything from 10x to 100x, so two people in the same bar can be an
+// order of magnitude apart. The decade spread is already collected, so this
+// costs nothing to say.
+//
+// Only people strictly further off are counted as beaten. Decades are whole
+// numbers, so ties are common and claiming them would inflate every score;
+// "closer than" should mean closer, not "at least as close as".
+var PERCENTILE_MIN = 5
+
+function percentileView(dist, myDecades) {
+  if (!dist || !dist.enough) return null
+  if (typeof myDecades !== "number" || !isFinite(myDecades)) return null
+
+  var spread = dist.decades
+  if (!spread) return null
+
+  var sample = 0
+  var beaten = 0
+  var tied = 0
+  for (var key in spread) {
+    if (!Object.prototype.hasOwnProperty.call(spread, key)) continue
+    var tally = spread[key]
+    if (typeof tally !== "number" || tally <= 0) continue
+    var decade = Number(key)
+    sample += tally
+    if (decade > myDecades) beaten += tally
+    else if (decade === myDecades) tied += tally
+  }
+
+  // Below this it is arithmetic about a handful of people dressed up as a
+  // ranking. One other player makes every answer 0% or 100%.
+  if (sample < PERCENTILE_MIN) return null
+
+  // Your own submission is in the table. Comparing yourself with yourself is
+  // not a comparison, so take it out of both the tie count and the sample.
+  var others = sample - 1
+  if (others < 1) return null
+  if (tied > 0) tied -= 1
+
+  var fraction = beaten / others
+  var percent = Math.round(fraction * 100)
+
+  var text
+  if (percent >= 99 && beaten === others) text = "Closer than everyone else who answered."
+  else if (percent <= 1 && beaten === 0) text = "Everyone else got closer than you on this one."
+  else text = "Closer than " + percent + "% of the " + others + " others who answered."
+
+  return {
+    visible: true,
+    percent: percent,
+    beaten: beaten,
+    tied: tied,
+    others: others,
+    text: text
+  }
+}
+
 function distributionView(Model, dist, myBand) {
   if (!dist) return { visible: false }
   var confessed = confessionNote(dist.confessed)
@@ -386,6 +446,8 @@ if (typeof module !== "undefined") {
     viewModel: viewModel,
     historyView: historyView,
     distributionView: distributionView,
+    percentileView: percentileView,
+    PERCENTILE_MIN: PERCENTILE_MIN,
     confessionNote: confessionNote,
     archetypeView: archetypeView,
     howToPlayView: howToPlayView,

@@ -703,3 +703,11 @@ body {
 .moved-steps li::marker { color: var(--accent) }
 .moved-steps a:not(.moved-go) { color: var(--accent) }
 .moved-steps .moved-go { margin-top: 0.45rem }
+
+/* Where a guess landed among everyone else. Sits under the bars because it is
+   a reading of them, not a fifth bar. */
+.dist-percentile {
+  margin: 0.75rem 0 0;
+  font-size: 0.82rem;
+  color: var(--accent);
+}

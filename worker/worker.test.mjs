@@ -34,6 +34,14 @@ function fakeDB() {
         return null;
       },
       async all() {
+        if (sql.startsWith("SELECT decade, tally")) {
+          const out = [];
+          for (const [k, tally] of decades) {
+            const [qid, decade] = k.split("|");
+            if (qid === args[0]) out.push({ decade: Number(decade), tally });
+          }
+          return { results: out };
+        }
         if (sql.startsWith("SELECT band, tally")) {
           const out = [];
           for (const [k, tally] of responses) {
@@ -518,4 +526,32 @@ const noSub = await worker.fetch(subscribeFrom("https://evil.example", "https://
 assert.equal(noSub.status, 403);
 assert.equal(e.DB._subs.size, 0);
 console.log("foreign subscribe -> 403, nothing written");
+
+// --- the spread comes back with the bands --------------------------------
+//
+// So a player can be told where they landed among everyone, not only which of
+// four buckets they hit. No new collection: decade_errors has been filling
+// since it was added.
+e = env();
+for (const [ip, decades] of [["8.0.0.1", 0], ["8.0.0.2", 1], ["8.0.0.3", 1], ["8.0.0.4", 3]]) {
+  await worker.fetch(post({ questionId: "spread-check", band: "Close", decades }, ip), e);
+}
+let spread = await (await worker.fetch(get("spread-check"), e)).json();
+assert.deepEqual(spread.decades, { 0: 1, 1: 2, 3: 1 });
+assert.equal(spread.decadeSample, 4);
+console.log("dist spread     -> " + JSON.stringify(spread.decades) + ", sample " + spread.decadeSample);
+
+// Submitting returns it too, so answering stays one round trip.
+const onSubmit = await (await worker.fetch(post({ questionId: "spread-check", band: "Off", decades: 5 }, "8.0.0.5"), e)).json();
+assert.equal(onSubmit.decadeSample, 5);
+assert.equal(onSubmit.decades[5], 1);
+console.log("submit spread   -> returned alongside the bands, one round trip");
+
+// A client that sends no decade is still counted in the bands and simply does
+// not appear in the spread.
+await worker.fetch(post({ questionId: "spread-check", band: "Close" }, "8.0.0.6"), e);
+spread = await (await worker.fetch(get("spread-check"), e)).json();
+assert.equal(spread.n, 6, "the band was counted");
+assert.equal(spread.decadeSample, 5, "but it is not in the spread");
+console.log("older client    -> counted in the bands, absent from the spread");
 console.log("\nAll worker tests passed.");
