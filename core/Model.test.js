@@ -506,4 +506,55 @@ assert.equal(Model.historyDays(withId)[0].entry.questionId, "piano-tuners-chicag
   assert.ok(Model.practicePool(questionBank, Model.emptyState(), []).length > 0)
 }
 
+
+// --- a retired daily goes back into the reserve before it comes round again
+//
+// The bank is finite, so once it is exhausted the schedule wraps and serves it
+// again from the top. A question that has already been a daily therefore has
+// two lives: it sits in the practice pool for most of the gap, then has to be
+// taken back out before its second turn - otherwise someone practises it days
+// before it is set as the daily.
+//
+// Nothing in reservedForDaily says any of that. It works because the function
+// asks questionForDay what each of the next 365 days will serve, and
+// pickQuestionIndex wraps once the offset passes the end of the bank, so the
+// reserve follows the questions round the loop on its own. That is worth
+// pinning: rewriting reservedForDaily as a plain index range would read as a
+// harmless simplification, pass every other test, and not break anything
+// visible for two years.
+{
+  const bank = questionBank
+  const origin = Model.SCHEDULE_ORIGIN
+  const reserve = Model.PRACTICE_RESERVE_DAYS
+  const first = bank[0].id
+
+  // Day it is served again, and the day it should be pulled back out.
+  const returns = origin + bank.length
+  const shields = returns - reserve + 1
+
+  const reservedOn = (day) => !!Model.reservedForDaily(bank, day)[first]
+  const practisableOn = (day) =>
+    Model.practicePool(bank, Model.emptyState(), [], day).some((q) => q.id === first)
+
+  assert.ok(!reservedOn(origin + 1), "the day after its turn it is free to practise")
+  assert.ok(practisableOn(origin + 1), "and it is actually in the pool")
+
+  assert.ok(!reservedOn(shields - 2), "still free the day before the window opens")
+  assert.ok(reservedOn(shields), "back in the reserve a year before it returns")
+  assert.ok(!practisableOn(shields), "and out of the practice pool")
+
+  assert.ok(reservedOn(returns - 1), "still reserved the day before")
+  assert.ok(reservedOn(returns), "and on the day itself")
+  assert.equal(Model.questionForDay(returns, bank).id, first, "it really is served again")
+
+  // The same has to hold for a question in the middle of the bank, or the
+  // above could pass on an off-by-one that only spares index 0.
+  const mid = bank[500].id
+  const midReturns = origin + bank.length + 500
+  assert.ok(
+    !!Model.reservedForDaily(bank, midReturns - reserve + 1)[mid],
+    "a mid-bank question is shielded on the same schedule"
+  )
+  assert.equal(Model.questionForDay(midReturns, bank).id, mid)
+}
 console.log("All Model.js tests passed.")
