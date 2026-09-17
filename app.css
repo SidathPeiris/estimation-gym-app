@@ -880,6 +880,62 @@ a:hover { color: var(--text-link-hover) }
 }
 .source { font-style: italic }
 
+/* Button, soft variant, in the practice mode's tone rather than the accent.
+   It sits directly under Share and carries the same weight on purpose - both
+   are "what now", and the colour is what says which mode each one leads to.
+   Practice earns no points and touches no stats, so it must never be mistaken
+   for a second daily. */
+.practice-offer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-5);
+  width: 100%;
+  margin-top: var(--space-4);
+  padding: 13px 20px;
+  border-radius: var(--radius-lg);
+  border: 1px solid color-mix(in srgb, var(--mode-practice) 55%, transparent);
+  background: color-mix(in srgb, var(--mode-practice) 16%, transparent);
+  color: var(--mode-practice);
+  font: var(--type-label);
+  font-size: var(--text-md);
+  font-weight: var(--weight-bold);
+  cursor: pointer;
+  text-align: left;
+  transition: var(--transition-control);
+}
+.practice-offer:hover {
+  background: color-mix(in srgb, var(--mode-practice) 20%, transparent);
+}
+.practice-offer:active { transform: var(--press-shift) }
+
+.practice-offer-label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+}
+.practice-offer-label svg {
+  width: 17px;
+  height: 17px;
+  flex: 0 0 auto;
+  stroke: currentColor;
+}
+
+/* The same lowercase, no-full-stop aside the disclosure summaries use. */
+.practice-offer-note {
+  font-weight: var(--weight-regular);
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* Under about 380px the note and the label stop fitting on one line, and the
+   note is the part that can go - the label already says what the button does. */
+@media (max-width: 380px) {
+  .practice-offer-note { display: none }
+}
+
 /* ---------- the disclosure run ---------- */
 /* Practice, How to play, History, Stats and Suggest a question are one list of
    the same control, so they share one separator and one rule. Disclosure: a

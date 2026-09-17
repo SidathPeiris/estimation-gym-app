@@ -157,4 +157,45 @@ console.log("pool exhausted     -> " + r.els["practice-intro"].textContent.slice
   console.log("next day question  -> never offered");
 }
 
+// 6. The offer under a scored daily.
+//
+// Practice was the fifth collapsed row down the page, below the result, the
+// chart and the share button, so a session ended at the score and most people
+// never learned there was a second thing to do. The offer puts it where the
+// player already is - and it has to arrive with a question in it, because an
+// opened but empty section is the same dead end one scroll higher.
+{
+  const r6 = run();
+  if (!r6.els["practice-offer"].hidden) throw new Error("the offer must not show before the day is answered");
+
+  r6.els["guess-input"].value = "1234";
+  r6.fire("guess-form", "submit");
+  if (r6.els["practice-offer"].hidden) throw new Error("the offer should appear once the day is scored");
+  if (!r6.els["practice-body"].hidden) throw new Error("practice should stay collapsed until the offer is taken");
+  console.log("\nbefore answering  -> no offer, practice collapsed");
+  console.log("after answering   -> offered, practice still collapsed");
+
+  r6.fire("practice-offer", "click");
+  if (r6.els["practice-body"].hidden) throw new Error("taking the offer should open practice");
+  const drawn = r6.els["practice-prompt"].textContent;
+  if (!drawn) throw new Error("taking the offer should draw a question, not just open the section");
+  console.log("offer taken       -> open, and drawn: " + drawn.slice(0, 46) + "...");
+
+  // Pressing it again part-way through must not throw the question away.
+  r6.fire("practice-offer", "click");
+  if (r6.els["practice-prompt"].textContent !== drawn)
+    throw new Error("the offer discarded a practice question that was still unanswered");
+  console.log("offer again       -> keeps the unanswered question");
+
+  // Once that one is scored, it draws a fresh one rather than sitting on it.
+  r6.els["practice-input"].value = "999";
+  r6.fire("practice-form", "submit");
+  if (r6.els["practice-result"].hidden) throw new Error("the practice answer did not score");
+  r6.fire("practice-offer", "click");
+  if (!r6.els["practice-result"].hidden) throw new Error("the offer should clear the last practice result");
+  if (!r6.els["practice-prompt"].textContent) throw new Error("the offer should draw another after one is scored");
+  console.log("offer after score -> draws another");
+}
+
+
 console.log("\nsmoke11 passed");

@@ -44,7 +44,8 @@
              "practice-go", "practice-error", "practice-result", "practice-band", "practice-points",
              "practice-guess-line", "practice-actual-line", "practice-decades",
              "practice-decades-ruler", "practice-decades-fill",
-             "practice-approach", "practice-hint", "practice-source", "practice-next"]
+             "practice-approach", "practice-hint", "practice-source", "practice-next",
+             "practice-offer"]
   ids.forEach(function (id) { el[id] = document.getElementById(id) })
 
   // Recomputed whenever the app comes back to the foreground, not fixed for
@@ -1139,6 +1140,7 @@
     renderPercentile(todayDist, todayEntry)
 
     show(el.share, vm.answered)
+    show(el["practice-offer"], vm.answered)
     show(el.approach, Boolean(vm.answered && vm.strategyLabel))
     if (vm.strategyLabel) setText(el.approach, vm.strategyLabel)
     show(el.hint, Boolean(vm.hint))
@@ -1292,6 +1294,25 @@
     practiceOpen = !practiceOpen
     if (practiceOpen && !practiceQuestion && !practiceResult) nextPractice()
     else renderPractice()
+  })
+
+  // The offer under a scored daily. Opens Practice and puts a question in it,
+  // rather than only scrolling to a collapsed section and leaving the player
+  // to find the control. An unanswered question already drawn is kept - the
+  // offer should not discard one they are part-way through.
+  el["practice-offer"].addEventListener("click", function () {
+    practiceOpen = true
+    if (!practiceQuestion || practiceResult) nextPractice()
+    else renderPractice()
+
+    // Guarded because the smoke harnesses render against a DOM stub, and
+    // because a browser with reduced motion asked for should not be dragged
+    // down the page.
+    if (el.practice.scrollIntoView) {
+      var reduced = window.matchMedia &&
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      el.practice.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" })
+    }
   })
 
   el["practice-form"].addEventListener("submit", function (event) {
