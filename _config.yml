@@ -42,6 +42,12 @@ exclude:
   # LICENSE stays because the app links to it.
   - DEVELOPING.md
 
+  # The design system and the agent tooling - kept in step with .assetsignore.
+  # Jekyll already skips directories beginning with a dot, so this is belt and
+  # braces rather than load-bearing; it is here so the two exclude lists say the
+  # same thing when read side by side.
+  - .claude/
+
   # Jekyll's own defaults, which setting `exclude` would otherwise replace
   - node_modules/
   - vendor/

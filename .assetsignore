@@ -1,12 +1,21 @@
 # Workers uploads everything under the assets directory, which here is the
 # repository root. This keeps development files out of the deployed site.
 #
-# Same job the Jekyll `exclude:` list did on GitHub Pages - kept in step with
-# _config.yml by pages.test.js, because the two are now both live at once and
-# drifting apart would quietly re-expose something.
+# Same job the Jekyll `exclude:` list does in _config.yml, and the two are kept
+# in step by hand, because both hosts are live at once and drifting apart would
+# quietly re-expose something.
 #
-# Nothing the app loads at runtime may appear here. version.test.js checks the
-# service worker's precache list against both files.
+# NOTHING ENFORCES THAT. This block used to claim `pages.test.js` held the two
+# lists together and that `version.test.js` checked the precache list against
+# both; neither is true - there is no pages.test.js, and version.test.js reads
+# neither file. It checks the version format, pins the cache name to
+# package.json, and rejects redirecting aliases in the precache list, and that
+# is all. Corrected rather than left standing, because a comment promising a
+# guard that does not exist is worse than no comment.
+#
+# So the two rules below are discipline, not tests:
+#   - nothing the app loads at runtime may appear in either list
+#   - anything added to one list belongs in the other
 #
 # TWO WRANGLER CONFIGS NOW LIVE HERE: wrangler.jsonc at the root for the static
 # site, and worker/wrangler.toml for the distribution Worker. A bare
@@ -43,3 +52,10 @@ wrangler.jsonc
 _config.yml
 .assetsignore
 .github/
+
+# The design system and the agent tooling. `assets.directory` in wrangler.jsonc
+# is the repository root, so anything committed and not listed here is uploaded
+# and served - and this folder is ~1.7MB of components, specimen pages and
+# documentation that the app itself never loads. Listed whether or not it is
+# committed, so committing it later cannot quietly publish it at /.claude/.
+.claude/
