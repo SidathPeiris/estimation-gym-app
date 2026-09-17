@@ -3,41 +3,62 @@
 Everything here is for working on the app itself. Players need none of it — see
 [README.md](README.md) for that.
 
-## Relationship to the Omarchy plugin
+## The Omarchy plugin is finished
 
-**This repo is the source of truth** for scoring and the question bank. `core/`
-is edited here, and the [plugin
-repo](https://github.com/SidathPeiris/estimation-gym-omarchy) consumes it.
+The [plugin repo](https://github.com/SidathPeiris/estimation-gym-omarchy) is
+**frozen at `fc89147`** and takes no further changes. It works, it is done, and
+the app is where the product goes from here.
 
-That is the opposite of how it started, and the change was overdue rather than
-planned. The plugin was nominally authoritative and `core/` was "never edited
-here" — but commit `8d1e3f0` added a fifty-line test to `core/Model.test.js` in
-this repo and the plugin never received it. The app had been ahead of its own
-source of truth, and nothing caught it, because a copied-file convention has no
-way to notice a copy being edited. The app is where the work happens, so the
-app is now where the files live.
+So there is no longer a sync step, no shared source of truth to maintain, and
+no second repository to keep in step. `core/` is simply this app's logic layer.
+`scripts/sync-core.mjs` has been deleted along with its npm script; the two
+codebases are independent copies now, and the widget's copy is final.
 
-| | App (this repo) | Widget (Omarchy) |
-| --- | --- | --- |
-| Scoring, streaks, day selection | `core/Model.js` — **edit here** | **same file**, synced to `Model.js` |
-| Question bank | `core/questions.js` — **edit here** | **same file**, synced to `content/questions.js` |
-| UI | `index.html` + `app.js` | `Widget.qml` (Quickshell) |
-| Storage | `localStorage` | `~/.local/state/estimation-gym/state.json` |
+**`core/` is no longer copied from anywhere, and nothing copies out of it.**
+Edit it freely.
+
+### What the freeze releases
+
+A great deal of the wording in `Model.js` and `presenter.js` is shaped by a
+constraint that no longer binds: that a result had to be described in the same
+words in a 300px shell bar as in the browser. `presenter.js` still says so in
+places, and those comments are now history rather than rules. The strings are
+good — keep them because they are good, not because something else depends on
+them.
+
+### The one thing the freeze breaks, and when
+
+Both surfaces pick the day's question the same way: `bank[N - SCHEDULE_ORIGIN]`,
+wrapping once the offset runs past the end. That agreement survives the freeze
+**only while the two banks are the same length.**
+
+The bank holds 1000 questions, and `SCHEDULE_ORIGIN` is 982, so **2029-06-04**
+is the last day served straight from it and **2029-06-05** is the first that
+wraps. Both dates are computed rather than remembered — `questionForDay(1981)`
+is `balloons-inflated-per-year` and `questionForDay(1982)` is
+`germs-on-a-phone-screen`, the first entry again.
+
+Until 2029-06-05, appending here changes nothing either surface serves, so the
+app and the frozen widget still show the same question on the same day. From
+that date they agree only while both banks are the same length — which they
+stop being the moment a question is added here. The widget restarts its
+thousand; the app carries on into whatever has been added since.
+
+That is fine — it is a consequence of finishing the widget, not a bug — but
+`README.md` claims the two always agree, so that claim is now dated rather than
+true, and it says so.
+
+### What is still shared, and stays shared
 
 The stored JSON shape is identical to the widget's `state.json`, so a history
-blob can be moved across by hand.
-
-What has **not** changed is the reason the two share a Model at all: a score
-has to mean the same thing in a shell bar as it does in the browser, and both
-surfaces have to describe a result in the same words. `presenter.js` is written
-against that constraint and so is the wording in `Model.js`. Being the source
-of truth is permission to edit those files here first — not permission to make
-the widget say something different.
+blob can still be moved across by hand. Nothing needs to be done to keep that
+working: both formats are frozen, one because the widget is finished and one
+because `storage.js` has to keep reading what players already have.
 
 ## Layout
 
 ```
-core/            # the shared logic layer - edit here, push to the plugin
+core/            # scoring, the question bank, and their tests
   Model.js         scoring, streaks, day selection, stats
   Model.test.js
   questions.js
@@ -48,7 +69,6 @@ app.css          # design tokens, then one section per component
 fonts/           # the three brand faces, self-hosted - see fonts/README.md
 scripts/
   serve.mjs        local dev server
-  sync-core.mjs    push core/ out to the plugin repo, then run both test suites
 ```
 
 `presenter.js` exists so the "what goes on screen" decisions are testable and
@@ -520,26 +540,13 @@ Two consequences worth knowing:
 
 ## Updating the question bank
 
-Edit `core/questions.js` **here**, commit it, then push it out to the widget:
+Edit `core/questions.js` and run `npm test`. That is the whole procedure now —
+there is no second repository to propagate to.
 
-```bash
-npm run sync-core ../estimation-gym-omarchy
-```
-
-That runs this repo's tests first and refuses to propagate a source that does
-not pass, copies `Model.js`, `Model.test.js`, `questions.js` and
-`questions.test.js` into the plugin's layout, reports the bank size and how
-many files actually changed, then runs the plugin's own suites against the new
-files. Commit the result in that repo.
-
-Two things it will refuse to do. It will not overwrite a plugin working tree
-with uncommitted changes — the direction of this script reversed, so anyone
-running it from muscle memory would otherwise push over widget edits they meant
-to keep. And it will not copy anything if the app's tests fail, because the
-whole point of the shared Model is that both surfaces agree.
-
-Append questions to the **end** of the bank, never insert. The bank's order is
-the calendar; see "The daily schedule is the bank's own order" below.
+Append to the **end** of the bank, never insert. The bank's order is the
+calendar, and `questions.test.js` fails the build if existing entries move; see
+"The daily schedule is the bank's own order" below. Every question added pushes
+the wrap date out by another day.
 
 ## Testing offline behaviour
 

@@ -139,8 +139,9 @@ off unless a collection endpoint is configured.
 
 ## Also for the Omarchy desktop bar
 
-The same puzzle runs as a widget in the [Omarchy](https://omarchy.org) shell
-bar, built from the same scoring logic and the same question bank as this app:
+The same puzzle also runs as a widget in the [Omarchy](https://omarchy.org)
+shell bar. It is **finished** — it does what it set out to do and takes no
+further changes, while the app carries on:
 
 **<https://github.com/SidathPeiris/estimation-gym-omarchy>**
 
@@ -151,6 +152,14 @@ omarchy plugin add https://github.com/SidathPeiris/estimation-gym-omarchy.git --
 Both show the same question on the same day and score it identically, but
 **streaks are kept separately on each device** — nothing syncs between them, and
 the desktop widget makes no network connection whatsoever.
+
+They agree on the daily question through **4 June 2029**, the last day the
+shared thousand-question bank covers. On **5 June 2029** the schedule wraps back
+to the first question — and from that day on, the two agree only if this app's
+bank is still a thousand questions long. Every question added here after the
+widget was finished moves the app forward while the widget starts again from
+the top. That is the price of calling the widget done, and it is worth knowing
+rather than discovering.
 
 ## License
 

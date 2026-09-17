@@ -248,11 +248,6 @@ function formatAsOf(year) {
   return year < 0 ? Math.abs(year) + " BC" : String(year)
 }
 
-// Mirrors "version" in manifest.json. Model.test.js asserts the two match, so
-// this cannot quietly drift from what the plugin actually declares - the whole
-// point of showing a version is that it is trustworthy.
-var PLUGIN_VERSION = "0.4.0"
-
 // Practice: questions to attempt outside the daily puzzle.
 //
 // A new player can otherwise have exactly one go and then wait a day, which is
@@ -594,7 +589,6 @@ var ModelAPI = {
   reservedForDaily: reservedForDaily,
   PRACTICE_RESERVE_DAYS: PRACTICE_RESERVE_DAYS,
   pickPractice: pickPractice,
-  PLUGIN_VERSION: PLUGIN_VERSION,
   formatAsOf: formatAsOf,
   computeStats: computeStats,
   calibrationLabel: calibrationLabel,

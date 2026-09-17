@@ -1,9 +1,10 @@
 (function () {
   "use strict"
 
-  // core/Model.js and core/questions.js are the shared logic layer - maintained
-  // here and pushed out to the Omarchy plugin - so they load as classic scripts
-  // and expose their declarations globally. Collect them into one object matching the shape presenter.js and
+  // core/Model.js and core/questions.js load as classic scripts and expose
+  // their declarations globally - a shape inherited from being shared with the
+  // Omarchy widget, which is now finished and no longer a constraint on how
+  // they are written. Collect them into one object matching the shape presenter.js and
   // storage.js expect, which is also the shape require() gives them under node.
   // core/Model.js declares its public surface as ModelAPI and exports that same
   // object under node, so there is no hand-maintained list here to fall out of

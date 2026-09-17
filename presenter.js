@@ -1,8 +1,15 @@
 // Pure presentation logic: turns state + today's question into everything the
 // screen needs, with no DOM and no platform APIs. The Model is passed in rather
 // than imported so this same file drives the web view now and a React Native
-// view later. Strings here are kept in step with the Omarchy widget so both
-// surfaces describe a result identically.
+// view later.
+//
+// The strings here were written to match the Omarchy widget word for word, so
+// a result read the same in a 300px shell bar as in the browser. That widget is
+// finished and takes no further changes, so the constraint is lifted: these
+// words are now only answerable to this app. They are still good words - the
+// discipline of fitting a bar made them plainer than they would otherwise have
+// been - so change them because something is better, not because nothing is
+// stopping you.
 
 // Mirrors bandColor() in Widget.qml: Bullseye and Close share the accent,
 // Ballpark is plain foreground, Off is the urgent colour.

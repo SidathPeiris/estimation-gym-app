@@ -211,13 +211,10 @@ assert.equal(Model.formatCompact(1.2e18), "1.2 × 10^18")
 // --- strategies / hints ---
 // Every archetype used by the bank must have guidance, or a player pressing
 // Hint on that day gets nothing.
-// The bank sits at content/questions.js here and directly alongside this file
-// once vendored into the app repo, so resolve whichever layout is present.
-const questionBank = require(
-  require("node:fs").existsSync(require("node:path").join(__dirname, "content"))
-    ? "./content/questions.js"
-    : "./questions.js"
-)
+// This used to resolve two layouts, because the same file ran here and in the
+// Omarchy plugin, where the bank sits under content/. That plugin is finished
+// and this file is no longer copied anywhere, so there is one layout again.
+const questionBank = require("./questions.js")
 const used = [...new Set(questionBank.map((q) => q.strategy))]
 for (const key of used) {
   assert.ok(Model.STRATEGIES[key], `bank uses strategy "${key}" with no guidance text`)
@@ -339,37 +336,11 @@ assert.equal(Model.historyDays(handEdited).length, 2, "History shows only real d
 assert.equal(Model.computeStats(handEdited).played, 2, "and Stats counts the same ones")
 assert.equal(Model.computeStats(handEdited).totalPoints, 100 + 40, "points follow too")
 
-// --- PLUGIN_VERSION must match what the plugin declares ---
-// The widget shows this at the foot of the panel. A version display is only
-// worth having if it is trustworthy, so the constant is pinned to the manifest
-// rather than trusted to be updated alongside it.
-//
-// Skipped when running from the app repo, where the manifest does not travel
-// with the vendored copy.
-{
-  const path = require("node:path")
-  const manifestPath = path.join(__dirname, "manifest.json")
-  if (require("node:fs").existsSync(manifestPath)) {
-    const manifest = require(manifestPath)
-    assert.equal(
-      Model.PLUGIN_VERSION,
-      manifest.version,
-      `Model.js PLUGIN_VERSION is "${Model.PLUGIN_VERSION}" but manifest.json says "${manifest.version}" - bump both`
-    )
-  }
-}
-
-// --- the version is three numbers, and none of them may be padded ---
-// major.minor.patch, meaning: a full release, a feature added within that
-// release, and a fix or small change within that. Padding a field to two
-// digits ("01.02.03") reads tidily but is not a valid version - leading zeros
-// are forbidden, every field would cap at 99, and anything that parses
-// versions either rejects it or sorts it wrongly.
-assert.match(
-  Model.PLUGIN_VERSION,
-  /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/,
-  `version "${Model.PLUGIN_VERSION}" must be major.minor.patch with no leading zeros`
-)
+// The plugin version constant that used to live here is gone with the widget.
+// It was never read by the app - only by these tests - and the app carries its
+// own version in package.json, pinned to the service worker cache name by
+// version.test.js. Two version numbers, one of them frozen and unread, is how
+// a reader ends up believing the wrong one.
 
 // --- formatAsOf: BC years are stored negative but must not be shown that way ---
 assert.equal(Model.formatAsOf(2025), "2025")
