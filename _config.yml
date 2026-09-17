@@ -15,7 +15,7 @@
 #
 # Careful: anything the app loads at runtime must NOT be listed here. That is
 # index.html, app.js, app.css, presenter.js, storage.js, sw.js, core/Model.js,
-# core/questions.js, manifest.webmanifest, icons/ and install/.
+# core/questions.js, manifest.webmanifest, icons/, fonts/ and install/.
 
 exclude:
   # The Cloudflare Worker: source, schema, and its config

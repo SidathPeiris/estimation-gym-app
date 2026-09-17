@@ -38,7 +38,13 @@ function resultView(Model, entry, question) {
     guessLine: "Your guess: " + Model.formatCompact(entry.guess) + " " + question.unit,
     actualLine: "Actual: " + Model.formatCompact(actual) + " " + question.unit,
     decadesLine: "Off by " + (decades !== null && decades !== undefined ? decades.toFixed(2) : "?") +
-      " orders of magnitude"
+      " orders of magnitude",
+    // The same distance as a number rather than a sentence, for a view that
+    // wants to draw it instead of state it. decadesLine stays the wording of
+    // record - the Omarchy widget reads that and nothing else - so this is
+    // additive and nothing downstream has to change to ignore it. null when
+    // the distance is unknown, which is the case decadesLine renders as "?".
+    decades: decades !== null && decades !== undefined ? decades : null
   }
 }
 

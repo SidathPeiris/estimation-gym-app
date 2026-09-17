@@ -33,6 +33,9 @@ package-lock.json
 node_modules/
 
 # Developer documentation. README and LICENSE stay - the app links to LICENSE.
+# fonts/README.md is the one README inside a runtime directory; it ships with
+# the fonts rather than being excluded, since excluding it would mean excluding
+# fonts/ itself.
 DEVELOPING.md
 
 # Config that belongs to the deploy, not to the site

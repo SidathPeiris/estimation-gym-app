@@ -20,7 +20,7 @@
   var ids = ["puzzle", "streak", "asof", "prompt", "guess-form", "guess-input", "guess-go",
              "exp",
              "error", "result", "band", "points", "guess-line", "actual-line",
-             "decades-line", "share", "hint", "source",
+             "decades-line", "decades-ruler", "decades-fill", "share", "hint", "source",
              "dist", "dist-summary", "dist-bars", "dist-note",
              "hint-toggle", "strategy", "strategy-label", "strategy-guidance", "approach",
              "build", "remind", "remind-state", "remind-note",
@@ -43,6 +43,7 @@
              "practice-prompt", "practice-asof", "practice-form", "practice-input", "practice-exp",
              "practice-go", "practice-error", "practice-result", "practice-band", "practice-points",
              "practice-guess-line", "practice-actual-line", "practice-decades",
+             "practice-decades-ruler", "practice-decades-fill",
              "practice-approach", "practice-hint", "practice-source", "practice-next"]
   ids.forEach(function (id) { el[id] = document.getElementById(id) })
 
@@ -715,6 +716,7 @@
       track.className = "bar-track"
       var fill = document.createElement("div")
       fill.className = "bar-fill tone-" + bar.tone
+      fill.dataset.band = bar.band
       fill.style.width = Math.round(bar.fraction * 100) + "%"
       track.appendChild(fill)
 
@@ -766,6 +768,21 @@
     else node.setAttribute("hidden", "")
   }
 
+  // The decade ruler on a scored result: the distance the sentence above it
+  // already states, drawn as a bar. Capped at three decades, because past that
+  // the bar is full and the number is doing the talking anyway. Floored at 2%
+  // so a Bullseye still shows something rather than an empty track. Nothing
+  // reads this back - it is a redrawing, not a second source of the score.
+  var RULER_MAX_DECADES = 3
+
+  function drawRuler(ruler, fill, decades) {
+    var known = typeof decades === "number" && isFinite(decades)
+    show(ruler, known)
+    if (!known) return
+    var span = Math.min(Math.abs(decades), RULER_MAX_DECADES) / RULER_MAX_DECADES
+    fill.style.width = Math.max(2, Math.min(100, span * 100)) + "%"
+  }
+
   function renderBars(bars) {
     el.bars.replaceChildren()
     bars.forEach(function (bar) {
@@ -781,6 +798,7 @@
 
       var fill = document.createElement("div")
       fill.className = "bar-fill tone-" + bar.tone
+      fill.dataset.band = bar.band
       fill.style.width = (bar.fraction * 100).toFixed(1) + "%"
       track.appendChild(fill)
 
@@ -810,6 +828,7 @@
 
       var band = document.createElement("td")
       band.className = "howto-band tone-" + row.tone
+      band.dataset.band = row.band
       band.textContent = row.band
 
       var meaning = document.createElement("td")
@@ -981,6 +1000,8 @@
 
     var tone = toneForBand(practiceResult.band)
     el["practice-result"].className = "result tone-" + tone
+    // Same as the daily: a styling hook for the per-band colour, nothing more.
+    el["practice-result"].dataset.band = practiceResult.band
     setText(el["practice-band"], practiceResult.band)
     // Deliberately not points: practice earns none, and showing a number would
     // suggest otherwise.
@@ -990,6 +1011,8 @@
     setText(el["practice-decades"], "Off by " +
       (practiceResult.distanceDecades !== null ? practiceResult.distanceDecades.toFixed(2) : "?") +
       " orders of magnitude")
+    drawRuler(el["practice-decades-ruler"], el["practice-decades-fill"],
+      practiceResult.distanceDecades)
 
     var strategy = Model.strategyFor(practiceQuestion)
     setText(el["practice-approach"], "Approach: " + strategy.label)
@@ -1010,6 +1033,7 @@
 
       var band = document.createElement("span")
       band.className = "history-band tone-" + row.tone
+      band.dataset.band = row.band
       band.textContent = row.band + (row.assisted ? " ·" : "")
       if (row.assisted) band.title = "Hint used - scored half points"
 
@@ -1078,11 +1102,18 @@
     show(el.result, Boolean(vm.result))
     if (vm.result) {
       el.result.className = "result tone-" + vm.result.tone
+      // The tone class is the three-way mapping this app and the Omarchy
+      // widget share, and it stays authoritative. The band name is carried
+      // alongside it purely so the stylesheet can give Bullseye its own
+      // colour instead of the accent it shares with Close - no scoring,
+      // wording or behaviour reads this.
+      el.result.dataset.band = vm.result.band
       setText(el.band, vm.result.band)
       setText(el.points, vm.result.pointsLabel)
       setText(el["guess-line"], vm.result.guessLine)
       setText(el["actual-line"], vm.result.actualLine)
       setText(el["decades-line"], vm.result.decadesLine)
+      drawRuler(el["decades-ruler"], el["decades-fill"], vm.result.decades)
     }
 
     show(el["hint-toggle"], vm.hintAvailable)

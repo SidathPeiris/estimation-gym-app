@@ -13,7 +13,7 @@
 // Note this caches code only. Play history lives in localStorage, which the
 // cache never touches, so a version bump can never cost anyone their streak.
 
-var CACHE = "estimation-gym-v1.9.1"
+var CACHE = "estimation-gym-v1.10.0"
 
 // A second cache, deliberately unversioned, holding one small record the
 // service worker needs but cannot otherwise reach: the streak.
@@ -46,7 +46,17 @@ var ASSETS = [
   "./icons/icon-512.png",
   "./icons/badge-96.png",
   "./icons/icon-192-maskable.png",
-  "./icons/icon-512-maskable.png"
+  "./icons/icon-512-maskable.png",
+  // The brand's three faces, self-hosted so an installed copy renders in its
+  // own type with no network at all. One variable file per family per subset -
+  // see fonts/README.md. Adding a font here without adding it to app.css, or
+  // the other way round, is the failure worth watching for.
+  "./fonts/bricolage-grotesque-latin.woff2",
+  "./fonts/bricolage-grotesque-latin-ext.woff2",
+  "./fonts/schibsted-grotesk-latin.woff2",
+  "./fonts/schibsted-grotesk-latin-ext.woff2",
+  "./fonts/jetbrains-mono-latin.woff2",
+  "./fonts/jetbrains-mono-latin-ext.woff2"
 ]
 
 self.addEventListener("install", function (event) {

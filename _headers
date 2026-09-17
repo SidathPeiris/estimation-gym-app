@@ -49,3 +49,9 @@
 
 /icons/*
   Cache-Control: public, max-age=604800
+
+# The webfonts. Same reasoning as the icons: the service worker holds them
+# anyway, and their names do not carry a version - so a week, not `immutable`,
+# or swapping a face would strand browsers on the old one for a year.
+/fonts/*
+  Cache-Control: public, max-age=604800

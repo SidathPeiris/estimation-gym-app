@@ -19,12 +19,19 @@ const types = {
   ".json": "application/json; charset=utf-8",
   ".webmanifest": "application/manifest+json; charset=utf-8",
   ".png": "image/png",
-  ".svg": "image/svg+xml"
+  ".svg": "image/svg+xml",
+  // Without this a font falls through to application/octet-stream, which the
+  // production headers would refuse outright - _headers sets nosniff.
+  ".woff2": "font/woff2"
 };
 
 createServer(async (req, res) => {
   const path = decodeURIComponent(req.url.split("?")[0]);
-  const file = join(root, path === "/" ? "/index.html" : path);
+  // A directory URL resolves to its index.html, the way the static host does.
+  // Only "/" did before, so "/install/" answered "not found" locally while it
+  // worked perfectly in production - which made the install page effectively
+  // untestable without deploying it.
+  const file = join(root, path.endsWith("/") ? path + "index.html" : path);
   if (!file.startsWith(root)) {
     res.writeHead(403).end("forbidden");
     return;

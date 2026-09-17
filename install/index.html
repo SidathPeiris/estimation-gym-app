@@ -24,175 +24,378 @@
 <link rel="apple-touch-icon" href="../icons/icon-192.png">
 
 <style>
-  /* Same tokens and the same monospace as the app, so this page and the thing
-     it installs read as one product. Kept self-contained rather than importing
-     app.css, which is full of styles that only make sense inside the puzzle. */
-  :root {
-    --bg: #1a1b26;
-    --panel: #1f2335;
-    --line: #2f3550;
-    --fg: #c0caf5;
-    --dim: #7681a8;
-    --accent: #7aa2f7;
-    --mono: ui-monospace, "Cascadia Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+  /* The same tokens and the same three faces as the app, so this page and the
+     thing it installs read as one product. Kept self-contained rather than
+     importing app.css, which is full of styles that only make sense inside the
+     puzzle - but the token block below is a copy of app.css's, and the two
+     have to move together. The fonts are the same files, so a visitor who
+     installs has already downloaded them.
+
+     As in app.css: a custom property is substituted where it is DECLARED, so
+     the light block repeats the whole alias layer rather than only the base
+     ramp. */
+
+  @font-face {
+    font-family: "Bricolage Grotesque";
+    font-style: normal;
+    font-weight: 400 800;
+    font-display: swap;
+    src: url("../fonts/bricolage-grotesque-latin.woff2") format("woff2");
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+      U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+      U+2212, U+2215, U+FEFF, U+FFFD;
   }
+  @font-face {
+    font-family: "Schibsted Grotesk";
+    font-style: normal;
+    font-weight: 400 700;
+    font-display: swap;
+    src: url("../fonts/schibsted-grotesk-latin.woff2") format("woff2");
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+      U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+      U+2212, U+2215, U+FEFF, U+FFFD;
+  }
+  @font-face {
+    font-family: "JetBrains Mono";
+    font-style: normal;
+    font-weight: 400 700;
+    font-display: swap;
+    src: url("../fonts/jetbrains-mono-latin.woff2") format("woff2");
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+      U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+      U+2212, U+2215, U+FEFF, U+FFFD;
+  }
+
+  :root {
+    --ink-1000: #13141c;
+    --ink-900: #1a1b26;
+    --ink-800: #1f2335;
+    --ink-700: #252a41;
+    --ink-600: #2f3550;
+    --ink-500: #414868;
+
+    --chalk-100: #e8edff;
+    --chalk-200: #c0caf5;
+    --chalk-400: #8d96b8;
+    --chalk-500: #7681a8;
+    --chalk-600: #565f89;
+
+    --blue-400: #9fbdff;
+    --blue-500: #7aa2f7;
+    --blue-700: #5872ae;
+    --red-500: #f7768e;
+    --green-500: #9ece6a;
+    --yellow-500: #e0af68;
+
+    --surface-page: var(--ink-900);
+    --surface-page-deep: var(--ink-1000);
+    --surface-card: var(--ink-800);
+
+    --text-display: var(--chalk-100);
+    --text-body: var(--chalk-200);
+    --text-muted: var(--chalk-500);
+    --text-faint: var(--chalk-600);
+    --text-on-accent: var(--ink-900);
+
+    --border-default: var(--ink-600);
+    --border-strong: var(--ink-500);
+
+    --accent: var(--blue-500);
+    --accent-deep: var(--blue-700);
+    --accent-ring: var(--ink-500);
+    --accent-edge: color-mix(in srgb, var(--accent) 55%, transparent);
+
+    --band-bullseye: var(--green-500);
+    --band-close: var(--blue-500);
+    --band-ballpark: var(--yellow-500);
+    --band-off: var(--red-500);
+
+    --font-display: "Bricolage Grotesque", "Segoe UI Variable Display", system-ui, sans-serif;
+    --font-sans: "Schibsted Grotesk", "Segoe UI", system-ui, -apple-system, sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", Menlo, Consolas, monospace;
+
+    --radius-sm: 6px;
+    --radius-md: 8px;
+    --radius-lg: 10px;
+    --radius-xl: 12px;
+    --radius-2xl: 16px;
+    --radius-pill: 999px;
+
+    --shadow-card: 0 1px 0 rgba(255, 255, 255, 0.03) inset, 0 10px 28px -18px rgba(0, 0, 0, 0.8);
+    --ring-wash: radial-gradient(ellipse at 50% 42%,
+      color-mix(in srgb, var(--accent) 15%, transparent) 0%,
+      color-mix(in srgb, var(--accent) 5%, transparent) 40%,
+      transparent 72%);
+
+    --dur-fast: 140ms;
+    --ease-out: cubic-bezier(0.2, 0.8, 0.25, 1);
+    --press-shift: translateY(1px);
+  }
+
   @media (prefers-color-scheme: light) {
     :root {
-      --bg: #eef1f8;
-      --panel: #ffffff;
-      --line: #d3dae9;
-      --fg: #1f2335;
-      --dim: #5a6484;
-      --accent: #2e5db8;
+      color-scheme: light;
+
+      --ink-1000: #e2e7f2;
+      --ink-900: #eef1f8;
+      --ink-800: #ffffff;
+      --ink-700: #f6f8fd;
+      --ink-600: #d3dae9;
+      --ink-500: #b6c0d6;
+
+      --chalk-100: #14161f;
+      --chalk-200: #1f2335;
+      --chalk-400: #485270;
+      --chalk-500: #5a6484;
+      --chalk-600: #737d9c;
+
+      --blue-400: #1f4da3;
+      --blue-500: #2e5db8;
+      --blue-700: #7f9bd6;
+      --red-500: #c0384f;
+      --green-500: #4a7f2c;
+      --yellow-500: #8a6412;
+
+      --surface-page: var(--ink-900);
+      --surface-page-deep: var(--ink-1000);
+      --surface-card: var(--ink-800);
+
+      --text-display: var(--chalk-100);
+      --text-body: var(--chalk-200);
+      --text-muted: var(--chalk-500);
+      --text-faint: var(--chalk-600);
+      --text-on-accent: #ffffff;
+
+      --border-default: var(--ink-600);
+      --border-strong: var(--ink-500);
+
+      --accent: var(--blue-500);
+      --accent-deep: var(--blue-700);
+      --accent-ring: var(--ink-500);
+      --accent-edge: color-mix(in srgb, var(--accent) 55%, transparent);
+
+      --band-bullseye: var(--green-500);
+      --band-close: var(--blue-500);
+      --band-ballpark: var(--yellow-500);
+      --band-off: var(--red-500);
+
+      --ring-wash: radial-gradient(ellipse at 50% 42%,
+        color-mix(in srgb, var(--accent) 15%, transparent) 0%,
+        color-mix(in srgb, var(--accent) 5%, transparent) 40%,
+        transparent 72%);
+      --shadow-card: 0 1px 0 rgba(255, 255, 255, 0.6) inset,
+                     0 10px 28px -20px rgba(31, 35, 53, 0.35);
     }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :root { --dur-fast: 0ms }
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box }
 
   body {
-    background: var(--bg);
-    color: var(--fg);
-    font-family: var(--mono);
+    background:
+      var(--ring-wash) no-repeat 50% -180px / 1100px 720px,
+      linear-gradient(180deg, var(--surface-page) 0%, var(--surface-page) 62%,
+                     var(--surface-page-deep) 100%);
+    background-attachment: fixed;
+    color: var(--text-body);
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
     line-height: 1.6;
     padding: 2rem 1.1rem 3rem;
+    -webkit-font-smoothing: antialiased;
+    text-wrap: pretty;
   }
 
   main { max-width: 34rem; margin: 0 auto }
 
   /* The mark is drawn rather than served from icons/. The icon PNG has the
      page background baked into it, so on this page it disappears entirely and
-     leaves the rings floating. Same geometry, no plate. */
+     leaves the rings floating. Same geometry, no plate - and the two ring
+     tones are the tokens that were named after it. */
   .mark { position: relative; width: 76px; height: 76px; margin: 0 auto 1rem }
   .mark i {
     position: absolute; left: 50%; top: 50%;
     transform: translate(-50%, -50%);
     border-radius: 50%; display: block;
   }
-  .m1 { width: 76px; height: 76px; border: 7px solid #414868 }
-  .m2 { width: 50px; height: 50px; border: 7px solid #5872ae }
+  .m1 { width: 76px; height: 76px; border: 7px solid var(--accent-ring) }
+  .m2 { width: 50px; height: 50px; border: 7px solid var(--accent-deep) }
   .m3 { width: 20px; height: 20px; background: var(--accent) }
 
-  h1 { font-size: 1.5rem; letter-spacing: -0.01em; text-align: center }
+  /* There is no wordmark file: the name is set in the display face with "Gym"
+     in the accent, which is how the OG card does it. */
+  h1 {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    color: var(--text-display);
+    text-align: center;
+  }
+  h1 .gym { color: var(--accent) }
 
   .tagline {
-    color: var(--dim); font-size: 0.86rem; margin-top: 0.6rem; text-align: center;
+    color: var(--text-muted); font-size: 0.875rem; margin-top: 0.6rem; text-align: center;
   }
-  .tagline strong { color: var(--fg) }
+  .tagline strong { color: var(--text-body); font-weight: 700 }
 
+  /* The one solid accent in the whole product. Everything else is a tint. */
   .play {
     display: block;
     margin: 1.3rem 0 0.5rem;
     padding: 0.95rem 1rem;
     text-align: center;
     background: var(--accent);
-    color: var(--bg);
+    color: var(--text-on-accent);
     font-weight: 700;
     font-size: 1rem;
     text-decoration: none;
-    border-radius: 10px;
+    border-radius: var(--radius-lg);
+    transition: filter var(--dur-fast) var(--ease-out),
+                transform var(--dur-fast) var(--ease-out);
   }
   .play:hover { filter: brightness(1.08) }
+  .play:active { transform: var(--press-shift) }
 
-  .play-note { text-align: center; font-size: 0.76rem; color: var(--dim) }
+  .play-note { text-align: center; font-size: 0.75rem; color: var(--text-muted) }
 
   /* The objections people have before installing anything, answered up front
      rather than in prose at the bottom. */
   .chips { display: flex; flex-wrap: wrap; gap: 0.35rem; justify-content: center; margin-top: 1rem }
   .chip {
-    font-size: 0.7rem; color: var(--dim);
-    border: 1px solid var(--line); border-radius: 999px; padding: 0.15rem 0.6rem;
+    font-size: 0.72rem; color: var(--text-muted);
+    border: 1px solid var(--border-default); border-radius: var(--radius-pill);
+    padding: 0.15rem 0.6rem;
   }
 
   .lbl {
-    font-size: 0.7rem; color: var(--dim); letter-spacing: 0.08em;
-    text-transform: uppercase; margin: 2rem 0 0.5rem;
+    font-size: 0.72rem; color: var(--text-muted); letter-spacing: 0.08em;
+    text-transform: uppercase; font-weight: 600; margin: 2rem 0 0.5rem;
   }
 
   /* A still of the actual game. Someone arriving from a video otherwise has to
-     install before finding out what the thing is. */
+     install before finding out what the thing is - so this mirrors the real
+     question card, down to the mode rule down its left edge. */
   .demo {
-    background: var(--panel); border: 1px solid var(--line);
-    border-radius: 12px; padding: 1rem;
+    position: relative;
+    overflow: hidden;
+    background: var(--surface-card); border: 1px solid var(--border-default);
+    border-radius: var(--radius-xl); box-shadow: var(--shadow-card); padding: 1rem;
   }
-  .demo-q { font-size: 0.92rem; line-height: 1.45 }
+  .demo::before {
+    content: "";
+    position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+    background: var(--accent);
+  }
+  .demo-q {
+    font-family: var(--font-display);
+    font-size: 1.0625rem; font-weight: 600; letter-spacing: -0.01em;
+    line-height: 1.45; color: var(--text-display);
+  }
   .demo-row { display: flex; gap: 0.5rem; margin-top: 0.8rem }
   .demo-input {
-    flex: 1; border: 1px solid var(--line); border-radius: 8px;
-    padding: 0.55rem 0.65rem; font-size: 0.82rem; color: var(--dim); background: var(--bg);
+    flex: 1; border: 1px solid var(--border-default); border-radius: var(--radius-md);
+    padding: 0.55rem 0.65rem; font-family: var(--font-mono); font-size: 0.8125rem;
+    color: var(--text-muted); background: var(--surface-card);
   }
   .demo-go {
-    border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent);
+    border: 1px solid var(--accent-edge);
     background: color-mix(in srgb, var(--accent) 16%, transparent);
-    color: var(--accent); border-radius: 8px;
-    padding: 0.55rem 0.8rem; font-size: 0.82rem; font-weight: 700;
+    color: var(--accent); border-radius: var(--radius-md);
+    padding: 0.55rem 0.8rem; font-size: 0.8125rem; font-weight: 700;
   }
+
+  /* All four bands carry their own colour here, exactly as they do on a real
+     result - this strip is where a new player first learns them. */
   .bands { display: flex; gap: 0.3rem; margin-top: 0.8rem }
   .band {
-    flex: 1; text-align: center; font-size: 0.62rem; line-height: 1.35;
-    border: 1px solid var(--line); border-radius: 6px; padding: 0.3rem 0.1rem; color: var(--dim);
+    flex: 1; text-align: center; font-size: 0.64rem; line-height: 1.35; font-weight: 700;
+    border: 1px solid var(--border-default); border-radius: var(--radius-sm);
+    padding: 0.3rem 0.1rem; color: var(--tone, var(--text-muted));
   }
+  .band span { font-family: var(--font-mono); font-weight: 400; color: var(--text-faint) }
+  .band[data-band="Bullseye"] { --tone: var(--band-bullseye) }
+  .band[data-band="Close"]    { --tone: var(--band-close) }
+  .band[data-band="Ballpark"] { --tone: var(--band-ballpark) }
+  .band[data-band="Off"]      { --tone: var(--band-off) }
   .band.hit {
-    border-color: var(--accent); color: var(--accent);
-    background: color-mix(in srgb, var(--accent) 12%, transparent);
+    border-color: color-mix(in srgb, var(--tone) 45%, transparent);
+    background: color-mix(in srgb, var(--tone) 12%, transparent);
   }
-  .demo-note { font-size: 0.72rem; color: var(--dim); margin-top: 0.6rem; text-align: center }
+  .demo-note { font-size: 0.72rem; color: var(--text-muted); margin-top: 0.6rem; text-align: center }
 
   .tour { margin-top: 0.6rem; text-align: center }
   .tour-video {
     width: 100%; max-width: 270px; height: auto;
-    border-radius: 14px; border: 1px solid var(--line); background: #000;
+    border-radius: var(--radius-2xl); border: 1px solid var(--border-default); background: #000;
   }
-  .tour figcaption { margin-top: 0.5rem; font-size: 0.76rem; color: var(--dim) }
+  .tour figcaption { margin-top: 0.5rem; font-size: 0.75rem; color: var(--text-muted) }
 
   /* One row per thing to watch, so the seven-minute video is discoverable
      without competing with the install steps. */
   .watch {
     display: flex; gap: 0.7rem; align-items: center;
-    background: var(--panel); border: 1px solid var(--line);
-    border-radius: 10px; padding: 0.75rem 0.85rem; margin-top: 0.55rem;
+    background: var(--surface-card); border: 1px solid var(--border-default);
+    border-radius: var(--radius-lg); padding: 0.75rem 0.85rem; margin-top: 0.55rem;
     text-decoration: none; color: inherit;
+    transition: border-color var(--dur-fast) var(--ease-out);
   }
-  .watch:hover { border-color: var(--dim) }
+  .watch:hover { border-color: var(--border-strong) }
   .watch-mark {
-    width: 34px; height: 34px; border-radius: 8px; flex: 0 0 auto;
+    width: 34px; height: 34px; border-radius: var(--radius-md); flex: 0 0 auto;
     display: grid; place-items: center; font-size: 0.7rem;
-    background: #f7768e; color: #fff;
+    background: var(--band-off); color: #fff;
   }
-  .watch-t { font-size: 0.82rem }
-  .watch-s { font-size: 0.72rem; color: var(--dim) }
+  .watch-t { font-size: 0.8125rem; font-weight: 700 }
+  .watch-s { font-size: 0.75rem; color: var(--text-muted) }
 
   h2 {
-    font-size: 0.95rem;
+    font-family: var(--font-display);
+    font-size: 1.0625rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: var(--text-display);
     margin: 2rem 0 0.15rem;
     display: flex; align-items: center; gap: 0.5rem;
   }
 
   .card {
-    background: var(--panel); border: 1px solid var(--line);
-    border-radius: 10px; padding: 0.9rem 1.1rem; margin-top: 0.7rem;
+    background: var(--surface-card); border: 1px solid var(--border-default);
+    border-radius: var(--radius-lg); padding: 0.9rem 1.1rem; margin-top: 0.7rem;
   }
 
-  ol { padding-left: 1.2rem; font-size: 0.88rem }
+  ol { padding-left: 1.2rem; font-size: 0.875rem }
   li { margin: 0.35rem 0 }
-  li::marker { color: var(--dim) }
+  li::marker { color: var(--text-muted) }
 
   kbd {
-    background: color-mix(in srgb, var(--fg) 10%, transparent);
-    border: 1px solid var(--line); border-radius: 4px;
-    padding: 0.05rem 0.35rem; font: inherit; font-size: 0.85em; white-space: nowrap;
+    background: color-mix(in srgb, var(--text-body) 10%, transparent);
+    border: 1px solid var(--border-default); border-radius: 4px;
+    padding: 0.05rem 0.35rem; font-family: var(--font-mono);
+    font-size: 0.85em; white-space: nowrap;
   }
 
+  /* Callout: a coloured left rule and the right two corners rounded. The one
+     place in the system that treatment is used. */
   .warn {
-    margin-top: 0.7rem; font-size: 0.8rem; color: var(--fg);
-    border-left: 2px solid var(--accent); padding: 0.15rem 0 0.15rem 0.65rem;
+    margin-top: 0.7rem; font-size: 0.8125rem; color: var(--text-body);
+    border-left: 2px solid var(--accent);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    background: color-mix(in srgb, var(--accent) 8%, transparent);
+    padding: 0.5rem 0.7rem 0.5rem 0.65rem;
   }
 
-  .why { margin-top: 2rem; font-size: 0.84rem; color: var(--dim) }
+  .why { margin-top: 2rem; font-size: 0.875rem; color: var(--text-muted) }
   .why p { margin-top: 0.6rem }
+  .why strong { color: var(--text-body) }
 
   footer {
-    margin-top: 2.4rem; padding-top: 1rem; border-top: 1px solid var(--line);
-    font-size: 0.76rem; color: var(--dim); text-align: center;
+    margin-top: 2.4rem; padding-top: 1rem; border-top: 1px solid var(--border-default);
+    font-size: 0.75rem; color: var(--text-muted); text-align: center;
   }
   footer a { color: var(--accent) }
 
@@ -204,7 +407,7 @@
 <body>
 <main>
   <div class="mark"><i class="m1"></i><i class="m2"></i><i class="m3"></i></div>
-  <h1>Estimation Gym</h1>
+  <h1>Estimation <span class="gym">Gym</span></h1>
   <p class="tagline">
     One question a day, the same one for everyone. You do not have to be right
     &mdash; <strong>you have to be roughly right.</strong>
@@ -278,10 +481,10 @@
       <div class="demo-go">Go</div>
     </div>
     <div class="bands">
-      <div class="band hit">Bullseye<br>2&times;</div>
-      <div class="band">Close<br>10&times;</div>
-      <div class="band">Ballpark<br>100&times;</div>
-      <div class="band">Off</div>
+      <div class="band hit" data-band="Bullseye">Bullseye<br><span>2&times;</span></div>
+      <div class="band" data-band="Close">Close<br><span>10&times;</span></div>
+      <div class="band" data-band="Ballpark">Ballpark<br><span>100&times;</span></div>
+      <div class="band" data-band="Off">Off</div>
     </div>
     <p class="demo-note">An example &mdash; not one of the real questions.</p>
   </div>
