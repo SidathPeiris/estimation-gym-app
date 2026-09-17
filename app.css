@@ -89,10 +89,10 @@
    a cold, offline launch.
 
    The eight names the old :root declared (--bg, --panel, --line, --fg, --dim,
-   --accent, --urgent, --mono) are kept at the foot of each scope as aliases
-   onto the semantic layer, so every rule further down this file keeps
-   resolving. --accent needs no alias: the system declares it under the same
-   name.
+   --accent, --urgent, --mono) were kept as aliases onto the semantic layer
+   while the sections below were moved over one at a time. They are gone now:
+   every rule in this file reads the semantic layer directly, so a colour is
+   changed in one place rather than two.
 
    A custom property is substituted where it is DECLARED, so an alias like
    `--surface-page: var(--ink-900)` on :root computes to the literal dark hex
@@ -309,14 +309,6 @@
                         color var(--dur-fast) var(--ease-out),
                         transform var(--dur-instant) var(--ease-out);
 
-  /* --- compatibility aliases for the rules further down this file --- */
-  --bg: var(--surface-page);
-  --panel: var(--surface-card);
-  --line: var(--border-default);
-  --fg: var(--text-body);
-  --dim: var(--text-muted);
-  --urgent: var(--status-urgent);
-  --mono: var(--font-mono);
 }
 
 /* The system ships its light theme as the opt-in class .theme-light; the app
@@ -418,14 +410,6 @@
     --shadow-card: 0 1px 0 rgba(255, 255, 255, 0.6) inset,
                    0 10px 28px -20px rgba(31, 35, 53, 0.35);
 
-    /* --- compatibility aliases --- */
-    --bg: var(--surface-page);
-    --panel: var(--surface-card);
-    --line: var(--border-default);
-    --fg: var(--text-body);
-    --dim: var(--text-muted);
-    --urgent: var(--status-urgent);
-    --mono: var(--font-mono);
   }
 }
 
@@ -505,9 +489,10 @@ a:hover { color: var(--text-link-hover) }
 }
 
 /* ---------- header ---------- */
+/* AppHeader: the mark, the name, the day, the streak and the reminder bell. */
 .hero {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   gap: var(--space-5);
   flex-wrap: wrap;
@@ -521,12 +506,59 @@ a:hover { color: var(--text-link-hover) }
   flex-wrap: wrap;
   min-width: 0;
 }
+
+/* Brandmark: three concentric rings, drawn rather than served from icons/.
+   The icon PNG has the page background baked into it, so on a card ground it
+   would leave the rings floating. Same geometry as the OG card, no plate. */
+.mark {
+  position: relative;
+  width: 26px;
+  height: 26px;
+  flex: 0 0 auto;
+  align-self: center;
+}
+.mark i {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: var(--radius-circle);
+  display: block;
+}
+.mark .m1 { width: 26px; height: 26px; border: 2.5px solid var(--accent-ring) }
+.mark .m2 { width: 17px; height: 17px; border: 2.5px solid var(--accent-deep) }
+.mark .m3 { width: 7px; height: 7px; background: var(--accent) }
+
 /* There is no wordmark file: the name is set in the display face with "Gym" in
    the accent, which is how the OG card and the install page do it. */
 .hero h1 { font-size: var(--text-2xl); font-weight: var(--weight-black) }
 .hero h1 .gym { color: var(--accent) }
 .puzzle { font-size: var(--text-base); color: var(--text-muted) }
-.streak { font-size: var(--text-sm); color: var(--text-muted); margin-top: var(--space-2) }
+
+/* StreakBadge. app.js writes this line with textContent, so the flame is a
+   masked pseudo-element rather than a child that every render would wipe. The
+   source prints "Streak 4 · Best 11" and that wording is presenter.js's, so
+   the badge wraps it rather than splitting it up. */
+.streak {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+  padding: 0.25rem 0.7rem;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-pill);
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+.streak::before {
+  content: "";
+  width: 13px;
+  height: 13px;
+  flex: 0 0 auto;
+  background-color: var(--text-faint);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4'/%3E%3C/svg%3E") center / contain no-repeat;
+}
 
 /* ---------- question card ---------- */
 /* QuestionCard: the hero of every screen. One question and the row you answer
@@ -848,28 +880,86 @@ a:hover { color: var(--text-link-hover) }
 }
 .source { font-style: italic }
 
-/* ---------- history ---------- */
-/* The collapsible sections - practice, how to play, history, stats, suggest -
-   are one list of the same kind of control, so they share one separator. */
+/* ---------- the disclosure run ---------- */
+/* Practice, How to play, History, Stats and Suggest a question are one list of
+   the same control, so they share one separator and one rule. Disclosure: a
+   chevron that turns rather than a glyph that is swapped, the title left, and
+   a lowercase summary right. */
 .practice, .howto, .history, .stats {
-  margin-top: 28px;
-  border-top: 1px solid var(--line);
-  padding-top: 18px;
+  margin-top: var(--section-gap);
+  border-top: 1px solid var(--border-default);
+  padding-top: var(--space-8);
 }
 
-.history-list { list-style: none; margin-top: 6px }
+.stats-toggle, .hint-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-5);
+  background: none;
+  border: 0;
+  padding: var(--space-1) 0;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+.hint-toggle { margin-top: var(--space-6) }
 
+.stats-title {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  font: var(--type-label);
+  font-size: var(--text-base);
+  color: var(--text-display);
+}
+
+/* The chevron is drawn as a mask rather than inlined as markup, because
+   app.js writes these sections' open state with textContent - which would
+   wipe an <svg> child on every render. The mask takes currentColor, so it
+   still themes and still inherits the muted tone. */
+.chev {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
+  color: var(--text-muted);
+  background-color: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 18 6-6-6-6'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 18 6-6-6-6'/%3E%3C/svg%3E") center / contain no-repeat;
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+.chev[data-open="true"] { transform: rotate(90deg) }
+
+.stats-summary { font-size: var(--text-sm); color: var(--text-muted) }
+
+.stats-body {
+  margin-top: var(--space-6);
+  animation: eg-rise var(--dur-base) var(--ease-out) both;
+}
+
+/* ---------- history ---------- */
+.history-list { list-style: none; margin-top: var(--space-2) }
+
+/* HistoryRow. Only what was actually recorded: the date, the band, the guess
+   and the value it was scored against. The question text is deliberately
+   absent - it is not stored, and the day number cannot be used to look it up. */
 .history-row {
   display: grid;
   grid-template-columns: 5.5rem 1fr auto;
   align-items: baseline;
-  gap: 10px;
-  padding: 9px 0;
-  border-bottom: 1px solid color-mix(in srgb, var(--line) 60%, transparent);
+  gap: var(--space-4);
+  padding: var(--space-3);
+  margin: 0 calc(var(--space-3) * -1);
+  border-radius: var(--radius-md);
+  border-bottom: 1px solid color-mix(in srgb, var(--border-default) 60%, transparent);
+  transition: var(--transition-control);
 }
 .history-row:last-child { border-bottom: 0 }
 
-.history-date { font-size: .8125rem; color: var(--dim) }
+.history-date { font-size: var(--text-sm); color: var(--text-muted) }
 
 /* BandTag, plain variant - in a dense list the colour carries the band on its
    own. Its hue is set in "what colour a band is" above. */
@@ -879,48 +969,53 @@ a:hover { color: var(--text-link-hover) }
   color: var(--tone, var(--band-close));
 }
 
-.history-numbers { font-size: .75rem; color: var(--dim); text-align: right; min-width: 0 }
+.history-numbers {
+  font-size: var(--text-xs);
+  color: var(--text-faint);
+  text-align: right;
+  min-width: 0;
+}
 .history-numbers .nowrap { white-space: nowrap }
 
-/* ---------- stats ---------- */
+/* History rows that can show a chart. */
+.history-row.comparable { cursor: pointer }
+.history-row.comparable:hover { background: color-mix(in srgb, var(--text-body) 4%, transparent) }
+.history-row.comparable:hover .history-date { color: var(--text-body) }
+.history-row.open { background: color-mix(in srgb, var(--text-body) 4%, transparent) }
 
-.stats-toggle {
-  width: 100%;
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 12px;
-  background: none;
-  border: 0;
-  padding: 4px 0;
-  color: inherit;
-  font: inherit;
-  cursor: pointer;
-  text-align: left;
+.history-dist {
+  grid-column: 1 / -1;
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border-default);
 }
-.stats-title { font-size: .875rem; font-weight: 700 }
-.chev { display: inline-block; width: 1em; color: var(--dim) }
-.stats-summary { font-size: .8125rem; color: var(--dim) }
 
-.stats-body { margin-top: 14px }
-
+/* ---------- stats ---------- */
+/* BandBars, used for both your lifetime spread and "how everyone did" on the
+   same question - same visual language in both places. */
 .bar-row {
   display: grid;
   grid-template-columns: 5.5rem 1fr 2rem;
   align-items: center;
-  gap: 10px;
-  margin-top: 8px;
+  gap: var(--space-4);
+  margin-top: var(--space-3);
 }
-.bar-label { font-size: .8125rem; color: var(--dim) }
+
+.bar-label { font-size: var(--text-sm); color: var(--text-muted) }
+
+/* Your own band, so the comparison is findable at a glance. */
+.bar-row.mine .bar-label { color: var(--text-display); font-weight: var(--weight-bold) }
+
 .bar-track {
   /* Explicitly block: width and height do not apply to an inline box, and
      these have been built from spans before now. */
   display: block;
   height: 8px;
-  border-radius: 4px;
-  background: color-mix(in srgb, var(--fg) 14%, transparent);
+  border-radius: var(--radius-xs);
+  background: color-mix(in srgb, var(--text-body) 14%, transparent);
   overflow: hidden;
 }
+
 /* Bars grow from the left rather than fading in, so a distribution reads as a
    measurement being taken. Hue is set in "what colour a band is" above. */
 .bar-fill {
@@ -931,103 +1026,97 @@ a:hover { color: var(--text-link-hover) }
   transform-origin: left;
   animation: eg-bar-grow var(--dur-slow) var(--ease-out) both;
 }
-.bar-tally { font-size: .8125rem; color: var(--dim); text-align: right }
 
-.stats-footer { font-size: .8125rem; color: var(--dim); margin-top: 16px }
+.bar-tally { font-size: var(--text-sm); color: var(--text-muted); text-align: right }
 
-.calibration {
-  font-size: .8125rem;
-  color: var(--fg);
-  margin-top: 8px;
-  padding: 10px 12px;
-  border-left: 2px solid var(--accent);
-  background: color-mix(in srgb, var(--accent) 8%, transparent);
-  border-radius: 0 6px 6px 0;
-}
+.stats-footer { font-size: var(--text-sm); color: var(--text-muted); margin-top: var(--space-7) }
 
-.export {
-  margin-top: 16px;
-  padding: 9px 14px;
-  border-radius: 8px;
-  border: 1px solid var(--line);
-  background: none;
-  color: var(--dim);
-  font: inherit;
-  font-size: .8125rem;
-  cursor: pointer;
-}
-.export:active { transform: translateY(1px) }
-
-/* --- hint offer and revealed guidance --- */
-/* Matches .stats-toggle so the two expanders read as the same control. */
-.hint-toggle {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 0.75rem;
-  width: 100%;
-  margin-top: 0.9rem;
-  padding: 0;
-  background: none;
-  border: 0;
-  color: inherit;
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
-}
-
-.strategy {
-  margin-top: 0.9rem;
+/* Callout: a coloured rule down the left edge, rounded on the right two
+   corners only. This treatment belongs to Callout and nothing else. */
+.calibration, .strategy {
+  margin-top: var(--space-6);
   padding: 0.7rem 0.85rem;
   border-left: 2px solid var(--accent);
-  border-radius: 0 6px 6px 0;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
   background: color-mix(in srgb, var(--accent) 8%, transparent);
+  animation: eg-rise var(--dur-base) var(--ease-out) both;
+}
+.calibration {
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
+  color: var(--text-secondary);
+  margin-top: var(--space-3);
 }
 
+/* Button, quiet variant: bordered, never the primary action. */
+.export, .confess-actions button {
+  margin-top: var(--space-7);
+  padding: 9px 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-default);
+  background: transparent;
+  color: var(--text-muted);
+  font: var(--type-label);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+  cursor: pointer;
+  transition: var(--transition-control);
+}
+.export:hover, .confess-actions button:hover {
+  color: var(--text-body);
+  border-color: var(--border-strong);
+}
+.export:active, .confess-actions button:active { transform: var(--press-shift) }
+
+/* --- hint offer and revealed guidance --- */
 .strategy-label {
   margin: 0;
-  font-size: 0.85rem;
-  font-weight: 700;
+  font: var(--type-label);
+  font-size: var(--text-base);
+  color: var(--text-display);
 }
 
 .strategy-guidance {
-  margin: 0.35rem 0 0;
-  font-size: 0.8rem;
-  line-height: 1.55;
-  color: var(--dim);
+  margin: var(--space-2) 0 0;
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
+  color: var(--text-secondary);
 }
 
 /* The archetype shown after answering sits with the hint text below it. */
-#approach { margin: 0.9rem 0 0; }
+#approach { margin: var(--space-6) 0 0 }
 
 /* --- how to play --- */
-
+/* StepList. */
 .howto-steps {
-  margin: 0.2rem 0 0;
+  margin: var(--space-1) 0 0;
   padding-left: 1.15rem;
-  font-size: 0.82rem;
-  line-height: 1.6;
-  color: var(--dim);
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
+  color: var(--text-secondary);
 }
 
-.howto-steps li { margin-bottom: 0.4rem }
+.howto-steps li { margin-bottom: var(--space-4) }
+.howto-steps li::marker { color: var(--text-muted) }
 
 .howto-intro {
-  margin: 0.9rem 0 0.6rem;
-  font-size: 0.82rem;
-  line-height: 1.6;
-  color: var(--dim);
+  margin: var(--space-6) 0 var(--space-5);
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
+  color: var(--text-secondary);
 }
 
+/* ScoringTable. Rows come from the Model's band table, so a repriced band
+   cannot leave the guide saying something untrue. */
 .howto-scoring {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.82rem;
+  font-size: var(--text-base);
 }
 
 .howto-scoring td {
-  padding: 0.3rem 0;
-  border-bottom: 1px solid var(--line);
+  padding: 0.45rem 0;
+  border-bottom: 1px solid var(--border-default);
   vertical-align: baseline;
 }
 
@@ -1040,66 +1129,66 @@ a:hover { color: var(--text-link-hover) }
   white-space: nowrap;
   color: var(--tone, var(--band-close));
 }
-.howto-meaning { color: var(--dim); padding-left: 0.6rem !important }
-.howto-points { color: var(--dim); text-align: right; white-space: nowrap }
-
-.howto-note {
-  margin: 0.7rem 0 0;
-  font-size: 0.8rem;
-  line-height: 1.6;
-  color: var(--dim);
+.howto-meaning { color: var(--text-muted); padding-left: 0.6rem !important }
+.howto-points {
+  color: var(--text-secondary);
+  text-align: right;
+  white-space: nowrap;
 }
 
-/* --- build / puzzle-date stamp --- */
+.howto-note {
+  margin: var(--space-5) 0 0;
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
+  color: var(--text-secondary);
+}
+
+/* FootNote: one quiet line of small print. */
 .build {
-  margin: 1.2rem 0 0;
-  font-size: 0.72rem;
-  color: var(--dim);
-  opacity: 0.75;
+  margin: var(--space-9) 0 0;
+  font-size: var(--text-2xs);
+  color: var(--text-faint);
   text-align: right;
   letter-spacing: 0.02em;
 }
 
 /* --- how everyone else did --- */
 .dist {
-  margin-top: 1rem;
-  padding: 0.85rem 0.95rem;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: var(--panel);
+  margin-top: var(--space-7);
+  padding: var(--card-pad-tight);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  background: var(--surface-card);
 }
 
 .dist-head {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: 0.75rem;
-  margin-bottom: 0.5rem;
+  gap: var(--space-5);
+  margin-bottom: var(--space-3);
 }
 
-.dist-title { font-size: 0.85rem; font-weight: 700 }
-.dist-summary { font-size: 0.75rem; color: var(--dim) }
+.dist-title {
+  font: var(--type-label);
+  font-size: var(--text-base);
+  color: var(--text-display);
+}
+.dist-summary { font-size: var(--text-xs); color: var(--text-muted) }
 
 .dist-note {
-  margin: 0.55rem 0 0;
-  font-size: 0.78rem;
-  line-height: 1.5;
-  color: var(--dim);
+  margin: var(--space-4) 0 0;
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+  color: var(--text-muted);
 }
 
-/* Your own band, so the comparison is findable at a glance. */
-.bar-row.mine .bar-label { color: var(--fg); font-weight: 700 }
-
-/* History rows that can show a chart. */
-.history-row.comparable { cursor: pointer }
-.history-row.comparable:hover .history-date { color: var(--fg) }
-.history-row.open { background: color-mix(in srgb, var(--fg) 4%, transparent) }
-
-.history-dist {
-  grid-column: 1 / -1;
-  margin-top: 0.5rem;
-  padding-top: 0.5rem;
-  border-top: 1px solid var(--line);
+/* Where a guess landed among everyone else. Sits under the bars because it is
+   a reading of them, not a fifth bar. */
+.dist-percentile {
+  margin: var(--space-5) 0 0;
+  font-size: var(--text-sm);
+  color: var(--accent);
 }
 
 /* --- suggest a question --- */
@@ -1108,14 +1197,14 @@ a:hover { color: var(--text-link-hover) }
    suggestion lands as pending and is only ever added to the bank by hand. */
 .suggest-field {
   display: block;
-  margin-top: 0.85rem;
+  margin-top: var(--space-5);
 }
 
 .suggest-label {
   display: block;
-  margin-bottom: 0.3rem;
-  font-size: 0.75rem;
-  color: var(--dim);
+  margin-bottom: var(--space-2);
+  font: var(--type-eyebrow);
+  color: var(--text-muted);
 }
 
 .suggest-label em { font-style: normal; opacity: 0.7 }
@@ -1128,8 +1217,9 @@ a:hover { color: var(--text-link-hover) }
 
 /* --- scientific-notation helper --- */
 /* The phone keypad has no "e"; this puts one within reach without swapping
-   the keypad for a full keyboard. */
-/* ExponentButton. The system's component draws this with a 3px dashed border;
+   the keypad for a full keyboard.
+
+   ExponentButton. The system's component draws this with a 3px dashed border;
    kept at a 1px solid hairline here to match the field it sits against and the
    rest of the app, per "hairline borders do the work". */
 .exp {
@@ -1151,101 +1241,139 @@ a:hover { color: var(--text-link-hover) }
 .exp:active { transform: var(--press-shift) }
 
 /* --- daily reminder, in the header corner --- */
+/* ReminderToggle. The bell is the one glyph in the app with its own colour
+   rather than the tone around it - it is a nudge, not a score. */
 .remind {
   display: inline-flex;
-  align-items: baseline;
-  gap: 6px;
+  align-items: center;
+  gap: var(--space-2);
   flex: 0 0 auto;
   padding: 0.3rem 0.6rem;
   background: transparent;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  color: var(--dim);
-  font: inherit;
-  font-size: 0.75rem;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-pill);
+  color: var(--text-muted);
+  font: var(--type-eyebrow);
+  font-size: var(--text-xs);
   line-height: 1;
   cursor: pointer;
+  transition: var(--transition-control);
 }
-.remind:hover { border-color: var(--dim); color: var(--fg) }
-.remind-bell { font-size: 0.85em }
-.remind-state { font-weight: 700 }
+.remind:hover { border-color: var(--border-strong) }
+
+.remind-bell {
+  display: inline-flex;
+  width: 13px;
+  height: 13px;
+  flex: 0 0 auto;
+  color: var(--reminder-bell);
+}
+.remind-bell svg { width: 100%; height: 100%; stroke: currentColor }
+
+/* One bell per state, swapped in CSS: app.js writes data-on and nothing else,
+   so neither glyph is rebuilt on a render. */
+.remind .bell-on { display: none }
+.remind .bell-off { display: block }
+.remind[data-on="true"] .bell-on { display: block }
+.remind[data-on="true"] .bell-off { display: none }
+
+.remind-state { font-weight: var(--weight-bold); color: var(--reminder-bell) }
 
 /* On is worth seeing at a glance; Off should stay quiet. */
-.remind[data-on="true"] { border-color: var(--accent); color: var(--accent) }
+.remind[data-on="true"] {
+  border-color: var(--accent-edge);
+  background: var(--accent-wash);
+}
 
 .remind-note {
-  margin: 0.5rem 0 0;
-  font-size: 0.78rem;
-  line-height: 1.5;
-  color: var(--dim);
+  margin: var(--space-4) 0 0;
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+  color: var(--text-muted);
 }
 
 /* --- restore a history --- */
 .restore-help, .restore-note {
-  margin: 0.6rem 0 0;
-  font-size: 0.78rem;
-  line-height: 1.5;
-  color: var(--dim);
+  margin: var(--space-4) 0 0;
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+  color: var(--text-muted);
 }
 
+/* TextField. Label above, mono only when the field is numeric. */
 .restore-input {
   width: 100%;
-  margin-top: 0.5rem;
-  padding: 0.55rem 0.7rem;
-  background: var(--bg);
-  color: var(--fg);
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  font: inherit;
-  font-size: 0.78rem;
+  margin-top: var(--space-3);
+  padding: 0.62rem 0.75rem;
+  background: var(--surface-card);
+  color: var(--text-body);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
   resize: vertical;
+  transition: var(--transition-control);
 }
-.restore-input:focus { outline: none; border-color: var(--accent) }
+.restore-input::placeholder { color: var(--text-muted) }
+.restore-input:hover { border-color: var(--border-strong) }
+.restore-input:focus {
+  outline: none;
+  border-color: var(--border-focus);
+  box-shadow: var(--ring-focus);
+}
 
 /* --- which shapes of problem you are good at --- */
 .arch {
-  margin-top: 0.9rem;
-  padding-top: 0.8rem;
-  border-top: 1px solid var(--line);
+  margin-top: var(--space-6);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--border-default);
 }
 
 .arch-headline {
-  margin: 0 0 0.5rem;
-  font-size: 0.82rem;
-  line-height: 1.5;
-  font-weight: 700;
+  margin: 0 0 var(--space-3);
+  font: var(--type-label);
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+  color: var(--text-display);
 }
 
+/* ArchetypeRow. One row per reasoning archetype, labels straight from
+   Model.STRATEGIES. */
 .arch-row {
   display: grid;
   grid-template-columns: 1fr auto auto;
   align-items: baseline;
-  gap: 0.6rem;
-  font-size: 0.78rem;
-  padding: 0.18rem 0;
+  gap: var(--space-3);
+  font-size: var(--text-sm);
+  padding: var(--space-1) 0;
 }
 
-.arch-label { color: var(--fg) }
-.arch-played { color: var(--dim); font-size: 0.72rem }
-.arch-median { color: var(--dim); text-align: right; white-space: nowrap }
+.arch-label { color: var(--text-body) }
+.arch-played { color: var(--text-faint); font-size: var(--text-2xs) }
+.arch-median {
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+  text-align: right;
+  white-space: nowrap;
+  min-width: 4.5rem;
+}
 
 /* Too few plays to rank: shown, but visibly not part of the comparison. */
-.arch-row.thin .arch-label { color: var(--dim) }
+.arch-row.thin .arch-label { color: var(--text-muted) }
 
 .arch-note {
-  margin: 0.6rem 0 0;
-  font-size: 0.75rem;
-  line-height: 1.5;
-  color: var(--dim);
+  margin: var(--space-4) 0 0;
+  font-size: var(--text-xs);
+  line-height: var(--leading-normal);
+  color: var(--text-muted);
 }
 
 /* --- practice --- */
-
 .practice-intro {
-  margin: 0.3rem 0 0.8rem;
-  font-size: 0.8rem;
-  line-height: 1.55;
-  color: var(--dim);
+  margin: var(--space-2) 0 var(--space-5);
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
+  color: var(--text-secondary);
 }
 
 /* The practice question is a QuestionCard prompt like any other, only without
@@ -1273,153 +1401,137 @@ a:hover { color: var(--text-link-hover) }
   opacity: 0.8;
 }
 
-#practice-next { margin-top: 0.9rem }
+#practice-next { margin-top: var(--space-6) }
 
 /* --- the reminder part of How to play --- */
 .howto-reminder {
-  margin-top: 1.1rem;
-  padding-top: 0.9rem;
-  border-top: 1px solid var(--line);
+  margin-top: var(--space-9);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--border-default);
 }
 
 .howto-subhead {
-  margin: 0 0 0.45rem;
-  font-size: 0.85rem;
-  font-weight: 700;
+  margin: 0 0 var(--space-3);
+  font: var(--type-label);
+  font-size: var(--text-base);
+  color: var(--text-display);
 }
 
-.howto-reminder .howto-steps { margin-top: 0.55rem }
+.howto-reminder .howto-steps { margin-top: var(--space-3) }
 
 /* --- AGPL source offer --- */
 /* Section 13 requires that people using this over a network are offered its
    source, so the link is in the app rather than only in the repository. */
 .source-offer {
-  margin: 1rem 0 0;
-  font-size: 0.72rem;
-  color: var(--dim);
-  opacity: 0.75;
+  margin: var(--space-7) 0 0;
+  font-size: var(--text-2xs);
+  color: var(--text-faint);
   text-align: center;
 }
 .source-offer a { color: inherit }
-.source-offer a:hover { color: var(--fg) }
+.source-offer a:hover { color: var(--text-body) }
 
 /* --- the confession --- */
 /* An exact-to-the-digit guess is essentially unreachable by estimating, so it
    gets asked, in fun, whether they looked it up. The answers ship with the app
    so it can play offline - anyone can read them, and pretending otherwise
-   would be sillier than joking about it. */
-.confess {
-  margin-top: 1.4rem;
-  padding: 1rem 1.1rem;
-  border: 1px solid var(--accent);
-  border-radius: 12px;
-  background: color-mix(in srgb, var(--accent) 8%, transparent);
-}
+   would be sillier than joking about it.
 
-.confess-title {
+   Banner: a full-width bordered notice, title in the tone, body in the
+   foreground, actions in a wrapping row. */
+.confess, .moved {
+  padding: var(--space-7) var(--space-8);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-xl);
+  background: color-mix(in srgb, var(--accent) 9%, transparent);
+  animation: eg-rise var(--dur-base) var(--ease-out) both;
+}
+.confess { margin-top: var(--space-11) }
+.moved { margin-bottom: var(--space-9) }
+
+.confess-title, .moved-title {
   margin: 0;
-  font-weight: 700;
-  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-family: var(--font-display);
+  font-weight: var(--weight-bold);
+  font-size: var(--text-md);
+  letter-spacing: var(--track-display);
   color: var(--accent);
 }
 
-.confess-body {
-  margin: 0.4rem 0 0;
-  font-size: 0.85rem;
-  line-height: 1.5;
-  color: var(--fg);
+.confess-body, .moved-body {
+  margin: var(--space-3) 0 0;
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  color: var(--text-body);
 }
 
 .confess-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 0.9rem;
+  gap: var(--space-4);
+  margin-top: var(--space-6);
 }
-
-.confess-actions button {
-  padding: 9px 14px;
-  border-radius: 8px;
-  border: 1px solid var(--line);
-  background: none;
-  color: var(--dim);
-  font: inherit;
-  font-size: 0.8125rem;
-  cursor: pointer;
-}
-
-.confess-actions button:hover { color: var(--fg); border-color: var(--dim) }
-.confess-actions button:active { transform: translateY(1px) }
+.confess-actions button { margin-top: 0 }
 
 /* The honest answer is the one worth making easy to press. Specificity rather
    than !important, so it stays overridable. */
 .confess-actions .confess-yes {
-  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  border-color: var(--accent-edge);
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
   color: var(--accent);
+}
+.confess-actions .confess-yes:hover {
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 20%, transparent);
 }
 
 .dist-confessed {
-  margin: 0.5rem 0 0;
-  font-size: 0.78rem;
-  line-height: 1.5;
-  color: var(--dim);
+  margin: var(--space-4) 0 0;
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+  color: var(--text-muted);
   font-style: italic;
 }
 
 /* --- the move to estimationgym.app --- */
 /* Only ever shown on the old host. The new domain never renders this. */
-.moved {
-  margin-bottom: 20px;
-  padding: 14px 16px;
-  border: 1px solid var(--accent);
-  border-radius: 12px;
-  background: color-mix(in srgb, var(--accent) 10%, transparent);
+.moved-title .icon {
+  display: inline-flex;
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
 }
+.moved-title .icon svg { width: 100%; height: 100%; stroke: currentColor }
 
-.moved-title {
-  margin: 0;
-  font-weight: 700;
-  font-size: 0.95rem;
-  color: var(--accent);
-  text-align: center;
-}
-
-.moved-body {
-  margin: 0.4rem 0 0;
-  font-size: 0.82rem;
-  line-height: 1.5;
-  color: var(--fg);
-}
-
+/* Button, solid variant - the same one the install page's Play now uses. */
 .moved-go {
   display: inline-block;
-  margin-top: 0.8rem;
+  margin-top: var(--space-5);
   padding: 0.6rem 0.9rem;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   background: var(--accent);
-  color: var(--bg);
-  font-weight: 700;
-  font-size: 0.82rem;
+  color: var(--text-on-accent);
+  font: var(--type-label);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
   text-decoration: none;
+  transition: var(--transition-control);
 }
+.moved-go:hover { filter: brightness(1.08); color: var(--text-on-accent) }
+.moved-go:active { transform: var(--press-shift) }
 
-.moved-note { margin: 0.6rem 0 0; font-size: 0.76rem; color: var(--dim) }
+.moved-note { margin: var(--space-4) 0 0; font-size: var(--text-xs); color: var(--text-muted) }
 
 .moved-steps {
-  margin: 0.8rem 0 0;
+  margin: var(--space-5) 0 0;
   padding-left: 1.15rem;
-  font-size: 0.8rem;
-  line-height: 1.55;
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
 }
-.moved-steps li { margin: 0.55rem 0 }
+.moved-steps li { margin: var(--space-4) 0 }
 .moved-steps li::marker { color: var(--accent) }
 .moved-steps a:not(.moved-go) { color: var(--accent) }
-.moved-steps .moved-go { margin-top: 0.45rem }
-
-/* Where a guess landed among everyone else. Sits under the bars because it is
-   a reading of them, not a fifth bar. */
-.dist-percentile {
-  margin: 0.75rem 0 0;
-  font-size: 0.82rem;
-  color: var(--accent);
-}
+.moved-steps .moved-go { margin-top: var(--space-3) }

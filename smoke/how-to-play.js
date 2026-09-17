@@ -41,7 +41,7 @@ const today = M.dayIndex(new Date());
 let r = run();
 if (r.els["howto-body"].hidden) throw new Error("guide should be open on a first visit");
 console.log("first visit       -> guide open: " + !r.els["howto-body"].hidden +
-  ", chevron " + r.els["howto-chev"].textContent);
+  ", chevron open=" + r.els["howto-chev"].dataset.open);
 console.log("steps rendered    -> " + r.els["howto-steps"].children.length);
 console.log("scoring rows      -> " + r.els["howto-scoring"].children.length +
   ": " + r.els["howto-scoring"].children.map((tr) =>
@@ -62,7 +62,7 @@ console.log("points match real scoring: yes");
 // 2. Toggle shuts it.
 r.fire("howto-toggle", "click");
 if (!r.els["howto-body"].hidden) throw new Error("clicking should collapse it");
-console.log("click             -> collapsed, chevron " + r.els["howto-chev"].textContent +
+console.log("click             -> collapsed, chevron open=" + r.els["howto-chev"].dataset.open +
   ", aria-expanded " + r.els["howto-toggle"].attrs["aria-expanded"]);
 r.fire("howto-toggle", "click");
 if (r.els["howto-body"].hidden) throw new Error("clicking again should reopen");

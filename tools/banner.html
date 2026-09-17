@@ -34,6 +34,12 @@
   and the home screen all show one mark.
 -->
 <style>
+  /* The brand faces, from the repo rather than a CDN so a render is
+     reproducible offline and always uses the shipped type. font-display:
+     block, not swap: a headless screenshot must never capture the fallback. */
+  @font-face{font-family:"Bricolage Grotesque";font-style:normal;font-weight:400 800;font-display:block;src:url("../fonts/bricolage-grotesque-latin.woff2") format("woff2")}
+  @font-face{font-family:"Schibsted Grotesk";font-style:normal;font-weight:400 700;font-display:block;src:url("../fonts/schibsted-grotesk-latin.woff2") format("woff2")}
+  @font-face{font-family:"JetBrains Mono";font-style:normal;font-weight:400 700;font-display:block;src:url("../fonts/jetbrains-mono-latin.woff2") format("woff2")}
   /* YouTube crops a banner hard, and differently per device:
        TV      2560 x 1440  (everything)
        Desktop 2560 x  423  (a horizontal band)
@@ -46,7 +52,7 @@
     background: #1a1b26;
     display: grid;
     place-items: center;
-    font-family: "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif;
+    font-family: "Schibsted Grotesk","Segoe UI",system-ui,sans-serif;
     color: #c0caf5;
   }
 
@@ -86,7 +92,7 @@
 
   .words { flex: 0 1 auto }
 
-  h1 {
+  h1 {font-family:"Bricolage Grotesque","Segoe UI Variable Display",system-ui,sans-serif;
     font-size: 150px;
     line-height: 0.95;
     font-weight: 700;

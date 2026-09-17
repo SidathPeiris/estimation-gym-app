@@ -959,7 +959,7 @@
   }
 
   function renderPractice() {
-    setText(el["practice-chev"], practiceOpen ? "▾" : "▸")
+    el["practice-chev"].dataset.open = practiceOpen ? "true" : "false"
     el["practice-toggle"].setAttribute("aria-expanded", String(practiceOpen))
     show(el["practice-body"], practiceOpen)
     if (!practiceOpen) return
@@ -1149,11 +1149,11 @@
     renderBuild()
     renderRemind()
 
-    setText(el["suggest-chev"], suggestOpen ? "▾" : "▸")
+    el["suggest-chev"].dataset.open = suggestOpen ? "true" : "false"
     el["suggest-toggle"].setAttribute("aria-expanded", String(suggestOpen))
     show(el["suggest-body"], suggestOpen)
 
-    setText(el["howto-chev"], howToOpen ? "▾" : "▸")
+    el["howto-chev"].dataset.open = howToOpen ? "true" : "false"
     el["howto-toggle"].setAttribute("aria-expanded", String(howToOpen))
     show(el["howto-body"], howToOpen)
 
@@ -1162,7 +1162,7 @@
       ? "1 day"
       : vm.history.total + " days")
     renderHistory(vm.history)
-    setText(el["history-chev"], historyOpen ? "▾" : "▸")
+    el["history-chev"].dataset.open = historyOpen ? "true" : "false"
     el["history-toggle"].setAttribute("aria-expanded", String(historyOpen))
     show(el["history-body"], historyOpen)
 
@@ -1175,7 +1175,7 @@
     renderArchetypes(vm.archetypes)
     renderPractice()
 
-    setText(el.chev, statsOpen ? "▾" : "▸")
+    el.chev.dataset.open = statsOpen ? "true" : "false"
     el["stats-toggle"].setAttribute("aria-expanded", String(statsOpen))
     show(el["stats-body"], statsOpen)
   }

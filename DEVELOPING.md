@@ -29,6 +29,8 @@ core/            # vendored from the plugin repo - do not edit here
 presenter.js     # pure view-model logic, no DOM
 storage.js       # persistence adapter
 app.js           # DOM wiring
+app.css          # design tokens, then one section per component
+fonts/           # the three brand faces, self-hosted - see fonts/README.md
 scripts/
   serve.mjs        local dev server
   sync-core.mjs    re-copy core/ from the plugin repo, then run the tests
@@ -311,12 +313,47 @@ A pile at 2-3 is the game working as intended. A pile at 6 or more is an input
 problem wearing a difficulty costume, and worth fixing in the client rather
 than in the question bank.
 
+## Design tokens and type
+
+`app.css` opens with the token block from the Estimation Gym Design System -
+the colour ramp, the semantic aliases, type, spacing, radii, elevation and
+motion - and every rule below it reads that layer. There are no raw hex values
+and no per-section colour constants, so a colour changes in one place.
+
+Two things about it are easy to get wrong:
+
+- **The light theme repeats the whole alias layer, not just the base ramp.** A
+  custom property is substituted where it is *declared*, so `--surface-page:
+  var(--ink-900)` on `:root` computes to the literal dark hex and inherits down
+  as that literal. Redefining `--ink-900` inside the light block never reaches
+  it. Add an alias to `:root` and it has to be added to the light block too, or
+  it silently stays dark.
+- **`install/index.html` carries its own copy of the token block.** It does not
+  link `app.css`, deliberately - that file is full of styles that only make
+  sense inside the puzzle. The two blocks have to move together.
+
+The three faces - Bricolage Grotesque for display, Schibsted Grotesk for prose,
+JetBrains Mono for anything numeric - are **self-hosted in `fonts/`** rather
+than fetched from a CDN. That is not a preference: `_headers` sets
+`font-src 'self'` and `style-src 'self'`, so a Google Fonts link is refused
+outright on the deployed site while working perfectly in local development.
+
+**Adding or changing a font means touching three files**: the `@font-face`
+rules at the top of `app.css`, the copy of them in `install/index.html`, and
+the `ASSETS` precache list in `sw.js`. Miss the last one and the face is simply
+absent offline. `fonts/README.md` has the refresh procedure.
+
 ## Brand assets
 
 `tools/banner.html` is the source for the YouTube channel banner, rendered
 with headless Chrome rather than hand-drawn so the wordmark uses a real
 typeface. The render command is in the file. The same convention as the
 plugin repo's `tools/preview.html`.
+
+All three tools under `tools/` pull the brand faces out of `fonts/` with
+`font-display: block`, so a headless screenshot waits for the real type rather
+than capturing the fallback. Render them from the repository root, or the
+relative `../fonts/` paths will not resolve.
 
 Only the source is committed. The PNG is half a megabyte, nothing in the app
 serves it, and this file reproduces it byte for byte.

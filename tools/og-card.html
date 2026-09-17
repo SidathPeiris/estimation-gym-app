@@ -1,9 +1,15 @@
 <style>
+  /* The brand faces, from the repo rather than a CDN so a render is
+     reproducible offline and always uses the shipped type. font-display:
+     block, not swap: a headless screenshot must never capture the fallback. */
+  @font-face{font-family:"Bricolage Grotesque";font-style:normal;font-weight:400 800;font-display:block;src:url("../fonts/bricolage-grotesque-latin.woff2") format("woff2")}
+  @font-face{font-family:"Schibsted Grotesk";font-style:normal;font-weight:400 700;font-display:block;src:url("../fonts/schibsted-grotesk-latin.woff2") format("woff2")}
+  @font-face{font-family:"JetBrains Mono";font-style:normal;font-weight:400 700;font-display:block;src:url("../fonts/jetbrains-mono-latin.woff2") format("woff2")}
   * { margin:0; padding:0; box-sizing:border-box }
   html, body { width:1200px; height:630px; overflow:hidden }
   body {
     background:#1a1b26; display:grid; place-items:center;
-    font-family:"Segoe UI Variable Display","Segoe UI",system-ui,sans-serif;
+    font-family:"Schibsted Grotesk","Segoe UI",system-ui,sans-serif;
     color:#c0caf5; position:relative;
   }
   .wash {
@@ -19,7 +25,7 @@
   .r-outer { width:150px; height:150px; border:13px solid #414868 }
   .r-mid   { width:100px; height:100px; border:13px solid #5872ae }
   .dot     { width:40px;  height:40px;  background:#7aa2f7 }
-  h1 { font-size:76px; line-height:1; font-weight:700; letter-spacing:-2px }
+  h1 {font-family:"Bricolage Grotesque","Segoe UI Variable Display",system-ui,sans-serif; font-size:76px; line-height:1; font-weight:700; letter-spacing:-2px }
   h1 span { color:#7aa2f7 }
   p { margin-top:26px; font-size:31px; font-weight:400; color:#8d96b8; line-height:1.4 }
   .foot { margin-top:30px; font-size:23px; color:#565f89 }
