@@ -5,17 +5,16 @@
 # in step by hand, because both hosts are live at once and drifting apart would
 # quietly re-expose something.
 #
-# NOTHING ENFORCES THAT. This block used to claim `pages.test.js` held the two
-# lists together and that `version.test.js` checked the precache list against
-# both; neither is true - there is no pages.test.js, and version.test.js reads
-# neither file. It checks the version format, pins the cache name to
-# package.json, and rejects redirecting aliases in the precache list, and that
-# is all. Corrected rather than left standing, because a comment promising a
-# guard that does not exist is worse than no comment.
-#
-# So the two rules below are discipline, not tests:
+# `pages.test.js` enforces both rules:
 #   - nothing the app loads at runtime may appear in either list
 #   - anything added to one list belongs in the other
+#
+# It did not exist until recently, though this block claimed it did - along
+# with a claim that `version.test.js` checked the precache list against both
+# files, which it does not. The comment had been believed long enough that
+# nobody wrote either guard. When the test was finally written it immediately
+# found two files published by one host and hidden by the other: `.gitignore`
+# was a 200 from Workers, and `wrangler.jsonc` a 200 from Pages.
 #
 # TWO WRANGLER CONFIGS NOW LIVE HERE: wrangler.jsonc at the root for the static
 # site, and worker/wrangler.toml for the distribution Worker. A bare
@@ -52,6 +51,9 @@ wrangler.jsonc
 _config.yml
 .assetsignore
 .github/
+# Served as 200 by Workers until pages.test.js caught it. Jekyll hides dotfiles
+# without being told, so it was only ever exposed on this host.
+.gitignore
 
 # The design system and the agent tooling. `assets.directory` in wrangler.jsonc
 # is the repository root, so anything committed and not listed here is uploaded

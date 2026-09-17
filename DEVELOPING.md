@@ -388,6 +388,26 @@ request still being refused afterwards.
 The Worker command names its config explicitly, so it cannot pick up the wrong
 one. The site needs no command at all.
 
+### What each host publishes
+
+Two hosts serve this repository at once and they decide differently. Workers
+uploads everything under the repository root except what `.assetsignore` lists.
+Pages publishes everything except what `_config.yml` lists — plus dotfiles and
+top-level `_` entries, which Jekyll hides on its own without being told.
+
+So the two lists have to say the same thing, and **`pages.test.js` is what
+holds them together.** It also checks that nothing in the service worker's
+precache list is excluded from either host, which is the expensive failure:
+`cache.addAll` rejects the whole batch on one missing file, the worker never
+activates, and the app stops being installable while the page carries on
+working — so there is no visible symptom.
+
+Both files claimed for a long time that this test existed when it did not.
+Writing it found two files published by one host and hidden by the other.
+`_headers` is the one deliberate exception: Cloudflare reads it as
+configuration and never serves it, and Jekyll hides it for its underscore, so
+it is absent from both while appearing in neither list.
+
 ## Versioning
 
 `major.minor.patch`, declared once in `package.json`:

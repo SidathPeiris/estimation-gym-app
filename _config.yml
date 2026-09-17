@@ -31,6 +31,11 @@ exclude:
   - markup.test.js
   - core/Model.test.js
   - core/questions.test.js
+  - pages.test.js
+
+  # Served as 200 by Pages until pages.test.js caught it. Workers already
+  # excluded it; Jekyll has no reason to know a .jsonc is deploy config.
+  - wrangler.jsonc
 
   # Build and maintenance tooling
   - scripts/
