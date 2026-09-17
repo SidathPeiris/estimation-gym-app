@@ -5,24 +5,39 @@ Everything here is for working on the app itself. Players need none of it — se
 
 ## Relationship to the Omarchy plugin
 
-The [plugin repo](https://github.com/SidathPeiris/estimation-gym-omarchy) is the
-**source of truth** for scoring and the question bank. `core/` is copied from it
-verbatim and is never edited here.
+**This repo is the source of truth** for scoring and the question bank. `core/`
+is edited here, and the [plugin
+repo](https://github.com/SidathPeiris/estimation-gym-omarchy) consumes it.
 
-| | Widget (Omarchy) | App (this repo) |
+That is the opposite of how it started, and the change was overdue rather than
+planned. The plugin was nominally authoritative and `core/` was "never edited
+here" — but commit `8d1e3f0` added a fifty-line test to `core/Model.test.js` in
+this repo and the plugin never received it. The app had been ahead of its own
+source of truth, and nothing caught it, because a copied-file convention has no
+way to notice a copy being edited. The app is where the work happens, so the
+app is now where the files live.
+
+| | App (this repo) | Widget (Omarchy) |
 | --- | --- | --- |
-| Scoring, streaks, day selection | `Model.js` | **same file**, vendored into `core/` |
-| Question bank | `content/questions.js` | **same file**, vendored into `core/` |
-| UI | `Widget.qml` (Quickshell) | `index.html` + `app.js` |
-| Storage | `~/.local/state/estimation-gym/state.json` | `localStorage` |
+| Scoring, streaks, day selection | `core/Model.js` — **edit here** | **same file**, synced to `Model.js` |
+| Question bank | `core/questions.js` — **edit here** | **same file**, synced to `content/questions.js` |
+| UI | `index.html` + `app.js` | `Widget.qml` (Quickshell) |
+| Storage | `localStorage` | `~/.local/state/estimation-gym/state.json` |
 
 The stored JSON shape is identical to the widget's `state.json`, so a history
 blob can be moved across by hand.
 
+What has **not** changed is the reason the two share a Model at all: a score
+has to mean the same thing in a shell bar as it does in the browser, and both
+surfaces have to describe a result in the same words. `presenter.js` is written
+against that constraint and so is the wording in `Model.js`. Being the source
+of truth is permission to edit those files here first — not permission to make
+the widget say something different.
+
 ## Layout
 
 ```
-core/            # vendored from the plugin repo - do not edit here
+core/            # the shared logic layer - edit here, push to the plugin
   Model.js         scoring, streaks, day selection, stats
   Model.test.js
   questions.js
@@ -33,7 +48,7 @@ app.css          # design tokens, then one section per component
 fonts/           # the three brand faces, self-hosted - see fonts/README.md
 scripts/
   serve.mjs        local dev server
-  sync-core.mjs    re-copy core/ from the plugin repo, then run the tests
+  sync-core.mjs    push core/ out to the plugin repo, then run both test suites
 ```
 
 `presenter.js` exists so the "what goes on screen" decisions are testable and
@@ -505,14 +520,26 @@ Two consequences worth knowing:
 
 ## Updating the question bank
 
-Edit questions in the **plugin repo**, then:
+Edit `core/questions.js` **here**, commit it, then push it out to the widget:
 
 ```bash
 npm run sync-core ../estimation-gym-omarchy
 ```
 
-That re-copies `Model.js`, `Model.test.js` and `questions.js`, reports the new
-bank size, and runs every test before it will leave the tree changed.
+That runs this repo's tests first and refuses to propagate a source that does
+not pass, copies `Model.js`, `Model.test.js`, `questions.js` and
+`questions.test.js` into the plugin's layout, reports the bank size and how
+many files actually changed, then runs the plugin's own suites against the new
+files. Commit the result in that repo.
+
+Two things it will refuse to do. It will not overwrite a plugin working tree
+with uncommitted changes — the direction of this script reversed, so anyone
+running it from muscle memory would otherwise push over widget edits they meant
+to keep. And it will not copy anything if the app's tests fail, because the
+whole point of the shared Model is that both surfaces agree.
+
+Append questions to the **end** of the bank, never insert. The bank's order is
+the calendar; see "The daily schedule is the bank's own order" below.
 
 ## Testing offline behaviour
 

@@ -127,7 +127,8 @@ if (command === "show" || command === "accept") {
   if (command === "accept") {
     query(`UPDATE suggestions SET status = 'accepted' WHERE id = '${id}'`);
     console.log("Marked accepted. Nothing is published yet - append this to the END of");
-    console.log("estimation-gym-omarchy/content/questions.js, after checking the answer:\n");
+    console.log("core/questions.js in this repo, after checking the answer, then run");
+    console.log("`npm run sync-core` to push it out to the widget:\n");
     console.log(JSON.stringify({
       id: kebab(row.prompt) || "rename-me",
       prompt: safe(row.prompt),

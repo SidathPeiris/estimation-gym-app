@@ -140,7 +140,7 @@ off unless a collection endpoint is configured.
 ## Also for the Omarchy desktop bar
 
 The same puzzle runs as a widget in the [Omarchy](https://omarchy.org) shell
-bar, which is where the question bank is maintained:
+bar, built from the same scoring logic and the same question bank as this app:
 
 **<https://github.com/SidathPeiris/estimation-gym-omarchy>**
 
@@ -160,7 +160,7 @@ You are free to use, study, share and modify this. If you run a modified
 version as a service that other people can use, the AGPL requires you to offer
 them its source too.
 
-`core/` is vendored from the [Omarchy plugin
+`core/` is maintained here and shared with the [Omarchy plugin
 repo](https://github.com/SidathPeiris/estimation-gym-omarchy), which is under
 the same licence. Both halves of the project are AGPL-3.0-or-later, so there is
 nothing to reconcile between them.
