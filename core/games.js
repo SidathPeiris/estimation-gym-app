@@ -31,6 +31,14 @@ var ENGINES = {
   }
 }
 
+// Every game names an `icon`. It is a name, not a drawing - the same reason
+// this file declares `bankGlobal` rather than the bank. The drawings are CSS
+// masks in app.css (`.icon-<name>`), following the chevron's precedent: a mask
+// takes currentColor, so one rule themes an icon for light, dark and the muted
+// coming-soon state without a second copy. games.test.js pins each name to a
+// rule that actually exists, because a missing one renders as a blank square
+// rather than as an error.
+
 // Fermi Questions' schedule origin, repeated here as a literal so this file
 // stays dependency-free. games.test.js pins it to Model.SCHEDULE_ORIGIN, the
 // same way sw.test.js pins the service worker's copy - duplicated constants
@@ -44,6 +52,9 @@ var GAMES = [
     tagline: "A real-world quantity to estimate. Scored on how close you get in powers of ten.",
     status: "live",
     engine: "numeric-log",
+
+    // A brain, because the whole game is the reasoning rather than the recall.
+    icon: "brain",
 
     // The legacy unnamespaced key, kept forever and on purpose.
     //
@@ -85,6 +96,7 @@ var GAMES = [
     name: "World Records",
     tagline: "The fastest, the furthest, the most. Estimate the record.",
     status: "coming-soon",
+    icon: "trophy",
     // Known already: it runs on the same engine as Fermi Questions. Its bank,
     // name, streak and schedule are its own, which is all a player sees.
     engine: "numeric-log"
@@ -93,13 +105,15 @@ var GAMES = [
     id: "dates",
     name: "Historical Dates",
     tagline: "When did it happen? Scored on how close you get.",
-    status: "coming-soon"
+    status: "coming-soon",
+    icon: "landmark"
   },
   {
     id: "crossword",
     name: "Crossword Clues",
     tagline: "One word, three clues. The fewer you need, the better you score.",
-    status: "coming-soon"
+    status: "coming-soon",
+    icon: "grid"
   }
 ]
 

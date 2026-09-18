@@ -337,6 +337,10 @@ function homeView(Model, games, statesById, today) {
     var card = {
       id: game.id,
       name: game.name,
+      // The name of a drawing, not a drawing. The renderer turns it into a
+      // class and app.css turns that into a mask - so this stays a view model
+      // of words and identifiers, with no markup in it.
+      icon: game.icon || null,
       tagline: game.tagline,
       playable: game.status === "live",
       status: game.status === "live" ? null : "Coming soon"

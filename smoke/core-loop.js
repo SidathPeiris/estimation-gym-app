@@ -67,18 +67,36 @@ if (!els.prompt.textContent || els.prompt.textContent === "Loading…") throw ne
 console.log("prompt:        " + els.prompt.textContent.slice(0, 70));
 console.log("date:          " + els.puzzle.textContent);
 if (els["hint-toggle"].hidden) throw new Error("hint should be offered before answering");
+if (!els["hint-confirm"].hidden) throw new Error("the confirmation should not be up until the hint is asked for");
 if (!els.strategy.hidden) throw new Error("guidance should be hidden until the hint is taken");
 if (!els.result.hidden) throw new Error("result should be hidden before answering");
 console.log("hint offered:  yes");
 
-// 2. Take the hint.
+// 2. Ask for the hint. Hint sits one row under the answer field, where a
+//    thumb already is, and taking it halves the day irreversibly - so the tap
+//    asks rather than acts. Backing out has to cost nothing at all: the
+//    guidance stays shut, the offer comes back, and the day is untouched.
 fire("hint-toggle", "click");
+if (els["hint-confirm"].hidden) throw new Error("asking for a hint should raise the confirmation");
+if (!els.strategy.hidden) throw new Error("asking is not taking - guidance must stay shut");
+if (!els["hint-toggle"].hidden) throw new Error("the offer and its confirmation must not both be on screen");
+
+fire("hint-confirm-no", "click");
+if (!els["hint-confirm"].hidden) throw new Error("declining should dismiss the confirmation");
+if (els["hint-toggle"].hidden) throw new Error("declining should put the offer back");
+if (!els.strategy.hidden) throw new Error("declining must not reveal the guidance");
+console.log("mis-tap:       asked, declined, day untouched");
+
+// 3. Ask again and confirm. Only now is the hint taken.
+fire("hint-toggle", "click");
+fire("hint-confirm-yes", "click");
 if (els.strategy.hidden) throw new Error("guidance did not appear");
+if (!els["hint-confirm"].hidden) throw new Error("the confirmation should close once answered");
 if (!els["hint-toggle"].hidden) throw new Error("offer should withdraw once taken");
 console.log("approach:      " + els["strategy-label"].textContent);
 console.log("guidance:      " + els["strategy-guidance"].textContent.slice(0, 68) + "...");
 
-// 3. Answer exactly right; a hinted Bullseye must score 50, not 100.
+// 4. Answer exactly right; a hinted Bullseye must score 50, not 100.
 els["guess-input"].value = String(
   vm.runInContext("ModelAPI.questionForDay(ModelAPI.dayIndex(new Date()), QUESTIONS).answerValue", sandbox)
 );
@@ -92,4 +110,4 @@ console.log("after answer:  " + els.approach.textContent);
 console.log("stats footer:  " + els["stats-footer"].textContent);
 if (!els["stats-footer"].textContent.includes("with a hint")) throw new Error("stats should note the hinted day");
 
-console.log("\nsmoke passed: hint offered -> taken -> halved score -> recorded");
+console.log("\nsmoke passed: hint offered -> declined -> taken -> halved score -> recorded");

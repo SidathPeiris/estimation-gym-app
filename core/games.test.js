@@ -106,6 +106,34 @@ for (const g of games) {
   )
 }
 
+// --- every icon a game names is actually drawn ----------------------------
+//
+// The registry names an icon; app.css draws it as a mask under `.icon-<name>`.
+// A name with no rule behind it is not an error anywhere - the element renders
+// as an empty 22px square, on the one screen every player starts from. So the
+// two halves are pinned together here, the same way the engine names are.
+{
+  const css = readFileSync(path.join(root, "app.css"), "utf8")
+  const drawn = new Set(
+    [...css.matchAll(/^\.icon-([a-z0-9-]+)\s*\{/gm)].map((m) => m[1])
+  )
+  assert.ok(drawn.size, "app.css declares no .icon-* rules at all")
+
+  for (const g of games) {
+    assert.ok(
+      g.icon && g.icon.trim(),
+      `game "${g.id}" names no icon, so its home card would sit unlabelled ` +
+      `beside three that are not`
+    )
+    assert.ok(
+      drawn.has(g.icon),
+      `game "${g.id}" names icon "${g.icon}", but app.css has no ` +
+      `.icon-${g.icon} rule - it would render as a blank square rather than ` +
+      `as anything that looks broken`
+    )
+  }
+}
+
 // --- the duplicated constants, pinned to their sources --------------------
 //
 // games.js is deliberately dependency-free, so it repeats three values that

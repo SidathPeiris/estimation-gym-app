@@ -23,7 +23,8 @@
              "error", "result", "band", "points", "guess-line", "actual-line",
              "decades-line", "decades-ruler", "decades-fill", "share", "hint", "source",
              "dist", "dist-summary", "dist-bars", "dist-note",
-             "hint-toggle", "strategy", "strategy-label", "strategy-guidance", "approach",
+             "hint-toggle", "hint-confirm", "hint-confirm-yes", "hint-confirm-no",
+             "strategy", "strategy-label", "strategy-guidance", "approach",
              "build", "remind", "remind-state", "remind-note",
              "howto", "howto-toggle", "howto-chev", "howto-body",
              "moved", "moved-go", "moved-note", "dist-percentile",
@@ -71,6 +72,13 @@
   var historyOpen = false
   var historyLimit = HISTORY_PAGE   // 0 means show every day played
   var hintShown = false
+
+  // The hint has been asked for but not yet taken. Kept separate from
+  // hintShown because that flag is the one the score reads: until this is
+  // confirmed, nothing about the day has changed and backing out costs
+  // nothing. Not persisted, for the same reason hintShown is not - an
+  // unanswered confirmation is a state of the screen, not of the day.
+  var hintConfirming = false
 
   // --- Practice ------------------------------------------------------------
   //
@@ -743,6 +751,7 @@
     today = now
     question = Model.questionForDay(today, QUESTIONS)
     hintShown = false
+    hintConfirming = false
     return true
   }
 
@@ -1200,15 +1209,31 @@
         box.setAttribute("aria-disabled", "true")
       }
 
+      // The icon and the name are one row, so the name of the game is what the
+      // eye lands on and the icon is what tells the four cards apart at a
+      // glance. Drawn as a mask rather than as an <svg>, like the chevrons: the
+      // mask takes currentColor, so the coming-soon cards' muted name colour
+      // mutes their icon too with no second rule.
+      var heading = document.createElement("p")
+      heading.className = "home-card-heading"
+
+      if (card.icon) {
+        var icon = document.createElement("span")
+        icon.className = "home-card-icon icon-" + card.icon
+        icon.setAttribute("aria-hidden", "true")
+        heading.appendChild(icon)
+      }
+
       var name = document.createElement("span")
       name.className = "home-card-name"
       name.textContent = card.name
+      heading.appendChild(name)
 
       var tagline = document.createElement("p")
       tagline.className = "home-card-tagline"
       tagline.textContent = card.tagline
 
-      box.append(name, tagline)
+      box.append(heading, tagline)
 
       if (card.playable) {
         var meta = document.createElement("p")
@@ -1280,7 +1305,12 @@
       drawRuler(el["decades-ruler"], el["decades-fill"], vm.result.decades)
     }
 
-    show(el["hint-toggle"], vm.hintAvailable)
+    // The offer and its confirmation are the same control in two states, so
+    // exactly one of them is ever on screen. vm.hintAvailable still governs
+    // both: confirming does not take the hint, so the day can still be
+    // answered, and answering it withdraws the question along with the offer.
+    show(el["hint-toggle"], vm.hintAvailable && !hintConfirming)
+    show(el["hint-confirm"], vm.hintAvailable && hintConfirming)
     show(el.strategy, vm.hintRevealed)
     if (vm.hintRevealed) {
       setText(el["strategy-label"], vm.strategyLabel)
@@ -1392,10 +1422,27 @@
     else enableReminder()
   })
 
+  // Asking is free. Nothing about the day changes until Yes.
   el["hint-toggle"].addEventListener("click", function () {
+    hintConfirming = true
+    render()
+    // Focus lands on "Not yet", never on "Yes". A confirmation that puts the
+    // cursor on the costly option, one row above where the thumb already is,
+    // reintroduces the mis-tap it exists to prevent.
+    el["hint-confirm-no"].focus()
+  })
+
+  el["hint-confirm-yes"].addEventListener("click", function () {
+    hintConfirming = false
     hintShown = true
     render()
     el["guess-input"].focus()
+  })
+
+  el["hint-confirm-no"].addEventListener("click", function () {
+    hintConfirming = false
+    render()
+    el["hint-toggle"].focus()
   })
 
   function flash(button, message) {

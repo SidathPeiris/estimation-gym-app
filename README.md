@@ -63,6 +63,10 @@ flow times lifetime", "people times per-person rate", "mass to moles to
 molecules" — without saying anything about the answer, so you still do the
 estimating.
 
+It asks before it opens. The control sits one row under the answer field,
+where a thumb already is, and taking it cannot be undone for that day — so the
+tap raises a confirmation rather than spending the points.
+
 Taking it:
 
 - **halves that day's points**, and the result is marked `· hint`;

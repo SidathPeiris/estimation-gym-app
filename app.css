@@ -628,12 +628,55 @@ a:hover { color: var(--text-link-hover) }
 .home-card:hover { border-color: var(--border-strong) }
 .home-card:active { transform: var(--press-shift) }
 
+/* The icon and the name are one row. Baseline alignment would drop the icon
+   below the display face's cap height, so they are centred on each other and
+   the icon is sized from the name rather than fixed in pixels. */
+.home-card-heading {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
 .home-card-name {
   font-family: var(--font-display);
   font-size: var(--text-xl);
   font-weight: var(--weight-semibold);
   letter-spacing: var(--track-tight);
   color: var(--text-display);
+}
+
+/* Drawn as a mask, like the chevrons, for the reason given there: app.js
+   writes card contents with textContent and replaceChildren, and neither can
+   wipe a background. It also means the shape and its colour are separate - the
+   drawing is declared once per game and recoloured by state, rather than an
+   <svg> per card that app.js would have to build and theme.
+
+   Icons are lucide (ISC). `grid` is lucide's grid-3x3 - the one not in the
+   design system's own icon set, added because a crossword is a grid and
+   nothing in that set says so. */
+.home-card-icon {
+  display: inline-block;
+  width: 22px;
+  height: 22px;
+  flex: 0 0 auto;
+  color: var(--mode, var(--mode-daily));
+  background-color: currentColor;
+  -webkit-mask: var(--icon) center / contain no-repeat;
+  mask: var(--icon) center / contain no-repeat;
+}
+.home-card.is-soon .home-card-icon { color: var(--text-faint) }
+
+.icon-brain {
+  --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 18V5'/%3E%3Cpath d='M15 13a4.17 4.17 0 0 1-3-4 4.17 4.17 0 0 1-3 4'/%3E%3Cpath d='M17.598 6.5A3 3 0 1 0 12 5a3 3 0 1 0-5.598 1.5'/%3E%3Cpath d='M17.997 5.125a4 4 0 0 1 2.526 5.77'/%3E%3Cpath d='M18 18a4 4 0 0 0 2-7.464'/%3E%3Cpath d='M19.967 17.483A4 4 0 1 1 12 18a4 4 0 1 1-7.967-.517'/%3E%3Cpath d='M6 18a4 4 0 0 1-2-7.464'/%3E%3Cpath d='M6.003 5.125a4 4 0 0 0-2.526 5.77'/%3E%3C/svg%3E");
+}
+.icon-trophy {
+  --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10 14.66V17a1 1 0 0 1-1 1 2 2 0 0 0-2 2v2'/%3E%3Cpath d='M14 14.66V17a1 1 0 0 0 1 1 2 2 0 0 1 2 2v2'/%3E%3Cpath d='M17.916 10H19.5A2.5 2.5 0 0 0 22 7.5V5a1 1 0 0 0-1-1h-3'/%3E%3Cpath d='M4 22h16'/%3E%3Cpath d='M6 9a6 6 0 0 0 12 0V3a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1z'/%3E%3Cpath d='M6.084 10H4.5A2.5 2.5 0 0 1 2 7.5V5a1 1 0 0 1 1-1h3'/%3E%3C/svg%3E");
+}
+.icon-landmark {
+  --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10 18v-7'/%3E%3Cpath d='M11.119 2.205a2 2 0 0 1 1.762 0l7.84 3.846A.5.5 0 0 1 20.5 7h-17a.5.5 0 0 1-.22-.949z'/%3E%3Cpath d='M14 18v-7'/%3E%3Cpath d='M18 18v-7'/%3E%3Cpath d='M3 22h18'/%3E%3Cpath d='M6 18v-7'/%3E%3C/svg%3E");
+}
+.icon-grid {
+  --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='18' height='18' x='3' y='3' rx='2'/%3E%3Cpath d='M3 9h18'/%3E%3Cpath d='M3 15h18'/%3E%3Cpath d='M9 3v18'/%3E%3Cpath d='M15 3v18'/%3E%3C/svg%3E");
 }
 
 .home-card-tagline {
@@ -1003,28 +1046,34 @@ a:hover { color: var(--text-link-hover) }
 }
 .source { font-style: italic }
 
-/* Button, soft variant, in the practice mode's tone rather than the accent.
-   It sits directly under Share and carries the same weight on purpose - both
-   are "what now", and the colour is what says which mode each one leads to.
-   Practice earns no points and touches no stats, so it must never be mistaken
-   for a second daily. */
+/* A capsule in the question card's top-right corner, sharing the eyebrow's
+   row and set in the eyebrow's type so the two read as one line: the mode on
+   the left, what to do next on the right. It is in the practice mode's tone
+   rather than the accent, because practice earns no points and touches no
+   stats and must never be mistaken for a second daily.
+
+   Absolutely positioned rather than placed in a flex row with the eyebrow,
+   because it is hidden for most of a session and a flex row would have to be
+   built and torn down around it. The eyebrow reserves the width instead, and
+   only while the capsule is actually there. */
 .practice-offer {
-  display: flex;
+  position: absolute;
+  top: var(--card-pad);
+  right: var(--card-pad);
+  display: inline-flex;
   align-items: center;
-  justify-content: space-between;
-  gap: var(--space-5);
-  width: 100%;
-  margin-top: var(--space-4);
-  padding: 13px 20px;
-  border-radius: var(--radius-lg);
+  gap: var(--space-2);
+  padding: 5px 11px;
+  border-radius: var(--radius-pill);
   border: 1px solid color-mix(in srgb, var(--mode-practice) 55%, transparent);
   background: color-mix(in srgb, var(--mode-practice) 16%, transparent);
   color: var(--mode-practice);
-  font: var(--type-label);
-  font-size: var(--text-md);
-  font-weight: var(--weight-bold);
+  font: var(--type-eyebrow);
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
   cursor: pointer;
-  text-align: left;
   transition: var(--transition-control);
 }
 .practice-offer:hover {
@@ -1032,31 +1081,27 @@ a:hover { color: var(--text-link-hover) }
 }
 .practice-offer:active { transform: var(--press-shift) }
 
-.practice-offer-label {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-3);
-  min-width: 0;
+/* The capsule is around 26px tall, which is a small target for a thumb. This
+   extends what is pressable to roughly 42px without changing what is drawn.
+   Inside the card's padding, so the card's overflow never clips it. */
+.practice-offer::after {
+  content: "";
+  position: absolute;
+  inset: -8px;
 }
-.practice-offer-label svg {
-  width: 17px;
-  height: 17px;
+
+.practice-offer svg {
+  width: 13px;
+  height: 13px;
   flex: 0 0 auto;
   stroke: currentColor;
 }
 
-/* The same lowercase, no-full-stop aside the disclosure summaries use. */
-.practice-offer-note {
-  font-weight: var(--weight-regular);
-  font-size: var(--text-sm);
-  color: var(--text-muted);
-  white-space: nowrap;
-}
-
-/* Under about 380px the note and the label stop fitting on one line, and the
-   note is the part that can go - the label already says what the button does. */
-@media (max-width: 380px) {
-  .practice-offer-note { display: none }
+/* Only while the capsule is on screen. Fermi Questions is short enough that it
+   never needed the room, but a longer game name would run under the capsule
+   the day it existed, and that failure would be silent. */
+.qcard:has(> .practice-offer:not([hidden])) .qcard-mode {
+  padding-right: 96px;
 }
 
 /* ---------- the disclosure run ---------- */
@@ -1228,7 +1273,7 @@ a:hover { color: var(--text-link-hover) }
 }
 
 /* Button, quiet variant: bordered, never the primary action. */
-.export, .confess-actions button {
+.export, .confess-actions button, .hint-confirm-actions button {
   margin-top: var(--space-7);
   padding: 9px 14px;
   border-radius: var(--radius-md);
@@ -1241,13 +1286,65 @@ a:hover { color: var(--text-link-hover) }
   cursor: pointer;
   transition: var(--transition-control);
 }
-.export:hover, .confess-actions button:hover {
+.export:hover, .confess-actions button:hover, .hint-confirm-actions button:hover {
   color: var(--text-body);
   border-color: var(--border-strong);
 }
-.export:active, .confess-actions button:active { transform: var(--press-shift) }
+.export:active, .confess-actions button:active,
+.hint-confirm-actions button:active { transform: var(--press-shift) }
 
 /* --- hint offer and revealed guidance --- */
+/* Callout, in the warn tone. Not the accent: the accent is what the app uses
+   for things it is offering, and this is the app checking. Taking a hint is
+   the only irreversible thing on this card - the points are halved the moment
+   the guidance opens - so it gets the one colour the product reserves for a
+   cost, the same one the streak is written in. */
+.hint-confirm {
+  margin-top: var(--space-5);
+  padding: var(--space-6) var(--space-7);
+  border: 1px solid color-mix(in srgb, var(--status-warn) 45%, transparent);
+  border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--status-warn) 10%, transparent);
+  animation: eg-rise var(--dur-base) var(--ease-out) both;
+}
+
+.hint-confirm-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: var(--weight-bold);
+  font-size: var(--text-md);
+  letter-spacing: var(--track-display);
+  color: var(--status-warn);
+}
+
+.hint-confirm-body {
+  margin: var(--space-3) 0 0;
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
+  color: var(--text-body);
+}
+
+.hint-confirm-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin-top: var(--space-6);
+}
+.hint-confirm-actions button { margin-top: 0 }
+
+/* The costly option is marked, not made easy. The confession dialog does the
+   opposite with its Yes, and deliberately so - there, the honest answer is the
+   one worth making effortless. Here, Yes spends something. */
+.hint-confirm-actions .hint-confirm-yes {
+  border-color: color-mix(in srgb, var(--status-warn) 55%, transparent);
+  background: color-mix(in srgb, var(--status-warn) 16%, transparent);
+  color: var(--status-warn);
+}
+.hint-confirm-actions .hint-confirm-yes:hover {
+  color: var(--status-warn);
+  background: color-mix(in srgb, var(--status-warn) 22%, transparent);
+}
+
 .strategy-label {
   margin: 0;
   font: var(--type-label);
