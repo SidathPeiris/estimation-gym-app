@@ -106,7 +106,7 @@ var RECORDS = [
     "id": "records-deepest-ocean-descent",
     "prompt": "How many metres below sea level is the deepest a crewed vessel has descended?",
     "unit": "metres",
-    "answerValue": 10935,
+    "answerValue": 10925,
     "decompositionHint": "The deepest ocean trench is a little deeper than Everest is tall, and the record is essentially the bottom of it.",
     "strategy": "anchor-scale",
     "source": "Five Deeps Expedition bathymetric survey of the Challenger Deep",
@@ -156,11 +156,11 @@ var RECORDS = [
     "id": "records-longest-lightning-flash",
     "prompt": "How many kilometres long was the longest lightning flash ever recorded?",
     "unit": "kilometres",
-    "answerValue": 768,
+    "answerValue": 829,
     "decompositionHint": "It travelled horizontally through the top of a storm system, so the limit is the width of the storm rather than the height of a cloud.",
     "strategy": "anchor-scale",
-    "source": "World Meteorological Organization weather and climate extremes archive",
-    "asOf": 2020
+    "source": "World Meteorological Organization certified megaflash record, July 2025",
+    "asOf": 2025
   },
   {
     "id": "records-greatest-one-minute-rainfall",
@@ -946,11 +946,11 @@ var RECORDS = [
     "id": "records-largest-iceberg",
     "prompt": "How many square kilometres did the largest recorded iceberg cover?",
     "unit": "square kilometres",
-    "answerValue": 3900,
-    "decompositionHint": "A slab calved off an ice shelf rather than a floating mountain, so think of it as a flat island - roughly 70 km by 50.",
+    "answerValue": 11000,
+    "decompositionHint": "A slab calved off an ice shelf rather than a floating mountain, so think of it as a flat island - roughly 295 km by 37.",
     "strategy": "area-density",
-    "source": "United States National Ice Center tracking of iceberg A23a",
-    "asOf": 2025
+    "source": "United States National Ice Center tracking of iceberg B-15",
+    "asOf": 2000
   },
   {
     "id": "records-driest-place-rainfall",
@@ -959,7 +959,7 @@ var RECORDS = [
     "answerValue": 0.76,
     "decompositionHint": "Some weather stations there have never recorded rain at all. A dry English summer month is about 40 millimetres, so work down from there.",
     "strategy": "anchor-scale",
-    "source": "Chilean Meteorological Directorate records for the Atacama Desert",
+    "source": "Chilean Meteorological Directorate long-term records for Arica",
     "asOf": 2025
   },
   {
@@ -1036,11 +1036,11 @@ var RECORDS = [
     "id": "records-longest-lived-cyclone",
     "prompt": "How many days did the longest-lasting tropical cyclone survive?",
     "unit": "days",
-    "answerValue": 31,
-    "decompositionHint": "It crossed an entire ocean basin and back, staying over warm water the whole time. Most storms last about a week before land or cold water kills them.",
+    "answerValue": 36,
+    "decompositionHint": "It crossed an entire ocean basin, staying over warm water the whole time. Most storms last about a week before land or cold water kills them.",
     "strategy": "anchor-scale",
-    "source": "NOAA National Hurricane Center best track archive for Hurricane John",
-    "asOf": 1994
+    "source": "World Meteorological Organization certified duration extreme for Cyclone Freddy",
+    "asOf": 2023
   },
   {
     "id": "records-largest-volcanic-eruption",
@@ -1764,9 +1764,9 @@ var RECORDS = [
   },
   {
     "id": "records-largest-building-by-floor-area",
-    "prompt": "How many square metres of floor does the largest building by floor area have?",
+    "prompt": "How many square metres of floor space does the New Century Global Center have?",
     "unit": "square metres",
-    "answerValue": 1760000,
+    "answerValue": 1700000,
     "decompositionHint": "It holds shops, offices, hotels and an indoor beach under one roof. Compare it with a large shopping centre at maybe 150,000 square metres.",
     "strategy": "anchor-scale",
     "source": "Chengdu municipal records for the New Century Global Center",
@@ -1856,7 +1856,7 @@ var RECORDS = [
     "id": "records-busiest-airport",
     "prompt": "How many passengers a year pass through the busiest airport?",
     "unit": "passengers",
-    "answerValue": 104000000,
+    "answerValue": 108100000,
     "decompositionHint": "Divide by 365 to get daily passengers, then by a plausible aircraft load, and check the number of flights a day sounds physically possible.",
     "strategy": "divide-total",
     "source": "Airports Council International annual traffic rankings",
