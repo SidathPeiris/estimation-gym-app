@@ -110,9 +110,16 @@ for (const q of RECORDS) {
 // Covers ids only, deliberately. Fixing a wrong answer, a typo, a source or a
 // hint on a question that is already scheduled is fine and should stay fine -
 // none of that moves anything.
-const SCHEDULED_SPAN = 49
+// Extended from 49 to the whole bank once it reached a year's worth. Anyone
+// can work out what tomorrow's question is by reading this file, so every day
+// in here is promised, not just the ones already served.
+//
+// The 49 that were live before the extension are the first 49 entries and
+// their order is unchanged - which is what made the rest of the bank safe to
+// edit, cull and rewrite right up until this line was changed.
+const SCHEDULED_SPAN = 365
 const SCHEDULE_FINGERPRINT =
-  "20e4fb724388491691bb129313018cc10f74c185416ee71a907c2e2e9f5c1117"
+  "850121691a459f9b7e79c10c8e792ab856a678db821f00c9f011bbaf249abfe8"
 
 assert.ok(
   RECORDS.length >= SCHEDULED_SPAN,

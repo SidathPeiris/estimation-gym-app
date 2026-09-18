@@ -563,7 +563,7 @@ There are two banks, and one definition of what a valid question is:
 | | |
 | --- | --- |
 | `core/questions.js` | Fermi Questions. Live, 1000 days pinned by checksum. |
-| `games/records/questions.js` | World Records. Live since 18 Sep 2026, 49 days pinned by checksum. |
+| `games/records/questions.js` | World Records. Live since 18 Sep 2026, 365 days pinned by checksum. |
 | `tools/bank-check.js` | The schema both are checked against. Not a test — the thing the tests run. |
 
 The rules that differ between them are arguments rather than assumptions:
