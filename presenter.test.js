@@ -449,4 +449,66 @@ console.log("confession count  -> counted apart from the bands, silent at zero")
   assert.equal(P.percentileView({ enough: true, decades: { 1: 9 } }, NaN), null);
   console.log("missing pieces  -> each returns null rather than throwing");
 }
+// --- homeView: one card per game ---
+//
+// Every string on the home screen comes from here rather than from the
+// renderer. renderPractice is the cautionary tale: it re-derived the band, the
+// points label and the result lines inline instead of calling resultView, and
+// the two have drifted since. Duplicating DOM writes is fine; duplicating
+// wording is how two surfaces start describing the same event differently.
+{
+  const Games = require("./core/games.js")
+  const today = Model.dayIndex(new Date())
+  const all = Games.allGames()
+
+  // Never played: no streak line, and it does not read as a zero.
+  const cold = P.homeView(Model, all, {}, today)
+  assert.equal(cold.cards.length, all.length, "every game gets a card")
+
+  const fermiCold = cold.cards[0]
+  assert.equal(fermiCold.id, "fermi")
+  assert.equal(fermiCold.playable, true)
+  assert.equal(fermiCold.streakLabel, null, "a streak of zero is not worth a line")
+  assert.equal(fermiCold.played, false)
+  assert.equal(fermiCold.statusLabel, "Not played yet")
+
+  // Played today, mid-run.
+  let played = Model.recordAnswer(Model.emptyState(), today - 1, 100, 100)
+  played = Model.recordAnswer(played, today, 100, 100)
+  const warm = P.homeView(Model, all, { fermi: played }, today).cards[0]
+  assert.equal(warm.streakLabel, "Streak 2")
+  assert.equal(warm.played, true)
+  assert.equal(warm.statusLabel, "Played today")
+
+  // A broken run reads as no streak rather than "Streak 0".
+  const broken = Model.recordAnswer(Model.emptyState(), today, 1, 1e9)  // Off
+  assert.equal(
+    P.homeView(Model, all, { fermi: broken }, today).cards[0].streakLabel, null,
+    "a broken run offers the game, not the scoreboard"
+  )
+
+  // Coming-soon cards carry a name, a tagline and a status, and nothing that
+  // implies they can be played.
+  const soon = P.homeView(Model, all, {}, today).cards.filter((c) => !c.playable)
+  assert.equal(soon.length, 3, "three games are announced")
+  for (const card of soon) {
+    assert.ok(card.name && card.tagline, `${card.id} needs a name and a tagline`)
+    assert.equal(card.status, "Coming soon")
+    assert.equal(card.streakLabel, undefined, "an unbuilt game has no streak")
+    assert.equal(card.played, undefined)
+  }
+
+  // The names on the home screen must be the registry's, not a second copy.
+  for (const card of cold.cards) {
+    assert.equal(
+      card.name, Games.gameById(card.id).name,
+      `the home screen calls "${card.id}" something the registry does not`
+    )
+  }
+
+  console.log("homeView          -> " + cold.cards.length + " cards, " +
+    soon.length + " announced, wording from the registry")
+}
+
+
 console.log(`All presenter tests passed (${QUESTIONS.length} questions rendered).`)

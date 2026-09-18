@@ -44,7 +44,25 @@
 </head>
 <body>
 
-<main class="app">
+<!-- The home screen. Hidden until the router exists; ships inert so the markup
+     and the smoke harnesses' id map absorb it a release before anything
+     depends on it.
+
+     Screens are hidden, never unmounted. Every listener in app.js binds at
+     module scope to an element that is always in the document, so there is no
+     teardown to write and no orphaned handler to chase. -->
+<main class="app home" id="home" hidden>
+  <header class="hero">
+    <div class="hero-title">
+      <span class="mark" aria-hidden="true"><i class="m1"></i><i class="m2"></i><i class="m3"></i></span>
+      <h1>Estimation <span class="gym">Gym</span></h1>
+    </div>
+  </header>
+  <p class="home-intro" id="home-intro">One question a day, the same one for everyone.</p>
+  <ul class="home-list" id="home-list"></ul>
+</main>
+
+<main class="app" id="game-fermi">
 
   <div class="moved" id="moved" hidden>
     <p class="moved-title">

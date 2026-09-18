@@ -560,6 +560,110 @@ a:hover { color: var(--text-link-hover) }
   mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4'/%3E%3C/svg%3E") center / contain no-repeat;
 }
 
+/* ---------- home ---------- */
+/* One card per game. The live one is the whole tap target, so the choice is
+   made once rather than hunted for; the announced ones are genuinely inert
+   rather than disabled buttons that still take focus and do nothing. */
+.home-intro {
+  margin-top: var(--space-4);
+  font-size: var(--text-base);
+  color: var(--text-muted);
+}
+
+.home-list {
+  list-style: none;
+  margin-top: var(--space-10);
+  display: grid;
+  gap: var(--space-5);
+}
+
+/* The playable card reuses the question card's surface, so a game reads as the
+   same kind of object on both screens. */
+.home-card {
+  position: relative;
+  overflow: hidden;
+  display: block;
+  width: 100%;
+  padding: var(--card-pad);
+  background: var(--surface-card);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card);
+  text-align: left;
+  text-decoration: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  transition: var(--transition-control);
+  animation: eg-rise var(--dur-base) var(--ease-out) both;
+}
+.home-card::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--mode, var(--mode-daily));
+}
+.home-card:hover { border-color: var(--border-strong) }
+.home-card:active { transform: var(--press-shift) }
+
+.home-card-name {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--track-tight);
+  color: var(--text-display);
+}
+
+.home-card-tagline {
+  margin-top: var(--space-2);
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
+  color: var(--text-secondary);
+}
+
+.home-card-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+.home-card-streak {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--status-warn);
+}
+
+/* Announced, not built. Not a <button>, not focusable, and the status is real
+   text rather than a colour - a screen reader should say the name and that it
+   is coming soon. */
+.home-card.is-soon {
+  cursor: default;
+  background: transparent;
+  box-shadow: none;
+  border-style: dashed;
+}
+.home-card.is-soon::before { background: var(--border-default) }
+.home-card.is-soon .home-card-name { color: var(--text-muted) }
+.home-card.is-soon .home-card-tagline { color: var(--text-faint) }
+
+.home-card-soon {
+  display: inline-block;
+  margin-top: var(--space-6);
+  padding: 3px 10px;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-pill);
+  font: var(--type-eyebrow);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
 /* ---------- question card ---------- */
 /* QuestionCard: the hero of every screen. One question and the row you answer
    it in, on a hairline-bordered card with the mode's colour as a rule down the

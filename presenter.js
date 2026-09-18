@@ -319,6 +319,46 @@ function statsView(Model, stats) {
 
 // `hintShown` is the live UI flag for today, not persisted state: once the day
 // is answered the entry's own `assisted` flag is what counts.
+// The home screen: one card per game.
+//
+// Every string a player reads on that screen comes from here rather than from
+// the renderer. That rule exists because of renderPractice, which is the app's
+// only other second render path: it re-derived the band, the points label and
+// the result lines inline instead of calling resultView, and the two have since
+// drifted - the daily's points label comes from the presenter, practice's is a
+// hardcoded string. Duplicating DOM writes is fine. Duplicating wording is how
+// two surfaces start saying different things about the same event.
+//
+// `statesById` maps a game id to its loaded state, or leaves it out. A game
+// with no state has simply never been played, which is not an error and reads
+// as no streak rather than a zero.
+function homeView(Model, games, statesById, today) {
+  var cards = (games || []).map(function (game) {
+    var card = {
+      id: game.id,
+      name: game.name,
+      tagline: game.tagline,
+      playable: game.status === "live",
+      status: game.status === "live" ? null : "Coming soon"
+    }
+    if (!card.playable) return card
+
+    var state = (statesById && statesById[game.id]) || null
+    var streak = state && state.streak ? state.streak : 0
+    var played = !!(state && Model.hasAnsweredDay(state, today))
+
+    // A streak of zero is not worth a line. Someone who has never played, and
+    // someone whose run has just broken, both want the game rather than the
+    // scoreboard.
+    card.streakLabel = streak > 0 ? "Streak " + streak : null
+    card.played = played
+    card.statusLabel = played ? "Played today" : "Not played yet"
+    return card
+  })
+
+  return { cards: cards }
+}
+
 // The guide, shaped for rendering. Content comes from the Model so the widget
 // and the app teach identical rules.
 function howToPlayView(Model) {
@@ -476,6 +516,7 @@ if (typeof module !== "undefined") {
     confessionNote: confessionNote,
     archetypeView: archetypeView,
     howToPlayView: howToPlayView,
+    homeView: homeView,
     shareText: shareText,
     shareRun: shareRun,
     SHARE_WINDOW: SHARE_WINDOW,
