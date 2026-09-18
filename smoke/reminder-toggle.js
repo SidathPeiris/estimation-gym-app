@@ -48,7 +48,7 @@ function run({ permission = "granted", supported = true, store = {}, workerOk = 
     document: { hidden: false, addEventListener() {}, getElementById: (id) => els[id] || null, createElement: (t) => makeEl("<" + t + ">") },
     window: {
       localStorage: { getItem: (k) => (k in store ? store[k] : null), setItem: (k, v) => { store[k] = String(v) }, removeItem: (k) => { delete store[k] } },
-      location: { search: "", pathname: "/", reload() {} }, history: { replaceState() {} },
+      location: { hash: "#fermi", search: "", pathname: "/", reload() {} }, history: { replaceState() {} },
       navigator: {}, matchMedia: () => ({ matches: false }), addEventListener() {},
       caches: { keys: () => Promise.resolve(["estimation-gym-v25"]) }
     },
@@ -58,7 +58,7 @@ function run({ permission = "granted", supported = true, store = {}, workerOk = 
   sandbox.window.window = sandbox.window;
   sandbox.caches = sandbox.window.caches;
   vm.createContext(sandbox);
-  for (const f of ["core/Model.js", "core/questions.js", "storage.js", "presenter.js", "app.js"])
+  for (const f of ["core/Model.js", "core/games.js", "core/questions.js", "storage.js", "presenter.js", "app.js"])
     vm.runInContext(fs.readFileSync(root + f, "utf8"), sandbox, { filename: f });
 
   return {

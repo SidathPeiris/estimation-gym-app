@@ -56,7 +56,7 @@ function run({ store = {}, host = "estimationgym.app", hash = "", announce = nul
   sandbox.window.window = sandbox.window;
   sandbox.caches = sandbox.window.caches;
   vm.createContext(sandbox);
-  for (const f of ["core/Model.js", "core/questions.js", "storage.js", "presenter.js", "app.js"]) {
+  for (const f of ["core/Model.js", "core/games.js", "core/questions.js", "storage.js", "presenter.js", "app.js"]) {
     let src = fs.readFileSync(root + f, "utf8");
     // The announcement is parked behind a flag while installs stay on the old
     // address. Overriding it here means the banner keeps being tested in full

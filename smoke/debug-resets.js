@@ -33,7 +33,7 @@ function run({ search = "", store = {}, standalone = false } = {}) {
         setItem: (k, v) => { store[k] = String(v) },
         removeItem: (k) => { delete store[k] }
       },
-      location: { search, pathname: "/estimation-gym-app/" },
+      location: { hash: "#fermi", search, pathname: "/estimation-gym-app/" },
       history: { replaceState: (a, b, url) => { replacedTo = url } },
       navigator: { standalone },
       matchMedia: () => ({ matches: standalone }),
@@ -43,7 +43,7 @@ function run({ search = "", store = {}, standalone = false } = {}) {
   };
   sandbox.window.window = sandbox.window;
   vm.createContext(sandbox);
-  for (const f of ["core/Model.js", "core/questions.js", "storage.js", "presenter.js", "app.js"]) {
+  for (const f of ["core/Model.js", "core/games.js", "core/questions.js", "storage.js", "presenter.js", "app.js"]) {
     vm.runInContext(fs.readFileSync(root + f, "utf8"), sandbox, { filename: f });
   }
   const fire = (id, ev, arg) => (listeners[id + ":" + ev] || []).forEach((fn) => fn(arg || { preventDefault() {} }));

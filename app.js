@@ -46,7 +46,8 @@
              "practice-guess-line", "practice-actual-line", "practice-decades",
              "practice-decades-ruler", "practice-decades-fill",
              "practice-approach", "practice-hint", "practice-source", "practice-next",
-             "practice-offer"]
+             "practice-offer",
+             "home", "home-intro", "home-list", "game-fermi", "back-to-games"]
   ids.forEach(function (id) { el[id] = document.getElementById(id) })
 
   // Recomputed whenever the app comes back to the foreground, not fixed for
@@ -1087,7 +1088,168 @@
     if (more) el["history-more"].textContent = "Show all " + history.total
   }
 
+  // --- routing ---------------------------------------------------------
+  //
+  // Hash, and only hash. A query string would miss the precached "./" entry,
+  // because the service worker's cache key includes it; a path would need its
+  // own precache entry, which version.test.js forbids because a redirecting
+  // alias makes cache.addAll reject and the worker never activate. A fragment
+  // never reaches the network at all, so the navigation URL stays exactly "./"
+  // and offline behaviour is unchanged.
+  //
+  // Navigation assigns location.hash rather than swapping elements directly,
+  // which puts each screen in history. In display: standalone there is no
+  // browser back button, so the Android hardware back key mapping to
+  // history.back() is the whole reason this is a route and not a boolean.
+  var HOME = "home"
+
+  // Where a runtime without a location lands.
+  //
+  // The smoke harnesses' window has localStorage and addEventListener and
+  // nothing else - core-loop.js does not define location at all. Reading it
+  // unguarded turns every one of them red, and app.js:532 and :547 are wrapped
+  // for the same reason.
+  //
+  // It falls back to the game rather than to home, which is the opposite of
+  // what an empty hash does. That is deliberate: an empty hash is a browser
+  // saying "no game chosen", whereas no location at all is a runtime that
+  // cannot navigate. The honest behaviour there is the one from before routing
+  // existed - render the puzzle - rather than a home screen whose only purpose
+  // is to be navigated away from.
+  var NO_LOCATION_ROUTE = "fermi"
+
+  function currentRoute() {
+    var hash
+    try {
+      if (!window.location) return NO_LOCATION_ROUTE
+      hash = window.location.hash || ""
+    } catch (e) {
+      return NO_LOCATION_ROUTE
+    }
+
+    var id = hash.replace(/^#\/?/, "")
+    if (!id || id === HOME) return HOME
+    // Only a live game is routable. A coming-soon id, or anything typed or
+    // shared that no longer exists, lands on home rather than a blank screen.
+    return GamesAPI.isPlayable(id) ? id : HOME
+  }
+
+  function cleanHash() {
+    try {
+      window.history.replaceState(null, "", window.location.pathname + window.location.search)
+    } catch (e) {}
+  }
+
+  function route() {
+    var id = currentRoute()
+
+    // An unroutable fragment is tidied away so a reload does not repeat it and
+    // a bookmark does not keep it.
+    try {
+      var raw = ((window.location && window.location.hash) || "").replace(/^#\/?/, "")
+      if (raw && raw !== HOME && id === HOME) cleanHash()
+    } catch (e) {}
+
+    show(el.home, id === HOME)
+    show(el["game-fermi"], id !== HOME)
+
+    if (id === HOME) renderHome()
+    else render()
+
+    // Outside the route guard on purpose. The move banner is about which
+    // ADDRESS the app was opened at, not which game is on screen - someone on
+    // the old host needs telling whether they are looking at the home screen or
+    // a puzzle. It lives in the Fermi screen's markup for now, which is where
+    // the old build had it, so moving hosts does not also move the banner.
+    renderMoveBanner()
+  }
+
+  function goTo(id) {
+    try {
+      window.location.hash = id === HOME ? "" : "#" + id
+      // Assigning an empty hash leaves a bare "#" behind, which is untidy in a
+      // shared link and in the address bar.
+      if (id === HOME) cleanHash()
+    } catch (e) {}
+    route()
+  }
+
+  // The second render path. It writes DOM and nothing else - every string it
+  // shows comes from homeView, for the reason spelled out there.
+  function renderHome() {
+    var states = {}
+    GamesAPI.liveGames().forEach(function (game) {
+      states[game.id] = game.id === "fermi" ? state : loadState(Model, window.localStorage, game)
+    })
+
+    var view = homeView(Model, GamesAPI.allGames(), states, today)
+    el["home-list"].replaceChildren()
+
+    view.cards.forEach(function (card) {
+      var item = document.createElement("li")
+
+      // A playable card is a button; an announced one is deliberately not, and
+      // is not focusable either. A disabled button that still takes focus and
+      // does nothing is worse than not being a button.
+      var box = document.createElement(card.playable ? "button" : "div")
+      box.className = "home-card" + (card.playable ? "" : " is-soon")
+      if (card.playable) {
+        box.type = "button"
+        box.addEventListener("click", function () { goTo(card.id) })
+      } else {
+        box.setAttribute("aria-disabled", "true")
+      }
+
+      var name = document.createElement("span")
+      name.className = "home-card-name"
+      name.textContent = card.name
+
+      var tagline = document.createElement("p")
+      tagline.className = "home-card-tagline"
+      tagline.textContent = card.tagline
+
+      box.append(name, tagline)
+
+      if (card.playable) {
+        var meta = document.createElement("p")
+        meta.className = "home-card-meta"
+        if (card.streakLabel) {
+          var streak = document.createElement("span")
+          streak.className = "home-card-streak"
+          streak.textContent = card.streakLabel
+          meta.appendChild(streak)
+
+          // Interpuncts separate metadata everywhere else in the product -
+          // "Streak 6 · Best 14", "12 played · 780 pts" - so they do here too.
+          // Punctuation rather than wording, which is why it is built in the
+          // renderer instead of baked into a string in homeView.
+          var dot = document.createElement("span")
+          dot.setAttribute("aria-hidden", "true")
+          dot.textContent = "·"
+          meta.appendChild(dot)
+        }
+        var status = document.createElement("span")
+        status.textContent = card.statusLabel
+        meta.appendChild(status)
+        box.appendChild(meta)
+      } else {
+        var soon = document.createElement("span")
+        soon.className = "home-card-soon"
+        soon.textContent = card.status
+        box.appendChild(soon)
+      }
+
+      item.appendChild(box)
+      el["home-list"].appendChild(item)
+    })
+  }
+
   function render() {
+    // The home screen is a different screen, not a different state of this
+    // one. Without this guard every one of the ~90 writes below runs against
+    // a hidden subtree on every home render.
+    if (currentRoute() === HOME) return
+
     var vm = viewModel(Model, state, question, today, historyLimit, hintShown, QUESTIONS)
 
     setText(el.puzzle, vm.dateLabel)
@@ -1126,8 +1288,6 @@
     }
 
     renderConfession(question)
-
-    renderMoveBanner()
 
     var todayEntry = vm.answered ? state.history[String(today)] : null
     var todayQid = todayEntry && todayEntry.questionId
@@ -1246,7 +1406,7 @@
   }
 
   el.share.addEventListener("click", function () {
-    var text = shareText(Model, state, question, today, location.origin + location.pathname)
+    var text = shareText(Model, state, question, today, location.origin + location.pathname + "#fermi")
     if (!text) return
 
     // On a phone this opens the OS share sheet, which is the whole point.
@@ -1365,7 +1525,14 @@
 
   // Static content, built once rather than on every render.
   renderHowToPlay(viewModel(Model, state, question, today, 0, false, QUESTIONS).howToPlay)
-  render()
+
+  // hashchange only, not popstate. Back and forward across fragments fire
+  // both, so listening to one avoids rendering everything twice.
+  try { window.addEventListener("hashchange", route) } catch (e) {}
+
+  el["back-to-games"].addEventListener("click", function () { goTo(HOME) })
+
+  route()
 
   // --- Anonymous install counter -----------------------------------------
   //

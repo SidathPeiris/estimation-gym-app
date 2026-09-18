@@ -39,7 +39,7 @@ function run({ store = {}, endpoint = "", serverCounts = null } = {}) {
     },
     window: {
       localStorage: { getItem: (k) => (k in store ? store[k] : null), setItem: (k, v) => { store[k] = String(v) }, removeItem: (k) => { delete store[k] } },
-      location: { search: "", pathname: "/", reload() {} }, history: { replaceState() {} },
+      location: { hash: "#fermi", search: "", pathname: "/", reload() {} }, history: { replaceState() {} },
       navigator: {}, matchMedia: () => ({ matches: false }), addEventListener() {},
       caches: { keys: () => Promise.resolve(["estimation-gym-v14"]) }
     },
@@ -49,7 +49,7 @@ function run({ store = {}, endpoint = "", serverCounts = null } = {}) {
   sandbox.caches = sandbox.window.caches;
   vm.createContext(sandbox);
 
-  for (const f of ["core/Model.js", "core/questions.js", "storage.js", "presenter.js", "app.js"]) {
+  for (const f of ["core/Model.js", "core/games.js", "core/questions.js", "storage.js", "presenter.js", "app.js"]) {
     let code = fs.readFileSync(root + f, "utf8");
     if (f === "app.js") {
       const before = code;

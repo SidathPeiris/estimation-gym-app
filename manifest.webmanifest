@@ -1,14 +1,17 @@
 {
   "name": "Estimation Gym",
   "short_name": "Estimation",
-  "description": "A daily Fermi-estimation puzzle, scored on order-of-magnitude closeness.",
+  "description": "Daily estimation games. One question a day, the same one for everyone, scored on how close you get.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#1a1b26",
   "theme_color": "#1a1b26",
-  "categories": ["education", "games"],
+  "categories": [
+    "education",
+    "games"
+  ],
   "icons": [
     {
       "src": "icons/icon-192.png",
@@ -33,6 +36,14 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
+    }
+  ],
+  "id": "/",
+  "shortcuts": [
+    {
+      "name": "Fermi Questions",
+      "short_name": "Fermi",
+      "url": "./#fermi"
     }
   ]
 }

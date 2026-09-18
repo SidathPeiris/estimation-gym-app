@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#1a1b26">
-<meta name="description" content="A daily Fermi-estimation puzzle, scored on order-of-magnitude closeness.">
-<title>Estimation Gym - a daily Fermi estimation puzzle</title>
+<meta name="description" content="Daily estimation games. One question a day, the same one for everyone, scored on how close you get.">
+<title>Estimation Gym - daily estimation games</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
@@ -31,7 +31,7 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://estimationgym.app/">
   <meta property="og:title" content="Estimation Gym">
-  <meta property="og:description" content="A daily Fermi-estimation puzzle. One question a day, scored on how close you get in powers of ten. Free, no account, works offline.">
+  <meta property="og:description" content="Daily estimation games. One question a day, the same one for everyone, scored on how close you get. Free, no account, works offline.">
   <meta property="og:image" content="https://estimationgym.app/icons/og-card.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -39,7 +39,7 @@
   <meta property="og:site_name" content="Estimation Gym">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Estimation Gym">
-  <meta name="twitter:description" content="A daily Fermi-estimation puzzle. One question a day, scored on how close you get in powers of ten. Free, no account, works offline.">
+  <meta name="twitter:description" content="Daily estimation games. One question a day, the same one for everyone, scored on how close you get. Free, no account, works offline.">
   <meta name="twitter:image" content="https://estimationgym.app/icons/og-card.png">
 </head>
 <body>
@@ -63,6 +63,10 @@
 </main>
 
 <main class="app" id="game-fermi">
+
+  <button type="button" class="back-to-games" id="back-to-games">
+    <span class="chev" aria-hidden="true"></span> All games
+  </button>
 
   <div class="moved" id="moved" hidden>
     <p class="moved-title">
