@@ -486,7 +486,11 @@ var GAME_NAME = "Fermi Questions"
 // Deliberately omits both the guess and the true value. A shared result has to
 // be safe to post before other people have played, and a band conveys how it
 // went without giving the answer away.
-function shareText(Model, state, question, day, url) {
+// `gameName` is optional and trailing, defaulting to Fermi Questions - the
+// codebase's idiom for widening a function without touching a caller or a
+// test. The share card names the game rather than the app alone, because two
+// games' cards would otherwise be indistinguishable to whoever receives one.
+function shareText(Model, state, question, day, url, gameName) {
   if (!Model.hasAnsweredDay(state, day)) return null
 
   var entry = state.history[String(day)]
@@ -499,7 +503,7 @@ function shareText(Model, state, question, day, url) {
   if (entry.assisted) today += " \u00b7 hint"
 
   var lines = [
-    APP_NAME + " \u00b7 " + GAME_NAME + " \u00b7 " + Model.formatDay(day),
+    APP_NAME + " \u00b7 " + (gameName || GAME_NAME) + " \u00b7 " + Model.formatDay(day),
     shareRun(state, day),
     today,
     "Streak " + state.streak

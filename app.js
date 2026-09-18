@@ -48,16 +48,67 @@
              "practice-decades-ruler", "practice-decades-fill",
              "practice-approach", "practice-hint", "practice-source", "practice-next",
              "practice-offer",
-             "home", "home-intro", "home-list", "game-fermi", "back-to-games"]
+             "home", "home-intro", "home-list", "game-screen", "back-to-games",
+             "game-name", "game-icon"]
   ids.forEach(function (id) { el[id] = document.getElementById(id) })
+
+  // Bank global name -> the bank. The registry declares the NAME so that
+  // reading it never drags in 400KB of questions; this is where the name turns
+  // back into the array.
+  //
+  // Written out rather than looked up. `window[name]` does not reach a classic
+  // script's top-level `var` inside the smoke harnesses' sandbox, and
+  // new Function is refused outright by the Content-Security-Policy, which
+  // says script-src 'self' with no hashes and means it. Two entries is not a
+  // burden and core/games.test.js pins every live game's bankGlobal to a key
+  // here - a missing one renders an empty card and throws nothing at all.
+  var BANKS = {
+    "QUESTIONS": typeof QUESTIONS !== "undefined" ? QUESTIONS : null,
+    "RECORDS": typeof RECORDS !== "undefined" ? RECORDS : null
+  }
 
   // Recomputed whenever the app comes back to the foreground, not fixed for
   // the life of the page. An installed copy is resumed from memory rather than
   // reloaded, so a phone left open overnight would otherwise still be showing
   // yesterday's question - and would record an answer against yesterday.
   var today = Model.dayIndex(new Date())
-  var question = Model.questionForDay(today, QUESTIONS)
-  var state = loadState(Model, window.localStorage)
+
+  // --- which game is on screen --------------------------------------------
+  //
+  // These four were Fermi's singletons until World Records arrived. They are
+  // now "whichever game is being played", swapped by selectGame() when the
+  // route changes. Nothing downstream needed rewriting: the ~90 writes in
+  // render() all read `question`, `state` and the view model built from them,
+  // so they never knew which game they were rendering in the first place.
+  //
+  // That is the whole reason World Records was built second. It differs from
+  // Fermi in its content and nothing else, so it forces this parameterisation
+  // against the easiest possible case - rather than letting a genuinely
+  // different game discover that the renderer was never game-agnostic.
+  var game = GamesAPI.gameById("fermi")
+  var bank = BANKS[game.bankGlobal]
+  var question = Model.questionForDay(today, bank, game.scheduleOrigin)
+  var state = loadState(Model, window.localStorage, game)
+
+  // Per game, not per screen. Taking a hint is a fact about today's Fermi
+  // question, so walking to World Records and back must not hand it back
+  // unclaimed. Still not persisted - a reload forgets it, exactly as it always
+  // has - because an unanswered hint is a state of the session, not of the day.
+  var hintShownFor = {}
+  var hintConfirmingFor = {}
+
+  // Swap everything that belongs to one game. Guarded so re-selecting the game
+  // already on screen keeps its unsaved screen state.
+  function selectGame(id) {
+    if (game && game.id === id) return
+    var next = GamesAPI.gameById(id)
+    if (!next || !GamesAPI.isPlayable(id)) return
+    game = next
+    bank = BANKS[game.bankGlobal]
+    question = Model.questionForDay(today, bank, game.scheduleOrigin)
+    state = loadState(Model, window.localStorage, game)
+  }
+
   // --- Debug reset -------------------------------------------------------
   // ?reset=today  un-answers today, leaving the rest of the history intact
   // ?reset=all    wipes history, streak and all, back to a first run
@@ -71,14 +122,15 @@
   var statsOpen = false
   var historyOpen = false
   var historyLimit = HISTORY_PAGE   // 0 means show every day played
-  var hintShown = false
 
-  // The hint has been asked for but not yet taken. Kept separate from
-  // hintShown because that flag is the one the score reads: until this is
-  // confirmed, nothing about the day has changed and backing out costs
-  // nothing. Not persisted, for the same reason hintShown is not - an
-  // unanswered confirmation is a state of the screen, not of the day.
-  var hintConfirming = false
+  // Has the hint been taken on the game currently on screen? The score reads
+  // this one.
+  function hintShown() { return !!hintShownFor[game.id] }
+
+  // Has it been asked for but not yet confirmed? Kept separate from the above
+  // because until it is confirmed nothing about the day has changed and
+  // backing out costs nothing.
+  function hintConfirming() { return !!hintConfirmingFor[game.id] }
 
   // --- Practice ------------------------------------------------------------
   //
@@ -135,7 +187,7 @@
     if (mode !== "today" && mode !== "all") return
 
     state = mode === "all" ? Model.emptyState() : forgetDay(state, today)
-    saveState(state, window.localStorage)
+    saveState(state, window.localStorage, game)
 
     try {
       window.history.replaceState(null, "", window.location.pathname)
@@ -201,7 +253,12 @@
 
   function renderRemind() {
     var on = remindEnabled()
-    show(el.remind, pushSupported())
+    // Offered only on the game the reminder can actually be about. The push
+    // carries no payload, so the service worker builds the text itself by
+    // reading core/questions.js - it can only ever name a Fermi question. A
+    // bell on World Records would turn on a reminder for a different game.
+    show(el.remind, game.reminder === true && pushSupported())
+    if (game.reminder !== true) { show(el["remind-note"], false); return }
     setText(el["remind-state"], on ? "On" : "Off")
     // Drives the accent styling, so "On" is visible at a glance in the corner.
     el.remind.setAttribute("data-on", String(on))
@@ -541,6 +598,10 @@
     try { return window.location.hostname === OLD_HOST } catch (e) { return false }
   }
 
+  // The move to estimationgym.app. Fermi Questions is the only game that ever
+  // existed on the old host, so both halves of this are deliberately about
+  // Fermi and nothing else - no `game` is passed, the bare shape is written,
+  // and the bare shape is what the other end reads back.
   function moveLink() {
     var payload = exportState(state)
     var packed
@@ -560,10 +621,14 @@
     } catch (e) {}
     var raw
     try { raw = decodeURIComponent(escape(window.atob(hash.slice(6)))) } catch (e) { return }
-    var result = importState(Model, state, raw)
+    var fermi = GamesAPI.gameById("fermi")
+    var into = loadState(Model, window.localStorage, fermi)
+    var result = importState(Model, into, raw, "fermi")
     if (!result || !result.state) return
-    state = result.state
-    saveState(state, window.localStorage)
+    saveState(result.state, window.localStorage, fermi)
+    // Named rather than assumed: this writes Fermi's key whichever screen the
+    // move link happened to land on, and it must keep doing so.
+    if (game.id === "fermi") state = result.state
     render()
   }
 
@@ -749,9 +814,10 @@
     var now = Model.dayIndex(new Date())
     if (now === today) return false
     today = now
-    question = Model.questionForDay(today, QUESTIONS)
-    hintShown = false
-    hintConfirming = false
+    question = Model.questionForDay(today, bank, game.scheduleOrigin)
+    // Every game rolls over at once, so every game's hint state clears.
+    hintShownFor = {}
+    hintConfirmingFor = {}
     return true
   }
 
@@ -945,7 +1011,7 @@
     practiceResult = null
     // today is passed so the reserve applies: practice must not offer a
     // question the daily puzzle is about to use.
-    practiceQuestion = Model.pickPractice(QUESTIONS, state, practisedIds(), today)
+    practiceQuestion = Model.pickPractice(bank, state, practisedIds(), today)
     el["practice-input"].value = ""
     show(el["practice-error"], false)
     renderPractice()
@@ -971,6 +1037,12 @@
   }
 
   function renderPractice() {
+    // Practice draws from Fermi's bank and from Fermi's played history, so a
+    // game without a pool has nothing to render. Returning early rather than
+    // rendering into a hidden section keeps nextPractice off a bank it was
+    // never written for.
+    if (game.practice !== true) return
+
     el["practice-chev"].dataset.open = practiceOpen ? "true" : "false"
     el["practice-toggle"].setAttribute("aria-expanded", String(practiceOpen))
     show(el["practice-body"], practiceOpen)
@@ -1160,10 +1232,17 @@
     } catch (e) {}
 
     show(el.home, id === HOME)
-    show(el["game-fermi"], id !== HOME)
+    show(el["game-screen"], id !== HOME)
 
-    if (id === HOME) renderHome()
-    else render()
+    if (id === HOME) {
+      renderHome()
+    } else {
+      // Before render(), never after: every write below reads `question` and
+      // `state`, so rendering first would paint the outgoing game's question
+      // under the incoming game's name for one frame.
+      selectGame(id)
+      render()
+    }
 
     // Outside the route guard on purpose. The move banner is about which
     // ADDRESS the app was opened at, not which game is on screen - someone on
@@ -1275,7 +1354,22 @@
     // a hidden subtree on every home render.
     if (currentRoute() === HOME) return
 
-    var vm = viewModel(Model, state, question, today, historyLimit, hintShown, QUESTIONS)
+    var vm = viewModel(Model, state, question, today, historyLimit, hintShown(), bank)
+
+    // Whose screen this is. The eyebrow names the game and wears its icon; the
+    // hero above still says Estimation Gym, because that is the app.
+    setText(el["game-name"], game.name)
+    el["game-icon"].className = "qcard-mode-icon icon-" + game.icon
+
+    // The three parts of this screen that belong to Fermi Questions rather
+    // than to the engine. Declared per game in the registry, which is where
+    // the reason for each one is written down.
+    // Two of the three parts of this screen that belong to Fermi Questions
+    // rather than to the engine; the bell is the third and renderRemind owns
+    // it. Declared per game in the registry, which is where the reason for
+    // each one is written down.
+    show(el.practice, game.practice === true)
+    show(el.suggest, game.suggest === true)
 
     setText(el.puzzle, vm.dateLabel)
     setText(el.streak, vm.streakLabel)
@@ -1309,8 +1403,8 @@
     // exactly one of them is ever on screen. vm.hintAvailable still governs
     // both: confirming does not take the hint, so the day can still be
     // answered, and answering it withdraws the question along with the offer.
-    show(el["hint-toggle"], vm.hintAvailable && !hintConfirming)
-    show(el["hint-confirm"], vm.hintAvailable && hintConfirming)
+    show(el["hint-toggle"], vm.hintAvailable && !hintConfirming())
+    show(el["hint-confirm"], vm.hintAvailable && hintConfirming())
     show(el.strategy, vm.hintRevealed)
     if (vm.hintRevealed) {
       setText(el["strategy-label"], vm.strategyLabel)
@@ -1382,17 +1476,29 @@
       return
     }
     show(el.error, false)
-    state = Model.recordAnswer(state, today, check.value, question.answerValue, hintShown, question.id)
-    if (!saveState(state, window.localStorage)) {
+    state = Model.recordAnswer(state, today, check.value, question.answerValue, hintShown(), question.id)
+    if (!saveState(state, window.localStorage, game)) {
       setText(el.error, "Scored, but your streak could not be saved on this device")
       show(el.error, true)
     }
     render()
 
     var entry = state.history[String(today)]
+
+    // No game column in D1, and none needed: every question id outside Fermi
+    // carries its game as a prefix, so "records-longest-bridge" cannot collide
+    // with a Fermi id and the distributions stay separate on their own.
     if (entry) submitResult(entry.questionId, entry.band, decadesOff(entry))
-    reportPlayed(today)
-    saveProgress()
+
+    // Both of these are about the daily reminder, which only ever names a
+    // Fermi question - see the registry. Telling the Worker that a World
+    // Records day was played would suppress a reminder for a game the player
+    // has not touched.
+    if (game.reminder === true) {
+      reportPlayed(today)
+      saveProgress()
+    }
+
     maybeAskAboutCheating(check.value, question)
   }
 
@@ -1424,7 +1530,7 @@
 
   // Asking is free. Nothing about the day changes until Yes.
   el["hint-toggle"].addEventListener("click", function () {
-    hintConfirming = true
+    hintConfirmingFor[game.id] = true
     render()
     // Focus lands on "Not yet", never on "Yes". A confirmation that puts the
     // cursor on the costly option, one row above where the thumb already is,
@@ -1433,14 +1539,14 @@
   })
 
   el["hint-confirm-yes"].addEventListener("click", function () {
-    hintConfirming = false
-    hintShown = true
+    hintConfirmingFor[game.id] = false
+    hintShownFor[game.id] = true
     render()
     el["guess-input"].focus()
   })
 
   el["hint-confirm-no"].addEventListener("click", function () {
-    hintConfirming = false
+    hintConfirmingFor[game.id] = false
     render()
     el["hint-toggle"].focus()
   })
@@ -1453,7 +1559,7 @@
   }
 
   el.share.addEventListener("click", function () {
-    var text = shareText(Model, state, question, today, location.origin + location.pathname + "#fermi")
+    var text = shareText(Model, state, question, today, location.origin + location.pathname + "#" + game.id, game.name)
     if (!text) return
 
     // On a phone this opens the OS share sheet, which is the whole point.
@@ -1541,13 +1647,13 @@
   })
 
   el["restore-go"].addEventListener("click", function () {
-    var result = importState(Model, state, el["restore-input"].value)
+    var result = importState(Model, state, el["restore-input"].value, game.id)
     setText(el["restore-note"], result.message)
     show(el["restore-note"], true)
     if (!result.ok) return
 
     state = result.state
-    if (!saveState(state, window.localStorage)) {
+    if (!saveState(state, window.localStorage, game)) {
       setText(el["restore-note"], "Restored on screen, but it could not be saved on this device.")
       render()
       return
@@ -1562,7 +1668,7 @@
   })
 
   el.export.addEventListener("click", function () {
-    var blob = exportState(state)
+    var blob = exportState(state, game)
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(blob)
         .then(function () { flash(el.export, "Copied") })

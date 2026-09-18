@@ -80,26 +80,67 @@ var GAMES = [
     // allowlisted exception to the id-prefix contract below.
     idPrefix: "",
 
-    rootId: "game-fermi",
-    practice: true
+    // Both live games render into the same screen, because they are the same
+    // engine: a number, log-distance scoring, four bands. Sharing it is the
+    // point - a second copy of that markup would be a second place for the
+    // wording to drift, which is the exact failure renderPractice already
+    // demonstrates. A game that needs a genuinely different screen, like
+    // Crossword Clues, names a different one here.
+    rootId: "game-screen",
+
+    // The three things that belong to Fermi Questions rather than to the
+    // engine, each hidden on any game that does not claim it.
+    //
+    // practice: the practice pool is drawn from this bank.
+    // suggest:  submissions land in one D1 table with no game column, so a
+    //           suggestion made from another game would arrive unattributable.
+    // reminder: the push names today's question and the service worker builds
+    //           that text by reading core/questions.js. It can only ever be
+    //           about Fermi, so offering the bell elsewhere would promise a
+    //           reminder that never mentions the game it was turned on from.
+    practice: true,
+    suggest: true,
+    reminder: true
   },
 
-  // --- announced, not yet built -------------------------------------------
-  //
-  // These appear on the home screen as COMING SOON. They carry a name and a
-  // tagline and nothing else: no storage key, no bank, no assets. A half-filled
-  // entry is worse than an empty one, because it looks ready - so the test
-  // asserts these stay empty until the game actually exists.
-
+  // The second game, and the one that proves the platform. It runs on Fermi's
+  // engine - the same numeric input, the same log-distance maths, the same
+  // four bands, the same result card - and differs in its bank, its name, its
+  // streak and its schedule, which is everything a player can see. Share the
+  // engine, not the identity.
   {
     id: "records",
     name: "World Records",
     tagline: "The fastest, the furthest, the most. Estimate the record.",
-    status: "coming-soon",
+    status: "live",
     icon: "trophy",
-    // Known already: it runs on the same engine as Fermi Questions. Its bank,
-    // name, streak and schedule are its own, which is all a player sees.
-    engine: "numeric-log"
+    engine: "numeric-log",
+
+    // Namespaced, unlike Fermi's. Fermi's bare key is the legacy exception
+    // above; everything after it follows this shape, and the two never touch,
+    // so a streak in one game cannot disturb a streak in the other.
+    storageKey: "estimation-gym-state:records",
+
+    // The day this went live, so its first question is its first day rather
+    // than some arbitrary offset into the bank.
+    scheduleOrigin: 991,
+
+    bankGlobal: "RECORDS",
+    assets: ["./games/records/questions.js"],
+
+    // Every question id starts with this. The Worker's D1 tables are keyed on
+    // a bare question_id with no game column, so the prefix IS the namespace -
+    // without it two games' answer distributions merge into one row and cannot
+    // be separated afterwards.
+    idPrefix: "records-",
+
+    rootId: "game-screen",
+
+    // No practice pool, no suggestion form and no reminder bell - see Fermi's
+    // entry for why each of those belongs to Fermi rather than to the engine.
+    practice: false,
+    suggest: false,
+    reminder: false
   },
   {
     id: "dates",

@@ -142,8 +142,16 @@ function historyFrom(parsed, gameId) {
     return section
   }
 
-  // A bare blob. Every export written before games existed is Fermi's.
-  if (parsed.history && typeof parsed.history === "object") return parsed
+  // A bare blob. Every export ever written before games existed is Fermi's,
+  // and a bare blob has no way to say otherwise - so it is Fermi's, and
+  // pasting one into another game is a mistake rather than a format.
+  //
+  // Without this, a Fermi backup restored while World Records is on screen
+  // merges Fermi's days into World Records' key and inflates a streak that was
+  // never played. It looks like it worked, which is the worst way to fail.
+  if (parsed.history && typeof parsed.history === "object") {
+    return (!gameId || gameId === "fermi") ? parsed : null
+  }
 
   return null
 }
@@ -212,8 +220,22 @@ function importState(Model, current, rawText, gameId) {
   }
 }
 
-function exportState(state) {
-  return JSON.stringify(state, null, 2)
+// Conservative writer, to the permissive reader above.
+//
+// Fermi still exports the bare shape it always has. That is deliberate and
+// worth keeping: this app is cache-first, so an export taken today may well be
+// pasted into a browser still running a stale build, and that build would
+// reject any shape it had not been taught. A bare blob is the one shape every
+// version ever shipped can read.
+//
+// Every other game emits the wrapper, because a bare blob cannot say which
+// game it came from and historyFrom now refuses to guess.
+function exportState(state, game) {
+  var id = !game ? "fermi" : (typeof game === "string" ? game : game.id)
+  if (id === "fermi") return JSON.stringify(state, null, 2)
+  var wrapped = { games: {} }
+  wrapped.games[id] = state
+  return JSON.stringify(wrapped, null, 2)
 }
 
 if (typeof module !== "undefined") {

@@ -26,7 +26,12 @@ const games = Games.allGames()
 const live = Games.liveGames()
 
 assert.ok(games.length >= 1, "the registry is empty")
-assert.equal(live.length, 1, "exactly one game is live today: Fermi Questions")
+assert.equal(
+  live.length, 2,
+  "two games are live: Fermi Questions and World Records. If this number " +
+  "changed, check that the new game carries a bank, a storage key of its own " +
+  "and an id prefix before relaxing it."
+)
 
 // --- ids ------------------------------------------------------------------
 
@@ -104,6 +109,52 @@ for (const g of games) {
     Games.ENGINES[g.engine],
     `game "${g.id}" declares engine "${g.engine}", which is not in ENGINES`
   )
+}
+
+// --- every live game's bank is reachable from app.js ----------------------
+//
+// The registry names a bank's global rather than holding the bank, so that
+// reading the registry never pulls in 400KB of questions. app.js turns that
+// name back into the array through an explicit map, because the alternative -
+// looking a global up by name at runtime - needs either `window[name]`, which
+// is not how a classic script's `var` is reachable inside the smoke sandbox,
+// or new Function, which the Content-Security-Policy forbids outright.
+//
+// An explicit map means a new game can declare a bankGlobal that app.js has
+// never heard of. That fails as an empty screen rather than as an error, so it
+// is pinned here.
+{
+  const app = readFileSync(path.join(root, "app.js"), "utf8")
+  const open = app.indexOf("var BANKS = {")
+  assert.ok(open >= 0, "app.js no longer declares a BANKS map")
+  const block = app.slice(open, app.indexOf("}", open))
+
+  for (const g of live) {
+    assert.ok(
+      block.includes('"' + g.bankGlobal + '"'),
+      `live game "${g.id}" declares bankGlobal "${g.bankGlobal}", which app.js ` +
+      `cannot resolve - the game would route, render an empty card and throw ` +
+      `nothing`
+    )
+  }
+}
+
+// --- every live game's bank is loaded by the page ------------------------
+//
+// Precaching it is not enough: a bank that is never script-tagged is never a
+// global, so the map above resolves to null. Both halves are needed and each
+// is easy to do without the other.
+{
+  const html = readFileSync(path.join(root, "index.html"), "utf8")
+  for (const g of live) {
+    for (const asset of g.assets) {
+      const src = asset.replace(/^\.\//, "")
+      assert.ok(
+        html.includes('src="' + src + '"'),
+        `live game "${g.id}" needs ${src} but index.html never loads it`
+      )
+    }
+  }
 }
 
 // --- every icon a game names is actually drawn ----------------------------

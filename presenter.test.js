@@ -490,7 +490,11 @@ console.log("confession count  -> counted apart from the bands, silent at zero")
   // Coming-soon cards carry a name, a tagline and a status, and nothing that
   // implies they can be played.
   const soon = P.homeView(Model, all, {}, today).cards.filter((c) => !c.playable)
-  assert.equal(soon.length, 3, "three games are announced")
+  assert.equal(
+    soon.length, all.filter((g) => g.status === "coming-soon").length,
+    "every coming-soon game gets an announced card, and no live one does"
+  )
+  assert.ok(soon.length, "nothing is announced, so this block proves nothing")
   for (const card of soon) {
     assert.ok(card.name && card.tagline, `${card.id} needs a name and a tagline`)
     assert.equal(card.status, "Coming soon")

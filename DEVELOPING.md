@@ -65,7 +65,7 @@ core/            # scoring, the game registry, Fermi's bank, and their tests
   questions.js     Fermi Questions' bank
 games/           # one folder per game that is not Fermi
   records/
-    questions.js   World Records' bank - not yet live
+    questions.js   World Records' bank
 tools/
   bank-check.js    the question schema, shared by every bank's test
 presenter.js     # pure view-model logic, no DOM
@@ -563,7 +563,7 @@ There are two banks, and one definition of what a valid question is:
 | | |
 | --- | --- |
 | `core/questions.js` | Fermi Questions. Live, 1000 days pinned by checksum. |
-| `games/records/questions.js` | World Records. Not live, so still freely reorderable. |
+| `games/records/questions.js` | World Records. Live since 18 Sep 2026, 49 days pinned by checksum. |
 | `tools/bank-check.js` | The schema both are checked against. Not a test — the thing the tests run. |
 
 The rules that differ between them are arguments rather than assumptions:

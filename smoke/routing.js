@@ -79,8 +79,8 @@ function run({ hash = "", store = {}, noLocation = false } = {}) {
 }
 
 const G = require(root + "core/games.js");
-const onHome = (r) => !r.els.home.hidden && r.els["game-fermi"].hidden;
-const onGame = (r) => r.els.home.hidden && !r.els["game-fermi"].hidden;
+const onHome = (r) => !r.els.home.hidden && r.els["game-screen"].hidden;
+const onGame = (r) => r.els.home.hidden && !r.els["game-screen"].hidden;
 
 // 1. No hash is the landing page.
 let r = run({ hash: "" });

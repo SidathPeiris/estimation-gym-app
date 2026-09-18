@@ -780,6 +780,20 @@ a:hover { color: var(--text-link-hover) }
   stroke: currentColor;
 }
 
+/* The daily card's eyebrow icon is the game's own, drawn from the same
+   .icon-<name> masks the home cards use, so a game looks like itself on both
+   screens. It takes the eyebrow's colour rather than declaring one, which is
+   what keeps it in the mode's tone. */
+.qcard-mode-icon {
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  flex: 0 0 auto;
+  background-color: currentColor;
+  -webkit-mask: var(--icon) center / contain no-repeat;
+  mask: var(--icon) center / contain no-repeat;
+}
+
 .prompt {
   margin-top: var(--space-6);
   font: var(--type-prompt);

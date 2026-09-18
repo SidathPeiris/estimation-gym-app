@@ -93,26 +93,55 @@ for (const q of RECORDS) {
   )
 }
 
-// --- the schedule is not frozen yet --------------------------------------
+// --- the append-only rule, now that the game is live ----------------------
 //
-// Fermi pins the first 1000 ids by checksum, because those days are live: a
-// reorder would re-date a question somebody has already been promised. This
-// bank has never been served to anybody, so it can still be reordered,
-// rewritten and culled freely - which is the whole point of building it while
-// the game is coming-soon.
+// The bank's array order IS the calendar: day N is served
+// RECORDS[N - scheduleOrigin]. While the game was coming-soon this bank could
+// be reordered, rewritten and culled freely, because nobody had been promised
+// anything. From the day it went live that stopped being true - inserting or
+// removing anything inside the pinned span silently re-dates every question
+// after it, which once changed the puzzle mid-day on Fermi for anyone playing.
 //
-// The day the registry entry flips to "live", that stops being true. This
-// block is what turns the rule on, and the assertion below is here so it
-// cannot be forgotten: a live game with an unpinned schedule is exactly the
-// bug the Fermi fingerprint exists to prevent.
-assert.equal(
-  game.status, "coming-soon",
-  "World Records is live, so its schedule must be pinned the way Fermi's is: " +
-  "set SCHEDULED_SPAN to the number of days already promised and add the " +
-  "SHA-256 of those ids, so the bank becomes append-only from that day on."
+// So the ids are pinned by checksum. Appending to the END leaves this
+// untouched and needs no change here, and every question appended pushes the
+// wrap date out by another day. If this fails, the bank was edited in place:
+// put it back and append instead.
+//
+// Covers ids only, deliberately. Fixing a wrong answer, a typo, a source or a
+// hint on a question that is already scheduled is fine and should stay fine -
+// none of that moves anything.
+const SCHEDULED_SPAN = 49
+const SCHEDULE_FINGERPRINT =
+  "20e4fb724388491691bb129313018cc10f74c185416ee71a907c2e2e9f5c1117"
+
+assert.ok(
+  RECORDS.length >= SCHEDULED_SPAN,
+  `bank shrank to ${RECORDS.length}: questions may be appended but never removed`
 )
 
+const fingerprint = require("node:crypto")
+  .createHash("sha256")
+  .update(RECORDS.slice(0, SCHEDULED_SPAN).map((q) => q.id).join(","))
+  .digest("hex")
+
+assert.equal(
+  fingerprint, SCHEDULE_FINGERPRINT,
+  `the first ${SCHEDULED_SPAN} questions changed order. The bank is ` +
+  "append-only: new questions go at the end, so that days already scheduled " +
+  "keep the question they were promised."
+)
+
+// The schedule must be able to serve every day it claims to cover.
+const served = new Set()
+for (let d = game.scheduleOrigin; d < game.scheduleOrigin + RECORDS.length; d++) {
+  const q = Model.questionForDay(d, RECORDS, game.scheduleOrigin)
+  assert.ok(q, `day ${d} has no question`)
+  assert.ok(!served.has(q.id), `day ${d} repeats ${q.id} within one pass`)
+  served.add(q.id)
+}
+assert.equal(served.size, RECORDS.length, "every question is scheduled exactly once")
+
 console.log(`registry:         ${game.name}, ${game.status}, engine ${game.engine}`)
-console.log(`schedule:         not yet pinned - the game is not live`)
+console.log(`scheduled:        ${RECORDS.length} days from ${Model.formatDay(game.scheduleOrigin)}`)
 console.log(`years covered:    ${Math.min(...RECORDS.map((q) => q.asOf))} .. ${Math.max(...RECORDS.map((q) => q.asOf))}`)
 console.log("\nAll World Records bank checks passed.")

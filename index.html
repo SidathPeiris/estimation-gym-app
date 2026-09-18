@@ -62,7 +62,7 @@
   <ul class="home-list" id="home-list"></ul>
 </main>
 
-<main class="app" id="game-fermi">
+<main class="app" id="game-screen">
 
   <button type="button" class="back-to-games" id="back-to-games">
     <span class="chev" aria-hidden="true"></span> All games
@@ -139,16 +139,17 @@
        qualifies rather than above it - the year is a footnote to the question,
        not a heading over it. -->
   <section class="qcard" id="question-card">
+    <!-- Which game this is. Both live games share this screen, because they
+         are the same engine with different content, so the name and the icon
+         are written by app.js from the registry rather than fixed here.
+
+         The icon is a mask, not an inline <svg>, for the reason the chevrons
+         are: app.js sets the name with textContent, and a textContent write on
+         the parent would wipe an <svg> sibling on the first render. A class
+         name cannot be wiped by anything. -->
     <p class="qcard-mode">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <path d="M8 2v3"></path><path d="M16 2v3"></path>
-        <rect x="3" y="3" width="18" height="18" rx="2"></rect>
-        <path d="M3 9h18"></path>
-        <path d="M8 13h.01"></path><path d="M12 13h.01"></path><path d="M16 13h.01"></path>
-        <path d="M8 17h.01"></path><path d="M12 17h.01"></path><path d="M16 17h.01"></path>
-      </svg>
-      Fermi Questions
+      <span class="qcard-mode-icon" id="game-icon" aria-hidden="true"></span>
+      <span id="game-name">Fermi Questions</span>
     </p>
 
     <!-- The day is answered and there is nothing else to do here, which is
@@ -460,6 +461,7 @@
 <script src="core/Model.js"></script>
 <script src="core/games.js"></script>
 <script src="core/questions.js"></script>
+<script src="games/records/questions.js"></script>
 <script src="presenter.js"></script>
 <script src="storage.js"></script>
 <script src="app.js"></script>

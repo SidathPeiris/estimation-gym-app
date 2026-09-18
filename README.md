@@ -2,16 +2,23 @@
 
 [![app installs](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fabacus.jasoncameron.dev%2Fget%2Festimation-gym%2Fapp-installs&query=%24.value&label=app%20installs&color=blue&style=flat-square)](https://estimationgym.app/)
 
-**A daily Fermi-estimation puzzle. One question a day, scored on how close you
-get in powers of ten.**
+**Daily estimation games. One question a day each, scored on how close you get
+in powers of ten.**
 
 ### ▶ [Play it](https://estimationgym.app/)
 
-Every calendar day everyone gets the same question — a real-world quantity you
-have to estimate, like *"how many piano tuners work in Chicago?"* You are scored
-on **order-of-magnitude closeness**, not the exact value, because getting within
-a factor of ten of a hard question is a genuinely useful skill and getting the
-number exactly right is not the point.
+Two games so far, each with its own question, its own streak and the same
+scoring:
+
+- **Fermi Questions** — a real-world quantity you have to work out, like *"how
+  many piano tuners work in Chicago?"*
+- **World Records** — the fastest, the furthest, the most. Every record states
+  the year it was true, so an answer never quietly goes stale.
+
+Every calendar day, everyone gets the same question in every game. You are
+scored on **order-of-magnitude closeness**, not the exact value, because getting
+within a factor of ten of a hard question is a genuinely useful skill and
+getting the number exactly right is not the point.
 
 No account. No sign-up. Works offline.
 
