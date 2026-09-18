@@ -221,4 +221,42 @@ console.log("keys               -> " + FERMI_KEY + "  |  " + RECORDS_KEY);
   console.log("hint state         -> per game, and remembered across a switch");
 }
 
+// 7. The answer box must not carry a guess from one game into the other.
+//
+//    Both games share one input because they share one screen, and nothing
+//    cleared it. Two consequences, and the invisible one is worse: a guess
+//    typed into Fermi was offered back on World Records as if it were yours,
+//    and applyUpdate() holds back a service worker reload while a guess is
+//    half-typed - so a leftover value quietly stopped the app taking new
+//    versions until the player emptied the box themselves.
+{
+  const r = run({ hash: "#fermi" });
+  r.els["guess-input"].value = "12345";
+
+  r.loc.hash = "#records";
+  r.fireWindow("hashchange");
+  if (r.els["guess-input"].value !== "") {
+    throw new Error("the Fermi guess followed the player to World Records: '" +
+      r.els["guess-input"].value + "'");
+  }
+
+  // And back the other way, so the fix is not one-directional.
+  r.els["guess-input"].value = "999";
+  r.loc.hash = "#fermi";
+  r.fireWindow("hashchange");
+  if (r.els["guess-input"].value !== "") {
+    throw new Error("a World Records guess followed the player back to Fermi");
+  }
+
+  // An answered day must still clear it, rather than the box being left with
+  // whatever was submitted.
+  const store = {};
+  const r2 = run({ hash: "#fermi", store });
+  r2.answer(M.questionForDay(today, QUESTIONS, fermi.scheduleOrigin).answerValue);
+  r2.loc.hash = "#records";
+  r2.fireWindow("hashchange");
+  if (r2.els["guess-input"].value !== "") throw new Error("a submitted guess survived the switch");
+  console.log("answer box         -> cleared on every game switch, both directions");
+}
+
 console.log("\nsmoke passed: two games, two banks, two streaks, one screen");

@@ -57,3 +57,32 @@ dated event, which cannot move, and which the sampling suggests are sound.
 
 This is not a clean bill of health for the whole bank. It is a targeted pass
 over the part most likely to be wrong, and it found eight errors there.
+
+records-longest-lightning-flash-recheck | n/a
+records-highest-tsunami-runup | OK | 524m Lituya Bay 1958, USGS/NASA
+records-largest-organism-area | OK | 2385 acres = 9.65 km2, US Forest Service
+records-deepest-mammal-dive | OK | 2992m Cuviers beaked whale
+records-longest-mammal-dive | OK | 222 min Cuviers beaked whale
+records-fastest-human-travel | OK | 39937.7 km/h Apollo 10
+records-land-speed | OK | 1227.985 km/h ThrustSSC, FIA homologated
+records-largest-nuclear-test | OK | 50 Mt Tsar Bomba 1961
+records-highest-energy-cosmic-ray | OK | 3.2e20 eV, still the record in 2026
+records-fastest-spinning-star | OK | 716 rot/s PSR J1748-2446ad
+records-longest-canyon | OK | 4000 km Valles Marineris
+records-longest-tennis-match | OK | 665 min Isner-Mahut 2010
+records-longest-chess-game | OK | 269 moves Nikolic-Arsovic 1989
+records-longest-24-hour-run | OK | 319.614 km Sorokin 2022
+records-largest-ship-tonnage | OK | 564763 DWT Seawise Giant
+records-most-passengers-one-flight | OK | 1088 (official manifest; GWR cites 1122)
+records-most-expensive-painting | OK | 450.3M Salvator Mundi, Christies 2017
+records-largest-domino-toppling | OK | 4491863, Domino Day 2009
+records-deepest-living-fish | OK | 8336m Izu-Ogasawara snailfish 2023, UWA
+records-most-eggs-laid | OK | 300M ocean sunfish
+records-longest-gestation | OK | frilled shark up to 3.5 years
+records-largest-egg | OK | elephant bird ~10.5kg (bank 10)
+records-longest-bird-flight-distance | OK | 13560km bar-tailed godwit 2022
+records-longest-animal-migration | OK | 96000km individual Arctic tern (species round trip ~80000km)
+records-largest-cave-chamber | OK | 10.78M m3 Miao Room, 2013 laser survey
+records-largest-wave-surfed | OK | 26.21m Steudtner 2020
+records-deepest-freedive | OK | 214m Nitsch 2007, AIDA
+records-longest-static-apnea | OK | 11:35 = 695s Mifsud 2009, AIDA

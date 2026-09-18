@@ -107,6 +107,22 @@
     bank = BANKS[game.bankGlobal]
     question = Model.questionForDay(today, bank, game.scheduleOrigin)
     state = loadState(Model, window.localStorage, game)
+
+    // The answer box belongs to the question, and the question just changed.
+    //
+    // Both games share one input, because they share one screen. Nothing ever
+    // cleared it, which never showed while there was one game: answer the day
+    // and the form hides until tomorrow. With two, a guess typed into Fermi
+    // was still sitting there on World Records - offered back as if it were
+    // yours for this question.
+    //
+    // The second effect was worse and entirely invisible. applyUpdate() holds
+    // back a service worker reload while a guess is half-typed, so a stale
+    // value meant the app quietly stopped taking new versions until the player
+    // cleared the box themselves. A leftover character could strand someone on
+    // an old build indefinitely.
+    el["guess-input"].value = ""
+    show(el.error, false)
   }
 
   // --- Debug reset -------------------------------------------------------
