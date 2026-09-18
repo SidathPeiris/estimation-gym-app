@@ -32,6 +32,7 @@ exclude:
   - core/Model.test.js
   - core/questions.test.js
   - core/games.test.js
+  - games/records/questions.test.js
   - pages.test.js
 
   # Served as 200 by Pages until pages.test.js caught it. Workers already

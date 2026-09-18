@@ -1,141 +1,40 @@
-// Schema and sanity checks for the question bank. Kept as a plain node test
-// like Model.test.js so it runs with no dependencies:
+// Schema and sanity checks for the Fermi Questions bank.
 //
-//   node questions.test.js
+//   node core/questions.test.js
 //
-// The bank is the part of this plugin most likely to be edited in bulk, and a
+// The bank is the part of this app most likely to be edited in bulk, and a
 // question with a wrong answer is worse than a missing one - it marks a
 // correct guess as "Off" and quietly discredits the scoring.
+//
+// The per-question rules used to be written out here. They now live in
+// tools/bank-check.js, because World Records is a second bank that has to obey
+// the same ones, and a specification with two copies is a specification that
+// drifts. Nothing was relaxed in the move. What stayed here is what is true of
+// THIS bank and no other: it may leave asOf off, its ids carry no prefix, and
+// its first 1000 entries are a live schedule that can never be reordered.
 
 const assert = require("node:assert/strict")
 const QUESTIONS = require("./questions.js")
 const Model = require("./Model.js")
+const { checkBank, report } = require("../tools/bank-check.js")
 
-const REQUIRED = ["id", "prompt", "unit", "answerValue", "decompositionHint", "strategy", "source"]
-const OPTIONAL = ["asOf"]
-// The strategy selects which hint a player sees, so an invented one would
-// silently fall back to generic advice rather than failing loudly.
-const STRATEGIES = Object.keys(Model.STRATEGIES)
-const CURRENT_YEAR = new Date().getFullYear()
+const result = checkBank(QUESTIONS, {
+  strategies: Object.keys(Model.STRATEGIES),
 
-let problems = []
-function fail(id, message) { problems.push(`${id}: ${message}`) }
+  // Fermi's ids shipped unprefixed and cannot be renamed: the fingerprint
+  // below pins them, and the Worker's D1 tables hold live rows keyed on those
+  // exact strings. It is the single allowlisted exception to the id-prefix
+  // contract, which core/games.test.js states in full.
+  idPrefix: "",
 
-const seenIds = new Set()
+  // Optional here, and deliberately so. Most Fermi questions are about
+  // quantities that do not have a year - the number of bacteria on a phone
+  // screen is not a record anybody breaks - so requiring one would mean
+  // inventing it. World Records is the bank where it is mandatory.
+  requireAsOf: false
+})
 
-for (const q of QUESTIONS) {
-  const id = q && q.id ? q.id : "(missing id)"
-
-  for (const field of REQUIRED) {
-    if (!(field in q)) { fail(id, `missing required field "${field}"`); continue }
-    if (typeof q[field] === "string" && q[field].trim() === "") fail(id, `empty "${field}"`)
-  }
-
-  for (const field of Object.keys(q)) {
-    if (!REQUIRED.includes(field) && !OPTIONAL.includes(field)) fail(id, `unknown field "${field}"`)
-  }
-
-  if (typeof q.id === "string") {
-    if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(q.id)) fail(id, "id must be kebab-case")
-    if (seenIds.has(q.id)) fail(id, "duplicate id")
-    seenIds.add(q.id)
-  }
-
-  if (typeof q.answerValue !== "number" || !isFinite(q.answerValue)) {
-    fail(id, "answerValue must be a finite number")
-  } else if (q.answerValue <= 0) {
-    // Scoring is log based, so a non-positive answer can never be scored.
-    fail(id, "answerValue must be positive")
-  } else if (q.answerValue < 1e-40 || q.answerValue > 1e100) {
-    // Loose enough for real physics at both ends - one fission event is
-    // 3.2e-11 joules, and the observable universe holds ~10^80 atoms - while
-    // still catching a stray exponent.
-    fail(id, `answerValue ${q.answerValue} is outside the plausible range`)
-  }
-
-  if ("asOf" in q) {
-    if (!Number.isInteger(q.asOf)) fail(id, "asOf must be a whole year")
-    // Negative years are BCE, so the floor is deep enough for antiquity.
-    else if (q.asOf < -10000 || q.asOf > CURRENT_YEAR + 1) fail(id, `asOf ${q.asOf} is out of range`)
-  }
-
-  // A prompt that pins itself to a date in prose should carry the structured
-  // field instead, otherwise no refresh script can ever find it.
-  if (typeof q.prompt === "string" && /\bas of\b/i.test(q.prompt) && !("asOf" in q)) {
-    fail(id, "prompt says 'as of' but has no asOf field")
-  }
-
-  // Contains rather than ends with, since a prompt may legitimately trail a
-  // parenthetical after the question mark.
-  if (typeof q.prompt === "string" && !q.prompt.includes("?")) {
-    fail(id, "prompt should be a question")
-  }
-  if (typeof q.decompositionHint === "string" && q.decompositionHint.trim().length < 30) {
-    fail(id, "decompositionHint is too short to teach anything")
-  }
-  // Nothing in a question is ever meant to be markup. The widget renders it
-  // as plain text and the app sets it via textContent, but a contributed
-  // question carrying tags is a sign something is wrong either way.
-  for (const field of ["prompt", "decompositionHint", "source", "unit"]) {
-    const value = q[field]
-    if (typeof value === "string" && /[<>]/.test(value)) {
-      fail(id, `${field} contains angle brackets - questions are plain text`)
-    }
-  }
-  if (typeof q.strategy === "string" && !STRATEGIES.includes(q.strategy)) {
-    fail(id, `unknown strategy "${q.strategy}" - expected one of: ${STRATEGIES.join(", ")}`)
-  }
-}
-
-// --- near-duplicate prompts ---
-// Two prompts about the same quantity in different years are legitimate and
-// intended, so only flag overlap when the questions share a period.
-const STOP = new Set(["how", "many", "much", "the", "a", "an", "are", "is", "there", "in",
-                      "of", "on", "at", "to", "for", "and", "or", "does", "do", "would",
-                      "what", "roughly", "approximately", "about", "per", "you", "your",
-                      "it", "take", "as", "single", "average", "typical"])
-
-function tokens(prompt) {
-  return new Set(
-    prompt.toLowerCase().replace(/[^a-z0-9\s]/g, " ").split(/\s+/)
-      .filter((w) => w.length > 2 && !STOP.has(w))
-  )
-}
-
-function jaccard(a, b) {
-  let shared = 0
-  for (const t of a) if (b.has(t)) shared++
-  const union = a.size + b.size - shared
-  return union === 0 ? 0 : shared / union
-}
-
-const prepared = QUESTIONS.map((q) => ({ id: q.id, asOf: q.asOf, tokens: tokens(q.prompt || "") }))
-const nearDuplicates = []
-for (let i = 0; i < prepared.length; i++) {
-  for (let j = i + 1; j < prepared.length; j++) {
-    if (prepared[i].asOf !== prepared[j].asOf) continue
-    const score = jaccard(prepared[i].tokens, prepared[j].tokens)
-    if (score >= 0.7) nearDuplicates.push(`${prepared[i].id} ~ ${prepared[j].id} (${score.toFixed(2)})`)
-  }
-}
-for (const pair of nearDuplicates) fail("duplicate-prompt", pair)
-
-// --- report ---
-const dated = QUESTIONS.filter((q) => "asOf" in q)
-const magnitudes = QUESTIONS.map((q) => Math.floor(Math.log10(q.answerValue)))
-  .filter((m) => isFinite(m))
-
-console.log(`questions:        ${QUESTIONS.length}`)
-console.log(`dated (asOf):     ${dated.length}`)
-console.log(`timeless:         ${QUESTIONS.length - dated.length}`)
-console.log(`magnitude range:  10^${Math.min(...magnitudes)} .. 10^${Math.max(...magnitudes)}`)
-console.log(`distinct units:   ${new Set(QUESTIONS.map((q) => q.unit)).size}`)
-
-if (problems.length) {
-  console.error(`\n${problems.length} problem(s):`)
-  for (const p of problems) console.error(`  ${p}`)
-  process.exit(1)
-}
+report(QUESTIONS, result)
 
 assert.ok(QUESTIONS.length > 0, "bank is not empty")
 

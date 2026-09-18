@@ -5,7 +5,7 @@
   "description": "Daily Fermi-estimation puzzle as an installable web app, scored on order-of-magnitude closeness.",
   "license": "AGPL-3.0-or-later",
   "scripts": {
-    "test": "node core/Model.test.js && node core/questions.test.js && node core/games.test.js && node presenter.test.js && node storage.test.js && node version.test.js && node sw.test.js && node install.test.js && node markup.test.js && node pages.test.js && node worker/worker.test.mjs && node worker/push.test.mjs && node smoke/run.mjs",
+    "test": "node core/Model.test.js && node core/questions.test.js && node games/records/questions.test.js && node core/games.test.js && node presenter.test.js && node storage.test.js && node version.test.js && node sw.test.js && node install.test.js && node markup.test.js && node pages.test.js && node worker/worker.test.mjs && node worker/push.test.mjs && node smoke/run.mjs",
     "serve": "node scripts/serve.mjs"
   }
 }

@@ -58,10 +58,16 @@ because `storage.js` has to keep reading what players already have.
 ## Layout
 
 ```
-core/            # scoring, the question bank, and their tests
+core/            # scoring, the game registry, Fermi's bank, and their tests
   Model.js         scoring, streaks, day selection, stats
   Model.test.js
-  questions.js
+  games.js         which games exist, what each is called, where its pieces are
+  questions.js     Fermi Questions' bank
+games/           # one folder per game that is not Fermi
+  records/
+    questions.js   World Records' bank - not yet live
+tools/
+  bank-check.js    the question schema, shared by every bank's test
 presenter.js     # pure view-model logic, no DOM
 storage.js       # persistence adapter
 app.js           # DOM wiring
@@ -70,6 +76,10 @@ fonts/           # the three brand faces, self-hosted - see fonts/README.md
 scripts/
   serve.mjs        local dev server
 ```
+
+Fermi's bank stays in `core/` because it is precached and because the service
+worker reads it directly to build the daily reminder. Every later game's bank
+lives under `games/<id>/`, which is where new ones go.
 
 `presenter.js` exists so the "what goes on screen" decisions are testable and
 reusable: a React Native view can consume the same view model without any of
@@ -538,15 +548,52 @@ Two consequences worth knowing:
 - Once the bank has been worked all the way through — currently 2029-06-05 —
   the order repeats. Every question added pushes that out by another day.
 
-## Updating the question bank
+## Updating a question bank
 
-Edit `core/questions.js` and run `npm test`. That is the whole procedure now —
-there is no second repository to propagate to.
+Edit the bank and run `npm test`. That is the whole procedure now — there is no
+second repository to propagate to.
 
-Append to the **end** of the bank, never insert. The bank's order is the
-calendar, and `questions.test.js` fails the build if existing entries move; see
-"The daily schedule is the bank's own order" below. Every question added pushes
-the wrap date out by another day.
+Append to the **end** of a bank, never insert. The bank's order is the
+calendar, and its test fails the build if existing entries move; see "The daily
+schedule is the bank's own order" below. Every question added pushes the wrap
+date out by another day.
+
+There are two banks, and one definition of what a valid question is:
+
+| | |
+| --- | --- |
+| `core/questions.js` | Fermi Questions. Live, 1000 days pinned by checksum. |
+| `games/records/questions.js` | World Records. Not live, so still freely reorderable. |
+| `tools/bank-check.js` | The schema both are checked against. Not a test — the thing the tests run. |
+
+The rules that differ between them are arguments rather than assumptions:
+World Records requires `asOf` on every question and prefixes every id with
+`records-`, and it rejects the Guinness name outright. Each bank's test states
+why in full.
+
+### Why `asOf` is mandatory for records and optional for Fermi
+
+A record is a fact with an expiry date. Saturn had 274 confirmed moons in
+March 2025 and 285 a year later, so a bank that claimed either without saying
+when would be wrong half the time. With the year attached, the card renders
+"as of 2026" under the prompt and the question stays permanently true about
+the year it names — a broken record does not need the entry edited, because
+the entry was never claiming to be current.
+
+Most Fermi questions have no year to state. The number of bacteria on a phone
+screen is not a record anybody breaks.
+
+### The rule that decides whether a record question is any good
+
+Bullseye is 0.3 decades, which is a **factor of two**. So the 100m sprint
+record is not a question: every answer between 4.8 and 19.2 seconds scores
+full marks. Nor is the marathon, the tallest building or the tallest human.
+
+A record belongs in that bank only if a thoughtful guess could still be out by
+more than a factor of two, and ideally if the magnitude can be *reasoned* to —
+the longest bridge is 165km, the deepest dive can be anchored on Everest, the
+farthest spacecraft on Neptune's orbit. No test can tell that a question is
+too easy, so this one is on whoever writes it.
 
 ## Testing offline behaviour
 
