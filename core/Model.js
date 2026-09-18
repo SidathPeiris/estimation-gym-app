@@ -119,6 +119,22 @@ function emptyState() {
   return { history: {}, streak: 0, bestStreak: 0, lastCompletedDay: -1 }
 }
 
+// Does a day's result keep a run alive?
+//
+// For Fermi Questions the rule is "anything better than Off", and it was
+// written out three times - here, and twice in storage.js where a streak is
+// rebuilt backwards from history. Three copies of one rule is three places to
+// miss when it changes, and it is about to: a game scored continuously out of
+// 100 needs a threshold rather than a band name, and that threshold is a
+// game-design decision rather than something the scoring function returns.
+//
+// So it gets a name. streakFrom() and forgetDay() take it as an optional
+// trailing argument and default to this, which keeps every existing call site
+// and test working untouched.
+function extendsStreak(entry) {
+  return !!entry && entry.band !== "Off"
+}
+
 // Applying the same day's result twice (e.g. a shell restart re-triggering a
 // stray submit) must not double-count the streak, so this is idempotent per day.
 // questionId is recorded so a past day can be tied back to the question it
@@ -130,7 +146,7 @@ function recordAnswer(state, dayIdx, guess, answerValue, assisted, questionId) {
 
   var result = scoreGuess(guess, answerValue, assisted)
   var isConsecutive = dayIdx === state.lastCompletedDay + 1
-  var newStreak = result.band === "Off" ? 0 : (isConsecutive ? state.streak + 1 : 1)
+  var newStreak = extendsStreak(result) ? (isConsecutive ? state.streak + 1 : 1) : 0
 
   var newHistory = {}
   for (var key in state.history) newHistory[key] = state.history[key]
@@ -582,6 +598,7 @@ var ModelAPI = {
   pointsForBand: pointsForBand,
   emptyState: emptyState,
   recordAnswer: recordAnswer,
+  extendsStreak: extendsStreak,
   hasAnsweredDay: hasAnsweredDay,
   historyDays: historyDays,
   archetypeStats: archetypeStats,

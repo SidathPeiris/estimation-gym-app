@@ -165,4 +165,43 @@ withMiss = Model.recordAnswer(withMiss, 32, 100, 100, false, "q-z")
 const afterMiss = S.importState(Model, Model.emptyState(), S.exportState(withMiss))
 assert.equal(afterMiss.state.streak, 2, "the run stops at the Off, it does not count through it")
 
+
+// --- the duplicated streak rule must agree with the Model ---
+//
+// storage.js cannot import Model - it is injected per call - so it carries its
+// own copy of "does this day keep a run alive" as the default for forgetDay and
+// streakFrom. Duplicated rules drift, so they are pinned here, the same way
+// sw.test.js pins the service worker copy of SCHEDULE_ORIGIN.
+//
+// Both are also exercised through a custom predicate, because the whole point
+// of making it a parameter is that a game scored out of 100 will pass its own.
+for (const band of ["Bullseye", "Close", "Ballpark", "Off"]) {
+  assert.equal(
+    S.defaultExtendsStreak({ band }),
+    Model.extendsStreak({ band }),
+    `storage.js and Model.js disagree about whether "${band}" extends a streak`
+  )
+}
+assert.equal(S.defaultExtendsStreak(null), false, "a missing entry never extends a run")
+assert.equal(Model.extendsStreak(null), false)
+
+{
+  // A predicate that only counts Bullseye: the run of Close days must stop.
+  let strict = Model.emptyState()
+  strict = Model.recordAnswer(strict, 40, 100, 100)    // Bullseye
+  strict = Model.recordAnswer(strict, 41, 1000, 100)   // Close
+  const onlyBullseye = (e) => !!e && e.band === "Bullseye"
+
+  assert.equal(S.streakFrom(strict.history).streak, 2, "the default rule counts both days")
+  assert.equal(
+    S.streakFrom(strict.history, onlyBullseye).streak, 0,
+    "a stricter rule stops at the most recent day, which is only Close"
+  )
+  assert.equal(
+    S.forgetDay(strict, 41, onlyBullseye).streak, 1,
+    "forgetDay honours the predicate too"
+  )
+  console.log("streak rule       -> shared with the Model, and overridable per game");
+}
+
 console.log("All storage tests passed.")

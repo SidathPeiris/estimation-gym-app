@@ -9,6 +9,18 @@
 
 var STORAGE_KEY = "estimation-gym-state"
 
+// Fermi Questions' streak rule, and the default for the two functions below
+// that rebuild a streak backwards from history.
+//
+// This duplicates Model.extendsStreak rather than calling it, because Model is
+// injected per call here - storage.js never imports it - and these two
+// functions are reachable without one. Duplicated constants drift, so
+// storage.test.js pins the two to agree, exactly as sw.test.js pins the
+// service worker's copy of SCHEDULE_ORIGIN.
+function defaultExtendsStreak(entry) {
+  return !!entry && entry.band !== "Off"
+}
+
 function loadState(Model, backend) {
   try {
     var raw = backend.getItem(STORAGE_KEY)
@@ -38,7 +50,8 @@ function saveState(state, backend) {
 // bestStreak is deliberately left alone. It is a high-water mark of something
 // that genuinely happened, and un-answering a day for a screenshot should not
 // quietly rewrite the record books.
-function forgetDay(state, dayIdx) {
+function forgetDay(state, dayIdx, extendsStreak) {
+  var keeps = typeof extendsStreak === "function" ? extendsStreak : defaultExtendsStreak
   var history = {}
   for (var key in state.history) {
     if (key !== String(dayIdx)) history[key] = state.history[key]
@@ -54,7 +67,7 @@ function forgetDay(state, dayIdx) {
   var streak = 0
   for (var i = 0; i < days.length; i++) {
     if (i > 0 && days[i] !== days[i - 1] - 1) break
-    if (history[String(days[i])].band === "Off") break
+    if (!keeps(history[String(days[i])])) break
     streak++
   }
 
@@ -69,7 +82,15 @@ function forgetDay(state, dayIdx) {
 // Rebuilds the streak from a history, using the same rule recordAnswer applies
 // going forwards: walk back from the most recent day, stopping at the first
 // gap or the first miss.
-function streakFrom(history) {
+//
+// `extendsStreak` is optional and defaults to Fermi Questions' rule, which is
+// Model.extendsStreak - "anything better than Off". It is a parameter because a
+// game scored continuously out of 100 needs a threshold instead of a band name,
+// and this function should not have to know which game it is rebuilding. Same
+// idiom as reservedForDaily's reserveDays and pickPractice's random: optional,
+// trailing, defaulted, so no existing caller changes.
+function streakFrom(history, extendsStreak) {
+  var keeps = typeof extendsStreak === "function" ? extendsStreak : defaultExtendsStreak
   var days = Object.keys(history)
     .filter(function (k) { var n = Number(k); return isFinite(n) && String(n) === k })
     .map(Number)
@@ -78,7 +99,7 @@ function streakFrom(history) {
   var streak = 0
   for (var i = 0; i < days.length; i++) {
     if (i > 0 && days[i] !== days[i - 1] - 1) break
-    if (history[String(days[i])].band === "Off") break
+    if (!keeps(history[String(days[i])])) break
     streak++
   }
   return { streak: streak, lastCompletedDay: days.length ? days[0] : -1 }
@@ -159,6 +180,7 @@ if (typeof module !== "undefined") {
     forgetDay: forgetDay,
     importState: importState,
     streakFrom: streakFrom,
+    defaultExtendsStreak: defaultExtendsStreak,
     exportState: exportState
   }
 }
