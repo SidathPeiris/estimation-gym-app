@@ -1,6 +1,7 @@
 const assert = require("node:assert/strict")
 const Model = require("./core/Model.js")
 const S = require("./storage.js")
+const Games = require("./core/games.js")
 
 function fakeBackend(initial) {
   const map = new Map(initial ? Object.entries(initial) : [])
@@ -203,5 +204,92 @@ assert.equal(Model.extendsStreak(null), false)
   )
   console.log("streak rule       -> shared with the Model, and overridable per game");
 }
+
+// --- one key per game, and no migration ---
+//
+// The whole multi-game state design rests on this: Fermi keeps the legacy
+// unnamespaced key and every other game gets a suffixed one. Nothing is
+// nested, so nothing needs migrating, and old cached code cannot see or
+// clobber another game's key.
+{
+  assert.equal(S.keyFor(), S.STORAGE_KEY, "no game means Fermi, for every existing caller")
+  assert.equal(S.keyFor("fermi"), S.STORAGE_KEY, "Fermi keeps the bare legacy key")
+  assert.equal(S.keyFor("records"), "estimation-gym-state:records")
+  assert.equal(
+    S.keyFor(Games.gameById("fermi")), S.STORAGE_KEY,
+    "a registry entry resolves to the key it declares"
+  )
+
+  // Two games must not be able to read each other.
+  const store = {}
+  const backend = {
+    getItem: (k) => (k in store ? store[k] : null),
+    setItem: (k, v) => { store[k] = String(v) }
+  }
+
+  let fermi = Model.recordAnswer(Model.emptyState(), 900, 100, 100)   // Bullseye
+  S.saveState(fermi, backend, "fermi")
+
+  let records = Model.recordAnswer(Model.emptyState(), 900, 1, 1e9)   // Off
+  S.saveState(records, backend, "records")
+
+  assert.deepEqual(Object.keys(store).sort(), ["estimation-gym-state", "estimation-gym-state:records"])
+  assert.equal(S.loadState(Model, backend, "fermi").streak, 1)
+  assert.equal(S.loadState(Model, backend, "records").streak, 0, "a separate streak, not a shared one")
+  assert.equal(
+    S.loadState(Model, backend).streak, 1,
+    "an old caller passing no game still gets Fermi"
+  )
+
+  // The downgrade case, which is the one that would cost someone their streak:
+  // code that knows nothing about games reads the bare key and finds Fermi
+  // exactly as it left it.
+  const legacyRead = JSON.parse(store["estimation-gym-state"])
+  assert.deepEqual(
+    Object.keys(legacyRead).sort(), ["bestStreak", "history", "lastCompletedDay", "streak"],
+    "Fermi's blob keeps the exact four-key shape old code expects"
+  )
+  console.log("per-game keys     -> separate streaks, Fermi unchanged at the legacy key")
+}
+
+// --- import accepts a bare blob and a multi-game wrapper ---
+{
+  let played = Model.recordAnswer(Model.emptyState(), 500, 100, 100)
+  const bare = S.exportState(played)
+
+  assert.equal(
+    JSON.parse(bare).games, undefined,
+    "exportState still writes the bare shape, so an export taken today can be " +
+    "pasted into a browser running a stale cached build"
+  )
+
+  // A bare blob restores as Fermi, which is what every export ever written is.
+  const fromBare = S.importState(Model, Model.emptyState(), bare)
+  assert.equal(fromBare.ok, true)
+  assert.equal(fromBare.added, 1)
+
+  // A wrapper restores the named game's section.
+  const wrapper = JSON.stringify({
+    games: {
+      fermi: played,
+      records: Model.recordAnswer(Model.emptyState(), 600, 100, 100)
+    }
+  })
+  const asFermi = S.importState(Model, Model.emptyState(), wrapper, "fermi")
+  assert.equal(asFermi.ok, true)
+  assert.ok(asFermi.state.history["500"], "took Fermi's section")
+  assert.ok(!asFermi.state.history["600"], "and not another game's")
+
+  const asRecords = S.importState(Model, Model.emptyState(), wrapper, "records")
+  assert.ok(asRecords.state.history["600"], "took the records section")
+
+  // A wrapper that has no section for the game being restored into is not
+  // silently merged into it - that would put one game's days in another.
+  const missing = S.importState(Model, Model.emptyState(), wrapper, "crossword")
+  assert.equal(missing.ok, false, "a wrapper with no matching game is refused")
+
+  console.log("import            -> bare blob and wrapper, without mixing games up")
+}
+
 
 console.log("All storage tests passed.")

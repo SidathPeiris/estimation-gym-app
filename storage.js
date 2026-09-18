@@ -21,9 +21,29 @@ function defaultExtendsStreak(entry) {
   return !!entry && entry.band !== "Off"
 }
 
-function loadState(Model, backend) {
+// One localStorage key per game, and no nesting. Ever.
+//
+// The obvious multi-game shape is { history, streak, …, games: { … } }. It
+// cannot work here: Model.recordAnswer returns a fresh four-key object literal
+// rather than spreading state, and so do forgetDay and importState below. Any
+// extra top-level key is therefore destroyed on the next answer - not only by
+// stale cached code, but by any code at all.
+//
+// Separate keys sidestep it completely. Fermi keeps the legacy unnamespaced
+// key so existing players need no migration whatsoever, and a second game's key
+// is invisible to old code, which cannot read it and cannot clobber it. There
+// is no migration function in this file because there is nothing to migrate.
+function keyFor(game) {
+  if (!game) return STORAGE_KEY
+  if (typeof game === "string") {
+    return game === "fermi" ? STORAGE_KEY : STORAGE_KEY + ":" + game
+  }
+  return game.storageKey || STORAGE_KEY
+}
+
+function loadState(Model, backend, game) {
   try {
-    var raw = backend.getItem(STORAGE_KEY)
+    var raw = backend.getItem(keyFor(game))
     if (!raw) return Model.emptyState()
     var parsed = JSON.parse(raw)
     // Same guard as Widget.qml: "{}" parses fine but is not a usable state.
@@ -35,9 +55,9 @@ function loadState(Model, backend) {
   }
 }
 
-function saveState(state, backend) {
+function saveState(state, backend, game) {
   try {
-    backend.setItem(STORAGE_KEY, JSON.stringify(state))
+    backend.setItem(keyFor(game), JSON.stringify(state))
     return true
   } catch (e) {
     return false
@@ -105,21 +125,45 @@ function streakFrom(history, extendsStreak) {
   return { streak: streak, lastCompletedDay: days.length ? days[0] : -1 }
 }
 
+// Permissive reader, conservative writer.
+//
+// A file pasted into the Restore box may be a bare blob taken from any build
+// ever shipped, or a multi-game wrapper taken from a later one. This accepts
+// both; exportState below still emits the bare shape, because an export taken
+// today may be pasted into a browser running a stale cached build that would
+// reject anything it did not recognise.
+function historyFrom(parsed, gameId) {
+  if (!parsed || typeof parsed !== "object") return null
+
+  // A wrapper: { games: { fermi: {history,…}, records: {history,…} } }
+  if (parsed.games && typeof parsed.games === "object") {
+    var section = parsed.games[gameId || "fermi"]
+    if (!section || typeof section !== "object" || !section.history) return null
+    return section
+  }
+
+  // A bare blob. Every export written before games existed is Fermi's.
+  if (parsed.history && typeof parsed.history === "object") return parsed
+
+  return null
+}
+
 // Restores an exported history.
 //
 // Merges rather than replaces, and an existing day always wins. Importing an
 // older export can therefore only ever add days back, never silently delete
 // the ones played since it was taken - which is the failure that would hurt
 // most, because it would look like it worked.
-function importState(Model, current, rawText) {
-  var parsed
+function importState(Model, current, rawText, gameId) {
+  var outer
   try {
-    parsed = JSON.parse(rawText)
+    outer = JSON.parse(rawText)
   } catch (e) {
     return { ok: false, message: "That does not look like an exported history." }
   }
 
-  if (!parsed || typeof parsed !== "object" || !parsed.history || typeof parsed.history !== "object") {
+  var parsed = historyFrom(outer, gameId)
+  if (!parsed) {
     return { ok: false, message: "That does not look like an exported history." }
   }
 
@@ -180,6 +224,8 @@ if (typeof module !== "undefined") {
     forgetDay: forgetDay,
     importState: importState,
     streakFrom: streakFrom,
+    keyFor: keyFor,
+    historyFrom: historyFrom,
     defaultExtendsStreak: defaultExtendsStreak,
     exportState: exportState
   }
