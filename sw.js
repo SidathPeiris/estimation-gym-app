@@ -13,7 +13,7 @@
 // Note this caches code only. Play history lives in localStorage, which the
 // cache never touches, so a version bump can never cost anyone their streak.
 
-var CACHE = "estimation-gym-v1.13.0"
+var CACHE = "estimation-gym-v1.14.0"
 
 // A second cache, deliberately unversioned, holding one small record the
 // service worker needs but cannot otherwise reach: the streak.
@@ -40,6 +40,7 @@ var ASSETS = [
   "./presenter.js",
   "./storage.js",
   "./core/Model.js",
+  "./core/games.js",
   "./core/questions.js",
   "./manifest.webmanifest",
   "./icons/icon-192.png",

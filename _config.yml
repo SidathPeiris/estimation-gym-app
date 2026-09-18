@@ -31,6 +31,7 @@ exclude:
   - markup.test.js
   - core/Model.test.js
   - core/questions.test.js
+  - core/games.test.js
   - pages.test.js
 
   # Served as 200 by Pages until pages.test.js caught it. Workers already
