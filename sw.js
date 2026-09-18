@@ -13,7 +13,7 @@
 // Note this caches code only. Play history lives in localStorage, which the
 // cache never touches, so a version bump can never cost anyone their streak.
 
-var CACHE = "estimation-gym-v1.19.0"
+var CACHE = "estimation-gym-v1.19.1"
 
 // A second cache, deliberately unversioned, holding one small record the
 // service worker needs but cannot otherwise reach: the streak.
@@ -250,6 +250,26 @@ self.addEventListener("push", function (event) {
   )
 })
 
+// Where a tapped reminder lands.
+//
+// The app used to be one game, so "./" was the question and this needed no
+// thought. It is now a chooser: "./" with no fragment is the home screen, and
+// for a while this reminder named a specific question and then dropped the
+// player on a list of games to go and find it in. Worse for anyone with the app
+// already open, because focus() does not navigate - they landed on whichever
+// screen they had left it on.
+//
+// The fragment is safe to add. It never reaches the network, so the navigation
+// URL is still exactly "./" and the precached entry still matches - which is
+// the reason the app routes on a hash rather than a path or a query in the
+// first place.
+//
+// Hardcoded rather than read from the registry: a service worker cannot
+// importScripts core/games.js without risking the fetch handler on every
+// startup. sw.test.js pins this to a game that is actually live, so it cannot
+// come to name something the router would bounce to home.
+var REMINDER_ROUTE = "./#fermi"
+
 self.addEventListener("notificationclick", function (event) {
   event.notification.close()
   event.waitUntil(
@@ -262,11 +282,20 @@ self.addEventListener("notificationclick", function (event) {
       // right thing to compare against: it is whatever address this worker
       // was installed from, so it cannot go stale the next time that moves.
       for (var i = 0; i < windows.length; i++) {
-        if (windows[i].url.indexOf(self.registration.scope) === 0 && "focus" in windows[i]) {
-          return windows[i].focus()
+        var client = windows[i]
+        if (client.url.indexOf(self.registration.scope) !== 0 || !("focus" in client)) continue
+
+        // Move it to the question before showing it. navigate() is not on every
+        // WindowClient and can reject on its own, so a failure falls back to
+        // the old behaviour rather than leaving the tap doing nothing at all.
+        if (typeof client.navigate === "function") {
+          return client.navigate(REMINDER_ROUTE)
+            .then(function (navigated) { return (navigated || client).focus() })
+            .catch(function () { return client.focus() })
         }
+        return client.focus()
       }
-      if (self.clients.openWindow) return self.clients.openWindow("./")
+      if (self.clients.openWindow) return self.clients.openWindow(REMINDER_ROUTE)
     })
   )
 })

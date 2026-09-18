@@ -139,6 +139,63 @@ assert.equal(reminderTitle({ streak: 6, lastPlayedDay: TODAY }, TODAY), GENERIC)
 
 console.log("reminder title    -> streak only when it is real and unbroken")
 
+// --- a tapped reminder must land on the question it named ---
+//
+// The reminder names a specific Fermi question in its body. It used to open
+// "./", which was that question back when the app was one game - and became
+// the chooser the day the home screen shipped, so the notification advertised
+// a question and then handed over a list of games to find it in.
+//
+// Two halves, both needed. The route has to carry a fragment, and that
+// fragment has to name a game the router will actually open: an id that is
+// coming-soon, renamed or misspelt gets bounced straight back to home, which
+// is the bug wearing a different hat.
+{
+  const Games = require("./core/games.js")
+  const route = (sw.match(/var REMINDER_ROUTE = "([^"]+)"/) || [])[1]
+  assert.ok(route, "sw.js no longer declares REMINDER_ROUTE")
+
+  const hash = route.indexOf("#")
+  assert.ok(
+    hash >= 0,
+    `the reminder opens "${route}", which has no fragment - so it lands on the ` +
+    `game chooser rather than on the question the notification just named`
+  )
+
+  const id = route.slice(hash + 1)
+  assert.ok(
+    Games.isPlayable(id),
+    `the reminder opens "#${id}", which is not a live game. The router sends ` +
+    `anything it cannot play to the home screen, so the tap would land on the ` +
+    `chooser exactly as if the fragment were missing.`
+  )
+
+  // The path half must still be the precached one, or an offline tap gets the
+  // browser's error page. A fragment is never sent to the network, which is
+  // why it can be added here at no cost; a path or a query could not be.
+  assert.equal(
+    route.slice(0, hash), "./",
+    "the reminder must open the precached start URL with a fragment appended - " +
+    "a different path or a query string would miss the cache while offline"
+  )
+
+  // And it has to actually be used. Opening the right URL in the fresh-window
+  // branch while an already-open copy is merely focused was the other half of
+  // the same bug: focus() does not navigate, so a player with the app open on
+  // the home screen stayed there.
+  const click = sw.slice(sw.indexOf('addEventListener("notificationclick"'))
+  assert.ok(
+    /client\.navigate\(REMINDER_ROUTE\)/.test(click),
+    "an already-open copy is focused without being navigated, so a reminder " +
+    "tapped while the app sits on the home screen leaves it on the home screen"
+  )
+  assert.ok(
+    !/openWindow\("\.\/"\)/.test(click),
+    'the fresh-window branch still opens "./", which is the chooser'
+  )
+  console.log(`reminder tap      -> "${route}", a live game, precached path`)
+}
+
 // --- the precache must revalidate, and must not re-download ---
 //
 // Two failures, opposite directions, one line of code between them.
