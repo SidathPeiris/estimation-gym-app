@@ -13,7 +13,7 @@
 // Note this caches code only. Play history lives in localStorage, which the
 // cache never touches, so a version bump can never cost anyone their streak.
 
-var CACHE = "estimation-gym-v1.12.2"
+var CACHE = "estimation-gym-v1.13.0"
 
 // A second cache, deliberately unversioned, holding one small record the
 // service worker needs but cannot otherwise reach: the streak.
@@ -102,7 +102,21 @@ self.addEventListener("fetch", function (event) {
       return fetch(event.request).catch(function () {
         // A navigation that misses the cache while offline still gets the app
         // shell rather than the browser's error page.
-        if (event.request.mode === "navigate") return caches.match("./index.html")
+        //
+        // This fell back to "./index.html" for a long time and never once
+        // worked. That URL is deliberately NOT precached - Cloudflare answers
+        // it with a 307 to "./", cache.addAll rejects the whole batch on a
+        // redirect, and the worker then never activates - and version.test.js
+        // forbids ever adding it. So the match resolved to undefined,
+        // respondWith(undefined) threw, and the player got the browser's error
+        // page anyway. It looked fine only because an installed copy launches
+        // at start_url "./", which is precached exactly.
+        //
+        // ignoreSearch because the cache key includes the query string, so
+        // "./?reset=today" missed "./" and took this same broken path.
+        if (event.request.mode === "navigate") {
+          return caches.match("./", { ignoreSearch: true })
+        }
         return Response.error()
       })
     })

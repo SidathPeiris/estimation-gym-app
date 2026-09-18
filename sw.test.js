@@ -138,6 +138,39 @@ assert.equal(reminderTitle({ streak: 6, lastPlayedDay: null }, TODAY), GENERIC)
 assert.equal(reminderTitle({ streak: 6, lastPlayedDay: TODAY }, TODAY), GENERIC)
 
 console.log("reminder title    -> streak only when it is real and unbroken")
+
+// --- the offline navigation fallback must point at something precached ---
+//
+// This is the guard that was missing. The fetch handler fell back to
+// caches.match("./index.html") for a navigation that misses the cache while
+// offline, and that URL has never been in ASSETS - version.test.js forbids it,
+// because Cloudflare 307s it and cache.addAll rejects on a redirect. So the
+// match resolved to undefined, respondWith(undefined) threw, and the player got
+// the browser's error page instead of the app. It looked like it worked only
+// because an installed copy launches at start_url "./", which is precached.
+//
+// Asserting the URL is in the precache list is the generalisable form: it
+// catches this bug and any future one where the fallback is pointed at
+// something that is not actually held offline.
+{
+  const fallback = (sw.match(/mode === "navigate"\)\s*\{?\s*\n?\s*return caches\.match\("([^"]+)"/) || [])[1]
+  assert.ok(fallback, "could not find the navigation fallback in sw.js")
+
+  const open = sw.indexOf("var ASSETS = [")
+  const close = sw.indexOf("]", open)
+  const assets = sw.slice(open, close)
+    .split("\n").map((l) => l.trim())
+    .filter((l) => l.startsWith('"'))
+    .map((l) => l.split('"')[1])
+
+  assert.ok(
+    assets.includes(fallback),
+    `the offline navigation fallback serves "${fallback}", which is not in the ` +
+    `precache list - so it resolves to undefined and the player gets the ` +
+    `browser's error page rather than the app`
+  )
+  console.log(`offline fallback  -> "${fallback}", which is precached`)
+}
 console.log(
   `service worker agrees with Model on ${days.length} days; ` +
   `today's notification would read "${todaysQuestion.prompt}"`

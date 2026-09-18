@@ -1,6 +1,6 @@
 {
   "name": "estimation-gym-app",
-  "version": "1.12.2",
+  "version": "1.13.0",
   "private": true,
   "description": "Daily Fermi-estimation puzzle as an installable web app, scored on order-of-magnitude closeness.",
   "license": "AGPL-3.0-or-later",
