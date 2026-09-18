@@ -3554,7 +3554,7 @@ var RECORDS = [
   },
   {
     "id": "records-largest-wind-farm",
-    "prompt": "How many megawatts can the largest wind farm generate?",
+    "prompt": "How many megawatts is the planned capacity of the largest wind farm?",
     "unit": "megawatts",
     "answerValue": 20000,
     "decompositionHint": "Thousands of turbines of a few megawatts each, spread across a desert corridor. Multiply a plausible turbine count by turbine size.",
@@ -3701,6 +3701,1006 @@ var RECORDS = [
     "strategy": "anchor-scale",
     "source": "University of Toronto isotopic dating of Kidd Creek Mine fluids",
     "asOf": 2016
+  },
+  {
+    "id": "records-farthest-object-visited",
+    "prompt": "How many kilometres from the Sun was the most distant object ever visited by a spacecraft?",
+    "unit": "kilometres",
+    "answerValue": 6600000000,
+    "decompositionHint": "A small Kuiper Belt object photographed in a flyby. Neptune orbits at 4.5 billion kilometres, so this is comfortably beyond the planets.",
+    "strategy": "anchor-scale",
+    "source": "NASA New Horizons mission data for Arrokoth",
+    "asOf": 2019
+  },
+  {
+    "id": "records-longest-venus-survival",
+    "prompt": "How many minutes did the longest-surviving lander last on the surface of Venus?",
+    "unit": "minutes",
+    "answerValue": 127,
+    "decompositionHint": "465 degrees and ninety times Earth's air pressure. The probe was chilled beforehand and ran on stored cold rather than cooling.",
+    "strategy": "anchor-scale",
+    "source": "Soviet Venera programme mission records, Venera 13",
+    "asOf": 1982
+  },
+  {
+    "id": "records-lunar-craters-counted",
+    "prompt": "How many craters wider than one kilometre have been catalogued on the Moon?",
+    "unit": "craters",
+    "answerValue": 1300000,
+    "decompositionHint": "The Moon's surface is 38 million square kilometres. Work out how densely a 1 km crater would have to be packed to reach a given count.",
+    "strategy": "area-density",
+    "source": "NASA Lunar Reconnaissance Orbiter global crater catalogue",
+    "asOf": 2025
+  },
+  {
+    "id": "records-chicxulub-impact-energy",
+    "prompt": "How many joules of energy did the impact that ended the dinosaurs release?",
+    "unit": "joules",
+    "answerValue": 1e+23,
+    "decompositionHint": "A 10 km rock at 20 km per second. Kinetic energy is half the mass times the speed squared, and rock is about 3,000 kilograms per cubic metre.",
+    "strategy": "energy-balance",
+    "source": "Published impact modelling of the Chicxulub event, Imperial College London",
+    "asOf": 2025
+  },
+  {
+    "id": "records-longest-rover-mission",
+    "prompt": "How many Martian days did the longest-running Mars rover mission last?",
+    "unit": "sols",
+    "answerValue": 5352,
+    "decompositionHint": "Designed for ninety days and killed in the end by a dust storm coating its solar panels. That is roughly fifteen Earth years.",
+    "strategy": "unit-conversion",
+    "source": "NASA Jet Propulsion Laboratory Opportunity mission records",
+    "asOf": 2018
+  },
+  {
+    "id": "records-largest-ring-system",
+    "prompt": "How many kilometres is the outer radius of the largest planetary ring?",
+    "unit": "kilometres",
+    "answerValue": 13000000,
+    "decompositionHint": "Not the bright rings but a vast, faint dust ring found in infrared. Saturn's visible rings end about 140,000 km out, so this is far beyond them.",
+    "strategy": "anchor-scale",
+    "source": "NASA Spitzer Space Telescope discovery of the Phoebe ring",
+    "asOf": 2009
+  },
+  {
+    "id": "records-coldest-place-solar-system",
+    "prompt": "How many kelvin is the coldest temperature measured anywhere in the solar system?",
+    "unit": "kelvin",
+    "answerValue": 25,
+    "decompositionHint": "In a crater floor near the Moon's south pole that has not seen sunlight for billions of years. Deep space itself sits at about 2.7 kelvin.",
+    "strategy": "anchor-scale",
+    "source": "NASA Lunar Reconnaissance Orbiter Diviner radiometer measurements",
+    "asOf": 2009
+  },
+  {
+    "id": "records-coldest-place-in-universe",
+    "prompt": "How many kelvin is the coldest known natural place in the universe?",
+    "unit": "kelvin",
+    "answerValue": 1,
+    "decompositionHint": "A nebula cooled below the background temperature of space itself by gas expanding rapidly away from a dying star.",
+    "strategy": "anchor-scale",
+    "source": "Published submillimetre observations of the Boomerang Nebula",
+    "asOf": 2025
+  },
+  {
+    "id": "records-highest-rocket-plane-altitude",
+    "prompt": "How many metres up did the highest flight by a rocket-powered aeroplane reach?",
+    "unit": "metres",
+    "answerValue": 107960,
+    "decompositionHint": "Above the 100 km line that is usually taken as the edge of space, flown by a piloted aircraft that glided back to a runway.",
+    "strategy": "anchor-scale",
+    "source": "NASA X-15 flight research programme records",
+    "asOf": 1963
+  },
+  {
+    "id": "records-farthest-naked-eye-object",
+    "prompt": "How many light years away is the most distant object visible to the naked eye?",
+    "unit": "light years",
+    "answerValue": 2500000,
+    "decompositionHint": "A whole galaxy rather than a star, which is the only way something that far can be bright enough. The Milky Way is 100,000 light years across.",
+    "strategy": "anchor-scale",
+    "source": "International Astronomical Union catalogue data for the Andromeda Galaxy",
+    "asOf": 2025
+  },
+  {
+    "id": "records-most-energetic-gamma-ray",
+    "prompt": "How many electronvolts did the most energetic photon ever detected carry?",
+    "unit": "electronvolts",
+    "answerValue": 18000000000000,
+    "decompositionHint": "From a gamma-ray burst so bright it saturated the detectors watching it. Visible light photons carry about two electronvolts.",
+    "strategy": "anchor-scale",
+    "source": "LHAASO observatory published measurements of GRB 221009A",
+    "asOf": 2022
+  },
+  {
+    "id": "records-largest-typhoon",
+    "prompt": "How many kilometres across was the largest tropical cyclone ever measured?",
+    "unit": "kilometres",
+    "answerValue": 2220,
+    "decompositionHint": "Nearly half the width of a continent, measured to the outer edge of its circulation rather than to the eye wall.",
+    "strategy": "anchor-scale",
+    "source": "NOAA and Joint Typhoon Warning Center records for Typhoon Tip",
+    "asOf": 1979
+  },
+  {
+    "id": "records-oldest-impact-crater",
+    "prompt": "How many years old is the oldest confirmed impact crater on Earth?",
+    "unit": "years",
+    "answerValue": 2229000000,
+    "decompositionHint": "Half the age of the planet. Almost nothing older survives, because plate tectonics recycles the crust that would carry the scar.",
+    "strategy": "anchor-scale",
+    "source": "Curtin University isotopic dating of the Yarrabubba structure",
+    "asOf": 2020
+  },
+  {
+    "id": "records-most-lightning-per-year",
+    "prompt": "How many nights a year does the most lightning-prone place on Earth see storms?",
+    "unit": "nights per year",
+    "answerValue": 297,
+    "decompositionHint": "Warm air off a lake meeting mountain air almost every evening, so the answer is a large fraction of the whole year rather than a handful.",
+    "strategy": "anchor-scale",
+    "source": "NASA Lightning Imaging Sensor observations of Lake Maracaibo",
+    "asOf": 2016
+  },
+  {
+    "id": "records-longest-continuous-eruption",
+    "prompt": "How many years has the longest continuously erupting volcano been active?",
+    "unit": "years",
+    "answerValue": 800,
+    "decompositionHint": "Recorded by European sailors as already erupting when they first passed, and it has not stopped since. That puts the start in medieval times.",
+    "strategy": "anchor-scale",
+    "source": "Smithsonian Global Volcanism Program record for Mount Yasur",
+    "asOf": 2025
+  },
+  {
+    "id": "records-largest-sand-sea",
+    "prompt": "How many square kilometres does the largest continuous sand desert cover?",
+    "unit": "square kilometres",
+    "answerValue": 650000,
+    "decompositionHint": "Sand seas are a small part of most deserts - the Sahara is mostly rock and gravel - so this is far less than the desert that contains it.",
+    "strategy": "anchor-scale",
+    "source": "Published geological surveys of the Rub al Khali",
+    "asOf": 2025
+  },
+  {
+    "id": "records-farthest-point-from-earth-centre",
+    "prompt": "How many kilometres from the centre of the Earth is its most distant surface point?",
+    "unit": "kilometres",
+    "answerValue": 6384.4,
+    "decompositionHint": "Not Everest: the planet bulges at the equator by about 21 km, so a lower mountain nearer the equator wins by that margin.",
+    "strategy": "anchor-scale",
+    "source": "Instituto Geografico Militar survey of Chimborazo",
+    "asOf": 2025
+  },
+  {
+    "id": "records-longest-animal-fast",
+    "prompt": "How many days can a male emperor penguin go without eating?",
+    "unit": "days",
+    "answerValue": 120,
+    "decompositionHint": "It incubates an egg through the Antarctic winter while the female feeds at sea. Work from the length of that winter rather than from hunger.",
+    "strategy": "rate-time",
+    "source": "British Antarctic Survey breeding studies",
+    "asOf": 2025
+  },
+  {
+    "id": "records-most-chromosomes",
+    "prompt": "How many chromosomes does the species with the most chromosomes carry?",
+    "unit": "chromosomes",
+    "answerValue": 1440,
+    "decompositionHint": "A fern that has repeatedly doubled its whole genome. Humans have 46, so this is a chain of doublings rather than a slow accumulation.",
+    "strategy": "exponential",
+    "source": "Royal Botanic Gardens Kew chromosome count records for Ophioglossum",
+    "asOf": 2025
+  },
+  {
+    "id": "records-smallest-genome",
+    "prompt": "How many base pairs does the smallest known cellular genome contain?",
+    "unit": "base pairs",
+    "answerValue": 159662,
+    "decompositionHint": "A bacterium living inside insect cells, which has shed almost every gene it can borrow from its host. E. coli has 4.6 million.",
+    "strategy": "anchor-scale",
+    "source": "Published genome sequence of Carsonella ruddii, Science",
+    "asOf": 2006
+  },
+  {
+    "id": "records-longest-hibernation",
+    "prompt": "How many months can the longest-hibernating mammal stay asleep?",
+    "unit": "months",
+    "answerValue": 11,
+    "decompositionHint": "A dormouse that skips breeding entirely in years when the tree seed crop fails, so the sleep is limited by the length of the year itself.",
+    "strategy": "anchor-scale",
+    "source": "Published studies of Glis glis hibernation, University of Vienna",
+    "asOf": 2025
+  },
+  {
+    "id": "records-largest-bird-nest",
+    "prompt": "How many kilograms did the heaviest recorded bird nest weigh?",
+    "unit": "kilograms",
+    "answerValue": 2700,
+    "decompositionHint": "Built up over decades by successive pairs adding sticks each year, until the branch holding it gave way.",
+    "strategy": "rate-time",
+    "source": "Published ornithological records for a bald eagle nest, St Petersburg, Florida",
+    "asOf": 1963
+  },
+  {
+    "id": "records-largest-beaver-dam",
+    "prompt": "How many metres long is the largest beaver dam?",
+    "unit": "metres",
+    "answerValue": 850,
+    "decompositionHint": "Large enough to be spotted from orbit in satellite imagery, built by successive generations across a shallow valley over decades.",
+    "strategy": "anchor-scale",
+    "source": "Parks Canada survey of Wood Buffalo National Park",
+    "asOf": 2007
+  },
+  {
+    "id": "records-tallest-termite-mound",
+    "prompt": "How many metres tall is the tallest recorded termite mound?",
+    "unit": "metres",
+    "answerValue": 12.8,
+    "decompositionHint": "A ventilation chimney for a colony living mostly underground, so the height is set by the airflow it has to drive rather than by the nest.",
+    "strategy": "anchor-scale",
+    "source": "Published entomological survey records, Democratic Republic of the Congo",
+    "asOf": 2025
+  },
+  {
+    "id": "records-oldest-wild-bird",
+    "prompt": "How many years old is the oldest known wild bird still breeding?",
+    "unit": "years",
+    "answerValue": 74,
+    "decompositionHint": "A Laysan albatross ringed as an adult in 1956, so her true age is at least that plus the five years before a first breeding attempt.",
+    "strategy": "anchor-scale",
+    "source": "United States Fish and Wildlife Service banding records for Wisdom",
+    "asOf": 2025
+  },
+  {
+    "id": "records-most-abundant-organism",
+    "prompt": "How many individual cells does the most abundant organism on Earth number?",
+    "unit": "cells",
+    "answerValue": 2e+28,
+    "decompositionHint": "A marine bacterium making up a large share of all plankton. Start from the ocean's volume in litres and a plausible count per litre.",
+    "strategy": "volume-packing",
+    "source": "Published abundance estimates for Pelagibacter ubique, Oregon State University",
+    "asOf": 2025
+  },
+  {
+    "id": "records-highest-living-mammal",
+    "prompt": "How many metres above sea level does the highest-living mammal survive?",
+    "unit": "metres",
+    "answerValue": 6130,
+    "decompositionHint": "Found in rock crevices on a volcano well above the snowline, where there is a little over half the oxygen available at sea level.",
+    "strategy": "anchor-scale",
+    "source": "Published survey of yellow-rumped leaf-eared mouse, University of Nebraska",
+    "asOf": 2020
+  },
+  {
+    "id": "records-largest-flower",
+    "prompt": "How many metres across is the largest single flower?",
+    "unit": "metres",
+    "answerValue": 1.11,
+    "decompositionHint": "A parasite with no leaves, stem or roots, which is what lets it put everything into one bloom. It smells of rotting meat to draw flies.",
+    "strategy": "anchor-scale",
+    "source": "Published botanical records for Rafflesia arnoldii, Indonesia",
+    "asOf": 2025
+  },
+  {
+    "id": "records-largest-fungus-fruiting-body",
+    "prompt": "How many metres long was the largest fungal fruiting body ever found?",
+    "unit": "metres",
+    "answerValue": 10.85,
+    "decompositionHint": "A shelf fungus growing along the underside of a fallen trunk, so its length is limited by the tree rather than by the fungus.",
+    "strategy": "anchor-scale",
+    "source": "Published description of Phellinus ellipsoideus, Fungal Biology",
+    "asOf": 2011
+  },
+  {
+    "id": "records-fastest-plant-movement",
+    "prompt": "How many seconds does the fastest movement by a plant take?",
+    "unit": "seconds",
+    "answerValue": 0.0005,
+    "decompositionHint": "A flower firing its pollen by releasing elastic tension, far too fast for anything chemical. A Venus flytrap is a thousand times slower.",
+    "strategy": "anchor-scale",
+    "source": "Published high-speed videography of bunchberry dogwood, Williams College",
+    "asOf": 2005
+  },
+  {
+    "id": "records-largest-seagrass-meadow",
+    "prompt": "How many square kilometres does the largest single seagrass meadow cover?",
+    "unit": "square kilometres",
+    "answerValue": 200,
+    "decompositionHint": "One clone spreading by runners for thousands of years, so its size is a growth rate multiplied by a very long time.",
+    "strategy": "rate-time",
+    "source": "University of Western Australia genetic survey of Shark Bay",
+    "asOf": 2022
+  },
+  {
+    "id": "records-highest-helicopter-flight",
+    "prompt": "How many metres up did the highest helicopter flight reach?",
+    "unit": "metres",
+    "answerValue": 12442,
+    "decompositionHint": "A rotor needs air to bite on, so the ceiling is far below a jet's. Airliners cruise at about 11,000 metres.",
+    "strategy": "anchor-scale",
+    "source": "Federation Aeronautique Internationale ratified rotorcraft altitude record",
+    "asOf": 1972
+  },
+  {
+    "id": "records-highest-glider-altitude",
+    "prompt": "How many metres up did the highest glider flight reach?",
+    "unit": "metres",
+    "answerValue": 22657,
+    "decompositionHint": "Riding a stratospheric mountain wave in a pressurised sailplane, well above where airliners fly and with no engine at all.",
+    "strategy": "anchor-scale",
+    "source": "Federation Aeronautique Internationale ratified record, Perlan 2",
+    "asOf": 2018
+  },
+  {
+    "id": "records-longest-paraglider-flight",
+    "prompt": "How many kilometres is the longest distance flown by a paraglider?",
+    "unit": "kilometres",
+    "answerValue": 631,
+    "decompositionHint": "A fabric wing with no rigid structure, climbing in thermals all day. Work from a modest cross-country speed and the hours of usable lift.",
+    "strategy": "rate-time",
+    "source": "Federation Aeronautique Internationale ratified paragliding record",
+    "asOf": 2023
+  },
+  {
+    "id": "records-longest-hang-glider-flight",
+    "prompt": "How many kilometres is the longest distance flown by a hang glider?",
+    "unit": "kilometres",
+    "answerValue": 764,
+    "decompositionHint": "Faster than a paraglider and so able to cover more ground in the same day's thermals, but still limited by daylight.",
+    "strategy": "rate-time",
+    "source": "Federation Aeronautique Internationale ratified hang gliding record",
+    "asOf": 2012
+  },
+  {
+    "id": "records-fastest-motorcycle",
+    "prompt": "How many kilometres per hour is the motorcycle land speed record?",
+    "unit": "kilometres per hour",
+    "answerValue": 605.7,
+    "decompositionHint": "Set in a fully enclosed streamliner rather than on an exposed bike, which is what lets it pass halfway to the speed of sound.",
+    "strategy": "anchor-scale",
+    "source": "Federation Internationale de Motocyclisme ratified record",
+    "asOf": 2010
+  },
+  {
+    "id": "records-longest-cave-isolation",
+    "prompt": "How many days did the longest voluntary stay alone underground last?",
+    "unit": "days",
+    "answerValue": 500,
+    "decompositionHint": "An experiment in isolation with no clocks and no contact. The limit is psychological rather than physical, and it ran well over a year.",
+    "strategy": "anchor-scale",
+    "source": "Published scientific monitoring of the Timeline project, Granada",
+    "asOf": 2023
+  },
+  {
+    "id": "records-fastest-100km-run",
+    "prompt": "How many seconds is the world record for running 100 kilometres?",
+    "unit": "seconds",
+    "answerValue": 22154,
+    "decompositionHint": "Just over six hours, which is a pace close to three and a half minutes per kilometre held for the whole distance. Convert the hours.",
+    "strategy": "rate-time",
+    "source": "International Association of Ultrarunners ratified world record",
+    "asOf": 2018
+  },
+  {
+    "id": "records-longest-golf-hole",
+    "prompt": "How many metres long is the longest golf hole in the world?",
+    "unit": "metres",
+    "answerValue": 964,
+    "decompositionHint": "A par seven. A long par five is about 550 metres, so ask how many extra shots this adds and how far each of those carries.",
+    "strategy": "anchor-scale",
+    "source": "Korea Golf Association course records for Gunsan Country Club",
+    "asOf": 2025
+  },
+  {
+    "id": "records-largest-quantum-computer",
+    "prompt": "How many qubits does the largest superconducting quantum processor have?",
+    "unit": "qubits",
+    "answerValue": 1121,
+    "decompositionHint": "Each qubit needs its own control wiring into a dilution refrigerator, so the count is limited by cabling and heat rather than by chip area.",
+    "strategy": "anchor-scale",
+    "source": "IBM published specifications for the Condor processor",
+    "asOf": 2023
+  },
+  {
+    "id": "records-highest-transmission-voltage",
+    "prompt": "How many volts does the highest-voltage power line carry?",
+    "unit": "volts",
+    "answerValue": 1100000,
+    "decompositionHint": "Higher voltage means lower current and so less heating loss, which is what makes very long lines possible. Household supply is about 230 volts.",
+    "strategy": "anchor-scale",
+    "source": "State Grid Corporation of China specifications for the Changji-Guquan link",
+    "asOf": 2019
+  },
+  {
+    "id": "records-largest-planned-telescope",
+    "prompt": "How many hexagonal segments make up the mirror of the Extremely Large Telescope?",
+    "unit": "segments",
+    "answerValue": 798,
+    "decompositionHint": "The mirror is 39 metres across and each segment is about 1.4 metres. Divide the mirror area by the segment area rather than guessing.",
+    "strategy": "anchor-scale",
+    "source": "European Southern Observatory specifications for the Extremely Large Telescope",
+    "asOf": 2025
+  },
+  {
+    "id": "records-oldest-shoes",
+    "prompt": "How many years old is the oldest known pair of shoes?",
+    "unit": "years",
+    "answerValue": 5500,
+    "decompositionHint": "Leather preserved in a dry cave under a layer of sheep dung, which sealed it from air. That puts it before the first written records.",
+    "strategy": "anchor-scale",
+    "source": "Published excavation report for the Areni-1 cave, Armenia",
+    "asOf": 2010
+  },
+  {
+    "id": "records-oldest-bread",
+    "prompt": "How many years old is the oldest known bread?",
+    "unit": "years",
+    "answerValue": 14400,
+    "decompositionHint": "Charred crumbs found in a fireplace, and older than farming - so it was made from wild grains gathered rather than grown.",
+    "strategy": "anchor-scale",
+    "source": "University of Copenhagen excavation at Shubayqa 1, Jordan",
+    "asOf": 2018
+  },
+  {
+    "id": "records-oldest-pottery",
+    "prompt": "How many years old is the oldest known pottery?",
+    "unit": "years",
+    "answerValue": 20000,
+    "decompositionHint": "Made by hunter-gatherers well before farming, which overturned the old assumption that pots arrive with settled villages.",
+    "strategy": "anchor-scale",
+    "source": "Published radiocarbon dating of Xianrendong Cave pottery, Science",
+    "asOf": 2012
+  },
+  {
+    "id": "records-oldest-human-footprints",
+    "prompt": "How many years old are the oldest securely dated human footprints in the Americas?",
+    "unit": "years",
+    "answerValue": 23000,
+    "decompositionHint": "Pressed into a lakeshore and dated by seeds in the layers above and below, which places people there during the last glacial maximum.",
+    "strategy": "anchor-scale",
+    "source": "United States Geological Survey dating of the White Sands trackways",
+    "asOf": 2021
+  },
+  {
+    "id": "records-oldest-mummy",
+    "prompt": "How many years old are the oldest deliberately mummified human remains?",
+    "unit": "years",
+    "answerValue": 7000,
+    "decompositionHint": "From a desert coast in South America, and around two thousand years earlier than the Egyptian practice most people think of first.",
+    "strategy": "anchor-scale",
+    "source": "UNESCO World Heritage documentation for the Chinchorro culture",
+    "asOf": 2025
+  },
+  {
+    "id": "records-oldest-university",
+    "prompt": "How many years has the oldest continuously operating university been teaching?",
+    "unit": "years",
+    "answerValue": 1166,
+    "decompositionHint": "Founded in North Africa as a mosque school and still awarding degrees, which puts its founding in the ninth century.",
+    "strategy": "anchor-scale",
+    "source": "UNESCO records for the University of al-Qarawiyyin",
+    "asOf": 2025
+  },
+  {
+    "id": "records-oldest-parliament",
+    "prompt": "How many years has the oldest surviving parliament been sitting?",
+    "unit": "years",
+    "answerValue": 1095,
+    "decompositionHint": "Founded by settlers on a volcanic island who met outdoors at a rift valley once a year. That places it in the early tenth century.",
+    "strategy": "anchor-scale",
+    "source": "UNESCO World Heritage documentation for Thingvellir and the Althing",
+    "asOf": 2025
+  },
+  {
+    "id": "records-oldest-star-map",
+    "prompt": "How many years old is the oldest known depiction of the night sky?",
+    "unit": "years",
+    "answerValue": 3600,
+    "decompositionHint": "A bronze disc with gold inlays showing the sun, moon and a cluster of stars, dated by the Bronze Age hoard it was buried with.",
+    "strategy": "anchor-scale",
+    "source": "State Museum of Prehistory Halle records for the Nebra sky disc",
+    "asOf": 2025
+  },
+  {
+    "id": "records-most-expensive-watch",
+    "prompt": "How many US dollars did the most expensive wristwatch ever sold fetch?",
+    "unit": "US dollars",
+    "answerValue": 31190000,
+    "decompositionHint": "A one-off complicated piece sold for charity, so the price reflects competitive bidding as much as the movement inside it.",
+    "strategy": "anchor-scale",
+    "source": "Christie's published auction result, Only Watch 2019",
+    "asOf": 2019
+  },
+  {
+    "id": "records-most-expensive-stamp",
+    "prompt": "How many US dollars did the most expensive postage stamp fetch?",
+    "unit": "US dollars",
+    "answerValue": 8300000,
+    "decompositionHint": "A single surviving example of a provisional issue printed locally when a shipment failed to arrive. Rarity rather than beauty sets the price.",
+    "strategy": "anchor-scale",
+    "source": "Sotheby's published auction result for the British Guiana 1c magenta",
+    "asOf": 2021
+  },
+  {
+    "id": "records-most-expensive-violin",
+    "prompt": "How many US dollars did the most expensive violin ever sold fetch?",
+    "unit": "US dollars",
+    "answerValue": 15900000,
+    "decompositionHint": "An eighteenth-century instrument. Compare it with the most expensive painting, which went for nearly thirty times as much.",
+    "strategy": "anchor-scale",
+    "source": "Tarisio published auction result for the Lady Blunt Stradivarius",
+    "asOf": 2011
+  },
+  {
+    "id": "records-most-expensive-photograph",
+    "prompt": "How many US dollars did the most expensive photograph fetch at auction?",
+    "unit": "US dollars",
+    "answerValue": 12400000,
+    "decompositionHint": "A print from a small numbered edition, which is what lets a reproducible medium command a price at all.",
+    "strategy": "anchor-scale",
+    "source": "Christie's published auction result for Man Ray's Le Violon d'Ingres",
+    "asOf": 2022
+  },
+  {
+    "id": "records-largest-ipo",
+    "prompt": "How many US dollars did the largest stock market flotation raise?",
+    "unit": "US dollars",
+    "answerValue": 29400000000,
+    "decompositionHint": "A state oil company selling a sliver of itself. The sum raised is a small percentage of a valuation close to two trillion dollars.",
+    "strategy": "divide-total",
+    "source": "Saudi Aramco published prospectus and listing documents",
+    "asOf": 2019
+  },
+  {
+    "id": "records-largest-lottery-jackpot",
+    "prompt": "How many US dollars was the largest lottery jackpot ever won?",
+    "unit": "US dollars",
+    "answerValue": 2040000000,
+    "decompositionHint": "It rolled over for three months. Each draw adds a share of ticket sales, so multiply a plausible weekly take by the number of draws.",
+    "strategy": "rate-time",
+    "source": "California State Lottery published Powerball results",
+    "asOf": 2022
+  },
+  {
+    "id": "records-largest-ancient-city",
+    "prompt": "How many people lived in the largest city of the ancient world at its peak?",
+    "unit": "people",
+    "answerValue": 1000000,
+    "decompositionHint": "It needed grain shipped from across a sea to feed itself, which is a good clue to the scale. No city matched it again for 1,800 years.",
+    "strategy": "anchor-scale",
+    "source": "Published demographic estimates for imperial Rome, Cambridge Ancient History",
+    "asOf": 2025
+  },
+  {
+    "id": "records-longest-suspension-bridge-towers",
+    "prompt": "How many metres tall are the tallest bridge towers ever built?",
+    "unit": "metres",
+    "answerValue": 343,
+    "decompositionHint": "A suspension bridge's towers must clear the deck by enough for the cable to sag properly, so tower height tracks span length.",
+    "strategy": "anchor-scale",
+    "source": "Published engineering specifications for the Millau Viaduct",
+    "asOf": 2004
+  },
+  {
+    "id": "records-deepest-railway-station",
+    "prompt": "How many metres below ground is the deepest railway station?",
+    "unit": "metres",
+    "answerValue": 105.5,
+    "decompositionHint": "Deep enough to double as a shelter, which is why it was built that way. A normal underground station sits about 20 metres down.",
+    "strategy": "anchor-scale",
+    "source": "Kyiv Metro published station specifications for Arsenalna",
+    "asOf": 2025
+  },
+  {
+    "id": "records-largest-cruise-passenger-count",
+    "prompt": "How many people can the largest cruise ship carry including crew?",
+    "unit": "people",
+    "answerValue": 9950,
+    "decompositionHint": "Passengers at maximum occupancy plus around 2,350 crew. Compare it with the population of a small town rather than a hotel.",
+    "strategy": "decompose",
+    "source": "Royal Caribbean published specifications for Icon of the Seas",
+    "asOf": 2024
+  },
+  {
+    "id": "records-longest-flight-by-a-model-aircraft",
+    "prompt": "How many kilometres did the first model aircraft to cross the Atlantic fly?",
+    "unit": "kilometres",
+    "answerValue": 3030,
+    "decompositionHint": "A five-kilogram petrol-powered model navigating by GPS, so the limit is fuel fraction rather than anything about the crossing itself.",
+    "strategy": "rate-time",
+    "source": "Federation Aeronautique Internationale ratified model aircraft record",
+    "asOf": 2003
+  },
+  {
+    "id": "records-largest-aircraft-wingspan",
+    "prompt": "How many metres is the wingspan of the aircraft with the widest wings?",
+    "unit": "metres",
+    "answerValue": 117,
+    "decompositionHint": "A twin-fuselage carrier built to drop rockets at altitude. A jumbo jet spans 68 metres, so this is not quite double that.",
+    "strategy": "anchor-scale",
+    "source": "Published manufacturer specifications for Stratolaunch Roc",
+    "asOf": 2019
+  },
+  {
+    "id": "records-most-flight-hours",
+    "prompt": "How many hours has the pilot with the most logged flight time flown?",
+    "unit": "hours",
+    "answerValue": 121000,
+    "decompositionHint": "Nearly fourteen years of continuous flying, accumulated over a career. Work out the hours a working pilot can log per year and multiply.",
+    "strategy": "rate-time",
+    "source": "Federal Aviation Administration certified logbook records",
+    "asOf": 2025
+  },
+  {
+    "id": "records-largest-helicopter-lift",
+    "prompt": "How many kilograms could the largest helicopter ever built lift?",
+    "unit": "kilograms",
+    "answerValue": 40000,
+    "decompositionHint": "Rotor lift scales with disc area, so doubling the payload needs a much larger rotor. A heavy transport helicopter manages about 12 tonnes.",
+    "strategy": "area-density",
+    "source": "Published specifications for the Mil V-12 rotorcraft",
+    "asOf": 1969
+  },
+  {
+    "id": "records-fastest-passenger-aircraft",
+    "prompt": "How many kilometres per hour was the cruising speed of the fastest passenger aircraft?",
+    "unit": "kilometres per hour",
+    "answerValue": 2179,
+    "decompositionHint": "Just over twice the speed of sound at altitude, which is about 1,060 km/h. Ordinary airliners cruise at around 900.",
+    "strategy": "anchor-scale",
+    "source": "Published operating specifications for Concorde",
+    "asOf": 2003
+  },
+  {
+    "id": "records-longest-serving-aircraft",
+    "prompt": "How many years has the longest-serving military aircraft type been in operation?",
+    "unit": "years",
+    "answerValue": 71,
+    "decompositionHint": "A strategic bomber first flown in the 1950s and planned to keep flying into the 2050s, which would make a century of service.",
+    "strategy": "anchor-scale",
+    "source": "United States Air Force published fleet records for the B-52",
+    "asOf": 2026
+  },
+  {
+    "id": "records-largest-telescope-array-collecting-area",
+    "prompt": "How many square metres of collecting area will the largest radio telescope array have?",
+    "unit": "square metres",
+    "answerValue": 1000000,
+    "decompositionHint": "The project is named after its target collecting area, which is a clue - the units are the thing to get right rather than the number.",
+    "strategy": "unit-conversion",
+    "source": "Square Kilometre Array Observatory published design specifications",
+    "asOf": 2025
+  },
+  {
+    "id": "records-most-cited-scientific-paper",
+    "prompt": "How many times has the most cited scientific paper been cited?",
+    "unit": "citations",
+    "answerValue": 350000,
+    "decompositionHint": "A laboratory method for measuring protein, cited by anyone who used it. Method papers dominate this list rather than famous discoveries.",
+    "strategy": "anchor-scale",
+    "source": "Web of Science citation counts for Lowry et al. 1951",
+    "asOf": 2025
+  },
+  {
+    "id": "records-longest-scientific-experiment-plants",
+    "prompt": "How many years has the longest-running seed germination experiment been going?",
+    "unit": "years",
+    "answerValue": 146,
+    "decompositionHint": "Bottles of seed buried in 1879 and dug up on a schedule that has been stretched as the seeds kept germinating.",
+    "strategy": "rate-time",
+    "source": "Michigan State University records for the Beal seed viability experiment",
+    "asOf": 2025
+  },
+  {
+    "id": "records-largest-prime-gap",
+    "prompt": "How large is the biggest known gap between consecutive known primes?",
+    "unit": "integers",
+    "answerValue": 1550000,
+    "decompositionHint": "Gaps grow roughly with the logarithm of the numbers involved, so a gap this size sits among numbers with hundreds of thousands of digits.",
+    "strategy": "exponential",
+    "source": "Published prime gap records, PrimeGrid distributed computing project",
+    "asOf": 2025
+  },
+  {
+    "id": "records-most-digits-memorised",
+    "prompt": "How many digits of pi has the record holder recited from memory?",
+    "unit": "digits",
+    "answerValue": 70030,
+    "decompositionHint": "Recited over ten hours without error. Work from a plausible digits-per-minute rate and the hours the attempt lasted.",
+    "strategy": "rate-time",
+    "source": "Published verification records for Rajveer Meena, VIT University",
+    "asOf": 2015
+  },
+  {
+    "id": "records-largest-known-twin-primes",
+    "prompt": "How many digits do the largest known twin primes have?",
+    "unit": "digits",
+    "answerValue": 388342,
+    "decompositionHint": "Far smaller than the largest known prime, because twins have to be found by searching rather than by a fast test for one special form.",
+    "strategy": "anchor-scale",
+    "source": "PrimeGrid verified discovery records",
+    "asOf": 2016
+  },
+  {
+    "id": "records-longest-word-in-a-dictionary",
+    "prompt": "How many letters are in the longest word in a major English dictionary?",
+    "unit": "letters",
+    "answerValue": 45,
+    "decompositionHint": "A medical coinage built from Greek and Latin roots for a lung disease caused by inhaling fine dust.",
+    "strategy": "recall-sanity",
+    "source": "Oxford English Dictionary entry for pneumonoultramicroscopicsilicovolcanoconiosis",
+    "asOf": 2025
+  },
+  {
+    "id": "records-most-languages-spoken-by-one-person",
+    "prompt": "How many languages could the most prolific recorded polyglot speak?",
+    "unit": "languages",
+    "answerValue": 59,
+    "decompositionHint": "A nineteenth-century cardinal and librarian, tested by visitors who arrived speaking their own tongues. Claims above this are unverified.",
+    "strategy": "anchor-scale",
+    "source": "Published contemporary accounts and scholarship on Giuseppe Mezzofanti",
+    "asOf": 1849
+  },
+  {
+    "id": "records-largest-vocabulary-animal",
+    "prompt": "How many words could the animal with the largest proven vocabulary understand?",
+    "unit": "words",
+    "answerValue": 1022,
+    "decompositionHint": "A border collie taught object names over three years and tested blind. Work from a learning rate per week and the years of training.",
+    "strategy": "rate-time",
+    "source": "Published study of the dog Chaser, Wofford College",
+    "asOf": 2011
+  },
+  {
+    "id": "records-largest-recorded-swarm-of-bees",
+    "prompt": "How many bees are in a very large honeybee swarm?",
+    "unit": "bees",
+    "answerValue": 60000,
+    "decompositionHint": "A swarm is roughly half a colony leaving with the old queen. Start from how many bees a full hive holds.",
+    "strategy": "divide-total",
+    "source": "Published apiological studies, Cornell University",
+    "asOf": 2025
+  },
+  {
+    "id": "records-deepest-scuba-cave-dive",
+    "prompt": "How many metres deep is the deepest cave dive on record?",
+    "unit": "metres",
+    "answerValue": 283,
+    "decompositionHint": "Deeper than open-water scuba records are usually set, because a cave gives no straight route to the surface if anything goes wrong.",
+    "strategy": "anchor-scale",
+    "source": "Published dive logs and verification for the Boesmansgat cave, South Africa",
+    "asOf": 1996
+  },
+  {
+    "id": "records-longest-underwater-habitat-stay",
+    "prompt": "How many days did the longest continuous stay in an underwater habitat last?",
+    "unit": "days",
+    "answerValue": 100,
+    "decompositionHint": "At a depth shallow enough to avoid decompression on exit, so the limit is supplies and psychology rather than pressure.",
+    "strategy": "anchor-scale",
+    "source": "Published mission records for Jules Undersea Lodge, Florida",
+    "asOf": 2023
+  },
+  {
+    "id": "records-largest-recorded-tide-range",
+    "prompt": "How many metres is the greatest tidal range measured anywhere on Earth?",
+    "unit": "metres",
+    "answerValue": 16.3,
+    "decompositionHint": "A funnel-shaped bay whose natural sloshing period happens to match the tide, so each cycle reinforces the last.",
+    "strategy": "anchor-scale",
+    "source": "Canadian Hydrographic Service measurements for the Bay of Fundy",
+    "asOf": 2025
+  },
+  {
+    "id": "records-strongest-recorded-tornado-outbreak",
+    "prompt": "How many tornadoes touched down in the largest single outbreak?",
+    "unit": "tornadoes",
+    "answerValue": 360,
+    "decompositionHint": "Over three days along one frontal system. A busy tornado day produces a few dozen, so this is roughly ten times a normal peak.",
+    "strategy": "anchor-scale",
+    "source": "NOAA Storm Prediction Center records for the 2011 Super Outbreak",
+    "asOf": 2011
+  },
+  {
+    "id": "records-most-powerful-recorded-solar-flare",
+    "prompt": "How many watts per square metre of X-rays did the most powerful recorded solar flare deliver at Earth?",
+    "unit": "watts per square metre",
+    "answerValue": 0.0045,
+    "decompositionHint": "Flare classes go up by factors of ten and this one saturated the sensors. An ordinary large flare delivers about a thousandth of this.",
+    "strategy": "exponential",
+    "source": "NOAA Space Weather Prediction Center GOES measurements, November 2003",
+    "asOf": 2003
+  },
+  {
+    "id": "records-largest-recorded-sunspot",
+    "prompt": "How many millionths of the Sun's visible hemisphere did the largest recorded sunspot group cover?",
+    "unit": "millionths of a hemisphere",
+    "answerValue": 6132,
+    "decompositionHint": "Expressed in millionths because sunspots are measured as a fraction of the disc. That fraction is still under one percent.",
+    "strategy": "divide-total",
+    "source": "Royal Greenwich Observatory sunspot area records, April 1947",
+    "asOf": 1947
+  },
+  {
+    "id": "records-longest-total-eclipse-possible",
+    "prompt": "How many seconds is the longest a total solar eclipse can theoretically last?",
+    "unit": "seconds",
+    "answerValue": 452,
+    "decompositionHint": "Set by the Moon at its closest and the Earth at its farthest from the Sun, with the shadow crossing the equator at local noon.",
+    "strategy": "anchor-scale",
+    "source": "NASA eclipse computations, Goddard Space Flight Center",
+    "asOf": 2025
+  },
+  {
+    "id": "records-largest-recorded-aurora-extent",
+    "prompt": "How far from the pole in degrees of latitude has an aurora been seen?",
+    "unit": "degrees of latitude",
+    "answerValue": 23,
+    "decompositionHint": "During the largest geomagnetic storm on record, aurorae were reported from the tropics. Give the latitude rather than the distance.",
+    "strategy": "anchor-scale",
+    "source": "Published historical accounts of the 1859 Carrington event, NOAA",
+    "asOf": 1859
+  },
+  {
+    "id": "records-fastest-erosion-rate",
+    "prompt": "How many millimetres a year is the fastest measured landscape erosion rate?",
+    "unit": "millimetres per year",
+    "answerValue": 20,
+    "decompositionHint": "A steep, wet, tectonically rising range where rock is lifted and stripped at similar speeds. Typical continental erosion is a hundredth of this.",
+    "strategy": "anchor-scale",
+    "source": "Published cosmogenic nuclide studies of the Southern Alps, New Zealand",
+    "asOf": 2025
+  },
+  {
+    "id": "records-fastest-mountain-uplift",
+    "prompt": "How many millimetres a year is the fastest measured mountain uplift?",
+    "unit": "millimetres per year",
+    "answerValue": 10,
+    "decompositionHint": "Measured by GPS across a collision zone. At this rate a range gains a kilometre of height every hundred thousand years, before erosion.",
+    "strategy": "rate-time",
+    "source": "Published GPS geodesy of the Southern Alps, GNS Science New Zealand",
+    "asOf": 2025
+  },
+  {
+    "id": "records-largest-recorded-sediment-flow",
+    "prompt": "How many kilometres did the longest recorded underwater sediment flow travel?",
+    "unit": "kilometres",
+    "answerValue": 1100,
+    "decompositionHint": "A turbidity current running down a submarine canyon and out across the abyssal plain, tracked by the seafloor cables it broke.",
+    "strategy": "anchor-scale",
+    "source": "Published study of the Congo Canyon turbidity current, University of Durham",
+    "asOf": 2020
+  },
+  {
+    "id": "records-largest-recorded-fish-catch",
+    "prompt": "How many tonnes of fish were landed in the largest annual catch of a single species?",
+    "unit": "tonnes",
+    "answerValue": 13000000,
+    "decompositionHint": "Peruvian anchoveta before the fishery collapsed. Compare it with total world fish landings of about 90 million tonnes a year.",
+    "strategy": "divide-total",
+    "source": "Food and Agriculture Organization fishery statistics",
+    "asOf": 1970
+  },
+  {
+    "id": "records-largest-recorded-crop-yield",
+    "prompt": "How many tonnes of wheat per hectare is the record yield?",
+    "unit": "tonnes per hectare",
+    "answerValue": 17.96,
+    "decompositionHint": "A cool maritime climate with a long grain-filling season. World average yield is about 3.5 tonnes per hectare.",
+    "strategy": "anchor-scale",
+    "source": "Published verification by the New Zealand Arable Food Industry Council",
+    "asOf": 2022
+  },
+  {
+    "id": "records-oldest-seed-bank-holding",
+    "prompt": "How many seed samples does the largest seed vault hold?",
+    "unit": "seed samples",
+    "answerValue": 1300000,
+    "decompositionHint": "Duplicates of collections held elsewhere, stored in permafrost as insurance. Each sample is typically 500 seeds in a foil packet.",
+    "strategy": "anchor-scale",
+    "source": "Norwegian Ministry of Agriculture records for the Svalbard Global Seed Vault",
+    "asOf": 2025
+  },
+  {
+    "id": "records-largest-herbarium",
+    "prompt": "How many preserved plant specimens does the largest herbarium hold?",
+    "unit": "specimens",
+    "answerValue": 8000000,
+    "decompositionHint": "Pressed sheets accumulated over four centuries of collecting. Work from a plausible annual accession rate times the years.",
+    "strategy": "rate-time",
+    "source": "Museum national d'Histoire naturelle published collection statistics, Paris",
+    "asOf": 2025
+  },
+  {
+    "id": "records-largest-natural-history-collection",
+    "prompt": "How many specimens does the largest natural history collection hold?",
+    "unit": "specimens",
+    "answerValue": 145000000,
+    "decompositionHint": "Most of it is insects and microscopic marine life rather than skeletons, which is why the count is so much larger than the displays suggest.",
+    "strategy": "anchor-scale",
+    "source": "Smithsonian National Museum of Natural History published collection statistics",
+    "asOf": 2025
+  },
+  {
+    "id": "records-most-species-named-by-one-person",
+    "prompt": "How many species did the most prolific taxonomist formally describe?",
+    "unit": "species",
+    "answerValue": 2500,
+    "decompositionHint": "The founder of modern naming conventions, working through a career of about fifty years. Divide to check the rate sounds achievable.",
+    "strategy": "rate-time",
+    "source": "International Plant Names Index attribution records for Carl Linnaeus",
+    "asOf": 1778
+  },
+  {
+    "id": "records-largest-genome-sequenced",
+    "prompt": "How many base pairs are in the largest animal genome ever sequenced?",
+    "unit": "base pairs",
+    "answerValue": 43000000000,
+    "decompositionHint": "A lungfish, whose genome is bloated with repeated sequence rather than extra genes. The human genome is three billion base pairs.",
+    "strategy": "anchor-scale",
+    "source": "Published lungfish genome assembly, Nature",
+    "asOf": 2021
+  },
+  {
+    "id": "records-most-eggs-laid-per-day",
+    "prompt": "How many eggs does the most fecund insect queen lay in a day?",
+    "unit": "eggs per day",
+    "answerValue": 40000,
+    "decompositionHint": "An African termite queen laying continuously around the clock. Divide by the minutes in a day to check the rate is physically possible.",
+    "strategy": "rate-time",
+    "source": "Published studies of Macrotermes queens, Smithsonian Tropical Research Institute",
+    "asOf": 2025
+  },
+  {
+    "id": "records-loudest-recorded-volcanic-eruption-pressure",
+    "prompt": "How many pascals of pressure change did the loudest recorded eruption produce at a hundred miles?",
+    "unit": "pascals",
+    "answerValue": 2100,
+    "decompositionHint": "Enough to move a mercury barometer visibly. Normal atmospheric pressure is 101,325 pascals, so this is a few percent of it.",
+    "strategy": "anchor-scale",
+    "source": "Royal Society barometric records of the 1883 Krakatoa eruption",
+    "asOf": 1883
+  },
+  {
+    "id": "records-largest-recorded-power-outage",
+    "prompt": "How many people lost power in the largest blackout ever recorded?",
+    "unit": "people",
+    "answerValue": 620000000,
+    "decompositionHint": "Two linked grid failures on consecutive days across northern India. That is a large fraction of one country's population.",
+    "strategy": "divide-total",
+    "source": "Indian Ministry of Power inquiry report, July 2012",
+    "asOf": 2012
+  },
+  {
+    "id": "records-largest-evacuation",
+    "prompt": "How many people were moved in the largest civilian evacuation by sea?",
+    "unit": "people",
+    "answerValue": 500000,
+    "decompositionHint": "Boats of every size ferrying people off Manhattan on one day. Compare it with the Dunkirk evacuation, which moved about 338,000 over nine days.",
+    "strategy": "anchor-scale",
+    "source": "United States Coast Guard records of the 11 September 2001 boatlift",
+    "asOf": 2001
+  },
+  {
+    "id": "records-longest-continuous-radio-broadcast",
+    "prompt": "How many years has the longest continuously running radio programme been on air?",
+    "unit": "years",
+    "answerValue": 75,
+    "decompositionHint": "A rural drama broadcast almost daily since 1951, which places its start in the early post-war years.",
+    "strategy": "anchor-scale",
+    "source": "BBC published programme records for The Archers",
+    "asOf": 2026
+  },
+  {
+    "id": "records-largest-museum-visitor-count",
+    "prompt": "How many people visited the most-visited museum in a single year?",
+    "unit": "visitors",
+    "answerValue": 10200000,
+    "decompositionHint": "Divide by the days it opens and check the daily figure against how many people can physically pass one entrance hall.",
+    "strategy": "divide-total",
+    "source": "Musee du Louvre published attendance figures",
+    "asOf": 2018
   }
 ]
 

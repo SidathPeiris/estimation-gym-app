@@ -86,3 +86,21 @@ records-largest-cave-chamber | OK | 10.78M m3 Miao Room, 2013 laser survey
 records-largest-wave-surfed | OK | 26.21m Steudtner 2020
 records-deepest-freedive | OK | 214m Nitsch 2007, AIDA
 records-longest-static-apnea | OK | 11:35 = 695s Mifsud 2009, AIDA
+records-largest-dam-volume | OK | 153M m3 structural volume, Tarbela
+records-longest-wind-turbine-blade | OK | 143m MySE292
+records-largest-wind-farm | FIXED-PROMPT | 20GW is Gansu's PLANNED capacity; only ~10GW built, so the prompt now says planned
+
+## Second tranche: the 100 questions added after the first pass
+
+records-longest-venus-survival | OK | 127 min Venera 13, 1982
+records-farthest-object-visited | OK | 6.6 billion km, Arrokoth flyby 2019
+records-highest-glider-altitude | FIXED | 23202 -> 22657 (FAI-ratified figure; 23203 is the pressure altitude)
+records-highest-helicopter-flight | OK | 12442m Boulet 1972, FAI
+records-oldest-shoes | OK | 5500y Areni-1, Armenia
+records-oldest-bread | OK | 14400y Shubayqa 1, PNAS
+records-oldest-pottery | OK | 20000y Xianrendong Cave, Science
+records-most-cited-scientific-paper | OK | Lowry 1951, 355k+ citations (bank 350k)
+records-largest-quantum-computer | OK | 1121 qubits IBM Condor 2023
+records-largest-recorded-power-outage | OK | 620M people, India 2012
+records-largest-lottery-jackpot | OK | 2.04bn Powerball 2022
+records-strongest-recorded-tornado-outbreak | OK | 360-368 tornadoes, 2011 Super Outbreak

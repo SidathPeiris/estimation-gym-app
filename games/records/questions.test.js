@@ -117,6 +117,17 @@ for (const q of RECORDS) {
 // The 49 that were live before the extension are the first 49 entries and
 // their order is unchanged - which is what made the rest of the bank safe to
 // edit, cull and rewrite right up until this line was changed.
+// Deliberately still 365 while the bank holds 465.
+//
+// The pin covers ids, not values, so a wrong answer inside it can always be
+// corrected - only reordering and removal are blocked. That is the right
+// trade for days already promised, but the hundred added most recently have
+// not been verified yet, and verification has twice found a question that had
+// to be removed outright rather than repriced.
+//
+// Those hundred are not served until September 2027, so there is a year to
+// check them and extend this number. Until then they stay editable, which is
+// the whole reason the pin is a number rather than "all of it".
 const SCHEDULED_SPAN = 365
 const SCHEDULE_FINGERPRINT =
   "850121691a459f9b7e79c10c8e792ab856a678db821f00c9f011bbaf249abfe8"
