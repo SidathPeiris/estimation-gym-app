@@ -66,6 +66,54 @@ assert.equal(Model.pickQuestionIndex(origin + bank.length, bank.length + 1), ban
 assert.equal(origin, Model.dayIndex(new Date(2026, 8, 9)))
 assert.equal(Model.formatDay(origin), "Wed 9 Sep")
 
+// --- a second game brings its own schedule origin ---
+//
+// pickQuestionIndex closed over the module-global SCHEDULE_ORIGIN, which is
+// fine while there is one bank and one frozen schedule. A second game has its
+// own bank and froze on its own day, so the origin is now an optional trailing
+// argument. Omitting it must behave exactly as before - that is what keeps
+// every existing caller, and the service worker's duplicated copy, in step.
+{
+  const own = origin + 500          // some other game, frozen 500 days later
+  const len = 40
+
+  assert.equal(
+    Model.pickQuestionIndex(own, len, own), 0,
+    "the origin day of a game serves the first question in its bank"
+  )
+  assert.equal(Model.pickQuestionIndex(own + 7, len, own), 7)
+
+  // The append-only guarantee has to hold for a custom origin too, or a second
+  // game gets the re-dealing bug the first one was fixed for.
+  for (let grown = len; grown <= len + 10; grown++) {
+    for (let day = own; day < own + len; day++) {
+      assert.equal(
+        Model.pickQuestionIndex(day, grown, own),
+        Model.pickQuestionIndex(day, len, own),
+        "day " + (day - own) + " moved when a custom-origin bank grew to " + grown
+      )
+    }
+  }
+
+  // And it still wraps past the end, the same way.
+  assert.equal(Model.pickQuestionIndex(own + len, len, own), 0, "wraps at the end")
+
+  // Omitted, undefined and the literal default must all be the Fermi schedule.
+  for (const day of [origin, origin + 1, origin + 999, origin - 5]) {
+    assert.equal(Model.pickQuestionIndex(day, 1000), Model.pickQuestionIndex(day, 1000, origin))
+    assert.equal(Model.pickQuestionIndex(day, 1000, undefined), Model.pickQuestionIndex(day, 1000))
+  }
+
+  // questionForDay passes it through.
+  const tiny = [{ id: "a" }, { id: "b" }, { id: "c" }]
+  assert.equal(Model.questionForDay(own, tiny, own).id, "a")
+  assert.equal(Model.questionForDay(own + 2, tiny, own).id, "c")
+  assert.equal(
+    Model.questionForDay(origin, tiny).id, "a",
+    "omitting the origin still uses the Fermi schedule"
+  )
+}
+
 // --- scoring bands ---
 assert.equal(Model.scoreGuess(100, 100).band, "Bullseye")
 assert.equal(Model.scoreGuess(150, 100).band, "Bullseye") // ~0.176 decades off

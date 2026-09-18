@@ -51,11 +51,19 @@ function formatDay(dayIdx) {
 // The origin is the day the schedule was frozen. Days are still counted from
 // the 2024 epoch so stored history and streaks keep their keys; only the
 // question lookup is re-anchored.
+//
+// This is Fermi Questions' origin, and the default for both functions below.
+// Another game has its own bank and froze its schedule on its own day, so it
+// passes its own - but this stays exported under this name because sw.test.js
+// greps sw.js for `var SCHEDULE_ORIGIN = (\d+)` and compares it to this value.
+// That is the only guard stopping the service worker's duplicated copy of the
+// schedule from drifting out of step with the app's.
 var SCHEDULE_ORIGIN = dayIndex(new Date(2026, 8, 9))
 
-function pickQuestionIndex(dayIdx, bankLength) {
+function pickQuestionIndex(dayIdx, bankLength, origin) {
   if (bankLength <= 0) return -1
-  var offset = dayIdx - SCHEDULE_ORIGIN
+  var from = typeof origin === "number" ? origin : SCHEDULE_ORIGIN
+  var offset = dayIdx - from
 
   // The frozen span. Every appended question extends it by another day.
   if (offset >= 0 && offset < bankLength) return offset
@@ -66,8 +74,8 @@ function pickQuestionIndex(dayIdx, bankLength) {
   return ((offset % bankLength) + bankLength) % bankLength
 }
 
-function questionForDay(dayIdx, bank) {
-  var index = pickQuestionIndex(dayIdx, bank.length)
+function questionForDay(dayIdx, bank, origin) {
+  var index = pickQuestionIndex(dayIdx, bank.length, origin)
   return index >= 0 ? bank[index] : null
 }
 
