@@ -1,0 +1,31 @@
+<!-- @dsCard group="Components" viewport="700x450" name="Feedback" subtitle="Hint callouts, the confession banner and footnotes" -->
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><link rel="stylesheet" href="../../styles.css">
+<script>window.EG_ICON_BASE = '../../assets/icons'</script>
+<style>body{padding:20px}</style>
+</head><body><div id="root"></div>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<script type="text/babel">
+const { Callout, Banner, FootNote, Button } = window.EstimationGymDesignSystem_4a01b0;
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <div>
+    <Banner title="Hold on." icon="circle-alert" actions={<>
+      <Button variant="soft" size="sm">Yes, I peeked</Button>
+      <Button variant="quiet" size="sm">No, I am just that good</Button>
+    </>}>
+      That is the answer to the digit. Did you look it up? The answers ship with the app, so anyone can read them.
+    </Banner>
+    <Callout title="Approach: Stock equals flow times lifetime" icon="lightbulb">
+      There is a standing stock and a rate at which it turns over. Stock equals flow times lifetime: if you know how many
+      are made each year and how long each one lasts, you know roughly how many exist right now.
+    </Callout>
+    <Callout title="You tend to guess low, by about 3.8×" icon="trending-down" tone="var(--status-warn)">
+      Knowing your direction of error is the part you can actually correct.
+    </Callout>
+    <FootNote align="center">Free software — <a href="#">source code</a> (AGPL-3.0)</FootNote>
+  </div>
+);
+</script></body></html>

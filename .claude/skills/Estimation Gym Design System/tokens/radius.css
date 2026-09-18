@@ -1,0 +1,14 @@
+/* Corner radii — the source's own values: 6 on the strategy callout, 8 on small
+   controls, 10 on inputs and primary buttons, 12 on result cards, 999 on the
+   reminder pill. Nothing is rounder than 20. */
+:root {
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 10px;
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+  --radius-3xl: 20px;
+  --radius-pill: 999px;
+  --radius-circle: 50%;
+}

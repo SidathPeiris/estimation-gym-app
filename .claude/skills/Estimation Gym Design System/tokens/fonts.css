@@ -1,0 +1,9 @@
+/* Webfonts — the brand's three faces, settled.
+   The source app ships no font binaries — it sets
+   font-family: ui-monospace, "Cascadia Mono", "JetBrains Mono", Menlo, Consolas
+   and lets the device decide, and the OG card falls back to "Segoe UI Variable
+   Display". JetBrains Mono is the source's own first preference; the other two
+   are this system's choices. See readme.md → "The three faces, and where they
+   came from". To self-host, replace this @import with @font-face rules — no
+   other file names a family. */
+@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Schibsted+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap");

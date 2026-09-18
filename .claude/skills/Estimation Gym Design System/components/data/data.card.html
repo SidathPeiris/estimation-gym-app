@@ -1,0 +1,43 @@
+<!-- @dsCard group="Components" viewport="700x430" name="Data" subtitle="Band bars, stat tiles, history rows and archetype rows" -->
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><link rel="stylesheet" href="../../styles.css">
+<script>window.EG_ICON_BASE = '../../assets/icons'</script>
+<style>body{padding:20px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}</style>
+</head><body><div id="root"></div>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<script type="text/babel">
+const { BandBars, StatTile, HistoryRow, ArchetypeRow } = window.EstimationGymDesignSystem_4a01b0;
+const rows = [
+  { band: 'Bullseye', tally: 3, fraction: 0.25 },
+  { band: 'Close', tally: 6, fraction: 0.50 },
+  { band: 'Ballpark', tally: 2, fraction: 0.17 },
+  { band: 'Off', tally: 1, fraction: 0.08 }
+];
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <div>
+    <div className="tiles">
+      <StatTile label="Days played" value="12" />
+      <StatTile label="Points" value="780" tone="var(--accent)" />
+      <StatTile label="Best streak" value="14" sub="current 6" tone="var(--status-warn)" />
+    </div>
+    <div className="grid">
+      <BandBars rows={rows} mine="Close" />
+      <div>
+        <ol style={{listStyle:'none',margin:0,padding:0}}>
+          <HistoryRow date="Mon 15 Sep" band="Bullseye" guess="1.2e6" actual="1.16e6" decades={0.01} comparable />
+          <HistoryRow date="Sun 14 Sep" band="Ballpark" guess="900" actual="29,000" decades={1.51} assisted />
+          <HistoryRow date="Sat 13 Sep" band="Off" guess="12" actual="17,000" decades={3.15} />
+        </ol>
+        <div style={{marginTop:14,paddingTop:12,borderTop:'1px solid var(--border-default)'}}>
+          <ArchetypeRow label="People times per-person rate" played={7} median={0.42} />
+          <ArchetypeRow label="Stock equals flow times lifetime" played={4} median={1.08} />
+          <ArchetypeRow label="Count the doublings" played={1} median={null} thin />
+        </div>
+      </div>
+    </div>
+  </div>
+);
+</script></body></html>

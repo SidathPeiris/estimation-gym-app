@@ -1,0 +1,52 @@
+/* Typography.
+   The source app is monospace end to end — deliberate, and the reason it reads
+   as a tool rather than a toy, but also why it reads flat. The redesign keeps
+   mono for everything numeric (guesses, points, distances, dates) and adds a
+   display face for headings and a humanist grotesk for prose. */
+:root {
+  --font-display: "Bricolage Grotesque", "Segoe UI Variable Display", system-ui, sans-serif;
+  --font-sans: "Schibsted Grotesk", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", Menlo, Consolas, monospace;
+
+  /* Size scale — small end is the source's own rem values, kept exactly. */
+  --text-2xs: 0.72rem;
+  --text-xs: 0.75rem;
+  --text-sm: 0.8125rem;
+  --text-base: 0.875rem;
+  --text-md: 1rem;
+  --text-lg: 1.0625rem;
+  --text-xl: 1.1875rem;
+  --text-2xl: 1.5rem;
+  --display-sm: 2rem;
+  --display-md: 2.75rem;
+  --display-lg: 3.5rem;
+  --display-xl: 4.75rem;
+
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+  --weight-black: 800;
+
+  --leading-none: 1;
+  --leading-tight: 1.15;
+  --leading-snug: 1.45;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.6;
+
+  --track-display: -0.03em;
+  --track-tight: -0.01em;
+  --track-normal: 0; /* @kind other */
+  --track-title: 0.3px; /* source h1 */
+  --track-label: 0.08em; /* source uppercase eyebrow */
+  --track-eyebrow: 1.4px; /* source .asof */
+
+  /* Composed roles */
+  --type-display: var(--weight-bold) var(--display-md) / var(--leading-tight) var(--font-display);
+  --type-title: var(--weight-bold) var(--text-2xl) / var(--leading-tight) var(--font-display);
+  --type-prompt: var(--weight-regular) var(--text-xl) / var(--leading-snug) var(--font-sans);
+  --type-body: var(--weight-regular) var(--text-base) / var(--leading-relaxed) var(--font-sans);
+  --type-label: var(--weight-bold) var(--text-sm) / var(--leading-normal) var(--font-sans);
+  --type-numeric: var(--weight-bold) var(--text-lg) / var(--leading-none) var(--font-mono);
+  --type-eyebrow: var(--weight-medium) var(--text-xs) / var(--leading-normal) var(--font-sans);
+}

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<!-- @template name="Install page" description="The install and landing page: hero lockup, objection chips, per-platform steps, and a demo of the game." -->
+<helmet>
+<script src="./ds-base.js"></script>
+<style>body{margin:0;background:var(--surface-page)}kbd{background:color-mix(in srgb, var(--text-body) 10%, transparent);border:1px solid var(--border-default);border-radius:var(--radius-xs);padding:.05rem .35rem;font:inherit;font-family:var(--font-mono);font-size:.85em;white-space:nowrap}ol{padding-left:1.2rem;margin:0;color:var(--text-body)}li{margin:6px 0;font-size:var(--text-base);line-height:var(--leading-relaxed)}</style>
+</helmet>
+<main style="max-width:34rem;margin:0 auto;padding:32px 20px 48px">
+
+<div style="text-align:center">
+<x-import component-from-global-scope="EstimationGymDesignSystem_4a01b0.Wordmark" size="lg" align="center" hint-size="100%,200px"></x-import>
+<p style="margin:14px auto 0;max-width:26rem;font:var(--type-body);font-size:var(--text-md);color:var(--text-secondary)">One question a day, the same one for everyone. You do not have to be right — <strong style="color:var(--text-display)">you have to be roughly right.</strong></p>
+<div style="margin-top:24px">
+<x-import component-from-global-scope="EstimationGymDesignSystem_4a01b0.Button" variant="solid" size="lg" block="{{ true }}" hint-size="100%,52px">Play now</x-import>
+</div>
+<p style="margin-top:10px;font-size:var(--text-xs);color:var(--text-muted)">Takes about a minute. Nothing from an app store.</p>
+<div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-top:16px">
+<x-import component-from-global-scope="EstimationGymDesignSystem_4a01b0.Chip" hint-size="60px,24px">Free</x-import>
+<x-import component-from-global-scope="EstimationGymDesignSystem_4a01b0.Chip" hint-size="100px,24px">No account</x-import>
+<x-import component-from-global-scope="EstimationGymDesignSystem_4a01b0.Chip" hint-size="110px,24px">Works offline</x-import>
+<x-import component-from-global-scope="EstimationGymDesignSystem_4a01b0.Chip" hint-size="70px,24px">No ads</x-import>
+<x-import component-from-global-scope="EstimationGymDesignSystem_4a01b0.Chip" hint-size="110px,24px">Open source</x-import>
+</div>
+</div>
+
+<section style="margin-top:28px">
+<h2 style="display:flex;align-items:center;gap:8px;font:var(--type-label);font-size:var(--text-md);font-family:var(--font-display);color:var(--text-display)">
+<x-import component-from-global-scope="EstimationGymDesignSystem_4a01b0.Icon" name="target" size="16" color="var(--accent)" hint-size="16px,16px"></x-import>
+On iPhone or iPad
+</h2>
+<div style="margin-top:10px;padding:16px 18px;background:var(--surface-card);border:1px solid var(--border-default);border-radius:var(--radius-lg)">
+<ol>
+<li>Open this page in <strong>Safari</strong>.</li>
+<li>Tap <strong>Play now</strong> above.</li>
+<li>Tap the <strong>Share</strong> button — the square with an arrow pointing up, <kbd>□↑</kbd>.</li>
+<li>Scroll down and tap <strong>Add to Home Screen</strong>.</li>
+<li>Tap <strong>Add</strong>.</li>
+</ol>
+<x-import component-from-global-scope="EstimationGymDesignSystem_4a01b0.Callout" hint-size="100%,72px">It has to be Safari. Chrome and Firefox on iPhone cannot add apps to the home screen — that is an Apple restriction, not a fault in the game.</x-import>
+</div>
+</section>
+
+<section style="margin-top:28px">
+<h2 style="display:flex;align-items:center;gap:8px;font:var(--type-label);font-size:var(--text-md);font-family:var(--font-display);color:var(--text-display)">
+<x-import component-from-global-scope="EstimationGymDesignSystem_4a01b0.Icon" name="plus" size="16" color="var(--accent)" hint-size="16px,16px"></x-import>
+On Android
+</h2>
+<div style="margin-top:10px;padding:16px 18px;background:var(--surface-card);border:1px solid var(--border-default);border-radius:var(--radius-lg)">
+<ol>
+<li>Open this page in <strong>Chrome</strong>.</li>
+<li>Tap <strong>Play now</strong> above.</li>
+<li>Tap the <kbd>⋮</kbd> menu, top right.</li>
+<li>Tap <strong>Install app</strong>, or <strong>Add to Home screen</strong> if that is what yours says.</li>
+</ol>
+<x-import component-from-global-scope="EstimationGymDesignSystem_4a01b0.Callout" hint-size="100%,56px">Chrome may offer to install it by itself, in a bar along the bottom. Taking that offer does the same thing.</x-import>
+</div>
+</section>
+
+<section style="margin-top:28px">
+<h2 style="display:flex;align-items:center;gap:8px;font:var(--type-label);font-size:var(--text-md);font-family:var(--font-display);color:var(--text-display)">
+<x-import component-from-global-scope="EstimationGymDesignSystem_4a01b0.Icon" name="rocket" size="16" color="var(--accent)" hint-size="16px,16px"></x-import>
+On a computer
+</h2>
+<div style="margin-top:10px;padding:16px 18px;background:var(--surface-card);border:1px solid var(--border-default);border-radius:var(--radius-lg)">
+<ol>
+<li>Just tap <strong>Play now</strong> — it works in the browser.</li>
+<li>In Chrome or Edge you can also click the <strong>install icon</strong> in the address bar to keep it in its own window.</li>
+</ol>
+</div>
+</section>
+
+<div style="margin:32px 0 10px">
+<x-import component-from-global-scope="EstimationGymDesignSystem_4a01b0.Eyebrow" hint-size="220px,16px">what you are installing</x-import>
+</div>
+<div style="background:var(--surface-card);border:1px solid var(--border-default);border-radius:var(--radius-xl);padding:18px">
+<p style="margin:0;font:var(--type-prompt);font-size:var(--text-md);font-family:var(--font-display);color:var(--text-display)">How many jellybeans fit in a one-litre jar?</p>
+<div style="display:flex;gap:8px;margin-top:14px">
+<div style="flex:1;border:1px solid var(--border-default);border-radius:var(--radius-md);padding:.55rem .65rem;font-family:var(--font-mono);font-size:var(--text-sm);color:var(--text-muted);background:var(--surface-sunken)">Guess (jellybeans)</div>
+<x-import component-from-global-scope="EstimationGymDesignSystem_4a01b0.Button" size="sm" hint-size="56px,36px">Go</x-import>
+</div>
+<div style="display:flex;gap:6px;margin-top:14px;flex-wrap:wrap">
+<x-import component-from-global-scope="EstimationGymDesignSystem_4a01b0.BandTag" band="Bullseye" size="sm" hint-size="90px,22px"></x-import>
+<x-import component-from-global-scope="EstimationGymDesignSystem_4a01b0.BandTag" band="Close" size="sm" hint-size="70px,22px"></x-import>
+<x-import component-from-global-scope="EstimationGymDesignSystem_4a01b0.BandTag" band="Ballpark" size="sm" hint-size="88px,22px"></x-import>
+<x-import component-from-global-scope="EstimationGymDesignSystem_4a01b0.BandTag" band="Off" size="sm" hint-size="60px,22px"></x-import>
+</div>
+<p style="margin-top:14px;font-size:var(--text-xs);color:var(--text-muted);text-align:center">An example — not one of the real questions.</p>
+</div>
+
+<div style="margin:32px 0 10px">
+<x-import component-from-global-scope="EstimationGymDesignSystem_4a01b0.Eyebrow" hint-size="130px,16px">see it first</x-import>
+</div>
+<figure style="margin:0;text-align:center">
+<img src="../../assets/brand/tour-poster.png" alt="A short tour of Estimation Gym" style="width:100%;max-width:270px;border-radius:var(--radius-2xl);border:1px solid var(--border-default);background:#000">
+<figcaption style="margin-top:8px;font-size:var(--text-xs);color:var(--text-muted)">Fifty seconds, if you would rather see it than read about it.</figcaption>
+</figure>
+
+<a href="https://youtu.be/3xvcWVqtHKY" target="_blank" rel="noopener noreferrer" style="display:flex;gap:14px;align-items:center;margin-top:16px;background:var(--surface-card);border:1px solid var(--border-default);border-radius:var(--radius-lg);padding:14px 16px;text-decoration:none;color:inherit">
+<span style="width:34px;height:34px;border-radius:var(--radius-md);flex:0 0 auto;display:grid;place-items:center;background:var(--status-urgent);color:#fff">▶</span>
+<span>
+<span style="display:block;font-size:var(--text-base);color:var(--text-display)">Seven-minute walkthrough</span>
+<span style="display:block;font-size:var(--text-xs);color:var(--text-muted)">On YouTube — why powers of ten make a better puzzle</span>
+</span>
+</a>
+
+<section style="margin-top:40px;color:var(--text-secondary)">
+<h2 style="font:var(--type-label);font-size:var(--text-md);font-family:var(--font-display);color:var(--text-display)">Why bother installing?</h2>
+<p style="margin-top:12px;font-size:var(--text-base);line-height:var(--leading-relaxed)">It opens like a normal app, with no browser bars, and it <strong style="color:var(--text-display)">works offline</strong> — the questions travel with it, so it plays on a plane or underground.</p>
+<p style="margin-top:12px;font-size:var(--text-base);line-height:var(--leading-relaxed)">Your streak and history stay on your own device. There is no account and no sign-up, and nothing about how you play leaves your phone.</p>
+</section>
+
+<div style="margin-top:40px;padding-top:16px;border-top:1px solid var(--border-default);text-align:center">
+<x-import component-from-global-scope="EstimationGymDesignSystem_4a01b0.Brandmark" size="22" tone="mono" style="color:var(--text-faint)" hint-size="22px,22px"></x-import>
+<x-import component-from-global-scope="EstimationGymDesignSystem_4a01b0.FootNote" align="center" hint-size="100%,20px">Source · AGPL-3.0</x-import>
+</div>
+
+</main>
+
+</x-dc>
+</body>
+</html>

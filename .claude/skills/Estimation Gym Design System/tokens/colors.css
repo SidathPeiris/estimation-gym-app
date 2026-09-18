@@ -1,0 +1,191 @@
+/* Colour system — Tokyo Night lineage.
+   The base ramp is lifted verbatim from the source app's app.css :root block
+   and its OG-card / install-page marks. The extended hues are the remaining
+   Tokyo Night accents, added so the four scoring bands can each own a colour
+   instead of sharing one blue. */
+:root {
+  /* --- base: surfaces --- */
+  --ink-1000: #13141c; /* deepest, redesign-only: page gradient floor */
+  --ink-900: #1a1b26;  /* source --bg, manifest theme_color */
+  --ink-800: #1f2335;  /* source --panel */
+  --ink-700: #252a41;  /* redesign-only: raised panel */
+  --ink-600: #2f3550;  /* source --line */
+  --ink-500: #414868;  /* source mark, outer ring */
+
+  /* --- base: ink --- */
+  --chalk-100: #e8edff; /* redesign-only: display headings */
+  --chalk-200: #c0caf5; /* source --fg */
+  --chalk-400: #8d96b8; /* source OG-card body */
+  --chalk-500: #7681a8; /* source --dim */
+  --chalk-600: #565f89; /* source OG-card footnote */
+
+  /* --- base: hues --- */
+  --blue-400: #9fbdff;
+  --blue-500: #7aa2f7; /* source --accent */
+  --blue-700: #5872ae; /* source mark, middle ring */
+  --red-500: #f7768e;  /* source --urgent */
+  --green-500: #9ece6a;
+  --teal-500: #73daca;
+  --cyan-500: #7dcfff;
+  --purple-500: #bb9af7;
+  --orange-500: #ff9e64;
+  --yellow-500: #e0af68;
+
+  /* --- semantic: surfaces --- */
+  --surface-page: var(--ink-900);
+  --surface-page-deep: var(--ink-1000);
+  --surface-card: var(--ink-800);
+  --surface-raised: var(--ink-700);
+  --surface-sunken: var(--ink-1000);
+  --surface-veil: rgba(26, 27, 38, 0.72);
+
+  /* --- semantic: text --- */
+  --text-display: var(--chalk-100);
+  --text-body: var(--chalk-200);
+  --text-secondary: var(--chalk-400);
+  --text-muted: var(--chalk-500);
+  --text-faint: var(--chalk-600);
+  --text-on-accent: var(--ink-900);
+  --text-link: var(--blue-500);
+  --text-link-hover: var(--blue-400);
+
+  /* --- semantic: lines --- */
+  --border-default: var(--ink-600);
+  --border-strong: var(--ink-500);
+  --border-focus: var(--blue-500);
+
+  /* --- semantic: accent --- */
+  --accent: var(--blue-500);
+  --accent-hover: var(--blue-400);
+  --accent-deep: var(--blue-700);
+  --accent-ring: var(--ink-500);
+  --accent-wash: color-mix(in srgb, var(--accent) 12%, transparent);
+  --accent-wash-strong: color-mix(in srgb, var(--accent) 20%, transparent);
+  --accent-edge: color-mix(in srgb, var(--accent) 55%, transparent);
+
+  /* --- semantic: status --- */
+  --status-urgent: var(--red-500);
+  --status-good: var(--green-500);
+  --status-warn: var(--yellow-500);
+  --status-info: var(--cyan-500);
+
+  /* --- scoring bands.
+     Source maps Bullseye + Close to the accent, Ballpark to plain foreground and
+     Off to urgent. The redesign gives all four their own hue so a result is
+     readable at a glance and a shared card is legible without the label. --- */
+  --band-bullseye: var(--green-500);
+  --band-close: var(--blue-500);
+  --band-ballpark: var(--yellow-500);
+  --band-off: var(--red-500);
+
+  /* The two numbers on a scored result: what you said, and what it was. */
+  --result-guess: #ff6900;
+  --result-actual: #edd800;
+
+  /* Streak and reminder, which are personal rather than part of a score.
+     --streak-best is lightened from #4f64c7 to clear 4.5:1 on the page ground,
+     since it labels small text. */
+  --streak-best: #8b9cf0;
+  --reminder-bell: #ff8000;
+
+  /* --- modes.
+     The daily puzzle and practice are the only two modes in the product. One
+     question a day, the same one for everyone; practice draws from the far end
+     of the same queue. --- */
+  --mode-daily: var(--blue-500);
+  --mode-practice: var(--cyan-500);
+}
+
+/* Light theme. The source app switches on prefers-color-scheme; here it is an
+   explicit opt-in class so a design preview is never at the mercy of the
+   viewer's OS setting. Base values are the source's light block, extended.
+
+   IMPORTANT: the semantic layer has to be re-declared here, not just the base
+   ramp. A custom property is substituted where it is DECLARED, so an alias like
+   `--surface-page: var(--ink-900)` on :root computes to the literal dark hex and
+   inherits down as that literal — redefining --ink-900 in this scope does not
+   reach it. Every alias below repeats its :root right-hand side so it
+   re-substitutes against this scope's base ramp. Keep the two lists in step:
+   a new alias on :root needs a line here too. */
+.theme-light {
+  /* --- base: surfaces --- */
+  --ink-1000: #e2e7f2;
+  --ink-900: #eef1f8;
+  --ink-800: #ffffff;
+  --ink-700: #f6f8fd;
+  --ink-600: #d3dae9;
+  --ink-500: #b6c0d6;
+
+  /* --- base: ink --- */
+  --chalk-100: #14161f;
+  --chalk-200: #1f2335;
+  --chalk-400: #485270;
+  --chalk-500: #5a6484;
+  --chalk-600: #737d9c;
+
+  /* --- base: hues, darkened to hold 4.5:1 on a light ground --- */
+  --blue-400: #1f4da3;
+  --blue-500: #2e5db8;
+  --blue-700: #7f9bd6;
+  --red-500: #c0384f;
+  --green-500: #4a7f2c;
+  --teal-500: #1f7f72;
+  --cyan-500: #2074a8;
+  --purple-500: #7047b8;
+  --orange-500: #b25c14;
+  --yellow-500: #8a6412;
+
+  /* --- semantic: surfaces --- */
+  --surface-page: var(--ink-900);
+  --surface-page-deep: var(--ink-1000);
+  --surface-card: var(--ink-800);
+  --surface-raised: var(--ink-700);
+  --surface-sunken: var(--ink-1000);
+  --surface-veil: rgba(238, 241, 248, 0.78);
+
+  /* --- semantic: text --- */
+  --text-display: var(--chalk-100);
+  --text-body: var(--chalk-200);
+  --text-secondary: var(--chalk-400);
+  --text-muted: var(--chalk-500);
+  --text-faint: var(--chalk-600);
+  --text-on-accent: #ffffff;
+  --text-link: var(--blue-500);
+  --text-link-hover: var(--blue-400);
+
+  /* --- semantic: lines --- */
+  --border-default: var(--ink-600);
+  --border-strong: var(--ink-500);
+  --border-focus: var(--blue-500);
+
+  /* --- semantic: accent --- */
+  --accent: var(--blue-500);
+  --accent-hover: var(--blue-400);
+  --accent-deep: var(--blue-700);
+  --accent-ring: var(--ink-500);
+  --accent-wash: color-mix(in srgb, var(--accent) 12%, transparent);
+  --accent-wash-strong: color-mix(in srgb, var(--accent) 20%, transparent);
+  --accent-edge: color-mix(in srgb, var(--accent) 55%, transparent);
+
+  /* --- semantic: status --- */
+  --status-urgent: var(--red-500);
+  --status-good: var(--green-500);
+  --status-warn: var(--yellow-500);
+  --status-info: var(--cyan-500);
+
+  /* --- scoring bands --- */
+  --band-bullseye: var(--green-500);
+  --band-close: var(--blue-500);
+  --band-ballpark: var(--yellow-500);
+  --band-off: var(--red-500);
+
+  /* --- result numbers and personal markers --- */
+  --result-guess: #b34a00;
+  --result-actual: #7d6a00;
+  --streak-best: #2f3f9c;
+  --reminder-bell: #a34d00;
+
+  /* --- modes --- */
+  --mode-daily: var(--blue-500);
+  --mode-practice: var(--cyan-500);
+}

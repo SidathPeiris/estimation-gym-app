@@ -1,0 +1,31 @@
+/* Spacing. Ladder taken from the values app.css actually uses (4, 6, 8, 10, 12,
+   14, 16, 18, 20, 24, 28, 32) rather than snapped to a 4/8 grid. */
+:root {
+  --space-1: 4px;
+  --space-2: 6px;
+  --space-3: 8px;
+  --space-4: 10px;
+  --space-5: 12px;
+  --space-6: 14px;
+  --space-7: 16px;
+  --space-8: 18px;
+  --space-9: 20px;
+  --space-10: 24px;
+  --space-11: 28px;
+  --space-12: 32px;
+  --space-14: 40px;
+  --space-16: 48px;
+  --space-20: 64px;
+
+  /* Layout */
+  --app-max: 640px;      /* source .app max-width */
+  --app-pad: 20px;       /* source .app side padding */
+  --prose-max: 34rem;    /* source install page main */
+  --section-gap: var(--space-11);
+  --stack-gap: var(--space-10);
+  --card-pad: var(--space-9);
+  --card-pad-tight: var(--space-7);
+  --control-h: 52px;     /* 14px padding + 1.0625rem line, as built */
+  --control-h-sm: 38px;
+  --tap-min: 44px;
+}

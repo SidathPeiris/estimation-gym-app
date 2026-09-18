@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<!-- @template name="Daily question" description="The daily puzzle screen: one question, the guess row, and the scored result with its decade ruler." -->
+<helmet>
+<script src="./ds-base.js"></script>
+<style>body{margin:0;background:var(--surface-page)}</style>
+</helmet>
+<div style="min-height:100vh;padding:24px 20px 48px">
+<div style="max-width:640px;margin:0 auto">
+
+<x-import component-from-global-scope="EstimationGymDesignSystem_4a01b0.AppHeader" date="Tue 16 Sep" streak="6" best="14" hint-size="100%,56px"></x-import>
+
+<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin:28px 0 14px">
+<x-import component-from-global-scope="EstimationGymDesignSystem_4a01b0.Eyebrow" icon="users" hint-size="200px,16px">everyone gets this one today</x-import>
+<span style="font-family:var(--font-mono);font-size:var(--text-2xs);color:var(--text-faint)">one a day</span>
+</div>
+
+<x-import component-from-global-scope="EstimationGymDesignSystem_4a01b0.QuestionCard" date="Tue 16 Sep" number="8" as-of="2025" archetype="{{ shownArchetype }}" answered="{{ answered }}" prompt="How many bacteria live on an average mobile phone screen?" hint-size="100%,220px">
+  <sc-if value="{{ unanswered }}" hint-placeholder-val="{{ true }}">
+    <x-import component-from-global-scope="EstimationGymDesignSystem_4a01b0.GuessField" value="{{ guess }}" on-change="{{ onGuess }}" on-submit="{{ onSubmit }}" error="{{ error }}" unit="bacteria" hint-size="100%,64px"></x-import>
+  </sc-if>
+  <sc-if value="{{ answered }}">
+    <x-import component-from-global-scope="EstimationGymDesignSystem_4a01b0.ResultCard" band="{{ band }}" points="{{ points }}" guess="{{ guessLabel }}" actual="{{ actualLabel }}" decades="{{ decades }}" assisted="{{ hinted }}" unit="bacteria" hint-size="100%,300px">
+      <x-import component-from-global-scope="EstimationGymDesignSystem_4a01b0.Button" variant="soft" block="{{ true }}" icon="share-2" hint-size="100%,44px">Share result</x-import>
+    </x-import>
+  </sc-if>
+</x-import>
+
+<sc-if value="{{ offerHint }}">
+  <button type="button" onClick="{{ onHint }}" style="display:flex;width:100%;align-items:baseline;justify-content:space-between;gap:12px;margin-top:14px;padding:0;background:none;border:0;color:inherit;cursor:pointer;text-align:left">
+    <span style="display:inline-flex;align-items:center;gap:8px;font:var(--type-label);font-size:var(--text-base);color:var(--text-display)">
+      <x-import component-from-global-scope="EstimationGymDesignSystem_4a01b0.Icon" name="lightbulb" size="15" color="var(--accent)" hint-size="15px,15px"></x-import>
+      Hint
+    </span>
+    <span style="font:var(--type-body);font-size:var(--text-sm);color:var(--text-muted)">scores half points</span>
+  </button>
+</sc-if>
+
+<sc-if value="{{ showGuidance }}">
+  <x-import component-from-global-scope="EstimationGymDesignSystem_4a01b0.Callout" title="Approach: Area times density" icon="lightbulb" hint-size="100%,96px">Estimate how much area or volume is involved and how densely the thing is packed into it, then multiply. A handful of densities per square metre or per litre are worth memorising; they transfer to a lot of questions.</x-import>
+</sc-if>
+
+<sc-if value="{{ answered }}">
+  <x-import component-from-global-scope="EstimationGymDesignSystem_4a01b0.Callout" title="How to think about it" icon="brain" tone="var(--text-muted)" hint-size="100%,72px">About 100 square centimetres, handled constantly and cleaned rarely.</x-import>
+</sc-if>
+
+<sc-if value="{{ showDistribution }}">
+  <div style="margin-top:20px;padding:16px 18px;background:var(--surface-card);border:1px solid var(--border-default);border-radius:var(--radius-xl)">
+    <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:14px">
+      <span style="font:var(--type-label);font-size:var(--text-base);color:var(--text-display)">How everyone did</span>
+      <span style="font-family:var(--font-mono);font-size:var(--text-xs);color:var(--text-muted)">789 answered</span>
+    </div>
+    <x-import component-from-global-scope="EstimationGymDesignSystem_4a01b0.BandBars" rows="{{ distribution }}" mine="{{ band }}" show-tally="{{ false }}" hint-size="100%,120px"></x-import>
+    <p style="margin:14px 0 0;font-size:var(--text-sm);color:var(--accent)">Closer than 61% of the 788 others who answered.</p>
+  </div>
+</sc-if>
+
+<sc-if value="{{ answered }}">
+  <div style="margin-top:24px;padding-top:18px;border-top:1px solid var(--border-default)">
+    <p style="margin:0;font:var(--type-label);font-size:var(--text-base);color:var(--text-display)">That is today's question done.</p>
+    <p style="margin:8px 0 14px;font-size:var(--text-sm);color:var(--text-muted);line-height:var(--leading-relaxed)">A new one arrives tomorrow, the same one for everybody. If you want another go now, practice draws from questions the daily has not given you — it earns no points and does not touch your streak.</p>
+    <x-import component-from-global-scope="EstimationGymDesignSystem_4a01b0.Button" variant="quiet" size="sm" icon="dumbbell" hint-size="180px,36px">Practice a question</x-import>
+  </div>
+</sc-if>
+
+<sc-if value="{{ unanswered }}">
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:24px">
+    <x-import component-from-global-scope="EstimationGymDesignSystem_4a01b0.Chip" icon="users" hint-size="110px,24px">no account</x-import>
+    <x-import component-from-global-scope="EstimationGymDesignSystem_4a01b0.Chip" icon="wifi-off" hint-size="120px,24px">works offline</x-import>
+    <x-import component-from-global-scope="EstimationGymDesignSystem_4a01b0.Chip" icon="lock" hint-size="190px,24px">nothing leaves your device</x-import>
+  </div>
+</sc-if>
+
+</div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;answerValue&quot;: { &quot;editor&quot;: &quot;float&quot;, &quot;default&quot;: 17000, &quot;tsType&quot;: &quot;number&quot;, &quot;section&quot;: &quot;Question&quot;, &quot;min&quot;: 1, &quot;max&quot;: 1000000000 },
+  &quot;archetypeLabel&quot;: { &quot;editor&quot;: &quot;enum&quot;, &quot;default&quot;: &quot;Area times density&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Question&quot;, &quot;options&quot;: [&quot;Area times density&quot;, &quot;People times per-person rate&quot;, &quot;Stock equals flow times lifetime&quot;, &quot;Multiply a chain of estimates&quot;, &quot;Divide a total by one unit&quot;, &quot;Count the doublings&quot;, &quot;Recall, then sanity-check&quot;] },
+  &quot;showDistribution&quot;: { &quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Behaviour&quot; }
+}">
+class Component extends DCLogic {
+  state = { guess: '', error: null, result: null, hinted: false };
+
+  score(raw) {
+    const answer = Number(this.props.answerValue ?? 17000);
+    const guess = Number(raw);
+    if (String(raw).trim() === '' || !isFinite(guess) || guess <= 0) return null;
+    const decades = Math.abs(Math.log10(guess) - Math.log10(answer));
+    const band = decades <= 0.3 ? 'Bullseye' : decades <= 1 ? 'Close' : decades <= 2 ? 'Ballpark' : 'Off';
+    const base = { Bullseye: 100, Close: 70, Ballpark: 40, Off: 10 }[band];
+    return {
+      band: band,
+      decades: decades,
+      points: this.state.hinted ? Math.round(base * 0.5) : base,
+      guessLabel: guess.toLocaleString('en-GB')
+    };
+  }
+
+  renderVals() {
+    const r = this.state.result;
+    const answer = Number(this.props.answerValue ?? 17000);
+    const wantsDistribution = this.props.showDistribution ?? true;
+    return {
+      guess: this.state.guess,
+      error: this.state.error,
+      onGuess: (next) => this.setState({ guess: next }),
+      onSubmit: (raw) => {
+        const scored = this.score(raw);
+        if (!scored) { this.setState({ error: 'Enter a positive number' }); return; }
+        this.setState({ error: null, result: scored });
+      },
+      onHint: () => this.setState({ hinted: true }),
+
+      answered: !!r,
+      unanswered: !r,
+      offerHint: !r && !this.state.hinted,
+      showGuidance: !!r || this.state.hinted,
+      showDistribution: !!r && wantsDistribution,
+      shownArchetype: r ? (this.props.archetypeLabel ?? 'Area times density') : null,
+
+      band: r ? r.band : 'Close',
+      points: r ? r.points : 0,
+      decades: r ? r.decades : 0,
+      guessLabel: r ? r.guessLabel : '',
+      hinted: this.state.hinted,
+      actualLabel: answer.toLocaleString('en-GB'),
+
+      distribution: [
+        { band: 'Bullseye', tally: 112, fraction: 0.14 },
+        { band: 'Close', tally: 331, fraction: 0.42 },
+        { band: 'Ballpark', tally: 244, fraction: 0.31 },
+        { band: 'Off', tally: 102, fraction: 0.13 }
+      ]
+    };
+  }
+}
+
+</script>
+</body>
+</html>
