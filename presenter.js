@@ -427,6 +427,18 @@ function shareRun(state, day, windowDays) {
   return squares.map(function (s) { return s === null ? MISSED_EMOJI : s }).join("")
 }
 
+// The app is Estimation Gym; the game inside it is Fermi Questions. They were
+// the same thing until the app became a home for more than one game, and the
+// share card is the one place both names have to appear - the brand first
+// because that is what gets recognised and searched for, the game second
+// because a shared result has to say which game produced it.
+//
+// GAME_NAME moves into the game registry once that exists. It is a constant
+// here rather than a literal inside shareText so there is exactly one place to
+// change when it does.
+var APP_NAME = "Estimation Gym"
+var GAME_NAME = "Fermi Questions"
+
 // Deliberately omits both the guess and the true value. A shared result has to
 // be safe to post before other people have played, and a band conveys how it
 // went without giving the answer away.
@@ -443,7 +455,7 @@ function shareText(Model, state, question, day, url) {
   if (entry.assisted) today += " \u00b7 hint"
 
   var lines = [
-    "Estimation Gym \u00b7 " + Model.formatDay(day),
+    APP_NAME + " \u00b7 " + GAME_NAME + " \u00b7 " + Model.formatDay(day),
     shareRun(state, day),
     today,
     "Streak " + state.streak
@@ -468,6 +480,8 @@ if (typeof module !== "undefined") {
     shareRun: shareRun,
     SHARE_WINDOW: SHARE_WINDOW,
     BAND_EMOJI: BAND_EMOJI,
-    HISTORY_PAGE: HISTORY_PAGE
+    HISTORY_PAGE: HISTORY_PAGE,
+    APP_NAME: APP_NAME,
+    GAME_NAME: GAME_NAME
   }
 }

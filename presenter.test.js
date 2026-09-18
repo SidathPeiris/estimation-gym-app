@@ -169,7 +169,8 @@ assert.equal(P.shareText(Model, Model.emptyState(), spoiler, 981, "https://examp
 
 let shared = Model.recordAnswer(Model.emptyState(), 981, 61, 137)
 const text = P.shareText(Model, shared, spoiler, 981, "https://example.test")
-assert.ok(text.includes("Estimation Gym · Tue 8 Sep"), "names the day by date, not by an opaque number")
+assert.ok(text.includes("Estimation Gym · Fermi Questions · Tue 8 Sep"),
+  "names the app, the game and the day - the game because a share has to say which one it came from")
 assert.ok(!text.includes("#981"), "the day number is no longer surfaced")
 assert.ok(text.includes("Close"), "names the band")
 assert.ok(text.includes("decades off"), "says how close")
@@ -320,7 +321,7 @@ assert.ok(!P.viewModel(Model, hintDone, question, 1).stats.footer.includes("hint
   const text = P.shareText(Model, s, question, day, "https://example.test/")
   const lines = text.split("\n")
 
-  assert.match(lines[0], /^Estimation Gym · /)
+  assert.match(lines[0], /^Estimation Gym · Fermi Questions · /)
   assert.equal([...lines[1]].length, 2, "the run is its own line")
   assert.match(lines[2], /decades off/)
   assert.match(lines[3], /^Streak /)
