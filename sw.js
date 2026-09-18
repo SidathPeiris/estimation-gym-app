@@ -13,7 +13,7 @@
 // Note this caches code only. Play history lives in localStorage, which the
 // cache never touches, so a version bump can never cost anyone their streak.
 
-var CACHE = "estimation-gym-v1.17.0"
+var CACHE = "estimation-gym-v1.17.1"
 
 // A second cache, deliberately unversioned, holding one small record the
 // service worker needs but cannot otherwise reach: the streak.
@@ -64,14 +64,31 @@ self.addEventListener("install", function (event) {
   event.waitUntil(
     caches.open(CACHE)
       .then(function (cache) {
-        // { cache: "reload" } bypasses the browser HTTP cache for each
-        // precache request. Without it, addAll is free to satisfy these from
-        // the HTTP cache, which means a fresh cache version can be populated
-        // with the *previous* build - the deploy then looks like it landed
-        // (new cache name, new service worker) while the app quietly keeps
-        // running old code. Observed happening to core/Model.js.
+        // Every precache request must check with the server before reusing
+        // anything. Without that, addAll is free to satisfy these from the
+        // HTTP cache, which means a fresh cache version can be populated with
+        // the *previous* build - the deploy then looks like it landed (new
+        // cache name, new service worker) while the app quietly keeps running
+        // old code. Observed happening to core/Model.js.
+        //
+        // This was { cache: "reload" }, which skips the HTTP cache entirely and
+        // downloads every byte of every asset on every version bump. That is
+        // 853KB a deploy, 391KB of it a question bank that almost never
+        // changes, and it grows with each game added.
+        //
+        // { cache: "no-cache" } keeps the guarantee and drops the cost. It is
+        // not the weaker option its name suggests: "reload" means do not look
+        // in the cache, "no-cache" means always revalidate before reusing what
+        // is there. So a stale body still cannot slip through - the server is
+        // always asked - but an unchanged file comes back 304 with no body.
+        //
+        // This relies on the host sending validators. Every asset here is
+        // served with an ETag, and /core/* additionally carries
+        // max-age=0, must-revalidate (see _headers). Verified against
+        // production: a conditional request for core/questions.js returns 304
+        // and 0 bytes where a full fetch transfers 399,982.
         return cache.addAll(ASSETS.map(function (url) {
-          return new Request(url, { cache: "reload" })
+          return new Request(url, { cache: "no-cache" })
         }))
       })
       .then(function () { return self.skipWaiting() })

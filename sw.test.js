@@ -139,6 +139,48 @@ assert.equal(reminderTitle({ streak: 6, lastPlayedDay: TODAY }, TODAY), GENERIC)
 
 console.log("reminder title    -> streak only when it is real and unbroken")
 
+// --- the precache must revalidate, and must not re-download ---
+//
+// Two failures, opposite directions, one line of code between them.
+//
+// Reuse the HTTP cache without checking, and a new cache version gets filled
+// with the previous build - the deploy looks like it landed while the app keeps
+// running old code. That happened, to core/Model.js.
+//
+// Skip the HTTP cache entirely, and every asset is downloaded in full on every
+// version bump: 853KB a deploy, 391KB of it a question bank that almost never
+// changes, growing with each game added.
+//
+// "no-cache" is the only mode that avoids both: always revalidate, reuse on a
+// 304. It reads like the weaker option and is not - "reload" means do not look
+// in the cache, "no-cache" means always ask before reusing.
+{
+  // Comments stripped first. The block explains at length why it is not
+  // "reload", and matching that prose would fail the very thing it documents.
+  const install = sw
+    .slice(sw.indexOf('addEventListener("install"'), sw.indexOf('addEventListener("activate"'))
+    .split("\n")
+    .filter((line) => !line.trim().startsWith("//"))
+    .join("\n")
+
+  assert.match(
+    install, /cache:\s*"no-cache"/,
+    "the precache must request with { cache: \"no-cache\" } so an unchanged " +
+    "asset revalidates to a 304 instead of being downloaded again"
+  )
+  assert.ok(
+    !/cache:\s*"reload"/.test(install),
+    'the precache uses { cache: "reload" }, which skips the HTTP cache and ' +
+    "re-downloads every asset on every version bump"
+  )
+  assert.ok(
+    !/cache:\s*"(default|force-cache|only-if-cached)"/.test(install),
+    "the precache must never reuse a cached body without revalidating - that " +
+    "is how a new cache version gets filled with the previous build"
+  )
+  console.log("precache mode     -> no-cache: revalidates, reuses on 304")
+}
+
 // --- the offline navigation fallback must point at something precached ---
 //
 // This is the guard that was missing. The fetch handler fell back to
