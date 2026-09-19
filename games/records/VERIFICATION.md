@@ -281,3 +281,32 @@ records-longest-artificial-heart-support | OK | 1373-1374 days, SynCardia
 records-longest-power-line | OK | 2539-2543 km Belo Monte-Rio UHVDC
 records-largest-evacuation | OK | ~500000, 9/11 boatlift
 records-fastest-pyroclastic-flow | OK | up to 700 km/h
+records-largest-tree-by-volume | OK | 1487 m3 is the trunk volume (total with bark 1591), which is what the hint describes
+records-largest-leaf | OK | 25.91m Raphia regalis frond
+records-greatest-crane-lift | FIXED | 20000 was the safe working load; the record lift was 20133 t
+records-fastest-lift | FIXED-SOURCE | 21 m/s is Guangzhou CTF (2017); Shanghai Tower was 20.5 and was the source named
+records-longest-canal | OK | 1776 km Jing-Hang Grand Canal
+records-largest-library | OK | ~173M items, Library of Congress
+records-deepest-constant-weight-freedive | OK | 136m Molchanov 2023, AIDA
+records-highest-accelerator-energy | OK | 6.8 TeV per beam, LHC Run 3
+records-largest-vacuum-chamber | OK | 22653 m3, NASA Space Power Facility
+records-largest-particle-accelerator | OK | 26659 m LHC circumference
+records-deepest-basin-on-mars | OK | 7152 m below datum, Hellas Planitia
+records-most-languages-in-one-country | OK | ~840 languages, Papua New Guinea (Ethnologue)
+records-most-expensive-car | OK | $143M Mercedes 300 SLR Uhlenhaut 2022
+records-most-expensive-coin | OK | $18.9M 1933 Double Eagle 2021
+records-largest-gold-reserve | OK | 8133.46 t United States
+records-fastest-planetary-winds | OK | 2100 km/h Neptune
+records-largest-comet-nucleus | OK | 119 km, C/2014 UN271, Hubble
+records-most-massive-star | OK | 196 solar masses R136a1 (range 169-230)
+records-chelyabinsk-airburst-energy | OK | ~500 kt, Chelyabinsk 2013
+records-oldest-water | OK | 2 billion years, Kidd Creek Mine
+records-farthest-naked-eye-object | OK | 2.5 Mly Andromeda
+records-most-energetic-gamma-ray | OK | ~18 TeV, GRB 221009A, LHAASO
+records-largest-sand-sea | OK | 560000-650000 km2 Rub al Khali (bank 650000)
+records-most-chromosomes | OK | 1440 in Ophioglossum reticulatum
+records-oldest-mummy | OK | Chinchorro, deliberate mummification from ~5050 BCE = ~7000 years
+records-most-expensive-stamp | OK | $8.3M British Guiana 1c magenta, 2021
+records-most-expensive-photograph | OK | $12.4M Le Violon d'Ingres, Christie's 2022
+records-most-flight-hours | FIXED | 121000 nearly doubled the record; Ed Long logged 64396 hours (1933-1999)
+records-largest-natural-history-collection | OK | ~145-148M specimens, Smithsonian NMNH

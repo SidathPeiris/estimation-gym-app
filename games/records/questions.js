@@ -1716,7 +1716,7 @@ var RECORDS = [
     "id": "records-greatest-crane-lift",
     "prompt": "How many tonnes can the strongest crane lift in a single hoist?",
     "unit": "tonnes",
-    "answerValue": 20000,
+    "answerValue": 20133,
     "decompositionHint": "A shipyard gantry rather than a mobile crane, lifting whole hull sections. A large mobile crane manages about 1,200 tonnes.",
     "strategy": "anchor-scale",
     "source": "Yantai Raffles Shipyard specifications for the Taisun crane",
@@ -1819,7 +1819,7 @@ var RECORDS = [
     "answerValue": 21,
     "decompositionHint": "The ceiling is not the motor but the passenger's ears: pressure change is what limits how fast a lift can climb comfortably.",
     "strategy": "anchor-scale",
-    "source": "Mitsubishi Electric specifications for the Shanghai Tower lifts",
+    "source": "Hitachi specifications for the Guangzhou CTF Finance Centre lifts",
     "asOf": 2025
   },
   {
@@ -4326,11 +4326,11 @@ var RECORDS = [
     "id": "records-most-flight-hours",
     "prompt": "How many hours has the pilot with the most logged flight time flown?",
     "unit": "hours",
-    "answerValue": 121000,
-    "decompositionHint": "Nearly fourteen years of continuous flying, accumulated over a career. Work out the hours a working pilot can log per year and multiply.",
+    "answerValue": 64396,
+    "decompositionHint": "More than seven years spent airborne, accumulated over 66 years of flying. Work out the hours a working pilot can log per year and multiply.",
     "strategy": "rate-time",
-    "source": "Federal Aviation Administration certified logbook records",
-    "asOf": 2025
+    "source": "Certified logbook records for Ed Long, 1933-1999",
+    "asOf": 1999
   },
   {
     "id": "records-largest-helicopter-lift",
