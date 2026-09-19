@@ -198,13 +198,21 @@ assert.equal(
 // a source on a question already scheduled is fine and should stay fine; none
 // of that moves anything.
 //
-// The whole bank, unlike World Records, which pins a span shorter than its
-// length because it has a year of unverified questions at the end that might
-// still need removing outright. Everything here is served within ten weeks, so
-// there is nothing in this bank that is not already promised.
-const SCHEDULED_SPAN = 71
+// Half the bank rather than all of it, deliberately, and for the reason World
+// Records keeps a short span too.
+//
+// Anyone can read this file and work out what any future day holds, so in one
+// sense every question in it is already promised. But the pin blocks removal
+// as well as reordering, and verification has repeatedly found questions that
+// had to come out rather than be corrected - a contested date that cannot
+// honestly be asked, a prompt that gives itself away. Pinning a question a
+// year before it is served would trade a real risk for no benefit.
+//
+// So the span covers the next six months and moves forward as the far half is
+// checked. Day 180 falls in March 2027; the bank wraps in September 2027.
+const SCHEDULED_SPAN = 180
 const SCHEDULE_FINGERPRINT =
-  "277175dcb3842a0bfbdcf42cb9ea76d821872b8508064dadaf6336b6787baef5"
+  "b87a3c43eca334366f790a4d8b91ed6c0130b53309798134f2ae8cb6654f1983"
 
 assert.ok(
   DATES.length >= SCHEDULED_SPAN,
