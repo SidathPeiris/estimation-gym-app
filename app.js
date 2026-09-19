@@ -19,7 +19,7 @@
 
   var el = {}
   var ids = ["puzzle", "streak", "asof", "prompt", "guess-form", "guess-input", "guess-go",
-             "exp",
+             "exp", "era", "date-input",
              "error", "result", "band", "points", "guess-line", "actual-line",
              "decades-line", "decades-ruler", "decades-fill", "share", "hint", "source",
              "dist", "dist-summary", "dist-bars", "dist-note",
@@ -64,7 +64,8 @@
   // here - a missing one renders an empty card and throws nothing at all.
   var BANKS = {
     "QUESTIONS": typeof QUESTIONS !== "undefined" ? QUESTIONS : null,
-    "RECORDS": typeof RECORDS !== "undefined" ? RECORDS : null
+    "RECORDS": typeof RECORDS !== "undefined" ? RECORDS : null,
+    "DATES": typeof DATES !== "undefined" ? DATES : null
   }
 
   // Recomputed whenever the app comes back to the foreground, not fixed for
@@ -121,7 +122,12 @@
     // value meant the app quietly stopped taking new versions until the player
     // cleared the box themselves. A leftover character could strand someone on
     // an old build indefinitely.
+    // Every control the answer could be half-typed into. The text field alone
+    // was the bug reported on the Fermi-to-World-Records switch; a date field
+    // left holding yesterday's game's answer would be the same bug again.
     el["guess-input"].value = ""
+    el["date-input"].value = ""
+    bcMode = false
     show(el.error, false)
   }
 
@@ -141,6 +147,25 @@
 
   // Has the hint been taken on the game currently on screen? The score reads
   // this one.
+  // Which of the three input configurations this question wants.
+  //
+  //   "number"  a quantity, with the exponent button - Fermi and World Records
+  //   "year"    a year, with the era toggle        - Historical Dates
+  //   "date"    a calendar date, with neither      - Historical Dates
+  //
+  // Read from the question rather than only from the game, because Historical
+  // Dates uses both of its own: a question dated to the day asks for one, and
+  // everything else asks for a year.
+  function inputMode() {
+    if (!game || game.engine !== "date") return "number"
+    return Model.inputForPrecision(question && question.precision)
+  }
+
+  // Whether the year in the field is to be read as BC. Not persisted and not
+  // per game: one game has an era toggle, and leaving it set across a question
+  // would silently turn a correct answer into one four thousand years out.
+  var bcMode = false
+
   function hintShown() { return !!hintShownFor[game.id] }
 
   // Has it been asked for but not yet confirmed? Kept separate from the above
@@ -944,7 +969,14 @@
     })
   }
 
-  // Static content, so it is built once rather than on every render.
+  // Built once per game rather than on every render.
+  //
+  // It used to be built once, full stop, at boot, from a hardcoded Fermi view
+  // model - which was true while every game shared one guide and quietly wrong
+  // the moment Historical Dates brought its own. The symptom was a date
+  // question explaining how to type scientific notation.
+  var howToBuiltFor = null
+
   function renderHowToPlay(guide) {
     el["howto-steps"].replaceChildren()
     guide.steps.forEach(function (step) {
@@ -1009,8 +1041,11 @@
   }
 
   function renderArchetypes(view) {
-    show(el.arch, view.visible)
-    if (!view.visible) return
+    // null on a game with no archetypes to break down. Historical Dates has
+    // none: Model.STRATEGIES is a taxonomy of ways to estimate a quantity, and
+    // none of them are ways to place a year.
+    show(el.arch, Boolean(view && view.visible))
+    if (!view || !view.visible) return
 
     show(el["arch-headline"], Boolean(view.headline))
     if (view.headline) setText(el["arch-headline"], view.headline)
@@ -1418,7 +1453,7 @@
     // a hidden subtree on every home render.
     if (currentRoute() === HOME) return
 
-    var vm = viewModel(Model, state, question, today, historyLimit, hintShown(), bank)
+    var vm = viewModel(Model, state, question, today, historyLimit, hintShown(), bank, game.engine)
 
     // Whose screen this is. The eyebrow names the game and wears its icon; the
     // hero above still says Estimation Gym, because that is the app.
@@ -1440,7 +1475,35 @@
     show(el.asof, Boolean(vm.asOfLabel))
     if (vm.asOfLabel) setText(el.asof, vm.asOfLabel)
     setText(el.prompt, vm.prompt)
+
+    // The answer row, in one of its three configurations. Exactly one input
+    // and at most one modifier button, so the row never shows a control that
+    // does nothing to the value being submitted.
+    var mode = inputMode()
+    show(el["guess-input"], mode !== "date")
+    show(el["date-input"], mode === "date")
+    show(el.exp, mode === "number")
+    show(el.era, mode === "year")
+
     el["guess-input"].placeholder = vm.placeholder
+    // A year has no decimal point and no exponent, so the keypad should not
+    // offer either. inputMode is a property rather than an attribute here
+    // because that is what the DOM shim in the smoke harnesses carries.
+    el["guess-input"].inputMode = mode === "year" ? "numeric" : "decimal"
+    el["guess-input"].setAttribute(
+      "aria-label", mode === "year" ? "The year it happened" : "Your estimate")
+
+    if (mode === "year") {
+      setText(el.era, bcMode ? "BC" : "AD")
+      el.era.dataset.bc = String(bcMode)
+      el.era.setAttribute("title", bcMode ? "Switch to AD" : "Switch to BC")
+      // States the era that is selected, not the one the button would move to.
+      // A control that only says where it would take you leaves a screen
+      // reader user with no way to know where they are.
+      el.era.setAttribute(
+        "aria-label",
+        bcMode ? "Era: BC. Activate to switch to AD." : "Era: AD. Activate to switch to BC.")
+    }
 
     // Once the day is answered the input is retired rather than left live,
     // since recordAnswer is a no-op for an already-played day.
@@ -1489,13 +1552,24 @@
     renderPercentile(todayDist, todayEntry)
 
     show(el.share, vm.answered)
-    show(el["practice-offer"], vm.answered)
+    // Answered AND this game has a pool to practise from. The capsule was
+    // gated on the first alone, so it appeared on World Records the day that
+    // game went live and would have appeared on Historical Dates too - and
+    // tapping it opens the Practice panel, which draws from Fermi's bank. A
+    // player finishing a World Records day was being offered a Fermi question
+    // dressed as more of what they had just played.
+    show(el["practice-offer"], vm.answered && game.practice === true)
     show(el.approach, Boolean(vm.answered && vm.strategyLabel))
     if (vm.strategyLabel) setText(el.approach, vm.strategyLabel)
     show(el.hint, Boolean(vm.hint))
     if (vm.hint) setText(el.hint, vm.hint)
     show(el.source, Boolean(vm.source))
     if (vm.source) setText(el.source, vm.source)
+
+    if (howToBuiltFor !== game.id) {
+      howToBuiltFor = game.id
+      renderHowToPlay(vm.howToPlay)
+    }
 
     renderBuild()
 
@@ -1530,16 +1604,28 @@
     show(el["stats-body"], statsOpen)
   }
 
+  // Reads whichever control is live, validates it the way that control needs,
+  // and hands back the same { ok, value } the numeric path always did - so
+  // everything after this point is the same code for all three games.
+  function readAnswer() {
+    var mode = inputMode()
+    if (mode === "date") return validateDate(el["date-input"].value, Model)
+    if (mode === "year") return validateYear(el["guess-input"].value, bcMode, Model)
+    return validateGuess(el["guess-input"].value)
+  }
+
   function submit(event) {
     event.preventDefault()
-    var check = validateGuess(el["guess-input"].value)
+    var check = readAnswer()
     if (!check.ok) {
       setText(el.error, check.message)
       show(el.error, true)
       return
     }
     show(el.error, false)
-    state = Model.recordAnswer(state, today, check.value, question.answerValue, hintShown(), question.id)
+    state = game.engine === "date"
+      ? Model.recordDateAnswer(state, today, check.value, question, hintShown(), question.id)
+      : Model.recordAnswer(state, today, check.value, question.answerValue, hintShown(), question.id)
     if (!saveState(state, window.localStorage, game)) {
       setText(el.error, "Scored, but your streak could not be saved on this device")
       show(el.error, true)
@@ -1560,7 +1646,11 @@
     reportPlayed(today)
     saveProgress()
 
-    maybeAskAboutCheating(check.value, question)
+    // Not asked on the date engine. The test for a peek is an exact match, and
+    // on a year-precision question an exact match is what knowing the answer
+    // looks like - "1989" is a thing people simply know. Accusing them of
+    // looking it up would be wrong far more often than it was right.
+    if (game.engine !== "date") maybeAskAboutCheating(check.value, question)
   }
 
   el["guess-form"].addEventListener("submit", submit)
@@ -1582,6 +1672,14 @@
   // device most people play on. This inserts it without giving up the keypad.
   el.exp.addEventListener("click", function () {
     insertExponent(el["guess-input"])
+  })
+
+  el.era.addEventListener("click", function () {
+    bcMode = !bcMode
+    render()
+    // Back to the field, so switching era mid-answer does not cost the player
+    // their place in it.
+    if (el["guess-input"].focus) el["guess-input"].focus()
   })
 
   el.remind.addEventListener("click", function () {
@@ -1737,9 +1835,6 @@
     }
   })
 
-  // Static content, built once rather than on every render.
-  renderHowToPlay(viewModel(Model, state, question, today, 0, false, QUESTIONS).howToPlay)
-
   // hashchange only, not popstate. Back and forward across fragments fire
   // both, so listening to one avoids rendering everything twice.
   try { window.addEventListener("hashchange", route) } catch (e) {}
@@ -1821,7 +1916,14 @@
   // a background update would be a poor trade.
   function applyUpdate() {
     if (reloading) return
-    if (el["guess-input"] && String(el["guess-input"].value).trim() !== "") {
+    // Any control the answer might be sitting in, not just the text field.
+    // Checking only that one would take a new version out from under somebody
+    // halfway through picking a date - and, worse, a stale value in the field
+    // it does not check would stop updates arriving at all.
+    var typed = [el["guess-input"], el["date-input"]].some(function (node) {
+      return node && String(node.value).trim() !== ""
+    })
+    if (typed) {
       pendingReload = true
       return
     }

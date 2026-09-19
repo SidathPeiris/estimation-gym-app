@@ -27,6 +27,74 @@ function validateGuess(text) {
   return { ok: true, value: guess }
 }
 
+// A year, as typed into the year field with the era toggle applied.
+//
+// The era is a separate control rather than a minus sign because a phone's
+// numeric keypad has no minus, which is the same reason the exponent button
+// exists on the other two games.
+function validateYear(text, bc, Model) {
+  var raw = String(text === undefined || text === null ? "" : text).trim()
+  if (raw === "") return { ok: false, message: "Enter a year" }
+  if (!/^\d{1,6}$/.test(raw)) return { ok: false, message: "Enter a year as digits" }
+
+  var year = Number(raw)
+  // There is no year zero, and nobody has ever written one down. Rejected
+  // rather than quietly nudged to 1, which would score a guess the player did
+  // not make.
+  if (year === 0) return { ok: false, message: "There is no year zero" }
+  if (!bc && year > new Date().getFullYear() + 1) {
+    return { ok: false, message: "That year has not happened yet" }
+  }
+  return { ok: true, value: bc ? -year : year }
+}
+
+// A calendar date, as the date field produces it: always YYYY-MM-DD, whatever
+// order the browser chose to show the player.
+function validateDate(text, Model) {
+  var raw = String(text === undefined || text === null ? "" : text).trim()
+  if (raw === "") return { ok: false, message: "Pick a date" }
+  if (Model.dayNumberForDate(raw) === null) return { ok: false, message: "That is not a real date" }
+  return { ok: true, value: raw }
+}
+
+// A result on the date engine.
+//
+// Deliberately the same keys resultView returns, so the renderer writes the
+// same elements for both games and there is no second result card to keep in
+// step. What differs is every string, because none of them can say "orders of
+// magnitude" about a year.
+function dateResultView(Model, entry, question) {
+  if (!entry) return null
+  var points = Model.pointsForBand(entry.band, entry.assisted)
+
+  // From the stored entry, not from today's question. Growing a bank
+  // reshuffles which question falls on which day, so a guess recorded before
+  // an update must still be shown against what it was actually scored against.
+  var answer = entry.answerValue !== undefined ? entry.answerValue : Model.answerForQuestion(question)
+  var asDate = typeof answer === "string"
+
+  var error = entry.error
+  var unit = entry.errorUnit || "years"
+  var missed = (error === null || error === undefined || !isFinite(error))
+    ? "?"
+    : (error === 0 ? "Exactly right" : "Off by " + error + " " + (error === 1 ? unit.replace(/s$/, "") : unit))
+
+  return {
+    band: entry.band,
+    tone: toneForBand(entry.band),
+    assisted: !!entry.assisted,
+    points: points,
+    pointsLabel: "+" + points + " pts" + (entry.assisted ? " · hint" : ""),
+    guessLine: "Your answer: " + (asDate ? Model.formatFullDate(entry.guess) : Model.formatYear(entry.guess)),
+    actualLine: "Actual: " + (asDate ? Model.formatFullDate(answer) : Model.formatYear(answer)),
+    decadesLine: missed,
+    // Nothing to draw on a log scale. The percentile strip reads this and
+    // hides itself when it is null, which is the right answer for a game
+    // whose distance is not a ratio.
+    decades: null
+  }
+}
+
 function resultView(Model, entry, question) {
   if (!entry) return null
   var decades = entry.distanceDecades
@@ -76,6 +144,32 @@ function historyView(Model, state, limit) {
 
   var rows = shown.map(function (item) {
     var entry = item.entry
+
+    // Which engine recorded this row, read off the row itself rather than
+    // passed in. A date entry carries errorUnit and no distanceDecades, so a
+    // history list formats correctly without knowing which game it belongs to -
+    // and a state file that somehow held both would still render both.
+    if (entry.errorUnit) {
+      var asDate = typeof entry.answerValue === "string"
+      var format = asDate
+        ? function (v) { return Model.formatFullDate(v) }
+        : function (v) { return Model.formatYear(v) }
+      return {
+        day: item.day,
+        dateLabel: Model.formatDay(item.day),
+        band: entry.band,
+        tone: toneForBand(entry.band),
+        assisted: !!entry.assisted,
+        questionId: entry.questionId || null,
+        points: Model.pointsForBand(entry.band, entry.assisted),
+        guessLabel: format(entry.guess),
+        actualLabel: entry.answerValue !== undefined ? format(entry.answerValue) : "?",
+        decadesLabel: (typeof entry.error === "number" && isFinite(entry.error))
+          ? entry.error + " " + entry.errorUnit
+          : "?"
+      }
+    }
+
     var decades = entry.distanceDecades
     var scoredAgainst = typeof entry.answerValue === "number" ? entry.answerValue : null
 
@@ -365,13 +459,13 @@ function homeView(Model, games, statesById, today) {
 
 // The guide, shaped for rendering. Content comes from the Model so the widget
 // and the app teach identical rules.
-function howToPlayView(Model) {
-  var guide = Model.HOW_TO_PLAY
+function howToPlayView(Model, engine) {
+  var guide = engine === "date" ? Model.HOW_TO_PLAY_DATES : Model.HOW_TO_PLAY
   return {
     title: guide.title,
     steps: guide.steps,
     scoringIntro: guide.scoringIntro,
-    scoring: Model.scoringRows().map(function (row) {
+    scoring: Model.scoringRows(engine).map(function (row) {
       return {
         band: row.band,
         tone: toneForBand(row.band),
@@ -403,12 +497,57 @@ function howToPlayView(Model) {
   }
 }
 
-function viewModel(Model, state, question, day, historyLimit, hintShown, bank) {
+// engine is a trailing optional, defaulting to the one the app had when it
+// had only one: every existing call site keeps working untouched, which is the
+// same shape the optional predicates on streakFrom and forgetDay take.
+function viewModel(Model, state, question, day, historyLimit, hintShown, bank, engine) {
   var answered = Model.hasAnsweredDay(state, day)
   var entry = answered ? state.history[String(day)] : null
   var stats = Model.computeStats(state)
   var limit = historyLimit === undefined ? HISTORY_PAGE : historyLimit
-  var strategy = question ? Model.strategyFor(question) : null
+  var isDate = engine === "date"
+
+  // On the date engine the hint IS the decomposition hint - there is no
+  // archetype taxonomy, because Model.STRATEGIES describes ways to estimate a
+  // quantity and none of them are ways to place a year. So the button reveals
+  // the bracketing advice at half points, and the same text is shown to
+  // everyone afterwards, exactly as the strategy guidance is.
+  var strategy = (question && !isDate) ? Model.strategyFor(question) : null
+  var hintBody = isDate
+    ? (question && question.decompositionHint ? question.decompositionHint : null)
+    : (strategy ? strategy.guidance : null)
+  var input = isDate && question ? Model.inputForPrecision(question.precision) : null
+
+  if (isDate) {
+    return {
+      dateLabel: Model.formatDay(day),
+      streakLabel: "Streak " + state.streak + " · Best " + state.bestStreak,
+      // A historical date does not drift, so there is never a year to qualify
+      // it with. The bank rejects the field outright rather than leaving it
+      // optional - see games/dates/questions.test.js.
+      asOfLabel: null,
+      prompt: question ? question.prompt : "No question available",
+      unit: "",
+      // Which control to show, and what it should say before it is touched.
+      input: input,
+      placeholder: input === "date" ? "" : "Year",
+      answered: answered,
+      result: question ? dateResultView(Model, entry, question) : null,
+      // No archetype line: there is nothing to name.
+      strategyLabel: null,
+      strategyGuidance: hintBody,
+      hintAvailable: !!(hintBody && !answered && !hintShown),
+      hintRevealed: !!(hintBody && !answered && hintShown),
+      hint: question && answered ? "How to think about it: " + question.decompositionHint : null,
+      source: question && answered && question.source ? "Source: " + question.source : null,
+      stats: statsView(Model, stats),
+      // Nothing to chart: the archetype panel is a breakdown by estimation
+      // strategy, and this game has none.
+      archetypes: null,
+      history: historyView(Model, state, limit),
+      howToPlay: howToPlayView(Model, "date")
+    }
+  }
 
   return {
     // The calendar date rather than the day number: everyone playing on a given
@@ -500,6 +639,13 @@ function shareText(Model, state, question, day, url, gameName) {
   var today = (BAND_EMOJI[entry.band] || "") + " " + entry.band
   if (decades !== null && decades !== undefined) {
     today += " \u00b7 " + decades.toFixed(2) + " decades off"
+  } else if (entry.errorUnit && typeof entry.error === "number" && isFinite(entry.error)) {
+    // A date result, which has no decades to quote. Without this the shared
+    // line said only the band, and lost the part that makes a share worth
+    // reading - how close it actually was.
+    today += " \u00b7 " + (entry.error === 0
+      ? "exact"
+      : entry.error + " " + (entry.error === 1 ? entry.errorUnit.replace(/s$/, "") : entry.errorUnit) + " off")
   }
   if (entry.assisted) today += " \u00b7 hint"
 
@@ -517,6 +663,9 @@ if (typeof module !== "undefined") {
   module.exports = {
     toneForBand: toneForBand,
     validateGuess: validateGuess,
+    validateYear: validateYear,
+    validateDate: validateDate,
+    dateResultView: dateResultView,
     viewModel: viewModel,
     historyView: historyView,
     distributionView: distributionView,

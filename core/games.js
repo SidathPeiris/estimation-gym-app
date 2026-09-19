@@ -59,6 +59,10 @@ var ENGINES = {
 // drift, so every copy gets a test rather than a promise.
 var FERMI_SCHEDULE_ORIGIN = 982
 
+// The day Historical Dates went live, so its first question is its first day
+// rather than some arbitrary offset into the bank.
+var DATES_SCHEDULE_ORIGIN = 992
+
 var GAMES = [
   {
     id: "fermi",
@@ -172,16 +176,32 @@ var GAMES = [
     id: "dates",
     name: "Historical Dates",
     tagline: "When did it happen? Scored on how close you get.",
-    status: "coming-soon",
+    status: "live",
     icon: "landmark",
 
-    // Declared before the game is playable, which is the one field a
-    // coming-soon entry may carry beyond its name: everything else here would
-    // be a promise that nothing can honour yet, and games.test.js says so.
-    // The engine is different - it names a scoring model that already exists
-    // and is already tested, so declaring it costs nothing and makes the
-    // registry the place that records what this game will be.
-    engine: "date"
+    // The first game that is not a reskin of Fermi Questions. Same four bands,
+    // same hundred points, same hint cost - and underneath, a distance in
+    // years or days rather than in powers of ten, because 1969 and 1970 are a
+    // thousandth of a decade apart and the log engine would call that perfect.
+    engine: "date",
+
+    storageKey: "estimation-gym-state:dates",
+    scheduleOrigin: DATES_SCHEDULE_ORIGIN,
+    bankGlobal: "DATES",
+    assets: ["./games/dates/questions.js"],
+    idPrefix: "dates-",
+
+    // The same screen as the other two. It is a different engine but not a
+    // different shape: a prompt, one answer control, a result card, a hint.
+    // What differs is which control appears, and app.js chooses that from the
+    // question's precision rather than from a second copy of the markup.
+    rootId: "game-screen",
+
+    // No practice pool and no suggestion form, for the reasons in Fermi's
+    // entry. Named in the daily reminder alongside the other two live games.
+    practice: false,
+    suggest: false,
+    reminder: true
   },
   {
     id: "crossword",

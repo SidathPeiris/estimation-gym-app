@@ -365,6 +365,48 @@ function recordAnswer(state, dayIdx, guess, answerValue, assisted, questionId) {
   }
 }
 
+// recordAnswer's counterpart for the date engine.
+//
+// The two share everything that is not scoring - the already-answered guard,
+// the consecutive-day rule, the streak arithmetic, and the four-key object on
+// the way out. That object is the reason this is a second function rather than
+// a flag on the first: recordAnswer returns a bare literal and does not spread
+// state, which is what makes one localStorage key per game work with no
+// migration, and it is not worth risking to save a dozen lines.
+//
+// The entry it writes carries errorUnit and no distanceDecades. That is what
+// marks it as a date result: computeStats skips it when averaging orders of
+// magnitude, and the history list formats it as a year or a date without being
+// told which game it came from.
+function recordDateAnswer(state, dayIdx, guess, question, assisted, questionId) {
+  if (state.history && state.history[String(dayIdx)]) return state
+
+  var result = scoreDate(guess, question, assisted)
+  var isConsecutive = dayIdx === state.lastCompletedDay + 1
+  var newStreak = extendsStreak(result) ? (isConsecutive ? state.streak + 1 : 1) : 0
+
+  var newHistory = {}
+  for (var key in state.history) newHistory[key] = state.history[key]
+  newHistory[String(dayIdx)] = {
+    guess: guess,
+    // The answer as it was scored, so a later edit to the bank cannot change
+    // what an old result claims to have been measured against.
+    answerValue: answerForQuestion(question),
+    band: result.band,
+    error: result.error,
+    errorUnit: result.unit
+  }
+  if (assisted) newHistory[String(dayIdx)].assisted = true
+  if (questionId) newHistory[String(dayIdx)].questionId = questionId
+
+  return {
+    history: newHistory,
+    streak: newStreak,
+    bestStreak: Math.max(state.bestStreak, newStreak),
+    lastCompletedDay: dayIdx
+  }
+}
+
 function hasAnsweredDay(state, dayIdx) {
   return !!(state.history && state.history[String(dayIdx)])
 }
@@ -400,6 +442,13 @@ function computeStats(state) {
     counts[entry.band]++
     totalPoints += pointsForBand(entry.band, entry.assisted)
     if (entry.assisted) assisted++
+    // Both of the stats below are about orders of magnitude, and a date result
+    // has none. Skipped rather than guarded by type, because a year IS a
+    // positive number: signedLog10Error would happily return log10(1989) minus
+    // log10(1989) and report a player as perfectly calibrated on a scale they
+    // were never measured against.
+    if (entry.errorUnit) continue
+
     if (typeof entry.distanceDecades === "number" && isFinite(entry.distanceDecades)) {
       distances.push(entry.distanceDecades)
     }
@@ -752,11 +801,26 @@ var BAND_MEANING = {
   Off: "more than 100x out"
 }
 
-function scoringRows() {
+// The same four bands mean something different when the distance is a number
+// of years rather than a ratio, and how different depends on the question: a
+// Bullseye is three days on a dated event and fifty years on the Great
+// Pyramid. So this says what the bands are FOR rather than quoting numbers
+// that only hold for one precision.
+var DATE_BAND_MEANING = {
+  Bullseye: "as exact as the date is known",
+  Close: "a month out, or a few years",
+  Ballpark: "the right year, or the right era",
+  Off: "further out than that"
+}
+
+// engine is a trailing optional, as it is everywhere else it was added: a call
+// with no argument still describes the game this app had when it had one.
+function scoringRows(engine) {
+  var meanings = engine === "date" ? DATE_BAND_MEANING : BAND_MEANING
   return BANDS.map(function (band) {
     return {
       band: band,
-      meaning: BAND_MEANING[band] || "",
+      meaning: meanings[band] || "",
       points: BAND_POINTS[band]
     }
   })
@@ -774,6 +838,28 @@ var HOW_TO_PLAY = {
   streakNote: "Anything better than Off extends your streak. An Off resets it to zero. Your best streak is kept alongside your current one.",
   hintNote: "Stuck? Hint tells you how to attack that shape of problem without giving anything away about the answer. It halves the day's points, but it never breaks your streak.",
   statsNote: "After ten days, Stats will tell you which way you lean - whether you habitually guess high or low. That is the part you can actually correct."
+}
+
+// The date game's guide. A separate object rather than a branch inside the
+// one above, because almost every sentence differs: there is no scientific
+// notation, nothing is measured in powers of ten, and the skill being taught
+// is bracketing rather than decomposition.
+//
+// HOW_TO_PLAY stays exactly as it was. It is shared with the Omarchy widget,
+// which is finished and only ever shows Fermi Questions, so editing it to make
+// room for a second game would change a surface that cannot be tested here.
+var HOW_TO_PLAY_DATES = {
+  title: "How to play",
+  steps: [
+    "Read today's question and work out roughly when it happened. Nobody expects you to know the date - bracket it between things you can place.",
+    "Enter a year, or a full date when the question asks for one. BC years are entered with the BC button rather than a minus sign.",
+    "You are scored on how close you get, and how close counts depends on how precisely the date is actually known.",
+    "Come back tomorrow for a new question. Everyone gets the same one on the same day."
+  ],
+  scoringIntro: "A date nobody can place to the year is not scored as though they should have. Each question carries how precisely its sources pin it down, and the bands widen to match - so being fifty years out on the Great Pyramid scores what being two years out on the fall of the Berlin Wall does.",
+  streakNote: "Anything better than Off extends your streak. An Off resets it to zero. Your best streak is kept alongside your current one.",
+  hintNote: "Stuck? Hint gives you something to bracket against - two things you can probably place, and which side of them this falls on. It halves the day's points, but it never breaks your streak.",
+  statsNote: "Stats keeps your bands, your points and your streak. There is no lean to report here: being early or late on a date is not the same kind of error as guessing high or low on a quantity."
 }
 
 // The public surface, declared once. Under node this is the module export;
@@ -794,6 +880,7 @@ var ModelAPI = {
   pointsForBand: pointsForBand,
   emptyState: emptyState,
   recordAnswer: recordAnswer,
+  recordDateAnswer: recordDateAnswer,
   extendsStreak: extendsStreak,
   hasAnsweredDay: hasAnsweredDay,
   historyDays: historyDays,
@@ -825,6 +912,8 @@ var ModelAPI = {
   formatCompact: formatCompact,
   HOW_TO_PLAY: HOW_TO_PLAY,
   scoringRows: scoringRows,
+  HOW_TO_PLAY_DATES: HOW_TO_PLAY_DATES,
+  DATE_BAND_MEANING: DATE_BAND_MEANING,
   BAND_MEANING: BAND_MEANING,
   STRATEGIES: STRATEGIES,
   strategyFor: strategyFor,

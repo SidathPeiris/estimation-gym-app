@@ -180,6 +180,17 @@
     <p class="prompt" id="prompt">Loading…</p>
     <p class="asof" id="asof" hidden></p>
 
+    <!-- One row, three configurations, chosen by the game's engine. app.js
+         shows exactly one input and at most one modifier button.
+
+           numeric-log   the text field and the exponent button
+           date / year   the text field and the era toggle
+           date / day    the date field and nothing else
+
+         The text field is shared between the first two rather than
+         duplicated, because it is also what selectGame clears when you move
+         between games and what applyUpdate checks before taking a new version
+         mid-answer. Two fields doing that job would be two places to forget. -->
     <form class="guess" id="guess-form" novalidate>
       <input
         id="guess-input"
@@ -189,8 +200,27 @@
         autocapitalize="off"
         spellcheck="false"
         aria-label="Your estimate">
+
+      <!-- Historical Dates, day precision. A native date field rather than
+           three boxes: it gives a phone its own picker, and it hands back
+           YYYY-MM-DD whatever order it chose to show the player - which
+           matters, because 7/20 and 20/7 are the same four characters to two
+           different halves of the world. -->
+      <input
+        id="date-input"
+        type="date"
+        hidden
+        aria-label="The date it happened">
       <button type="button" class="exp" id="exp" aria-label="Insert scientific notation, times ten to the power"
               title="Scientific notation: 3 ×10ⁿ 12 is 3e12">&times;10<sup>n</sup></button>
+      <!-- Historical Dates, year precision. The era is a button rather than a
+           minus sign for the same reason the exponent beside it is one: a
+           phone's numeric keypad has neither. aria-pressed carries the state,
+           so a screen reader announces which era is selected instead of
+           reading a label that changes under it. -->
+      <button type="button" class="era" id="era" hidden data-bc="false"
+              aria-label="Era: AD. Activate to switch to BC." title="Switch to BC">AD</button>
+
       <button type="submit" id="guess-go">Go</button>
     </form>
     <p class="error" id="error" role="alert" hidden></p>
@@ -462,6 +492,7 @@
 <script src="core/games.js"></script>
 <script src="core/questions.js"></script>
 <script src="games/records/questions.js"></script>
+<script src="games/dates/questions.js"></script>
 <script src="presenter.js"></script>
 <script src="storage.js"></script>
 <script src="app.js"></script>

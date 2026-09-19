@@ -13,7 +13,7 @@
 // Note this caches code only. Play history lives in localStorage, which the
 // cache never touches, so a version bump can never cost anyone their streak.
 
-var CACHE = "estimation-gym-v1.23.0"
+var CACHE = "estimation-gym-v1.24.0"
 
 // A second cache, deliberately unversioned, holding one small record the
 // service worker needs but cannot otherwise reach: the streak.
@@ -43,6 +43,7 @@ var ASSETS = [
   "./core/games.js",
   "./core/questions.js",
   "./games/records/questions.js",
+  "./games/dates/questions.js",
   "./manifest.webmanifest",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
@@ -167,7 +168,8 @@ self.addEventListener("fetch", function (event) {
 // a third live game cannot quietly ship outside the reminder.
 var REMINDER_GAMES = [
   { name: "Fermi Questions", bank: "./core/questions.js", origin: 982 },
-  { name: "World Records", bank: "./games/records/questions.js", origin: 991 }
+  { name: "World Records", bank: "./games/records/questions.js", origin: 991 },
+  { name: "Historical Dates", bank: "./games/dates/questions.js", origin: 992 }
 ]
 
 var EPOCH_MS = Date.UTC(2024, 0, 1)

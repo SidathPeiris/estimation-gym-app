@@ -199,6 +199,18 @@ console.log("keys               -> " + FERMI_KEY + "  |  " + RECORDS_KEY);
       throw new Error("#" + id + " is showing on World Records, which does not claim " + flag);
     }
   }
+  // The capsule in the card's corner, not the disclosure further down. It was
+  // gated on "the day is answered" alone, so it appeared on World Records from
+  // the day that game shipped - and it opens the panel that draws from Fermi's
+  // bank, so it offered one game's question as more of another's.
+  {
+    const answered = run({ hash: "#records" });
+    answered.answer(1);
+    if (!answered.els["practice-offer"].hidden) {
+      throw new Error("the Practice capsule is offered on World Records, which has no practice pool");
+    }
+  }
+
   if (onFermi.els.practice.hidden) throw new Error("Practice should still show on Fermi");
   if (onFermi.els.suggest.hidden) throw new Error("Suggest should still show on Fermi");
   console.log("fermi-only parts   -> practice and suggest, hidden on World Records");

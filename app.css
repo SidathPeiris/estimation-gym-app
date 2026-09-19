@@ -1530,6 +1530,68 @@ a:hover { color: var(--text-link-hover) }
 .exp:hover, .exp:focus-visible { color: var(--text-body); border-color: var(--border-strong) }
 .exp:active { transform: var(--press-shift) }
 
+/* --- era toggle, Historical Dates --- */
+/* Sits in the exponent button's slot and takes its shape, because it does the
+   same job: a phone's numeric keypad has no minus sign any more than it has an
+   "e", and a year before the common era has to be reachable without one.
+
+   BC is a real state rather than a relabelling, so it takes the accent the way
+   the reminder bell does when it is on. AD can look like every other quiet
+   control on the card; BC should not, because it silently changes what the
+   number beside it means.
+
+   The label says which era is selected rather than which one the button would
+   switch to, so it is not aria-pressed - a control whose name changes under a
+   screen reader cannot also claim to be a toggle. The accessible name carries
+   both halves and data-bc drives the styling. */
+.era {
+  flex: 0 0 auto;
+  min-width: 3.2rem;
+  padding: 0 0.7rem;
+  background: transparent;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  color: var(--text-muted);
+  font: var(--type-label);
+  line-height: 1;
+  cursor: pointer;
+  transition: var(--transition-control);
+}
+
+.era:hover, .era:focus-visible { color: var(--text-body); border-color: var(--border-strong) }
+.era:active { transform: var(--press-shift) }
+
+.era[data-bc="true"] {
+  color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+}
+
+/* --- the date field, Historical Dates at day precision --- */
+/* Everything about its box is already right: `.guess input` matches this one
+   too, so it takes the same card background, hairline, radius, padding and
+   mono face as the field it replaces. Only what a native date control brings
+   with it needs answering.
+
+   The calendar indicator is tinted rather than hidden. Hiding it is the usual
+   trick and it costs the only affordance saying the field opens a picker. */
+.guess input[type="date"] {
+  /* iOS otherwise draws this at the platform's own height and ignores the
+     padding, leaving it noticeably shorter than the Go button beside it. */
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.guess input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  filter: invert(0.6);
+}
+
+:root[data-theme="light"] .guess input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: none;
+  opacity: 0.55;
+}
+
 /* --- daily reminder, in the header corner --- */
 /* ReminderToggle. The bell is the one glyph in the app with its own colour
    rather than the tone around it - it is a nudge, not a score. */

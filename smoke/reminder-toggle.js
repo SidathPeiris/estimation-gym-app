@@ -74,6 +74,16 @@ const settle = async () => { for (let i = 0; i < 8; i++) await new Promise((r) =
 const M2 = require(root + "core/Model.js");
 const TODAY = M2.dayIndex(new Date());
 const answeredToday = () => JSON.stringify(M2.recordAnswer(M2.emptyState(), TODAY, 100, 100, false, "q"));
+// The dates game records a different shaped entry, so the fixture is built the
+// way that game would actually build it rather than borrowed from Fermi.
+const dateAnsweredToday = () => JSON.stringify(
+  M2.recordDateAnswer(M2.emptyState(), TODAY, 1989, { precision: "year", answerYear: 1989 }, false, "dates-q"));
+// Every live game, since /played is only sent once none of them are left.
+const allAnswered = () => ({
+  "estimation-gym-state": answeredToday(),
+  "estimation-gym-state:records": answeredToday(),
+  "estimation-gym-state:dates": dateAnsweredToday()
+});
 
 (async () => {
   // 1. Off by default; the toggle is offered where push is supported.
@@ -111,7 +121,9 @@ const answeredToday = () => JSON.stringify(M2.recordAnswer(M2.emptyState(), TODA
   console.log("one game answered  -> nothing reported, a game is still waiting");
 
   {
-    const done = run({ store: { "estimation-gym-state:records": answeredToday() } });
+    const others = allAnswered();
+    delete others["estimation-gym-state"];   // the one this run is about to answer
+    const done = run({ store: others });
     done.tap(); await settle();
     done.submit("1000"); await settle();
     const played = done.calls.find((c) => c.url && c.url.includes("/played"));
@@ -174,10 +186,7 @@ const answeredToday = () => JSON.stringify(M2.recordAnswer(M2.emptyState(), TODA
   }
   console.log("subscribe mid-day  -> nothing reported, a game is still waiting");
 
-  r = run({ store: {
-    "estimation-gym-state": answeredToday(),
-    "estimation-gym-state:records": answeredToday()
-  } });
+  r = run({ store: allAnswered() });
   r.tap(); await settle();
   const playedCall = r.calls.find((c) => c.url && c.url.includes("/played"));
   if (!playedCall) throw new Error("subscribing after finishing the day did not report it");

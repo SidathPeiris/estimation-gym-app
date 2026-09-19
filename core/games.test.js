@@ -27,10 +27,10 @@ const live = Games.liveGames()
 
 assert.ok(games.length >= 1, "the registry is empty")
 assert.equal(
-  live.length, 2,
-  "two games are live: Fermi Questions and World Records. If this number " +
-  "changed, check that the new game carries a bank, a storage key of its own " +
-  "and an id prefix before relaxing it."
+  live.length, 3,
+  "three games are live: Fermi Questions, World Records and Historical Dates. " +
+  "If this number changed, check that the new game carries a bank, a storage " +
+  "key of its own and an id prefix before relaxing it."
 )
 
 // --- ids ------------------------------------------------------------------
