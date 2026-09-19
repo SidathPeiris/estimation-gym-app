@@ -140,3 +140,25 @@ records-farthest-driven-on-another-world | OK | 45.16 km Opportunity
 records-most-abundant-wild-bird | OK | 1.5bn red-billed quelea
 records-largest-animal-biomass | OK | 379M tonnes Antarctic krill, CCAMLR
 records-deepest-bird-dive | OK | 564m emperor penguin
+
+## Risk-targeted pass
+
+records-largest-solar-farm | FIXED | 5000 MW was not any real plant; Gonghe-Talatan complex is 15600 MW (Midong is 3500 as a single plant)
+records-largest-seagrass-meadow | FIXED | 200 -> 180 km2, matching the 2022 UWA study the source cites
+records-longest-cave-isolation | OK | 500 days Flamini 2023
+records-longest-underwater-habitat-stay | OK | 100 days Dituri 2023
+records-largest-herbarium | OK | MNHN Paris, ~8M specimens total
+records-largest-telescope-array-collecting-area | REMOVED | 1 km2 is the SKA's NAME, not its collecting area; Phase 1 dishes are ~21,000 m2. The hint pointed at the name as a clue, which made it a trick question with a wrong answer.
+records-largest-neutrino-detector | OK | IceCube is a cubic kilometre = 1e9 m3
+records-largest-sinkhole | OK | Xiaozhai Tiankeng, 511-662m (bank uses the 662 upper bound)
+records-deepest-freshwater-cave | OK | Hranice Abyss 519.5m
+records-longest-suspension-footbridge | FIXED-SOURCE | 721m is Sky Bridge 721 in Czechia; the source named Arouca, which is 516m
+records-longest-escalator | OK | 137.4m Admiralteyskaya, St Petersburg
+records-largest-clock-face | OK | 43m Makkah Royal Clock Tower
+records-longest-burning-light-bulb | OK | Centennial Light, first lit 1901
+records-deepest-laboratory | FIXED-SOURCE | 2400m is China Jinping; SNOLAB is ~2070m and was the source named
+records-longest-golf-hole | FIXED | 964 was the YARDAGE of a Japanese hole; Gunsan's is 1004 METRES
+records-longest-runway | FIXED-PROMPT | the 5500m runway at Qamdo Bamda is closed and replaced by a 4500m one; the prompt now names it rather than claiming a current title
+records-deepest-railway-station | FIXED-PROMPT | Arsenalna is now second-deepest after Hongyancun, Chongqing; the prompt now names the station
+records-largest-container-ship | OK | 24346 TEU MSC Irina
+records-largest-artificial-island | OK | 970 km2 Flevopolder

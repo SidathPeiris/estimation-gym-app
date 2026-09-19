@@ -1604,12 +1604,12 @@ var RECORDS = [
   },
   {
     "id": "records-largest-solar-farm",
-    "prompt": "How many megawatts can the largest solar power installation generate?",
+    "prompt": "How many megawatts can the largest solar power complex generate?",
     "unit": "megawatts",
-    "answerValue": 5000,
+    "answerValue": 15600,
     "decompositionHint": "Panels yield roughly 200 watts per square metre of array in good sun, so the question is really how many square kilometres of desert are covered.",
     "strategy": "area-density",
-    "source": "China National Energy Administration capacity records",
+    "source": "China National Energy Administration capacity records for the Gonghe-Talatan complex",
     "asOf": 2025
   },
   {
@@ -2289,7 +2289,7 @@ var RECORDS = [
     "answerValue": 2400,
     "decompositionHint": "The depth is chosen to cut the cosmic ray background by about a millionfold, since each doubling of depth buys a large factor.",
     "strategy": "exponential",
-    "source": "SNOLAB published facility specifications",
+    "source": "China Jinping Underground Laboratory published facility specifications",
     "asOf": 2025
   },
   {
@@ -3229,8 +3229,8 @@ var RECORDS = [
     "answerValue": 721,
     "decompositionHint": "Carrying only people, so the deck can be far lighter than a road bridge - which is exactly what lets the span be so long.",
     "strategy": "anchor-scale",
-    "source": "Portuguese national tourism records for the Arouca 516 bridge",
-    "asOf": 2021
+    "source": "Czech tourism authority specifications for Sky Bridge 721, Dolni Morava",
+    "asOf": 2022
   },
   {
     "id": "records-most-exoplanets-known",
@@ -3374,10 +3374,10 @@ var RECORDS = [
   },
   {
     "id": "records-longest-runway",
-    "prompt": "How many metres long is the longest public airport runway?",
+    "prompt": "How many metres long was Qamdo Bamda Airport’s original runway?",
     "unit": "metres",
     "answerValue": 5500,
-    "decompositionHint": "It sits high on a plateau, where thin air means longer takeoff rolls, so altitude rather than aircraft size sets the length.",
+    "decompositionHint": "It sits at 4,300 metres on a plateau, where thin air means much longer takeoff rolls - so altitude rather than aircraft size sets the length. It has since been replaced by a shorter one.",
     "strategy": "anchor-scale",
     "source": "Civil Aviation Administration of China records for Qamdo Bamda Airport",
     "asOf": 2025
@@ -4006,8 +4006,8 @@ var RECORDS = [
     "id": "records-largest-seagrass-meadow",
     "prompt": "How many square kilometres does the largest single seagrass meadow cover?",
     "unit": "square kilometres",
-    "answerValue": 200,
-    "decompositionHint": "One clone spreading by runners for thousands of years, so its size is a growth rate multiplied by a very long time.",
+    "answerValue": 180,
+    "decompositionHint": "One clone spreading by runners for about 4,500 years, so its size is a growth rate multiplied by a very long time.",
     "strategy": "rate-time",
     "source": "University of Western Australia genetic survey of Shark Bay",
     "asOf": 2022
@@ -4086,8 +4086,8 @@ var RECORDS = [
     "id": "records-longest-golf-hole",
     "prompt": "How many metres long is the longest golf hole in the world?",
     "unit": "metres",
-    "answerValue": 964,
-    "decompositionHint": "A par seven. A long par five is about 550 metres, so ask how many extra shots this adds and how far each of those carries.",
+    "answerValue": 1004,
+    "decompositionHint": "A par seven, and a kilometre from tee to green. A long par five is about 550 metres, so ask how many extra shots this adds and how far each carries.",
     "strategy": "anchor-scale",
     "source": "Korea Golf Association course records for Gunsan Country Club",
     "asOf": 2025
@@ -4284,10 +4284,10 @@ var RECORDS = [
   },
   {
     "id": "records-deepest-railway-station",
-    "prompt": "How many metres below ground is the deepest railway station?",
+    "prompt": "How many metres below ground is Kyiv’s Arsenalna metro station?",
     "unit": "metres",
     "answerValue": 105.5,
-    "decompositionHint": "Deep enough to double as a shelter, which is why it was built that way. A normal underground station sits about 20 metres down.",
+    "decompositionHint": "Deep enough to double as a shelter, and dug under a river bluff. A normal underground station sits about 20 metres down.",
     "strategy": "anchor-scale",
     "source": "Kyiv Metro published station specifications for Arsenalna",
     "asOf": 2025
@@ -4361,16 +4361,6 @@ var RECORDS = [
     "strategy": "anchor-scale",
     "source": "United States Air Force published fleet records for the B-52",
     "asOf": 2026
-  },
-  {
-    "id": "records-largest-telescope-array-collecting-area",
-    "prompt": "How many square metres of collecting area will the largest radio telescope array have?",
-    "unit": "square metres",
-    "answerValue": 1000000,
-    "decompositionHint": "The project is named after its target collecting area, which is a clue - the units are the thing to get right rather than the number.",
-    "strategy": "unit-conversion",
-    "source": "Square Kilometre Array Observatory published design specifications",
-    "asOf": 2025
   },
   {
     "id": "records-most-cited-scientific-paper",
