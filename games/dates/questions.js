@@ -3024,6 +3024,1070 @@ var DATES = [
     "answerYear": -300,
     "decompositionHint": "Alexandria under the early Ptolemies, shortly after Alexander's empire broke up. It stayed the standard geometry textbook for over two thousand years.",
     "source": "Oxford Classical Dictionary; Heath, The Thirteen Books of Euclid's Elements"
+  },
+  {
+    "id": "dates-salamis",
+    "prompt": "In what year did the Greek fleet destroy the Persian navy at Salamis?",
+    "precision": "year",
+    "decompositionHint": "It fell a decade after the Athenian victory at Marathon, in the second Persian invasion, and only weeks after the stand at Thermopylae.",
+    "source": "Herodotus, Histories, Book VIII",
+    "answerYear": -480
+  },
+  {
+    "id": "dates-peloponnesian-war-begins",
+    "prompt": "In what year did the Peloponnesian War between Athens and Sparta break out?",
+    "precision": "year",
+    "decompositionHint": "It began roughly half a century after the Persian invasions were beaten off, with Athens still at the height of its power under Pericles.",
+    "source": "Thucydides, History of the Peloponnesian War, Book II",
+    "answerYear": -431
+  },
+  {
+    "id": "dates-gaugamela",
+    "prompt": "In what year did Alexander beat Darius III at Gaugamela?",
+    "precision": "year",
+    "decompositionHint": "Alexander crossed into Asia three years before this, and he was dead within a decade of it. This was the battle that broke Persian resistance.",
+    "source": "Arrian, Anabasis of Alexander, Book III",
+    "answerYear": -331
+  },
+  {
+    "id": "dates-carthage-destroyed",
+    "prompt": "In what year did Rome destroy Carthage at the close of the Third Punic War?",
+    "precision": "year",
+    "decompositionHint": "Hannibal had crossed the Alps about seventy years earlier. Rome needed three wars and two more generations to finish the city off.",
+    "source": "Polybius, Histories, Book XXXIX, and Appian, Punica",
+    "answerYear": -146
+  },
+  {
+    "id": "dates-great-fire-of-rome",
+    "prompt": "In what year did the great fire burn through Rome under Nero?",
+    "precision": "year",
+    "decompositionHint": "Nero ruled for about fourteen years in the middle of the first century, and the fire came in the second half of that reign.",
+    "source": "Tacitus, Annals, Book XV",
+    "answerYear": 64
+  },
+  {
+    "id": "dates-antonine-plague-begins",
+    "prompt": "In what year did the Antonine Plague begin to spread through the Roman Empire?",
+    "precision": "year",
+    "decompositionHint": "Roman armies carried it home from a campaign in the east during the joint reign of Marcus Aurelius and Lucius Verus, well before the empire split.",
+    "source": "Cassius Dio, Roman History, with Galen's accounts of the epidemic",
+    "answerYear": 165
+  },
+  {
+    "id": "dates-adrianople",
+    "prompt": "In what year did the Goths destroy a Roman army at Adrianople?",
+    "precision": "year",
+    "decompositionHint": "The emperor Valens died on the field. It came a generation before the empire was divided permanently between east and west.",
+    "source": "Ammianus Marcellinus, Res Gestae, Book XXXI",
+    "answerYear": 378
+  },
+  {
+    "id": "dates-edict-of-thessalonica",
+    "prompt": "In what year did the Edict of Thessalonica make Nicene Christianity the state religion of Rome?",
+    "precision": "year",
+    "decompositionHint": "It came under Theodosius I, decades after Constantine had merely legalised the faith and a generation before Rome was first sacked.",
+    "source": "Codex Theodosianus XVI.1.2",
+    "answerYear": 380
+  },
+  {
+    "id": "dates-council-of-ephesus",
+    "prompt": "In what year did the Council of Ephesus meet?",
+    "precision": "year",
+    "decompositionHint": "It was the third of the great church councils, a century after the first at Nicaea and two decades after Alaric's Goths entered Rome.",
+    "source": "Acts of the Council of Ephesus",
+    "answerYear": 431
+  },
+  {
+    "id": "dates-vandals-sack-rome",
+    "prompt": "In what year did the Vandals under Gaiseric sack Rome?",
+    "precision": "year",
+    "decompositionHint": "This was the second sack of the city that century, about forty-five years after the first, and the western empire fell within a generation.",
+    "source": "Prosper of Aquitaine, Chronicle",
+    "answerYear": 455
+  },
+  {
+    "id": "dates-theodoric-kills-odoacer",
+    "prompt": "In what year did Theodoric the Ostrogoth kill Odoacer and take Italy?",
+    "precision": "year",
+    "decompositionHint": "Odoacer had deposed the last western emperor about seventeen years earlier and ruled Italy in the meantime.",
+    "source": "Anonymus Valesianus, with John of Antioch",
+    "answerYear": 493
+  },
+  {
+    "id": "dates-justinian-code",
+    "prompt": "In what year was the first edition of Justinian's code of civil law issued?",
+    "precision": "year",
+    "decompositionHint": "Justinian took the throne a couple of years before and set his lawyers to work almost at once. The Hagia Sophia came later in the same reign.",
+    "source": "Codex Justinianus, constitutio Summa rei publicae",
+    "answerYear": 529
+  },
+  {
+    "id": "dates-monte-cassino-founded",
+    "prompt": "In what year did Benedict of Nursia found the monastery at Monte Cassino?",
+    "precision": "year",
+    "decompositionHint": "It was founded while Justinian ruled from Constantinople, and decades before the Lombards came down into Italy.",
+    "source": "Gregory the Great, Dialogues, Book II",
+    "answerYear": 529
+  },
+  {
+    "id": "dates-nika-riots",
+    "prompt": "In what year did the Nika riots burn much of Constantinople?",
+    "precision": "year",
+    "decompositionHint": "They broke out early in Justinian's reign, a few years after his law code appeared and just before he rebuilt the great church.",
+    "source": "Procopius, History of the Wars, Book I",
+    "answerYear": 532
+  },
+  {
+    "id": "dates-lombard-kingdom-founded",
+    "prompt": "In what year did the Lombards establish their kingdom in Italy?",
+    "precision": "year",
+    "decompositionHint": "It came a generation after the eastern empire had reconquered Italy from the Goths, undoing most of that expensive work.",
+    "source": "Paul the Deacon, History of the Lombards, Book II",
+    "answerYear": 568
+  },
+  {
+    "id": "dates-sui-dynasty-founded",
+    "prompt": "In what year was the Sui dynasty founded in China?",
+    "precision": "year",
+    "decompositionHint": "It reunified China after centuries of division, and it lasted only a few decades before the Tang replaced it.",
+    "source": "Book of Sui, Annals of Emperor Wen",
+    "answerYear": 581
+  },
+  {
+    "id": "dates-augustine-arrives-kent",
+    "prompt": "In what year did Augustine land in Kent to begin the mission to the English?",
+    "precision": "year",
+    "decompositionHint": "Pope Gregory the Great sent him. It came a century and a half after the Anglo-Saxons arrived, and a lifetime before the Synod of Whitby.",
+    "source": "Bede, Ecclesiastical History of the English People, Book I",
+    "answerYear": 597
+  },
+  {
+    "id": "dates-grand-canal-completed",
+    "prompt": "In what year was the Grand Canal of China completed under the Sui?",
+    "precision": "year",
+    "decompositionHint": "It was dug within a generation of that dynasty's founding, and the forced labour it took helped bring the dynasty down soon after.",
+    "source": "Book of Sui, treatise on waterways",
+    "answerYear": 609
+  },
+  {
+    "id": "dates-battle-of-nineveh",
+    "prompt": "In what year did Heraclius defeat the Persians at Nineveh?",
+    "precision": "year",
+    "decompositionHint": "It ended the last great war between Rome and Persia, only a few years before Arab armies overran both exhausted empires.",
+    "source": "Theophanes the Confessor, Chronographia",
+    "answerYear": 627
+  },
+  {
+    "id": "dates-muhammad-dies",
+    "prompt": "In what year did the Prophet Muhammad die?",
+    "precision": "year",
+    "decompositionHint": "He died about a decade after the migration from Mecca to Medina that the Islamic calendar counts from.",
+    "source": "Ibn Ishaq, Sirat Rasul Allah, as transmitted by Ibn Hisham",
+    "answerYear": 632
+  },
+  {
+    "id": "dates-battle-of-nahavand",
+    "prompt": "In what year did the Arab conquest of Persia end at the battle of Nahavand?",
+    "precision": "year",
+    "decompositionHint": "The Sasanian empire collapsed within roughly a decade of the Prophet's death. Arab writers called this one the victory of victories.",
+    "source": "al-Baladhuri, Futuh al-Buldan",
+    "answerYear": 642
+  },
+  {
+    "id": "dates-synod-of-whitby",
+    "prompt": "In what year did the Synod of Whitby settle the dating of Easter in Northumbria?",
+    "precision": "year",
+    "decompositionHint": "It came about two generations after the Roman mission landed in Kent, and it decided for Rome over the Irish church.",
+    "source": "Bede, Ecclesiastical History of the English People, Book III",
+    "answerYear": 664
+  },
+  {
+    "id": "dates-karbala",
+    "prompt": "In what year was Husayn ibn Ali killed at Karbala?",
+    "precision": "year",
+    "decompositionHint": "It happened about half a century after the Prophet's death, under the Umayyad caliphate, and it split the Muslim community lastingly.",
+    "source": "al-Tabari, History of the Prophets and Kings",
+    "answerYear": 680
+  },
+  {
+    "id": "dates-first-bulgarian-empire",
+    "prompt": "In what year was the First Bulgarian Empire established on the Danube?",
+    "precision": "year",
+    "decompositionHint": "Asparukh's Bulgars beat a Byzantine army and were recognised, roughly a century before Charlemagne was crowned in Rome.",
+    "source": "Theophanes the Confessor, Chronographia",
+    "answerYear": 681
+  },
+  {
+    "id": "dates-abbasid-caliphate-begins",
+    "prompt": "In what year did the Abbasids overthrow the Umayyads and take the caliphate?",
+    "precision": "year",
+    "decompositionHint": "It came about a century after the first Arab conquests, and a couple of decades before Baghdad was founded as the new capital.",
+    "source": "al-Tabari, History of the Prophets and Kings",
+    "answerYear": 750
+  },
+  {
+    "id": "dates-battle-of-talas",
+    "prompt": "In what year did Arab and Tang armies meet at the Talas river?",
+    "precision": "year",
+    "decompositionHint": "It fell a year or so after the Abbasids took power, and it marked the furthest west a Tang army ever fought.",
+    "source": "Book of Tang, with al-Tabari",
+    "answerYear": 751
+  },
+  {
+    "id": "dates-roncevaux-pass",
+    "prompt": "In what year was Charlemagne's rearguard destroyed at the pass of Roncevaux?",
+    "precision": "year",
+    "decompositionHint": "It happened on the way back from a campaign in Spain, decades before he was crowned emperor in Rome.",
+    "source": "Einhard, Life of Charlemagne",
+    "answerYear": 778
+  },
+  {
+    "id": "dates-heian-period-begins",
+    "prompt": "In what year did the Japanese court move to Heian-kyo, beginning the Heian period?",
+    "precision": "year",
+    "decompositionHint": "The move came at the very end of the eighth century, a year or two after the Vikings first raided England.",
+    "source": "Nihon Kiryaku, and Imperial Household Agency records of the Heian capital",
+    "answerYear": 794
+  },
+  {
+    "id": "dates-treaty-of-verdun",
+    "prompt": "In what year did the Treaty of Verdun divide Charlemagne's empire between his grandsons?",
+    "precision": "year",
+    "decompositionHint": "It came about three decades after Charlemagne died, and the awkward middle share is roughly why France and Germany argued for a millennium.",
+    "source": "Annals of St Bertin",
+    "answerYear": 843
+  },
+  {
+    "id": "dates-diamond-sutra-printed",
+    "prompt": "In what year was the Diamond Sutra printed, the oldest dated printed book that survives?",
+    "precision": "year",
+    "decompositionHint": "It was made in Tang China, roughly six centuries before movable type reached Europe, and it was sealed in a cave at Dunhuang.",
+    "source": "British Library, Dunhuang collection, colophon of the Diamond Sutra scroll",
+    "answerYear": 868
+  },
+  {
+    "id": "dates-alfred-the-great-crowned",
+    "prompt": "In what year did Alfred the Great become king of Wessex?",
+    "precision": "year",
+    "decompositionHint": "He took the throne a few years after the Viking Great Army landed in England, and he reigned for about three decades.",
+    "source": "Anglo-Saxon Chronicle, entry for Alfred's accession",
+    "answerYear": 871
+  },
+  {
+    "id": "dates-iceland-settled",
+    "prompt": "In what year does Icelandic tradition date the first Norse settlement of the island?",
+    "precision": "year",
+    "decompositionHint": "It falls in the Viking age, a couple of generations after the first raids on England and about a century before Greenland.",
+    "source": "Landnamabok, the Icelandic Book of Settlements",
+    "answerYear": 874
+  },
+  {
+    "id": "dates-kievan-rus-established",
+    "prompt": "In what year is Oleg said to have taken Kyiv and founded the Kievan Rus?",
+    "precision": "year",
+    "decompositionHint": "It came about two decades after Rurik's Norse followers settled at Novgorod, and a century before Vladimir's conversion.",
+    "source": "Primary Chronicle, the Tale of Bygone Years",
+    "answerYear": 882
+  },
+  {
+    "id": "dates-battle-of-lechfeld",
+    "prompt": "In what year did Otto I crush the Magyars at the Lechfeld?",
+    "precision": "year",
+    "decompositionHint": "It ended the Hungarian raids into western Europe, and Otto was crowned emperor in Rome a few years afterwards.",
+    "source": "Widukind of Corvey, Deeds of the Saxons",
+    "answerYear": 955
+  },
+  {
+    "id": "dates-otto-crowned-emperor",
+    "prompt": "In what year was Otto the Great crowned Holy Roman Emperor in Rome?",
+    "precision": "year",
+    "decompositionHint": "It revived the imperial title in the west about a century and a half after Charlemagne's coronation on Christmas Day.",
+    "source": "Liudprand of Cremona, with the Regesta Imperii",
+    "answerYear": 962
+  },
+  {
+    "id": "dates-eric-the-red-greenland",
+    "prompt": "Around what year did Eric the Red begin the Norse colonisation of Greenland?",
+    "precision": "decade",
+    "decompositionHint": "He sailed from Iceland roughly a century after that island was settled, and his son reached North America within a generation.",
+    "source": "Eirik the Red's Saga, with Landnamabok",
+    "answerYear": 985
+  },
+  {
+    "id": "dates-vladimir-converts",
+    "prompt": "In what year did Vladimir I adopt Christianity for the Kievan Rus?",
+    "precision": "year",
+    "decompositionHint": "It came about a century after Oleg took Kyiv, and it tied the Rus to Constantinople rather than to Rome.",
+    "source": "Primary Chronicle, the Tale of Bygone Years",
+    "answerYear": 988
+  },
+  {
+    "id": "dates-canute-king-of-england",
+    "prompt": "In what year did Canute the Great become king of England?",
+    "precision": "year",
+    "decompositionHint": "He took the throne half a century before the Norman conquest, after his father's Danish invasion and the death of Edmund Ironside.",
+    "source": "Anglo-Saxon Chronicle, entry for Cnut's accession",
+    "answerYear": 1016
+  },
+  {
+    "id": "dates-tale-of-genji-completed",
+    "prompt": "Around what year was The Tale of Genji completed in Japan?",
+    "precision": "decade",
+    "decompositionHint": "Murasaki Shikibu wrote it at the Heian court, about two centuries after the capital moved to Kyoto.",
+    "source": "Murasaki Shikibu's diary, with the standard scholarly dating of the Genji monogatari",
+    "answerYear": 1021
+  },
+  {
+    "id": "dates-canon-of-medicine",
+    "prompt": "Around what year did Avicenna finish the Canon of Medicine?",
+    "precision": "decade",
+    "decompositionHint": "He worked in Persia during the Islamic golden age, and his book was still a European medical textbook five centuries later.",
+    "source": "Ibn Sina, al-Qanun fi al-Tibb, standard dating of its completion",
+    "answerYear": 1025
+  },
+  {
+    "id": "dates-seljuk-empire-founded",
+    "prompt": "In what year was the Great Seljuk Empire founded?",
+    "precision": "year",
+    "decompositionHint": "It rose a generation before the Seljuks broke the Byzantine army in Armenia and opened Anatolia to Turkish settlement.",
+    "source": "Ibn al-Athir, The Complete History",
+    "answerYear": 1037
+  },
+  {
+    "id": "dates-manzikert",
+    "prompt": "In what year did the Seljuks defeat the Byzantines at Manzikert?",
+    "precision": "year",
+    "decompositionHint": "It came five years after Hastings, and the loss of Anatolia is much of why the emperor later asked the west for help.",
+    "source": "Michael Attaleiates, History",
+    "answerYear": 1071
+  },
+  {
+    "id": "dates-henry-iv-canossa",
+    "prompt": "In what year did Henry IV wait in the snow at Canossa for the Pope's forgiveness?",
+    "precision": "year",
+    "decompositionHint": "It fell in the middle of the investiture quarrel, the year after Gregory VII excommunicated him.",
+    "source": "Lampert of Hersfeld, Annals",
+    "answerYear": 1077
+  },
+  {
+    "id": "dates-university-of-bologna-founded",
+    "prompt": "In what year is the University of Bologna conventionally dated from?",
+    "precision": "year",
+    "decompositionHint": "It is reckoned the oldest university in continuous operation in Europe, founded about a generation after the Norman conquest of England.",
+    "source": "University of Bologna, official account of its foundation",
+    "answerYear": 1088
+  },
+  {
+    "id": "dates-council-of-clermont",
+    "prompt": "In what year did Pope Urban II call for the First Crusade at Clermont?",
+    "precision": "year",
+    "decompositionHint": "The call came four years before the crusaders reached Jerusalem, and a couple of decades after the Byzantine defeat at Manzikert.",
+    "source": "Fulcher of Chartres, History of the Expedition to Jerusalem",
+    "answerYear": 1095
+  },
+  {
+    "id": "dates-knights-templar-founded",
+    "prompt": "Around what year were the Knights Templar founded in Jerusalem?",
+    "precision": "decade",
+    "decompositionHint": "They were set up to guard pilgrims about two decades after the First Crusade took the city.",
+    "source": "William of Tyre, History of Deeds Done Beyond the Sea",
+    "answerYear": 1119
+  },
+  {
+    "id": "dates-concordat-of-worms",
+    "prompt": "In what year did the Concordat of Worms settle the investiture controversy?",
+    "precision": "year",
+    "decompositionHint": "It came about half a century after the quarrel began, and a few decades before Frederick Barbarossa was crowned.",
+    "source": "Text of the Concordat of Worms, Monumenta Germaniae Historica",
+    "answerYear": 1122
+  },
+  {
+    "id": "dates-battle-of-dan-no-ura",
+    "prompt": "In what year did the Minamoto destroy the Taira at Dan-no-ura?",
+    "precision": "year",
+    "decompositionHint": "It ended the Genpei War, and the first shogunate was established within a decade of it.",
+    "source": "The Tale of the Heike, with the Azuma Kagami",
+    "answerYear": 1185
+  },
+  {
+    "id": "dates-saladin-takes-jerusalem",
+    "prompt": "In what year did Saladin retake Jerusalem from the crusaders?",
+    "precision": "year",
+    "decompositionHint": "It followed his victory at Hattin that same summer, and it prompted the Third Crusade within a couple of years.",
+    "source": "Baha al-Din ibn Shaddad, The Rare and Excellent History of Saladin",
+    "answerYear": 1187
+  },
+  {
+    "id": "dates-fourth-crusade-sacks-constantinople",
+    "prompt": "In what year did the Fourth Crusade sack Constantinople?",
+    "precision": "year",
+    "decompositionHint": "The crusaders never reached the Holy Land at all. They took the greatest Christian city instead, a century after the First Crusade.",
+    "source": "Geoffrey of Villehardouin, The Conquest of Constantinople",
+    "answerYear": 1204
+  },
+  {
+    "id": "dates-cambridge-founded",
+    "prompt": "In what year was the University of Cambridge founded?",
+    "precision": "year",
+    "decompositionHint": "Scholars fled there after trouble at Oxford, which had already been teaching for about a century.",
+    "source": "University of Cambridge, official account of its foundation",
+    "answerYear": 1209
+  },
+  {
+    "id": "dates-las-navas-de-tolosa",
+    "prompt": "In what year did the Christian kingdoms of Spain win at Las Navas de Tolosa?",
+    "precision": "year",
+    "decompositionHint": "It broke Almohad power in Iberia, and it came three years before Magna Carta was sealed in England.",
+    "source": "Rodrigo Jimenez de Rada, De rebus Hispaniae",
+    "answerYear": 1212
+  },
+  {
+    "id": "dates-battle-of-bouvines",
+    "prompt": "In what year did Philip Augustus win the battle of Bouvines?",
+    "precision": "year",
+    "decompositionHint": "King John's share of that defeat is much of why his barons forced Magna Carta on him the following year.",
+    "source": "William the Breton, Philippide",
+    "answerYear": 1214
+  },
+  {
+    "id": "dates-siege-of-baghdad",
+    "prompt": "In what year did the Mongols sack Baghdad and end the Abbasid caliphate?",
+    "precision": "year",
+    "decompositionHint": "It came about half a century after Genghis Khan united the Mongols, and it was his grandson Hulegu who gave the order.",
+    "source": "Rashid al-Din, Jami al-Tawarikh",
+    "answerYear": 1258
+  },
+  {
+    "id": "dates-aquinas-dies",
+    "prompt": "In what year did Thomas Aquinas die, leaving the Summa Theologiae unfinished?",
+    "precision": "year",
+    "decompositionHint": "He died in the generation after the Mongols sacked Baghdad, and a few decades before Dante began the Divine Comedy.",
+    "source": "Acts of the canonisation process of Thomas Aquinas",
+    "answerYear": 1274
+  },
+  {
+    "id": "dates-battle-of-yamen",
+    "prompt": "In what year did the Mongols destroy the last Song fleet at Yamen?",
+    "precision": "year",
+    "decompositionHint": "It finished a conquest of southern China that Kublai Khan had been pressing for about two decades.",
+    "source": "History of Song, final annals",
+    "answerYear": 1279
+  },
+  {
+    "id": "dates-sicilian-vespers",
+    "prompt": "In what year did the Sicilian Vespers rising throw the French out of Sicily?",
+    "precision": "year",
+    "decompositionHint": "It broke out at Easter, a decade and a half after Charles of Anjou had taken the island.",
+    "source": "Bartholomew of Neocastro, Historia Sicula",
+    "answerYear": 1282
+  },
+  {
+    "id": "dates-stirling-bridge",
+    "prompt": "In what year did William Wallace defeat the English at Stirling Bridge?",
+    "precision": "year",
+    "decompositionHint": "It came the year after Edward I invaded Scotland, and Wallace was executed less than a decade later.",
+    "source": "Walter of Guisborough, Chronicle",
+    "answerYear": 1297
+  },
+  {
+    "id": "dates-ottoman-state-founded",
+    "prompt": "In what year is the founding of the Ottoman state conventionally dated?",
+    "precision": "year",
+    "decompositionHint": "Osman's small Anatolian principality began about a century before the Ottomans crossed into the Balkans in force.",
+    "source": "Ottoman dynastic chronicles, conventional dating from Osman I",
+    "answerYear": 1299
+  },
+  {
+    "id": "dates-wallace-executed",
+    "prompt": "In what year was William Wallace executed in London?",
+    "precision": "year",
+    "decompositionHint": "It came eight years after his victory at Stirling Bridge, and Bannockburn followed within a decade of his death.",
+    "source": "Chronicle of Lanercost",
+    "answerYear": 1305
+  },
+  {
+    "id": "dates-templars-arrested",
+    "prompt": "In what year did Philip IV of France order the mass arrest of the Knights Templar?",
+    "precision": "year",
+    "decompositionHint": "The order had existed for about two centuries, and the arrests were made on a Friday the thirteenth in October.",
+    "source": "Registers of the trial of the Templars, Vatican Apostolic Archive",
+    "answerYear": 1307
+  },
+  {
+    "id": "dates-bannockburn",
+    "prompt": "In what year did Robert the Bruce defeat the English at Bannockburn?",
+    "precision": "year",
+    "decompositionHint": "It came a decade after Wallace's execution, and it secured Scottish independence for a generation.",
+    "source": "John Barbour, The Brus, with the Scotichronicon",
+    "answerYear": 1314
+  },
+  {
+    "id": "dates-battle-of-crecy",
+    "prompt": "In what year did the English longbowmen win at Crecy?",
+    "precision": "year",
+    "decompositionHint": "It fell early in the Hundred Years War, about a decade after the fighting began, and Calais was taken the following year.",
+    "source": "Jean Froissart, Chronicles",
+    "answerYear": 1346
+  },
+  {
+    "id": "dates-peasants-revolt",
+    "prompt": "In what year did the Peasants' Revolt march on London?",
+    "precision": "year",
+    "decompositionHint": "It came a generation after the Black Death, when labour was scarce and a poll tax proved the final straw.",
+    "source": "Thomas Walsingham, Chronica Maiora, with the Anonimalle Chronicle",
+    "answerYear": 1381
+  },
+  {
+    "id": "dates-battle-of-kosovo",
+    "prompt": "In what year did the Ottomans and the Serbs fight at Kosovo Polje?",
+    "precision": "year",
+    "decompositionHint": "It fell about a century after the Ottoman state was founded, and well before Constantinople finally fell to them.",
+    "source": "Constantine the Philosopher, Life of Stefan Lazarevic, with Ottoman accounts",
+    "answerYear": 1389
+  },
+  {
+    "id": "dates-joan-of-arc-burned",
+    "prompt": "In what year was Joan of Arc burned at the stake in Rouen?",
+    "precision": "year",
+    "decompositionHint": "She had lifted the siege of Orleans about two years earlier, near the end of the Hundred Years War.",
+    "source": "Record of the trial of condemnation of Joan of Arc, Rouen",
+    "answerYear": 1431
+  },
+  {
+    "id": "dates-vasco-da-gama-reaches-india",
+    "prompt": "In what year did Vasco da Gama reach India by sea?",
+    "precision": "year",
+    "decompositionHint": "He rounded the Cape of Good Hope on the way, six years after Columbus had sailed west hoping to get to the same place.",
+    "source": "Roteiro da primeira viagem de Vasco da Gama a India",
+    "answerYear": 1498
+  },
+  {
+    "id": "dates-diet-of-worms",
+    "prompt": "In what year did Luther refuse to recant before the Diet of Worms?",
+    "precision": "year",
+    "decompositionHint": "It came four years after he published his theses, and he was spirited away to the Wartburg immediately afterwards.",
+    "source": "Edict of Worms, Deutsche Reichstagsakten",
+    "answerYear": 1521
+  },
+  {
+    "id": "dates-sack-of-rome-1527",
+    "prompt": "In what year did mutinous imperial troops sack Rome under Charles V?",
+    "precision": "year",
+    "decompositionHint": "It came a decade after the Reformation began, and it effectively ended the High Renaissance in the city.",
+    "source": "Luigi Guicciardini, The Sack of Rome",
+    "answerYear": 1527
+  },
+  {
+    "id": "dates-st-bartholomews-day-massacre",
+    "prompt": "In what year did the St Bartholomew's Day massacre of Huguenots begin in Paris?",
+    "precision": "year",
+    "decompositionHint": "It fell in the middle of the French Wars of Religion, about a decade after they began, and it started two days after a failed assassination.",
+    "source": "Registers of the Parlement of Paris, with contemporary accounts of the French Wars of Religion",
+    "answerYear": 1572
+  },
+  {
+    "id": "dates-drake-circumnavigation-returns",
+    "prompt": "In what year did Francis Drake sail back into Plymouth after going round the world?",
+    "precision": "year",
+    "decompositionHint": "His was the second expedition to manage it, about sixty years after the first, and he came home loaded with Spanish treasure.",
+    "source": "The World Encompassed by Sir Francis Drake",
+    "answerYear": 1580
+  },
+  {
+    "id": "dates-mary-queen-of-scots-executed",
+    "prompt": "In what year was Mary, Queen of Scots executed at Fotheringhay?",
+    "precision": "year",
+    "decompositionHint": "She had been a prisoner in England for nineteen years, and the Spanish Armada sailed the following summer.",
+    "source": "Calendar of State Papers, Scotland, warrant and report of the execution at Fotheringhay",
+    "answerYear": 1587
+  },
+  {
+    "id": "dates-giordano-bruno-burned",
+    "prompt": "In what year was Giordano Bruno burned at the stake in Rome?",
+    "precision": "year",
+    "decompositionHint": "It fell exactly at the turn of a century, and a generation before Galileo faced the same tribunal.",
+    "source": "Records of the Roman Inquisition, summary of the trial of Giordano Bruno",
+    "answerYear": 1600
+  },
+  {
+    "id": "dates-dutch-east-india-company-founded",
+    "prompt": "In what year was the Dutch East India Company chartered?",
+    "precision": "year",
+    "decompositionHint": "It followed its English rival by a couple of years, and it is usually called the first company to sell shares to the public.",
+    "source": "Charter of the Vereenigde Oostindische Compagnie, States-General of the Netherlands",
+    "answerYear": 1602
+  },
+  {
+    "id": "dates-gunpowder-plot",
+    "prompt": "In what year was the Gunpowder Plot to blow up Parliament discovered?",
+    "precision": "year",
+    "decompositionHint": "It came two years into the reign of James I, soon after he inherited the English throne from Elizabeth.",
+    "source": "State Papers Domestic, James I, with the confession of Guy Fawkes",
+    "answerYear": 1605
+  },
+  {
+    "id": "dates-quebec-city-founded",
+    "prompt": "In what year did Samuel de Champlain found Quebec City?",
+    "precision": "year",
+    "decompositionHint": "It came a year after the English settled Jamestown, and a dozen years before the Mayflower reached Cape Cod.",
+    "source": "Samuel de Champlain, Les Voyages",
+    "answerYear": 1608
+  },
+  {
+    "id": "dates-king-james-bible",
+    "prompt": "In what year was the King James Bible first printed?",
+    "precision": "year",
+    "decompositionHint": "The translation was ordered soon after James inherited the English throne, and it took about seven years of committee work.",
+    "source": "Title page of the Authorised Version, Robert Barker, London",
+    "answerYear": 1611
+  },
+  {
+    "id": "dates-napier-logarithms",
+    "prompt": "In what year did John Napier publish the first table of logarithms?",
+    "precision": "year",
+    "decompositionHint": "It appeared in Edinburgh a few years before the Thirty Years War began, and it halved the labour of astronomy overnight.",
+    "source": "John Napier, Mirifici Logarithmorum Canonis Descriptio",
+    "answerYear": 1614
+  },
+  {
+    "id": "dates-defenestration-of-prague",
+    "prompt": "In what year were imperial officials thrown out of a Prague window, setting off the Thirty Years War?",
+    "precision": "year",
+    "decompositionHint": "The war it began ran for three decades and was settled at Westphalia; the men who fell survived the drop.",
+    "source": "Contemporary Bohemian accounts of the defenestration, with Imperial Diet records",
+    "answerYear": 1618
+  },
+  {
+    "id": "dates-battle-of-white-mountain",
+    "prompt": "In what year did the emperor crush the Bohemian revolt at the White Mountain?",
+    "precision": "year",
+    "decompositionHint": "It came two years into the Thirty Years War and settled Bohemia for the Habsburgs for three centuries.",
+    "source": "Imperial war records and contemporary accounts of the Bohemian revolt",
+    "answerYear": 1620
+  },
+  {
+    "id": "dates-new-amsterdam-founded",
+    "prompt": "In what year was New Amsterdam founded at the tip of Manhattan?",
+    "precision": "year",
+    "decompositionHint": "The Dutch West India Company set it up about five years after the Mayflower landed further north.",
+    "source": "Records of the Dutch West India Company, New Netherland",
+    "answerYear": 1625
+  },
+  {
+    "id": "dates-st-peters-basilica-consecrated",
+    "prompt": "In what year was St Peter's Basilica in Rome consecrated as finished?",
+    "precision": "year",
+    "decompositionHint": "Building had run for more than a century, through Bramante, Michelangelo and Maderno, and Bernini's colonnade came later still.",
+    "source": "Fabbrica di San Pietro, record of the consecration by Urban VIII",
+    "answerYear": 1626
+  },
+  {
+    "id": "dates-descartes-discourse",
+    "prompt": "In what year did Descartes publish the Discourse on Method?",
+    "precision": "year",
+    "decompositionHint": "It appeared in Leiden in the middle of the Thirty Years War, and it is where the famous line about thinking comes from.",
+    "source": "Rene Descartes, Discours de la methode, Leiden",
+    "answerYear": 1637
+  },
+  {
+    "id": "dates-first-opera-house-opens",
+    "prompt": "In what year did the first public opera house open in Venice?",
+    "precision": "year",
+    "decompositionHint": "Opera itself was about forty years old by then. What was new was that anyone could buy a ticket rather than be invited.",
+    "source": "Records of the Teatro San Cassiano, Venice",
+    "answerYear": 1637
+  },
+  {
+    "id": "dates-tasman-sights-new-zealand",
+    "prompt": "In what year did Abel Tasman make the first recorded European sighting of New Zealand?",
+    "precision": "year",
+    "decompositionHint": "He sailed from Batavia for the Dutch East India Company, and he had passed Tasmania a few weeks earlier on the same voyage.",
+    "source": "Abel Tasman, journal of the voyage of the Heemskerck and Zeehaen",
+    "answerYear": 1642
+  },
+  {
+    "id": "dates-cape-town-founded",
+    "prompt": "In what year did the Dutch set up their supply station at the Cape of Good Hope?",
+    "precision": "year",
+    "decompositionHint": "It was built to victual ships on the run to the Indies, about half a century after that trading company was chartered.",
+    "source": "Jan van Riebeeck, journal of the Cape settlement",
+    "answerYear": 1652
+  },
+  {
+    "id": "dates-royal-society-founded",
+    "prompt": "In what year was the Royal Society of London founded?",
+    "precision": "year",
+    "decompositionHint": "It began in the same year the monarchy was restored in England, and Newton joined it about a decade afterwards.",
+    "source": "Journal Book of the Royal Society, record of the founding meeting",
+    "answerYear": 1660
+  },
+  {
+    "id": "dates-micrographia-published",
+    "prompt": "In what year did Robert Hooke publish Micrographia?",
+    "precision": "year",
+    "decompositionHint": "It came out in the same year plague emptied London, five years after the Royal Society was founded, and it is the book that named the cell.",
+    "source": "Robert Hooke, Micrographia, printed for the Royal Society",
+    "answerYear": 1665
+  },
+  {
+    "id": "dates-new-york-renamed",
+    "prompt": "In what year did the English take New Amsterdam and rename it New York?",
+    "precision": "year",
+    "decompositionHint": "It happened about forty years after the Dutch founded the town, at the start of the second Anglo-Dutch war.",
+    "source": "Articles of Capitulation on the Reduction of New Netherland",
+    "answerYear": 1664
+  },
+  {
+    "id": "dates-leeuwenhoek-first-letter",
+    "prompt": "In what year did Antonie van Leeuwenhoek send his first letter of microscope observations to the Royal Society?",
+    "precision": "year",
+    "decompositionHint": "His letters began arriving from Delft about eight years after Hooke's book of microscope drawings appeared in London.",
+    "source": "Letters of Antonie van Leeuwenhoek, Philosophical Transactions of the Royal Society",
+    "answerYear": 1673
+  },
+  {
+    "id": "dates-greenwich-observatory-founded",
+    "prompt": "In what year was the Royal Observatory at Greenwich founded?",
+    "precision": "year",
+    "decompositionHint": "Charles II set it up to solve the longitude problem at sea, about fifteen years after the Royal Society was founded.",
+    "source": "Royal warrant of Charles II founding the Observatory at Greenwich",
+    "answerYear": 1675
+  },
+  {
+    "id": "dates-edict-of-fontainebleau",
+    "prompt": "In what year did Louis XIV revoke the toleration granted to French Protestants?",
+    "precision": "year",
+    "decompositionHint": "The edict he cancelled had stood for nearly ninety years, and hundreds of thousands of Huguenots left France afterwards.",
+    "source": "Edict of Fontainebleau, revoking the Edict of Nantes",
+    "answerYear": 1685
+  },
+  {
+    "id": "dates-locke-two-treatises",
+    "prompt": "In what year was Locke's Two Treatises of Government first published?",
+    "precision": "year",
+    "decompositionHint": "It appeared anonymously just after the Glorious Revolution had put William and Mary on the throne.",
+    "source": "John Locke, Two Treatises of Government, printed for Awnsham Churchill, London",
+    "answerYear": 1689
+  },
+  {
+    "id": "dates-battle-of-the-boyne",
+    "prompt": "In what year did William III defeat James II at the Boyne?",
+    "precision": "year",
+    "decompositionHint": "It came a year or two after the Glorious Revolution, and it settled who held the crown in Ireland.",
+    "source": "Contemporary dispatches of the Williamite war in Ireland",
+    "answerYear": 1690
+  },
+  {
+    "id": "dates-salem-witch-trials",
+    "prompt": "In what year did the Salem witch trials take place in Massachusetts?",
+    "precision": "year",
+    "decompositionHint": "They ran for a single year in a Puritan colony, about seventy years after the Mayflower landed.",
+    "source": "Salem Witchcraft Papers, Essex County court records",
+    "answerYear": 1692
+  },
+  {
+    "id": "dates-treaty-of-karlowitz",
+    "prompt": "In what year did the Treaty of Karlowitz end the Great Turkish War?",
+    "precision": "year",
+    "decompositionHint": "It came sixteen years after the Ottomans failed at the walls of Vienna, and it began their long retreat out of Hungary.",
+    "source": "Text of the Treaty of Karlowitz",
+    "answerYear": 1699
+  },
+  {
+    "id": "dates-statute-of-anne",
+    "prompt": "In what year did the Statute of Anne, the first copyright law, come into force?",
+    "precision": "year",
+    "decompositionHint": "It was passed in Britain about two and a half centuries after printing first reached England.",
+    "source": "Statute of Anne, 8 Anne c. 21, Parliament of Great Britain",
+    "answerYear": 1710
+  },
+  {
+    "id": "dates-battle-of-poltava",
+    "prompt": "In what year did Peter the Great destroy the Swedish army at Poltava?",
+    "precision": "year",
+    "decompositionHint": "It turned the Great Northern War and made Russia the leading Baltic power. His new capital on the Neva was six years old.",
+    "source": "Russian and Swedish campaign records of the Great Northern War",
+    "answerYear": 1709
+  },
+  {
+    "id": "dates-treaty-of-utrecht",
+    "prompt": "In what year did the Treaty of Utrecht end the War of the Spanish Succession?",
+    "precision": "year",
+    "decompositionHint": "The war had run for a dozen years, and Britain came out of it holding Gibraltar.",
+    "source": "Text of the Treaty of Utrecht",
+    "answerYear": 1713
+  },
+  {
+    "id": "dates-new-orleans-founded",
+    "prompt": "In what year was New Orleans founded by the French?",
+    "precision": "year",
+    "decompositionHint": "It was laid out on the lower Mississippi about eighty-five years before the United States bought the whole territory.",
+    "source": "Records of the Company of the Indies, founding of La Nouvelle-Orleans",
+    "answerYear": 1718
+  },
+  {
+    "id": "dates-south-sea-bubble",
+    "prompt": "In what year did the South Sea Bubble burst in London?",
+    "precision": "year",
+    "decompositionHint": "It came the year before Britain got its first prime minister, and Isaac Newton lost a fortune in it.",
+    "source": "Reports of the parliamentary committee of inquiry into the South Sea Company",
+    "answerYear": 1720
+  },
+  {
+    "id": "dates-first-british-prime-minister",
+    "prompt": "In what year did Robert Walpole become the first British prime minister?",
+    "precision": "year",
+    "decompositionHint": "He took office to clear up after a financial crash the year before, and he held the job for two decades.",
+    "source": "Journals of the House of Commons, Walpole's appointment as First Lord of the Treasury",
+    "answerYear": 1721
+  },
+  {
+    "id": "dates-culloden",
+    "prompt": "In what year was the Jacobite rising crushed at Culloden?",
+    "precision": "year",
+    "decompositionHint": "The rising had begun the previous year, and this was the last pitched battle fought on British soil.",
+    "source": "Contemporary dispatches of the Duke of Cumberland's army",
+    "answerYear": 1746
+  },
+  {
+    "id": "dates-plains-of-abraham",
+    "prompt": "In what year did the British take Quebec on the Plains of Abraham?",
+    "precision": "year",
+    "decompositionHint": "Both commanders died of their wounds, and the war it belonged to was settled four years later.",
+    "source": "Dispatches of the Quebec campaign, British Army records",
+    "answerYear": 1759
+  },
+  {
+    "id": "dates-treaty-of-paris-1763",
+    "prompt": "In what year did the Treaty of Paris end the Seven Years War?",
+    "precision": "year",
+    "decompositionHint": "France gave up Canada in it, and the taxes raised to pay for that war helped start the American rebellion a decade later.",
+    "source": "Text of the Treaty of Paris ending the Seven Years War",
+    "answerYear": 1763
+  },
+  {
+    "id": "dates-stamp-act",
+    "prompt": "In what year did Parliament pass the Stamp Act on the American colonies?",
+    "precision": "year",
+    "decompositionHint": "It came two years after the Seven Years War ended, and the colonies were in open revolt within a decade of it.",
+    "source": "Stamp Act 1765, 5 Geo. III c. 12",
+    "answerYear": 1765
+  },
+  {
+    "id": "dates-boston-massacre",
+    "prompt": "On what date did British soldiers fire on a crowd in the Boston Massacre?",
+    "precision": "day",
+    "decompositionHint": "It fell five years after the Stamp Act and about three before the tea went into the harbour, on a cold evening in early spring.",
+    "source": "Records of the trial of the soldiers, Suffolk County, Massachusetts",
+    "answerDate": "1770-03-05"
+  },
+  {
+    "id": "dates-arkwright-cromford-mill",
+    "prompt": "In what year did Richard Arkwright open his water-powered cotton mill at Cromford?",
+    "precision": "year",
+    "decompositionHint": "It is usually called the first modern factory, and it opened a few years before the American war of independence began.",
+    "source": "Arkwright partnership records, Cromford Mill, Derbyshire",
+    "answerYear": 1771
+  },
+  {
+    "id": "dates-wealth-of-nations",
+    "prompt": "In what year did Adam Smith publish The Wealth of Nations?",
+    "precision": "year",
+    "decompositionHint": "It came out in London in the very same year a set of American colonies declared themselves independent.",
+    "source": "Adam Smith, An Inquiry into the Nature and Causes of the Wealth of Nations, London",
+    "answerYear": 1776
+  },
+  {
+    "id": "dates-cook-killed-hawaii",
+    "prompt": "In what year was James Cook killed in Hawaii?",
+    "precision": "year",
+    "decompositionHint": "He died on his third Pacific voyage, about a decade after he first charted New Zealand and eastern Australia.",
+    "source": "Journals of the third voyage of Captain James Cook, Admiralty records",
+    "answerYear": 1779
+  },
+  {
+    "id": "dates-critique-of-pure-reason",
+    "prompt": "In what year did Kant publish the Critique of Pure Reason?",
+    "precision": "year",
+    "decompositionHint": "It appeared in Konigsberg while the American war of independence was still being fought.",
+    "source": "Immanuel Kant, Kritik der reinen Vernunft, first edition, Riga",
+    "answerYear": 1781
+  },
+  {
+    "id": "dates-declaration-rights-of-man",
+    "prompt": "In what year did the French assembly adopt the Declaration of the Rights of Man and of the Citizen?",
+    "precision": "year",
+    "decompositionHint": "It was adopted about six weeks after the Bastille fell, in the first summer of the revolution.",
+    "source": "Declaration des droits de l'homme et du citoyen, National Constituent Assembly",
+    "answerYear": 1789
+  },
+  {
+    "id": "dates-washington-inaugurated",
+    "prompt": "On what date was George Washington first sworn in as president?",
+    "precision": "day",
+    "decompositionHint": "It happened in New York, about ten weeks before the Bastille fell in Paris and six years after the war ended.",
+    "source": "Journal of the First Congress of the United States, record of the inauguration",
+    "answerDate": "1789-04-30"
+  },
+  {
+    "id": "dates-us-bill-of-rights-ratified",
+    "prompt": "In what year were the first ten amendments to the United States constitution ratified?",
+    "precision": "year",
+    "decompositionHint": "They were added two years after the new government began work, to satisfy the states that had held out over ratifying.",
+    "source": "National Archives, records of ratification of the Bill of Rights",
+    "answerYear": 1791
+  },
+  {
+    "id": "dates-marie-antoinette-executed",
+    "prompt": "On what date was Marie Antoinette executed in Paris?",
+    "precision": "day",
+    "decompositionHint": "It came about nine months after her husband went to the guillotine, in the autumn, at the height of the Terror.",
+    "source": "Records of the Revolutionary Tribunal, Paris",
+    "answerDate": "1793-10-16"
+  },
+  {
+    "id": "dates-napoleon-first-consul",
+    "prompt": "In what year did Napoleon seize power and become First Consul?",
+    "precision": "year",
+    "decompositionHint": "The coup came a decade after the revolution began, and he crowned himself emperor five years afterwards.",
+    "source": "Constitution of the Year VIII, French Republic",
+    "answerYear": 1799
+  },
+  {
+    "id": "dates-louisiana-purchase",
+    "prompt": "In what year did the United States buy Louisiana from France?",
+    "precision": "year",
+    "decompositionHint": "It doubled the size of the country at a stroke, and the expedition sent to survey it set off the following spring.",
+    "source": "Louisiana Purchase Treaty between the United States and the French Republic",
+    "answerYear": 1803
+  },
+  {
+    "id": "dates-austerlitz",
+    "prompt": "In what year did Napoleon beat the Austrians and Russians at Austerlitz?",
+    "precision": "year",
+    "decompositionHint": "It came about six weeks after Nelson's victory at Trafalgar, and it is usually called Napoleon's finest battle.",
+    "source": "Bulletins of the Grande Armee, with Austrian and Russian campaign records",
+    "answerYear": 1805
+  },
+  {
+    "id": "dates-holy-roman-empire-dissolved",
+    "prompt": "In what year was the Holy Roman Empire dissolved?",
+    "precision": "year",
+    "decompositionHint": "Francis II gave up the title under pressure from Napoleon, roughly a thousand years after Charlemagne's coronation began it.",
+    "source": "Instrument of abdication of Francis II, Imperial archives, Vienna",
+    "answerYear": 1806
+  },
+  {
+    "id": "dates-britain-abolishes-slave-trade",
+    "prompt": "In what year did Britain make the Atlantic slave trade illegal?",
+    "precision": "year",
+    "decompositionHint": "Owning slaves stayed lawful in the British empire for another quarter of a century after the trade itself was banned.",
+    "source": "Slave Trade Act 1807, 47 Geo. III c. 36",
+    "answerYear": 1807
+  },
+  {
+    "id": "dates-tambora-eruption",
+    "prompt": "In what year did Mount Tambora erupt in Indonesia?",
+    "precision": "year",
+    "decompositionHint": "It is the largest eruption in recorded history, and the following summer failed right across the northern hemisphere.",
+    "source": "Smithsonian Institution Global Volcanism Program, Tambora eruptive history",
+    "answerYear": 1815
+  },
+  {
+    "id": "dates-frankenstein-published",
+    "prompt": "In what year was Mary Shelley's Frankenstein first published?",
+    "precision": "year",
+    "decompositionHint": "She had begun it two summers earlier beside Lake Geneva, in a year when the weather never really warmed up.",
+    "source": "Frankenstein, or The Modern Prometheus, first edition, Lackington, London",
+    "answerYear": 1818
+  },
+  {
+    "id": "dates-singapore-founded",
+    "prompt": "In what year did Stamford Raffles found the British settlement at Singapore?",
+    "precision": "year",
+    "decompositionHint": "It came a few years after the Napoleonic wars ended, as a free port on the route to China.",
+    "source": "Treaty between the East India Company and the Sultan of Johor",
+    "answerYear": 1819
+  },
+  {
+    "id": "dates-peterloo-massacre",
+    "prompt": "In what year did cavalry charge a reform meeting at St Peter's Field in Manchester?",
+    "precision": "year",
+    "decompositionHint": "It came four years after Waterloo, at a huge open-air meeting demanding the vote.",
+    "source": "Reports of the Manchester magistrates and the inquest into the deaths at St Peter's Field",
+    "answerYear": 1819
+  },
+  {
+    "id": "dates-napoleon-dies",
+    "prompt": "In what year did Napoleon die on Saint Helena?",
+    "precision": "year",
+    "decompositionHint": "He had been held on the island for about six years after his final defeat in Belgium.",
+    "source": "Report of the post-mortem examination, British garrison, Saint Helena",
+    "answerYear": 1821
+  },
+  {
+    "id": "dates-erie-canal-opens",
+    "prompt": "In what year did the Erie Canal open across New York State?",
+    "precision": "year",
+    "decompositionHint": "It linked the Hudson to the Great Lakes, and it opened in the same year as the first public steam railway in England.",
+    "source": "New York State Canal Corporation, record of the opening of the Erie Canal",
+    "answerYear": 1825
+  },
+  {
+    "id": "dates-metropolitan-police-founded",
+    "prompt": "In what year did Robert Peel found the Metropolitan Police in London?",
+    "precision": "year",
+    "decompositionHint": "It came three years before the Great Reform Act, and it is why British constables are still nicknamed after him.",
+    "source": "Metropolitan Police Act 1829, 10 Geo. IV c. 44",
+    "answerYear": 1829
+  },
+  {
+    "id": "dates-liverpool-manchester-railway",
+    "prompt": "In what year did the Liverpool and Manchester Railway open?",
+    "precision": "year",
+    "decompositionHint": "It was the first line to run scheduled passenger trains between two cities under steam, five years after the Stockton line.",
+    "source": "Liverpool and Manchester Railway Company, record of the opening day",
+    "answerYear": 1830
+  },
+  {
+    "id": "dates-great-reform-act",
+    "prompt": "In what year did the Great Reform Act redraw Britain's parliamentary seats?",
+    "precision": "year",
+    "decompositionHint": "It came three years after the Metropolitan Police were founded, and it swept away the rotten boroughs.",
+    "source": "Representation of the People Act 1832, 2 and 3 Will. IV c. 45",
+    "answerYear": 1832
+  },
+  {
+    "id": "dates-treaty-of-waitangi",
+    "prompt": "In what year was the Treaty of Waitangi signed in New Zealand?",
+    "precision": "year",
+    "decompositionHint": "Maori chiefs and the Crown signed it about two centuries after the first European sighting of the islands.",
+    "source": "Archives New Zealand, the Treaty of Waitangi sheets",
+    "answerYear": 1840
+  },
+  {
+    "id": "dates-dinosaur-word-coined",
+    "prompt": "In what year did Richard Owen coin the word dinosaur?",
+    "precision": "year",
+    "decompositionHint": "He proposed it to the British Association about two decades before Darwin's book on the origin of species appeared.",
+    "source": "Richard Owen, Report on British Fossil Reptiles, British Association for the Advancement of Science",
+    "answerYear": 1841
+  },
+  {
+    "id": "dates-treaty-of-nanking",
+    "prompt": "In what year did the Treaty of Nanking end the First Opium War?",
+    "precision": "year",
+    "decompositionHint": "Hong Kong was ceded to Britain in it, three years after the fighting began over the opium trade.",
+    "source": "Text of the Treaty of Nanking",
+    "answerYear": 1842
+  },
+  {
+    "id": "dates-seneca-falls-convention",
+    "prompt": "In what year did the Seneca Falls convention on women's rights meet?",
+    "precision": "year",
+    "decompositionHint": "It met in upstate New York in the same year revolutions swept Europe, and it produced a declaration of sentiments.",
+    "source": "Report of the Woman's Rights Convention held at Seneca Falls, New York",
+    "answerYear": 1848
   }
 ]
 

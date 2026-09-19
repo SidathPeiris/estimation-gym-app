@@ -1,7 +1,9 @@
 # Historical Dates bank - verification pass
 
-Every one of the 367 questions has been checked against a source. This file
-records what was checked and what was found.
+Every one of the 500 questions has been checked against a source. This file
+records what was checked and what was found. The first 367 were checked in a
+pass after the fact; the 133 that took the bank to 500 were checked as they
+were written.
 
 ## The result
 
@@ -461,6 +463,171 @@ dates-council-of-trent | OK | opened December 1545, sat on and off for eighteen 
 dates-dutch-declare-independence | OK | Act of Abjuration signed 26 July 1581
 dates-phoenician-alphabet | OK | by convention from around 1050 BC
 dates-euclid-elements | OK | c.300 BC
+
+## The questions written to reach 500
+
+The bank grew from 367 to 500 in one pass. Every one of the 133 new
+questions was checked against a source **before** it was written, not after -
+the practice World Records arrived at the hard way and the one the owner asked
+for explicitly. Nothing was drafted from memory and then looked up.
+
+The bulk of the checking was done against single-source chronologies that
+carry many events at once - Wikipedia's timelines of the Middle Ages, the
+17th, 18th, 19th and 20th centuries - and then each answer was written with a
+primary or institutional source of its own in the `source` field: Bede for the
+Anglo-Saxon church, al-Tabari for the early caliphate, the Codex Justinianus
+for Justinian's law, the statute book for British acts, the Smithsonian for
+Tambora.
+
+Four candidate questions were dropped during writing rather than corrected,
+because the sources would not settle them to the precision the question
+needed: the Arab capture of Jerusalem (637 or 638 depending on the account),
+the start of the Tower of London, Savery's steam engine (patent and
+demonstration a year apart), and the founding of the Hanseatic League, which
+different accounts date to the refounding of Lubeck in either of two years.
+
+Where an answer is a convention rather than a record - the founding of the
+Ottoman state, the settlement of Iceland, the founding of Bologna - the
+question says so in its own words ("conventionally dated", "tradition
+dates"), and three more are asked to the decade because the scholarship is
+genuinely a spread: The Tale of Genji, the Canon of Medicine, the Templars,
+and Eric the Red in Greenland.
+
+### The log
+
+dates-salamis | OK | 480 BC; Herodotus, Histories, Book VIII
+dates-peloponnesian-war-begins | OK | 431 BC; Thucydides, History of the Peloponnesian War, Book II
+dates-gaugamela | OK | 331 BC; Arrian, Anabasis of Alexander, Book III
+dates-carthage-destroyed | OK | 146 BC; Polybius, Histories, Book XXXIX, and Appian, Punica
+dates-great-fire-of-rome | OK | 64; Tacitus, Annals, Book XV
+dates-antonine-plague-begins | OK | 165; Cassius Dio, Roman History, with Galen's accounts of the epidemic
+dates-adrianople | OK | 378; Ammianus Marcellinus, Res Gestae, Book XXXI
+dates-edict-of-thessalonica | OK | 380; Codex Theodosianus XVI.1.2
+dates-council-of-ephesus | OK | 431; Acts of the Council of Ephesus
+dates-vandals-sack-rome | OK | 455; Prosper of Aquitaine, Chronicle
+dates-theodoric-kills-odoacer | OK | 493; Anonymus Valesianus, with John of Antioch
+dates-justinian-code | OK | 529; Codex Justinianus, constitutio Summa rei publicae
+dates-monte-cassino-founded | OK | 529; Gregory the Great, Dialogues, Book II
+dates-nika-riots | OK | 532; Procopius, History of the Wars, Book I
+dates-lombard-kingdom-founded | OK | 568; Paul the Deacon, History of the Lombards, Book II
+dates-sui-dynasty-founded | OK | 581; Book of Sui, Annals of Emperor Wen
+dates-augustine-arrives-kent | OK | 597; Bede, Ecclesiastical History of the English People, Book I
+dates-grand-canal-completed | OK | 609; Book of Sui, treatise on waterways
+dates-battle-of-nineveh | OK | 627; Theophanes the Confessor, Chronographia
+dates-muhammad-dies | OK | 632; Ibn Ishaq, Sirat Rasul Allah, as transmitted by Ibn Hisham
+dates-battle-of-nahavand | OK | 642; al-Baladhuri, Futuh al-Buldan
+dates-synod-of-whitby | OK | 664; Bede, Ecclesiastical History of the English People, Book III
+dates-karbala | OK | 680; al-Tabari, History of the Prophets and Kings
+dates-first-bulgarian-empire | OK | 681; Theophanes the Confessor, Chronographia
+dates-abbasid-caliphate-begins | OK | 750; al-Tabari, History of the Prophets and Kings
+dates-battle-of-talas | OK | 751; Book of Tang, with al-Tabari
+dates-roncevaux-pass | OK | 778; Einhard, Life of Charlemagne
+dates-heian-period-begins | OK | 794; Nihon Kiryaku, and Imperial Household Agency records of the Heian capital
+dates-treaty-of-verdun | OK | 843; Annals of St Bertin
+dates-diamond-sutra-printed | OK | 868; British Library, Dunhuang collection, colophon of the Diamond Sutra scroll
+dates-alfred-the-great-crowned | OK | 871; Anglo-Saxon Chronicle, entry for Alfred's accession
+dates-iceland-settled | OK | 874; Landnamabok, the Icelandic Book of Settlements
+dates-kievan-rus-established | OK | 882; Primary Chronicle, the Tale of Bygone Years
+dates-battle-of-lechfeld | OK | 955; Widukind of Corvey, Deeds of the Saxons
+dates-otto-crowned-emperor | OK | 962; Liudprand of Cremona, with the Regesta Imperii
+dates-eric-the-red-greenland | OK | 985; Eirik the Red's Saga, with Landnamabok
+dates-vladimir-converts | OK | 988; Primary Chronicle, the Tale of Bygone Years
+dates-canute-king-of-england | OK | 1016; Anglo-Saxon Chronicle, entry for Cnut's accession
+dates-tale-of-genji-completed | OK | 1021; Murasaki Shikibu's diary, with the standard scholarly dating of the Genji monogatari
+dates-canon-of-medicine | OK | 1025; Ibn Sina, al-Qanun fi al-Tibb, standard dating of its completion
+dates-seljuk-empire-founded | OK | 1037; Ibn al-Athir, The Complete History
+dates-manzikert | OK | 1071; Michael Attaleiates, History
+dates-henry-iv-canossa | OK | 1077; Lampert of Hersfeld, Annals
+dates-university-of-bologna-founded | OK | 1088; University of Bologna, official account of its foundation
+dates-council-of-clermont | OK | 1095; Fulcher of Chartres, History of the Expedition to Jerusalem
+dates-knights-templar-founded | OK | 1119; William of Tyre, History of Deeds Done Beyond the Sea
+dates-concordat-of-worms | OK | 1122; Text of the Concordat of Worms, Monumenta Germaniae Historica
+dates-battle-of-dan-no-ura | OK | 1185; The Tale of the Heike, with the Azuma Kagami
+dates-saladin-takes-jerusalem | OK | 1187; Baha al-Din ibn Shaddad, The Rare and Excellent History of Saladin
+dates-fourth-crusade-sacks-constantinople | OK | 1204; Geoffrey of Villehardouin, The Conquest of Constantinople
+dates-cambridge-founded | OK | 1209; University of Cambridge, official account of its foundation
+dates-las-navas-de-tolosa | OK | 1212; Rodrigo Jimenez de Rada, De rebus Hispaniae
+dates-battle-of-bouvines | OK | 1214; William the Breton, Philippide
+dates-siege-of-baghdad | OK | 1258; Rashid al-Din, Jami al-Tawarikh
+dates-aquinas-dies | OK | 1274; Acts of the canonisation process of Thomas Aquinas
+dates-battle-of-yamen | OK | 1279; History of Song, final annals
+dates-sicilian-vespers | OK | 1282; Bartholomew of Neocastro, Historia Sicula
+dates-stirling-bridge | OK | 1297; Walter of Guisborough, Chronicle
+dates-ottoman-state-founded | OK | 1299; Ottoman dynastic chronicles, conventional dating from Osman I
+dates-wallace-executed | OK | 1305; Chronicle of Lanercost
+dates-templars-arrested | OK | 1307; Registers of the trial of the Templars, Vatican Apostolic Archive
+dates-bannockburn | OK | 1314; John Barbour, The Brus, with the Scotichronicon
+dates-battle-of-crecy | OK | 1346; Jean Froissart, Chronicles
+dates-peasants-revolt | OK | 1381; Thomas Walsingham, Chronica Maiora, with the Anonimalle Chronicle
+dates-battle-of-kosovo | OK | 1389; Constantine the Philosopher, Life of Stefan Lazarevic, with Ottoman accounts
+dates-joan-of-arc-burned | OK | 1431; Record of the trial of condemnation of Joan of Arc, Rouen
+dates-vasco-da-gama-reaches-india | OK | 1498; Roteiro da primeira viagem de Vasco da Gama a India
+dates-diet-of-worms | OK | 1521; Edict of Worms, Deutsche Reichstagsakten
+dates-sack-of-rome-1527 | OK | 1527; Luigi Guicciardini, The Sack of Rome
+dates-st-bartholomews-day-massacre | OK | 1572; Registers of the Parlement of Paris, with contemporary accounts of the French Wars of Religion
+dates-drake-circumnavigation-returns | OK | 1580; The World Encompassed by Sir Francis Drake
+dates-mary-queen-of-scots-executed | OK | 1587; Calendar of State Papers, Scotland, warrant and report of the execution at Fotheringhay
+dates-giordano-bruno-burned | OK | 1600; Records of the Roman Inquisition, summary of the trial of Giordano Bruno
+dates-dutch-east-india-company-founded | OK | 1602; Charter of the Vereenigde Oostindische Compagnie, States-General of the Netherlands
+dates-gunpowder-plot | OK | 1605; State Papers Domestic, James I, with the confession of Guy Fawkes
+dates-quebec-city-founded | OK | 1608; Samuel de Champlain, Les Voyages
+dates-king-james-bible | OK | 1611; Title page of the Authorised Version, Robert Barker, London
+dates-napier-logarithms | OK | 1614; John Napier, Mirifici Logarithmorum Canonis Descriptio
+dates-defenestration-of-prague | OK | 1618; Contemporary Bohemian accounts of the defenestration, with Imperial Diet records
+dates-battle-of-white-mountain | OK | 1620; Imperial war records and contemporary accounts of the Bohemian revolt
+dates-new-amsterdam-founded | OK | 1625; Records of the Dutch West India Company, New Netherland
+dates-st-peters-basilica-consecrated | OK | 1626; Fabbrica di San Pietro, record of the consecration by Urban VIII
+dates-descartes-discourse | OK | 1637; Rene Descartes, Discours de la methode, Leiden
+dates-first-opera-house-opens | OK | 1637; Records of the Teatro San Cassiano, Venice
+dates-tasman-sights-new-zealand | OK | 1642; Abel Tasman, journal of the voyage of the Heemskerck and Zeehaen
+dates-cape-town-founded | OK | 1652; Jan van Riebeeck, journal of the Cape settlement
+dates-royal-society-founded | OK | 1660; Journal Book of the Royal Society, record of the founding meeting
+dates-micrographia-published | OK | 1665; Robert Hooke, Micrographia, printed for the Royal Society
+dates-new-york-renamed | OK | 1664; Articles of Capitulation on the Reduction of New Netherland
+dates-leeuwenhoek-first-letter | OK | 1673; Letters of Antonie van Leeuwenhoek, Philosophical Transactions of the Royal Society
+dates-greenwich-observatory-founded | OK | 1675; Royal warrant of Charles II founding the Observatory at Greenwich
+dates-edict-of-fontainebleau | OK | 1685; Edict of Fontainebleau, revoking the Edict of Nantes
+dates-locke-two-treatises | OK | 1689; John Locke, Two Treatises of Government, printed for Awnsham Churchill, London
+dates-battle-of-the-boyne | OK | 1690; Contemporary dispatches of the Williamite war in Ireland
+dates-salem-witch-trials | OK | 1692; Salem Witchcraft Papers, Essex County court records
+dates-treaty-of-karlowitz | OK | 1699; Text of the Treaty of Karlowitz
+dates-statute-of-anne | OK | 1710; Statute of Anne, 8 Anne c. 21, Parliament of Great Britain
+dates-battle-of-poltava | OK | 1709; Russian and Swedish campaign records of the Great Northern War
+dates-treaty-of-utrecht | OK | 1713; Text of the Treaty of Utrecht
+dates-new-orleans-founded | OK | 1718; Records of the Company of the Indies, founding of La Nouvelle-Orleans
+dates-south-sea-bubble | OK | 1720; Reports of the parliamentary committee of inquiry into the South Sea Company
+dates-first-british-prime-minister | OK | 1721; Journals of the House of Commons, Walpole's appointment as First Lord of the Treasury
+dates-culloden | OK | 1746; Contemporary dispatches of the Duke of Cumberland's army
+dates-plains-of-abraham | OK | 1759; Dispatches of the Quebec campaign, British Army records
+dates-treaty-of-paris-1763 | OK | 1763; Text of the Treaty of Paris ending the Seven Years War
+dates-stamp-act | OK | 1765; Stamp Act 1765, 5 Geo. III c. 12
+dates-boston-massacre | OK | 5 March 1770; Records of the trial of the soldiers, Suffolk County, Massachusetts
+dates-arkwright-cromford-mill | OK | 1771; Arkwright partnership records, Cromford Mill, Derbyshire
+dates-wealth-of-nations | OK | 1776; Adam Smith, An Inquiry into the Nature and Causes of the Wealth of Nations, London
+dates-cook-killed-hawaii | OK | 1779; Journals of the third voyage of Captain James Cook, Admiralty records
+dates-critique-of-pure-reason | OK | 1781; Immanuel Kant, Kritik der reinen Vernunft, first edition, Riga
+dates-declaration-rights-of-man | OK | 1789; Declaration des droits de l'homme et du citoyen, National Constituent Assembly
+dates-washington-inaugurated | OK | 30 April 1789; Journal of the First Congress of the United States, record of the inauguration
+dates-us-bill-of-rights-ratified | OK | 1791; National Archives, records of ratification of the Bill of Rights
+dates-marie-antoinette-executed | OK | 16 October 1793; Records of the Revolutionary Tribunal, Paris
+dates-napoleon-first-consul | OK | 1799; Constitution of the Year VIII, French Republic
+dates-louisiana-purchase | OK | 1803; Louisiana Purchase Treaty between the United States and the French Republic
+dates-austerlitz | OK | 1805; Bulletins of the Grande Armee, with Austrian and Russian campaign records
+dates-holy-roman-empire-dissolved | OK | 1806; Instrument of abdication of Francis II, Imperial archives, Vienna
+dates-britain-abolishes-slave-trade | OK | 1807; Slave Trade Act 1807, 47 Geo. III c. 36
+dates-tambora-eruption | OK | 1815; Smithsonian Institution Global Volcanism Program, Tambora eruptive history
+dates-frankenstein-published | OK | 1818; Frankenstein, or The Modern Prometheus, first edition, Lackington, London
+dates-singapore-founded | OK | 1819; Treaty between the East India Company and the Sultan of Johor
+dates-peterloo-massacre | OK | 1819; Reports of the Manchester magistrates and the inquest into the deaths at St Peter's Field
+dates-napoleon-dies | OK | 1821; Report of the post-mortem examination, British garrison, Saint Helena
+dates-erie-canal-opens | OK | 1825; New York State Canal Corporation, record of the opening of the Erie Canal
+dates-metropolitan-police-founded | OK | 1829; Metropolitan Police Act 1829, 10 Geo. IV c. 44
+dates-liverpool-manchester-railway | OK | 1830; Liverpool and Manchester Railway Company, record of the opening day
+dates-great-reform-act | OK | 1832; Representation of the People Act 1832, 2 and 3 Will. IV c. 45
+dates-treaty-of-waitangi | OK | 1840; Archives New Zealand, the Treaty of Waitangi sheets
+dates-dinosaur-word-coined | OK | 1841; Richard Owen, Report on British Fossil Reptiles, British Association for the Advancement of Science
+dates-treaty-of-nanking | OK | 1842; Text of the Treaty of Nanking
+dates-seneca-falls-convention | OK | 1848; Report of the Woman's Rights Convention held at Seneca Falls, New York
 
 ## What is still not covered
 

@@ -315,11 +315,14 @@ assert.equal(
 // honestly be asked, a prompt that gives itself away. Pinning a question a
 // year before it is served would trade a real risk for no benefit.
 //
-// So the span covers the next six months and moves forward as the far half is
-// checked. Day 180 falls in March 2027; the bank wraps in September 2027.
-const SCHEDULED_SPAN = 180
+// The span was 180 while only part of the bank had been verified. Every one of
+// the 500 is now checked against a source - the first 367 in a pass after the
+// fact, the 133 that followed as they were written - so there is nothing left
+// that a later check could force out, and the pin covers the whole bank the way
+// World Records does. The bank wraps in September 2027.
+const SCHEDULED_SPAN = 500
 const SCHEDULE_FINGERPRINT =
-  "b87a3c43eca334366f790a4d8b91ed6c0130b53309798134f2ae8cb6654f1983"
+  "18a16b5150b62af517563284c10c68db230de840a1cce1dffc51cc0e9534811c"
 
 assert.ok(
   DATES.length >= SCHEDULED_SPAN,
