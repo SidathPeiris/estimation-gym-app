@@ -310,3 +310,37 @@ records-most-expensive-stamp | OK | $8.3M British Guiana 1c magenta, 2021
 records-most-expensive-photograph | OK | $12.4M Le Violon d'Ingres, Christie's 2022
 records-most-flight-hours | FIXED | 121000 nearly doubled the record; Ed Long logged 64396 hours (1933-1999)
 records-largest-natural-history-collection | OK | ~145-148M specimens, Smithsonian NMNH
+records-longest-running-experiment | OK | 98 years, UQ pitch drop since 1927
+records-longest-mammal-migration | OK | 22511 km grey whale (bank 22500)
+records-fastest-growing-plant | OK | up to 91 cm/day, bamboo
+records-largest-chess-tablebase | OK | 423,836,835,667,331 legal 7-piece positions
+records-largest-known-twin-primes | OK | 388342 digits, PrimeGrid 2016
+records-highest-altitude-plant | OK | 6150m Saussurea gnaphalodes
+records-highest-living-mammal | FIXED | 6130m was the 1921 pika record; the leaf-eared mouse was found at Llullaillaco's 6739m summit
+records-deepest-permafrost | OK | >1500m Siberia (bank 1650, the commonly cited figure)
+records-longest-bus-route | OK | ~6300 km Transoceanica Rio-Lima (bank 6200)
+records-longest-paraglider-flight | FIXED | 631km is a HANG GLIDING figure; the paragliding free-distance record is 610km (Kayrouz 2021)
+records-longest-hang-glider-flight | OK | 764km remains the hang gliding record
+records-tallest-tides-in-solar-system | OK | ~100m solid tide on Io
+records-deepest-life | FIXED | 5000m overstated; active microbial life confirmed to 2458 m below seafloor (IODP Exp 337)
+records-faintest-signal-received | OK | ~1e-19 W from Voyager 1 at Earth
+records-farthest-point-from-earth-centre | OK | 6384.4 km Chimborazo
+records-longest-total-eclipse-possible | OK | 7min32s = 452s maximum
+records-deepest-lunar-crater | OK | up to 8.2 km, South Pole-Aitken
+records-fastest-glacier-surge | FIXED | 100 -> 112 m/day (Kutiah 1953, the figure the source names)
+records-fastest-plate-motion | FIXED | 16 -> 10 cm/yr; 16 matched no standard figure, the Pacific Plate is the fastest major plate at ~10
+records-most-abundant-vertebrate | OK | hundreds of trillions, bristlemouths (bank 1e14)
+records-most-abundant-organism | OK | ~2e28 cells, Pelagibacter
+records-largest-ancient-library | OK | ~400000-500000 scrolls, Alexandria (estimates vary)
+records-oldest-alcohol-residue | OK | 9000 years, Jiahu, Henan
+records-longest-word-in-a-dictionary | OK | 45 letters, pneumonoultramicroscopicsilicovolcanoconiosis
+records-largest-atom-interference | OK | ~2000 atoms, Vienna/Basel 2019
+records-fastest-heart-rate | OK | 1260 bpm blue-throated hummingbird
+records-largest-recorded-swarm-of-bees | FIXED | 60000 -> 25000 (a healthy prime swarm is 12000-25000, up to ~30000)
+
+## Status after the risk-targeted pass
+
+All 173 questions flagged as risky have been checked. 353 of 463 verified
+against a source. The 110 that remain unchecked all scored zero on the risk
+model: they are historical records pinned to a dated event, held by a
+certifying body, or both - the categories that have produced almost no errors.

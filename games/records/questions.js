@@ -2936,8 +2936,8 @@ var RECORDS = [
     "id": "records-deepest-life",
     "prompt": "How many metres below the sea floor has living life been found?",
     "unit": "metres",
-    "answerValue": 5000,
-    "decompositionHint": "Microbes in sediment and rock, living on chemical energy rather than sunlight. The limit is temperature, which rises with depth.",
+    "answerValue": 2458,
+    "decompositionHint": "Microbes in coal and shale beds, living on chemical energy rather than sunlight. The limit is temperature, which rises steadily with depth.",
     "strategy": "anchor-scale",
     "source": "International Ocean Discovery Program drilling results",
     "asOf": 2025
@@ -3186,7 +3186,7 @@ var RECORDS = [
     "id": "records-fastest-glacier-surge",
     "prompt": "How many metres a day did the fastest glacier surge advance?",
     "unit": "metres per day",
-    "answerValue": 100,
+    "answerValue": 112,
     "decompositionHint": "Meltwater beneath the ice lifts it off its bed and it slides rather than creeps. Ordinary glaciers move under a metre a day.",
     "strategy": "anchor-scale",
     "source": "Published glaciological measurements of Kutiah Glacier, Karakoram",
@@ -3686,10 +3686,10 @@ var RECORDS = [
     "id": "records-fastest-plate-motion",
     "prompt": "How many centimetres a year does the fastest-moving tectonic plate travel?",
     "unit": "centimetres per year",
-    "answerValue": 16,
+    "answerValue": 10,
     "decompositionHint": "Roughly the rate fingernails grow. Measured by satellite geodesy, which can resolve millimetres over a continent.",
     "strategy": "anchor-scale",
-    "source": "NASA Jet Propulsion Laboratory space geodesy measurements",
+    "source": "NASA Jet Propulsion Laboratory space geodesy measurements of the Pacific Plate",
     "asOf": 2025
   },
   {
@@ -3966,8 +3966,8 @@ var RECORDS = [
     "id": "records-highest-living-mammal",
     "prompt": "How many metres above sea level does the highest-living mammal survive?",
     "unit": "metres",
-    "answerValue": 6130,
-    "decompositionHint": "Found in rock crevices on a volcano well above the snowline, where there is a little over half the oxygen available at sea level.",
+    "answerValue": 6739,
+    "decompositionHint": "Found on a volcano summit two kilometres above the highest green plants, where there is a little over half the oxygen available at sea level.",
     "strategy": "anchor-scale",
     "source": "Published survey of yellow-rumped leaf-eared mouse, University of Nebraska",
     "asOf": 2020
@@ -4036,11 +4036,11 @@ var RECORDS = [
     "id": "records-longest-paraglider-flight",
     "prompt": "How many kilometres is the longest distance flown by a paraglider?",
     "unit": "kilometres",
-    "answerValue": 631,
+    "answerValue": 610,
     "decompositionHint": "A fabric wing with no rigid structure, climbing in thermals all day. Work from a modest cross-country speed and the hours of usable lift.",
     "strategy": "rate-time",
-    "source": "Federation Aeronautique Internationale ratified paragliding record",
-    "asOf": 2023
+    "source": "Federation Aeronautique Internationale paragliding free distance record, Sebastien Kayrouz",
+    "asOf": 2021
   },
   {
     "id": "records-longest-hang-glider-flight",
@@ -4446,8 +4446,8 @@ var RECORDS = [
     "id": "records-largest-recorded-swarm-of-bees",
     "prompt": "How many bees are in a very large honeybee swarm?",
     "unit": "bees",
-    "answerValue": 60000,
-    "decompositionHint": "A swarm is roughly half a colony leaving with the old queen. Start from how many bees a full hive holds.",
+    "answerValue": 25000,
+    "decompositionHint": "A prime swarm is roughly half a colony leaving with the old queen. Start from how many bees a full hive holds at its summer peak.",
     "strategy": "divide-total",
     "source": "Published apiological studies, Cornell University",
     "asOf": 2025
