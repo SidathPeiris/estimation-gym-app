@@ -532,3 +532,68 @@ that belonged to something adjacent to the thing being asked about. 82 hours is
 a real crossing time, by the wrong ship. The lesson is that a figure being
 plausible, well-sourced and about the right subject still does not mean it
 answers the question printed above it.
+
+## Third pass: the 37 that took the bank to 500
+
+Written and checked at the same time rather than written first and checked
+afterwards, which is the practice the first two passes argued for.
+
+Fourteen of the first draft turned out to already be in the bank - the same
+record written twice under the same id. The checker caught every one, and the
+verification was not wasted: it independently confirmed the figures the
+existing entries already held (the largest wave at 26.21m, Salvator Mundi at
+$450.3m, the Hoba meteorite at 60 tonnes, the Cullinan at 3,106 carats, the
+Delaware Aqueduct at 137km, the 110-round fight, R136a1 at 196 solar masses
+and the largest desert at 14 million square kilometres). Those fourteen were
+dropped and replaced.
+
+Three figures were wrong in the draft and corrected before they were written
+down: the Sarawak Chamber is 9.58 million cubic metres rather than 12 million,
+the largest organism covers 9.1 square kilometres rather than 9.65, and the
+record tornado day produced 226 rather than 216. All three came from
+half-remembered numbers, which is exactly what checking while writing is for.
+
+The bank's own rules caught the rest: four sources named the Guinness
+compilation and were re-sourced to the bodies that established the figures,
+and one more question duplicated an existing prompt and was replaced.
+
+records-strongest-bite-force | OK | 16460 N, Erickson et al., PLOS ONE 2012
+records-deepest-fish | OK | 8336 m, Izu-Ogasawara Trench, 2022
+records-largest-cave-chamber-volume | FIXED-BEFORE-WRITING | 12 million -> 9,579,205 m3 (2011 laser scan)
+records-largest-nuclear-explosion | OK | 50 Mt = 2.1e17 J, Tsar Bomba
+records-largest-star-radius | OK | 2150 solar radii, Stephenson 2-18
+records-longest-scheduled-flight | OK | 15,349 km, Singapore to New York
+records-largest-library-collection | OK | 178 million items, Library of Congress
+records-largest-organism-by-area | FIXED-BEFORE-WRITING | 9.65 -> 9.1 km2, Armillaria ostoyae
+records-greatest-vertical-drop | OK | 1250 m, Mount Thor
+records-highest-recorded-bird-flight | OK | 11,300 m, Ruppell's vulture
+records-longest-straight-road | OK | 240 km, Highway 10, Saudi Arabia
+records-longest-railway-platform | OK | 1507 m, Hubballi, verified January 2023
+records-longest-ship-ever-built | OK | 458.45 m, Seawise Giant
+records-tallest-mountain-from-base | OK | 10,211 m, Mauna Kea from the sea floor
+records-greatest-daily-snowfall | OK | 75.8 inches = 1.93 m, Silver Lake Colorado 1921
+records-largest-island | OK | 2,166,086 km2, Greenland
+records-most-tornadoes-in-a-day | FIXED-BEFORE-WRITING | 216 -> 226, 27-28 April 2011
+records-largest-bird-egg | OK | 7-10 litres, Aepyornis maximus
+records-longest-lasting-rainbow | OK | 8h58m = 32,280 s, Taipei 2017
+records-oldest-cheese | OK | 3600 years, Xiaohe tombs, Cell 2024
+records-longest-without-sleep | OK | 264 hours, Randy Gardner 1963-64
+records-most-distant-galaxy-age | OK | 290 million years after the Big Bang, JADES-GS-z14-0
+records-highest-permanent-settlement | OK | 5100 m, La Rinconada
+records-longest-place-name | OK | 168 letters, the ceremonial name of Bangkok
+records-most-people-in-space-at-once | OK | 19, 11 December 2021
+records-most-spoken-language | OK | 1.49 billion total speakers, English
+records-largest-religious-building | OK | 162.6 hectares, Angkor Wat
+records-fastest-maglev-train | OK | 603 km/h, Yamanashi test track 2015
+records-oldest-hotel | OK | founded 705, so 1321 years
+records-largest-stadium-capacity | OK | ~114,000 after the 2014 refurbishment
+records-longest-ski-descent | OK | 23 km, Vallee Blanche
+records-longest-reign | OK | 72 years, Louis XIV
+records-saltiest-water | OK | 18 times seawater, Don Juan Pond
+records-deepest-lake | OK | 1642 m, Lake Baikal
+records-tallest-dam | OK | 305 m, Jinping-I
+records-largest-freshwater-fish | OK | 300 kg stingray, Mekong, June 2022
+records-longest-train-journey | OK | 10,214 km, Moscow to Pyongyang
+
+All 500 questions in the bank are now checked, and the schedule pin covers all
+500.

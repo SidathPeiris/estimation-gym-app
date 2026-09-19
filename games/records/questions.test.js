@@ -128,9 +128,9 @@ for (const q of RECORDS) {
 // The pin still covers ids and not values, so a wrong answer found later can
 // always be corrected in place. Only reordering and removal are blocked, and
 // both of those re-date questions that people have already been promised.
-const SCHEDULED_SPAN = 463
+const SCHEDULED_SPAN = 500
 const SCHEDULE_FINGERPRINT =
-  "df138aec3753f3df78521dd36cec11c2a6f8f380ed8c5205d21a06d826d4d414"
+  "7099794bd0fe21e0f44e9196ec86221966425b03371f2727607caffec16d88ac"
 
 assert.ok(
   RECORDS.length >= SCHEDULED_SPAN,

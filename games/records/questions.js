@@ -4681,6 +4681,376 @@ var RECORDS = [
     "strategy": "divide-total",
     "source": "Musee du Louvre published attendance figures",
     "asOf": 2018
+  },
+  {
+    "id": "records-strongest-bite-force",
+    "prompt": "How many newtons of bite force does the animal with the strongest bite generate?",
+    "unit": "newtons",
+    "answerValue": 16460,
+    "decompositionHint": "A human bite is a few hundred newtons and a lion's is about four thousand. Work up from there for a jaw built to hold a buffalo under water.",
+    "strategy": "anchor-scale",
+    "source": "Erickson et al., PLOS ONE 2012, direct measurement of Crocodylus porosus",
+    "asOf": 2012
+  },
+  {
+    "id": "records-deepest-fish",
+    "prompt": "How many metres down was the deepest fish ever recorded?",
+    "unit": "metres",
+    "answerValue": 8336,
+    "decompositionHint": "The deepest trenches reach about 11,000 m, and fish are thought to be limited by the pressure at which their cell chemistry fails - somewhere short of the bottom.",
+    "strategy": "anchor-scale",
+    "source": "University of Western Australia and Tokyo University of Marine Science, Izu-Ogasawara Trench",
+    "asOf": 2022
+  },
+  {
+    "id": "records-largest-cave-chamber-volume",
+    "prompt": "How many cubic metres does the largest single cave chamber hold?",
+    "unit": "cubic metres",
+    "answerValue": 9579205,
+    "decompositionHint": "Estimate it as a box. The floor is about 600m by 400m and the roof is around 70m up, which is enough to park a row of jumbo jets.",
+    "strategy": "volume-packing",
+    "source": "Mulu Caves Project laser scan of Sarawak Chamber, 2011",
+    "asOf": 2011
+  },
+  {
+    "id": "records-largest-nuclear-explosion",
+    "prompt": "How many joules of energy did the largest nuclear weapon ever tested release?",
+    "unit": "joules",
+    "answerValue": 210000000000000000,
+    "decompositionHint": "One tonne of TNT is 4.2 billion joules, and this was measured in tens of millions of tonnes of TNT equivalent. Two multiplications.",
+    "strategy": "unit-conversion",
+    "source": "Soviet instrumentation for the Tsar Bomba test, 30 October 1961",
+    "asOf": 1961
+  },
+  {
+    "id": "records-largest-star-radius",
+    "prompt": "How many times the radius of the Sun is the largest known star?",
+    "unit": "solar radii",
+    "answerValue": 2150,
+    "decompositionHint": "The Sun's radius is about 700,000 km and Saturn orbits at about 1.4 billion km. A red supergiant this size would swallow that orbit whole.",
+    "strategy": "unit-conversion",
+    "source": "Published photometry of Stephenson 2-18",
+    "asOf": 2020
+  },
+  {
+    "id": "records-longest-scheduled-flight",
+    "prompt": "How many kilometres is the longest scheduled non-stop passenger flight?",
+    "unit": "kilometres",
+    "answerValue": 15349,
+    "decompositionHint": "Earth's circumference is 40,000 km, so half way round is 20,000. The longest commercial route is a large fraction of that but cannot reach it.",
+    "strategy": "anchor-scale",
+    "source": "Singapore Airlines SQ23, New York to Singapore, published route data",
+    "asOf": 2025
+  },
+  {
+    "id": "records-largest-library-collection",
+    "prompt": "How many items does the largest library collection hold?",
+    "unit": "items",
+    "answerValue": 178000000,
+    "decompositionHint": "Books are only part of it - the count includes maps, photographs, recordings and manuscripts. Think of a collection that has absorbed a national copyright deposit for two centuries.",
+    "strategy": "stock-flow",
+    "source": "Library of Congress published collection statistics",
+    "asOf": 2021
+  },
+  {
+    "id": "records-largest-organism-by-area",
+    "prompt": "How many square kilometres does the largest single living organism cover?",
+    "unit": "square kilometres",
+    "answerValue": 9.1,
+    "decompositionHint": "It is a fungus spreading underground through a forest, so think in terms of a patch of woodland rather than anything you could see at once.",
+    "strategy": "area-density",
+    "source": "United States Forest Service survey of Armillaria ostoyae, Malheur National Forest",
+    "asOf": 2025
+  },
+  {
+    "id": "records-greatest-vertical-drop",
+    "prompt": "How many metres is the greatest purely vertical drop on any cliff face?",
+    "unit": "metres",
+    "answerValue": 1250,
+    "decompositionHint": "A falling body covers about 5m in the first second and accelerates. Half a minute of freefall is the sort of drop being described.",
+    "strategy": "rate-time",
+    "source": "Parks Canada, Mount Thor, Auyuittuq National Park",
+    "asOf": 2025
+  },
+  {
+    "id": "records-highest-recorded-bird-flight",
+    "prompt": "How many metres up was the highest bird ever recorded in flight?",
+    "unit": "metres",
+    "answerValue": 11300,
+    "decompositionHint": "Airliners cruise around 10,000m. The record was set by a bird colliding with one, which tells you roughly where to put it.",
+    "strategy": "anchor-scale",
+    "source": "Laybourne, The Wilson Bulletin, 1974; Ruppell's vulture struck over Abidjan",
+    "asOf": 1973
+  },
+  {
+    "id": "records-longest-straight-road",
+    "prompt": "How many kilometres long is the longest perfectly straight stretch of road?",
+    "unit": "kilometres",
+    "answerValue": 240,
+    "decompositionHint": "It crosses desert with no natural obstacle to bend around. At motorway speed it is about two hours without touching the steering wheel.",
+    "strategy": "rate-time",
+    "source": "Highway 10, Saudi Arabia, Haradh to Highway 95",
+    "asOf": 2025
+  },
+  {
+    "id": "records-longest-railway-platform",
+    "prompt": "How many metres long is the longest railway platform?",
+    "unit": "metres",
+    "answerValue": 1507,
+    "decompositionHint": "A long-distance carriage is about 24m and a full train is twenty or so of them. This platform holds more than one train end to end.",
+    "strategy": "chain-multiply",
+    "source": "South Western Railway, Hubballi Junction, verified January 2023",
+    "asOf": 2023
+  },
+  {
+    "id": "records-longest-ship-ever-built",
+    "prompt": "How many metres long was the longest ship ever built?",
+    "unit": "metres",
+    "answerValue": 458.45,
+    "decompositionHint": "Compare it with a building laid on its side: it is longer than the Empire State Building is tall, and it could not turn in most harbours.",
+    "strategy": "anchor-scale",
+    "source": "Seawise Giant, later Knock Nevis; Lloyd's Register",
+    "asOf": 1979
+  },
+  {
+    "id": "records-tallest-mountain-from-base",
+    "prompt": "How many metres tall is the tallest mountain measured from its own base?",
+    "unit": "metres",
+    "answerValue": 10211,
+    "decompositionHint": "Everest is 8,849m above sea level but stands on a plateau already 5,000m up. The winner starts on the sea floor instead.",
+    "strategy": "anchor-scale",
+    "source": "United States Geological Survey bathymetry around Mauna Kea",
+    "asOf": 2025
+  },
+  {
+    "id": "records-greatest-daily-snowfall",
+    "prompt": "How many metres of snow fell in the heaviest recorded twenty-four hours?",
+    "unit": "metres",
+    "answerValue": 1.93,
+    "decompositionHint": "Fresh snow is roughly ten times the depth of the water it melts to, so start from a very heavy day's rainfall and multiply.",
+    "strategy": "unit-conversion",
+    "source": "Silver Lake, Colorado, 14-15 April 1921; NOAA records",
+    "asOf": 1921
+  },
+  {
+    "id": "records-largest-island",
+    "prompt": "How many square kilometres is the largest island?",
+    "unit": "square kilometres",
+    "answerValue": 2166086,
+    "decompositionHint": "Map projections make it look far bigger than it is. Compare it with a country you know the area of and that sits at a similar latitude.",
+    "strategy": "anchor-scale",
+    "source": "Statistics Greenland; CIA World Factbook",
+    "asOf": 2025
+  },
+  {
+    "id": "records-most-tornadoes-in-a-day",
+    "prompt": "How many tornadoes touched down in the most active twenty-four hours on record?",
+    "unit": "tornadoes",
+    "answerValue": 226,
+    "decompositionHint": "A busy year in the United States brings around 1,200. The record day is a meaningful fraction of a whole year, which is the surprise.",
+    "strategy": "divide-total",
+    "source": "NOAA Storm Prediction Center, 27-28 April 2011",
+    "asOf": 2011
+  },
+  {
+    "id": "records-largest-bird-egg",
+    "prompt": "How many litres does the largest bird egg ever laid hold?",
+    "unit": "litres",
+    "answerValue": 10,
+    "decompositionHint": "A hen's egg is about 50ml and an ostrich egg about 1.4 litres. The bird that laid this one weighed half a tonne.",
+    "strategy": "anchor-scale",
+    "source": "Natural History Museum, London; Aepyornis maximus specimens",
+    "asOf": 2025
+  },
+  {
+    "id": "records-longest-lasting-rainbow",
+    "prompt": "How many seconds did the longest continuously observed rainbow last?",
+    "unit": "seconds",
+    "answerValue": 32280,
+    "decompositionHint": "A rainbow usually lasts minutes because the shower moves on. This one needed a mountain holding moisture in place for most of a working day.",
+    "strategy": "unit-conversion",
+    "source": "Chinese Culture University, Taipei, 30 November 2017",
+    "asOf": 2017
+  },
+  {
+    "id": "records-oldest-cheese",
+    "prompt": "How many years old is the oldest cheese ever found?",
+    "unit": "years",
+    "answerValue": 3600,
+    "decompositionHint": "It survived because the desert freeze-dried the tomb it was buried in. That puts it in the Bronze Age rather than anywhere classical.",
+    "strategy": "recall-sanity",
+    "source": "Cell, Liu et al. 2024, kefir cheese from Xiaohe tombs, Taklamakan",
+    "asOf": 2024
+  },
+  {
+    "id": "records-longest-without-sleep",
+    "prompt": "How many hours did the longest documented stretch without sleep last?",
+    "unit": "hours",
+    "answerValue": 264,
+    "decompositionHint": "Divide by 24 to sanity-check the number of days. It is more than a week and less than a fortnight, and the record is no longer accepted for safety reasons.",
+    "strategy": "unit-conversion",
+    "source": "Randy Gardner, San Diego, December 1963 to January 1964; Stanford sleep research records",
+    "asOf": 1964
+  },
+  {
+    "id": "records-most-distant-galaxy-age",
+    "prompt": "How many million years after the Big Bang do we see the most distant known galaxy?",
+    "unit": "million years",
+    "answerValue": 290,
+    "decompositionHint": "The universe is 13,800 million years old. The earliest galaxies formed in the first couple of per cent of that, which is the fraction to aim for.",
+    "strategy": "divide-total",
+    "source": "Nature, Carniani et al. 2024, JWST spectroscopy of JADES-GS-z14-0",
+    "asOf": 2024
+  },
+  {
+    "id": "records-highest-permanent-settlement",
+    "prompt": "How many metres above sea level is the highest permanent human settlement?",
+    "unit": "metres",
+    "answerValue": 5100,
+    "decompositionHint": "Everest base camp sits around 5,300m and is not lived in year round. This town is a working gold mine that people never leave.",
+    "strategy": "anchor-scale",
+    "source": "NASA Earth Observatory; La Rinconada, Peru",
+    "asOf": 2025
+  },
+  {
+    "id": "records-longest-place-name",
+    "prompt": "How many letters long is the longest official place name?",
+    "unit": "letters",
+    "answerValue": 168,
+    "decompositionHint": "It is a ceremonial city name rather than an ordinary one, built from a string of honorific phrases. Count words of about eight letters and multiply.",
+    "strategy": "chain-multiply",
+    "source": "Royal Institute of Thailand, the full ceremonial name of Bangkok",
+    "asOf": 2025
+  },
+  {
+    "id": "records-most-people-in-space-at-once",
+    "prompt": "How many people have been in space at the same moment?",
+    "unit": "people",
+    "answerValue": 19,
+    "decompositionHint": "Add up the crews that could overlap: a space station holds about seven, a second station three, and a visiting capsule or two adds the rest.",
+    "strategy": "decompose",
+    "source": "NASA, Roscosmos and CMSA crew manifests, 11 December 2021",
+    "asOf": 2021
+  },
+  {
+    "id": "records-most-spoken-language",
+    "prompt": "How many people speak the world's most spoken language, counting second-language speakers?",
+    "unit": "speakers",
+    "answerValue": 1490000000,
+    "decompositionHint": "World population is about 8 billion. The leading language is spoken by roughly one person in six, and most of them did not grow up speaking it.",
+    "strategy": "population-rate",
+    "source": "Ethnologue total-speaker figures for English",
+    "asOf": 2026
+  },
+  {
+    "id": "records-largest-religious-building",
+    "prompt": "How many hectares does the largest religious building cover?",
+    "unit": "hectares",
+    "answerValue": 162.6,
+    "decompositionHint": "A hectare is 100m by 100m, about two football pitches. The site is a walled temple complex with a moat, not a single building.",
+    "strategy": "area-density",
+    "source": "APSARA National Authority; Angkor Wat, Cambodia",
+    "asOf": 2025
+  },
+  {
+    "id": "records-fastest-maglev-train",
+    "prompt": "How many kilometres per hour did the fastest maglev train reach?",
+    "unit": "kilometres per hour",
+    "answerValue": 603,
+    "decompositionHint": "Conventional high-speed rail tops out near 350 km/h in service. Removing wheel contact lifts the ceiling, but air resistance still sets it.",
+    "strategy": "anchor-scale",
+    "source": "Central Japan Railway Company, Yamanashi Maglev Line, 21 April 2015",
+    "asOf": 2015
+  },
+  {
+    "id": "records-oldest-hotel",
+    "prompt": "How many years has the world's oldest hotel been operating?",
+    "unit": "years",
+    "answerValue": 1321,
+    "decompositionHint": "It is a Japanese hot-spring inn that has been run by the same family for over fifty generations. Count back from the present rather than guessing a round number.",
+    "strategy": "rate-time",
+    "source": "Nishiyama Onsen Keiunkan company records; Japanese company-longevity registers",
+    "asOf": 2026
+  },
+  {
+    "id": "records-longest-train-journey",
+    "prompt": "How many kilometres is the longest scheduled train journey without changing trains?",
+    "unit": "kilometres",
+    "answerValue": 10214,
+    "decompositionHint": "It crosses eight time zones and takes just under eight days. At the average speed of a long-distance train, days times hours times speed gets you there.",
+    "strategy": "rate-time",
+    "source": "Russian Railways and Korean State Railway timetables, Moscow to Pyongyang",
+    "asOf": 2025
+  },
+  {
+    "id": "records-largest-stadium-capacity",
+    "prompt": "How many spectators does the largest stadium hold?",
+    "unit": "spectators",
+    "answerValue": 114000,
+    "decompositionHint": "The biggest football grounds in Europe hold about 80,000 to 100,000. The record is above that but not by the multiple people expect.",
+    "strategy": "anchor-scale",
+    "source": "Rungrado 1st of May Stadium, Pyongyang, post-2014 refurbishment estimates",
+    "asOf": 2025
+  },
+  {
+    "id": "records-longest-ski-descent",
+    "prompt": "How many kilometres long is the longest continuous ski descent?",
+    "unit": "kilometres",
+    "answerValue": 23,
+    "decompositionHint": "It drops about 2,700 vertical metres. Ski runs fall roughly one metre in ten, so the vertical drop tells you most of the length.",
+    "strategy": "unit-conversion",
+    "source": "Compagnie du Mont-Blanc; the Vallee Blanche from the Aiguille du Midi",
+    "asOf": 2025
+  },
+  {
+    "id": "records-longest-reign",
+    "prompt": "How many years did the longest verified reign of a sovereign monarch last?",
+    "unit": "years",
+    "answerValue": 72,
+    "decompositionHint": "He came to the throne as a small child, which is the only way to get a reign this long, and outlived both his son and his grandson.",
+    "strategy": "rate-time",
+    "source": "Records of heads of state; Louis XIV of France, 1643 to 1715",
+    "asOf": 1715
+  },
+  {
+    "id": "records-saltiest-water",
+    "prompt": "How many times saltier than seawater is the saltiest natural body of water?",
+    "unit": "times",
+    "answerValue": 18,
+    "decompositionHint": "The Dead Sea is roughly nine times seawater and is already too salty to swim in properly. The record is a shallow Antarctic pond that never freezes.",
+    "strategy": "anchor-scale",
+    "source": "NASA Earth Observatory; Don Juan Pond, Wright Valley, Antarctica",
+    "asOf": 2025
+  },
+  {
+    "id": "records-deepest-lake",
+    "prompt": "How many metres deep is the deepest lake?",
+    "unit": "metres",
+    "answerValue": 1642,
+    "decompositionHint": "It sits in a continental rift that is still pulling apart, so it is far deeper than a glacial lake could be. Compare it with the depth of a shallow sea.",
+    "strategy": "anchor-scale",
+    "source": "Russian Academy of Sciences bathymetry of Lake Baikal",
+    "asOf": 2025
+  },
+  {
+    "id": "records-tallest-dam",
+    "prompt": "How many metres tall is the tallest dam?",
+    "unit": "metres",
+    "answerValue": 305,
+    "decompositionHint": "The Hoover Dam is about 220m. The record is a thin arch wedged into a gorge, where the rock walls take the load rather than the dam's own weight.",
+    "strategy": "anchor-scale",
+    "source": "Jinping-I Dam, Yalong River, China",
+    "asOf": 2025
+  },
+  {
+    "id": "records-largest-freshwater-fish",
+    "prompt": "How many kilograms did the largest freshwater fish ever measured weigh?",
+    "unit": "kilograms",
+    "answerValue": 300,
+    "decompositionHint": "It was a ray about four metres long and two metres across. Estimate it as a flat disc a few centimetres thick and take flesh as roughly the density of water.",
+    "strategy": "volume-packing",
+    "source": "Wonders of the Mekong project and the Cambodian Fisheries Administration, 13 June 2022",
+    "asOf": 2022
   }
 ]
 
