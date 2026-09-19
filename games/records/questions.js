@@ -1146,8 +1146,8 @@ var RECORDS = [
     "id": "records-largest-geode",
     "prompt": "How many metres long is the largest geode anyone can walk inside?",
     "unit": "metres",
-    "answerValue": 11,
-    "decompositionHint": "A gypsum-lined cavity big enough for several people to stand in at once, which is unusual mainly because geodes are normally fist-sized.",
+    "answerValue": 8,
+    "decompositionHint": "A gypsum-lined cavity big enough for a few people to stand in at once, lined with transparent crystals up to two metres long. Geodes are normally fist-sized.",
     "strategy": "anchor-scale",
     "source": "Spanish Geological and Mining Institute survey of the Pulpi Geode",
     "asOf": 2025
@@ -1156,8 +1156,8 @@ var RECORDS = [
     "id": "records-largest-gold-nugget",
     "prompt": "How many kilograms did the largest gold nugget ever found weigh?",
     "unit": "kilograms",
-    "answerValue": 72,
-    "decompositionHint": "Gold is nineteen times denser than water, so a nugget the size of a football weighs far more than it looks. This one was found just below the surface.",
+    "answerValue": 109.59,
+    "decompositionHint": "Gold is nineteen times denser than water, so a nugget the size of a football weighs far more than it looks. This is its weight as dug up, before refining.",
     "strategy": "volume-packing",
     "source": "Museums Victoria records for the Welcome Stranger nugget",
     "asOf": 1869

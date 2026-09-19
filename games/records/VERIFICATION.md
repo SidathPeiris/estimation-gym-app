@@ -104,3 +104,39 @@ records-largest-quantum-computer | OK | 1121 qubits IBM Condor 2023
 records-largest-recorded-power-outage | OK | 620M people, India 2012
 records-largest-lottery-jackpot | OK | 2.04bn Powerball 2022
 records-strongest-recorded-tornado-outbreak | OK | 360-368 tornadoes, 2011 Super Outbreak
+
+## Third tranche
+
+records-farthest-spacecraft | OK | 25.6bn km Aug 2026, NASA
+records-longest-nonstop-flight | OK | 15349 km SQ23
+records-hottest-temperature-created | OK | 5.5 trillion K, CERN ALICE 2012
+records-strongest-continuous-magnetic-field | OK | 45.5 T MagLab 2019 (later beaten at 48.7 T; asOf 2019 keeps it true)
+records-largest-gold-nugget | FIXED | 72kg was the refined yield; the nugget weighed 109.59kg as found
+records-largest-geode | FIXED | Pulpi Geode is 8m long, not 11
+records-largest-crystal | OK | 12m selenite beams, Naica
+records-largest-rough-diamond | OK | 3106 carats Cullinan
+records-heaviest-animal-heart | OK | 180kg blue whale
+records-smallest-mammal | OK | 1.7-2g Kitti's hog-nosed bat
+records-largest-known-flood | OK | 10-20M m3/s Missoula (bank 17M)
+records-strongest-ocean-current | OK | 137 Sv ACC
+records-largest-lake-by-area | OK | 371000 km2 Caspian
+records-largest-meteorite | OK | ~60t Hoba
+records-largest-historical-eruption | OK | 150 km3 tephra, Tambora 1815
+records-longest-earthquake-shaking | OK | ~10 min, Valdivia 1960
+records-longest-mountain-range | OK | 65000 km mid-ocean ridge
+records-largest-desert | OK | Antarctica
+records-earliest-galaxy-seen | OK | 290 Myr after Big Bang, JADES-GS-z14-0
+records-longest-bird-flight-without-landing | OK | 10 months, Lund University
+records-highest-balloon-flight | OK | 53 km BU60-1 2002
+records-fastest-wingbeat | OK | 1046 Hz Forcipomyia, Sotavalta 1947
+records-strongest-animal-for-its-size | OK | 1141x, Onthophagus taurus, QMUL 2010
+records-most-legs | OK | 1306 legs Eumillipes persephone 2021
+records-largest-bacterium | OK | max 2cm = 20mm Thiomargarita magnifica
+records-largest-genome | OK | 149bn base pairs Paris japonica
+records-heaviest-payload-to-orbit | OK | 140000 kg Saturn V
+records-greatest-rocket-thrust | OK | 33-35 MN Saturn V at liftoff (bank 35.1)
+records-most-powerful-rocket-engine | OK | ~6.6-6.77 MN per F-1
+records-farthest-driven-on-another-world | OK | 45.16 km Opportunity
+records-most-abundant-wild-bird | OK | 1.5bn red-billed quelea
+records-largest-animal-biomass | OK | 379M tonnes Antarctic krill, CCAMLR
+records-deepest-bird-dive | OK | 564m emperor penguin
