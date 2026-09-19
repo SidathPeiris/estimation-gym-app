@@ -257,3 +257,27 @@ records-densest-matter | OK | ~4e17 kg/m3 nuclear density (standard textbook val
 records-tallest-cliff | OK | ~20km Verona Rupes, Miranda
 records-largest-impact-basin | OK | 2500km South Pole-Aitken
 records-longest-lived-storm | OK | Great Red Spot observed continuously since 1830-31
+records-deepest-scuba-cave-dive | OK | 282.6m Gomes 1996, Boesmansgat (cave dived to 283.9)
+records-largest-ipo | OK | 29.4bn Saudi Aramco with greenshoe
+records-largest-vocabulary-animal | OK | 1022 object names, Chaser, Wofford College 2011
+records-fastest-erosion-rate | REMOVED | 20 mm/yr overstated (published max ~10); and in steady state it equals the uplift rate, making it a near-duplicate of the uplift question
+records-fastest-mountain-uplift | OK | ~10 mm/yr across the Alpine Fault
+records-highest-bridge-deck | FIXED | Duge 565m was surpassed in 2025 by the Huajiang Canyon Bridge at 625m
+records-deepest-tunnel | OK | ~2450m overburden, Gotthard Base Tunnel
+records-most-eggs-laid-per-day | OK | up to 40000/day, Macrotermes queen
+records-largest-software-codebase | OK | ~2bn lines, Google monorepo
+records-largest-encyclopedia | OK | 7M+ articles, English Wikipedia (passed 7M May 2025)
+records-longest-novel | OK | 1267069 words, A la recherche du temps perdu
+records-largest-dinosaur-footprint | OK | ~1.75m Walmadany (bank 1.7)
+records-longest-mathematical-proof | OK | 15000+ pages, classification of finite simple groups
+records-most-expensive-spice | OK | saffron ~$7500-10000/kg (bank 10000, premium grade)
+records-largest-concrete-pour | FIXED | 21580 was the CUBIC YARDS figure read as cubic metres (Wilshire Grand = 16209 m3), and the record moved to Lakhta Center at 19624 m3 in 2015
+records-longest-traffic-jam | OK | 12 days = 288 hours, G110 August 2010
+records-tallest-termite-mound | FIXED | the 12.8m Congo mound is unconfirmed (GWR says evidence is scant); the tallest documented is ~8m cathedral termite mounds in Australia
+records-largest-fungus-fruiting-body | OK | 10.85m Phellinus ellipsoideus, Hainan 2010
+records-largest-prime-gap | FIXED | 1550000 matched nothing; the largest known gap is 16045848 between 385713-digit probable primes (Hoglund 2024). 1550 is the largest proven FIRST-OCCURRENCE gap.
+records-longest-motorcycle-jump | OK | 106.98m Maddison 2008
+records-longest-artificial-heart-support | OK | 1373-1374 days, SynCardia
+records-longest-power-line | OK | 2539-2543 km Belo Monte-Rio UHVDC
+records-largest-evacuation | OK | ~500000, 9/11 boatlift
+records-fastest-pyroclastic-flow | OK | up to 700 km/h

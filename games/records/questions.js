@@ -1566,11 +1566,11 @@ var RECORDS = [
     "id": "records-highest-bridge-deck",
     "prompt": "How many metres above the river below does the highest bridge deck sit?",
     "unit": "metres",
-    "answerValue": 565,
+    "answerValue": 625,
     "decompositionHint": "It crosses a gorge rather than a wide valley, so compare the drop with a very tall building rather than with a normal bridge.",
     "strategy": "anchor-scale",
-    "source": "China Ministry of Transport records for the Duge Bridge",
-    "asOf": 2016
+    "source": "China Ministry of Transport records for the Huajiang Canyon Bridge",
+    "asOf": 2025
   },
   {
     "id": "records-largest-dam-volume",
@@ -3346,11 +3346,11 @@ var RECORDS = [
     "id": "records-largest-concrete-pour",
     "prompt": "How many cubic metres of concrete were placed in the largest continuous pour?",
     "unit": "cubic metres",
-    "answerValue": 21580,
-    "decompositionHint": "It has to be continuous because a joint would weaken the raft, so the limit is how many trucks can reach the site in thirty hours.",
+    "answerValue": 19624,
+    "decompositionHint": "It has to be continuous because a joint would weaken the raft, so the limit is how many trucks can reach the site across two days of pouring.",
     "strategy": "rate-time",
-    "source": "Published construction records for the Wilshire Grand Center, Los Angeles",
-    "asOf": 2014
+    "source": "Published construction records for the Lakhta Center, Saint Petersburg",
+    "asOf": 2015
   },
   {
     "id": "records-tallest-chimney",
@@ -3936,10 +3936,10 @@ var RECORDS = [
     "id": "records-tallest-termite-mound",
     "prompt": "How many metres tall is the tallest recorded termite mound?",
     "unit": "metres",
-    "answerValue": 12.8,
+    "answerValue": 8,
     "decompositionHint": "A ventilation chimney for a colony living mostly underground, so the height is set by the airflow it has to drive rather than by the nest.",
     "strategy": "anchor-scale",
-    "source": "Published entomological survey records, Democratic Republic of the Congo",
+    "source": "Documented cathedral termite mounds, Northern Territory, Australia",
     "asOf": 2025
   },
   {
@@ -4386,11 +4386,11 @@ var RECORDS = [
     "id": "records-largest-prime-gap",
     "prompt": "How large is the biggest known gap between consecutive known primes?",
     "unit": "integers",
-    "answerValue": 1550000,
+    "answerValue": 16045848,
     "decompositionHint": "Gaps grow roughly with the logarithm of the numbers involved, so a gap this size sits among numbers with hundreds of thousands of digits.",
     "strategy": "exponential",
-    "source": "Published prime gap records, PrimeGrid distributed computing project",
-    "asOf": 2025
+    "source": "Published prime gap records, Andreas Hoglund verification",
+    "asOf": 2024
   },
   {
     "id": "records-most-digits-memorised",
@@ -4531,16 +4531,6 @@ var RECORDS = [
     "strategy": "anchor-scale",
     "source": "Published historical accounts of the 1859 Carrington event, NOAA",
     "asOf": 1859
-  },
-  {
-    "id": "records-fastest-erosion-rate",
-    "prompt": "How many millimetres a year is the fastest measured landscape erosion rate?",
-    "unit": "millimetres per year",
-    "answerValue": 20,
-    "decompositionHint": "A steep, wet, tectonically rising range where rock is lifted and stripped at similar speeds. Typical continental erosion is a hundredth of this.",
-    "strategy": "anchor-scale",
-    "source": "Published cosmogenic nuclide studies of the Southern Alps, New Zealand",
-    "asOf": 2025
   },
   {
     "id": "records-fastest-mountain-uplift",

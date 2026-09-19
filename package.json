@@ -1,6 +1,6 @@
 {
   "name": "estimation-gym-app",
-  "version": "1.21.4",
+  "version": "1.21.5",
   "private": true,
   "description": "Daily estimation games as an installable web app, scored on order-of-magnitude closeness.",
   "license": "AGPL-3.0-or-later",
