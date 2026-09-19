@@ -356,7 +356,7 @@ var RECORDS = [
     "id": "records-longest-chess-game",
     "prompt": "How many moves were played in the longest tournament chess game on record?",
     "unit": "moves",
-    "answerValue": 269,
+    "answerValue": 295,
     "decompositionHint": "A normal game is about 40 moves. This one hit the fifty-move draw rule repeatedly without either side claiming it.",
     "strategy": "anchor-scale",
     "source": "FIDE tournament records, Belgrade 1989",
@@ -2706,7 +2706,7 @@ var RECORDS = [
     "id": "records-longest-running-play",
     "prompt": "How many performances has the longest-running theatrical play given?",
     "unit": "performances",
-    "answerValue": 29500,
+    "answerValue": 30000,
     "decompositionHint": "Eight shows a week, nearly every week, since 1952. Multiply that out and subtract a couple of years for closures.",
     "strategy": "rate-time",
     "source": "Society of London Theatre performance records for The Mousetrap",
@@ -2719,8 +2719,8 @@ var RECORDS = [
     "answerValue": 8573,
     "decompositionHint": "Staged in a stadium, so the real limit is how many players can see a conductor and stay together across that distance.",
     "strategy": "anchor-scale",
-    "source": "Published event records, Frankfurt Deutsche Bank Park",
-    "asOf": 2023
+    "source": "El Sistema Nacional de Orquestas de Venezuela, Caracas, November 2021",
+    "asOf": 2021
   },
   {
     "id": "records-oldest-inhabited-city",
@@ -2737,9 +2737,9 @@ var RECORDS = [
     "prompt": "How many metres long were the longest tusks ever found?",
     "unit": "metres",
     "answerValue": 5.02,
-    "decompositionHint": "A mammoth rather than an elephant, and they curved round almost into a spiral, so the measured length far exceeds the animal's height.",
+    "decompositionHint": "A mastodon rather than an elephant, and the tusks curved round almost into a spiral, so the measured length far exceeds the animal height.",
     "strategy": "anchor-scale",
-    "source": "Published palaeontological measurements of Columbian mammoth tusks",
+    "source": "Published measurements of the Milia mastodon tusks, Grevena, Greece",
     "asOf": 2025
   },
   {
@@ -2976,7 +2976,7 @@ var RECORDS = [
     "id": "records-largest-tumour-removed",
     "prompt": "How many kilograms did the largest tumour ever removed weigh?",
     "unit": "kilograms",
-    "answerValue": 137,
+    "answerValue": 138.7,
     "decompositionHint": "It weighed more than the patient did afterwards, and had grown slowly over years. Think about how much mass a body can carry at all.",
     "strategy": "anchor-scale",
     "source": "Published clinical case report, Stanford University Medical Center",
@@ -2984,10 +2984,10 @@ var RECORDS = [
   },
   {
     "id": "records-longest-transplant-chain",
-    "prompt": "How many kidney transplants were performed in the longest single donor chain?",
-    "unit": "transplants",
+    "prompt": "How many surgical operations made up the longest single kidney donor chain?",
+    "unit": "operations",
     "answerValue": 70,
-    "decompositionHint": "Each donor gives to a stranger so that their own recipient receives from another, so the chain is limited by matching and logistics.",
+    "decompositionHint": "Every transplant needs two operations, one to remove and one to implant, and each donor gives to a stranger so their own recipient can receive from another.",
     "strategy": "anchor-scale",
     "source": "National Kidney Registry published chain records",
     "asOf": 2015
@@ -2996,11 +2996,11 @@ var RECORDS = [
     "id": "records-longest-coma",
     "prompt": "How many years did the longest recorded coma last?",
     "unit": "years",
-    "answerValue": 37,
-    "decompositionHint": "Kept alive by continuous nursing care at home. The limiting factors are infection and pressure injury rather than anything neurological.",
+    "answerValue": 42,
+    "decompositionHint": "Kept alive by continuous nursing care at home for over 15,000 days. The limits are infection and pressure injury rather than anything neurological.",
     "strategy": "anchor-scale",
-    "source": "Published clinical case report, Miami, Florida",
-    "asOf": 1978
+    "source": "Published clinical records for Edwarda O Bara, Miami, Florida",
+    "asOf": 2012
   },
   {
     "id": "records-most-expensive-spice",

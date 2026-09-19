@@ -162,3 +162,72 @@ records-longest-runway | FIXED-PROMPT | the 5500m runway at Qamdo Bamda is close
 records-deepest-railway-station | FIXED-PROMPT | Arsenalna is now second-deepest after Hongyancun, Chongqing; the prompt now names the station
 records-largest-container-ship | OK | 24346 TEU MSC Irina
 records-largest-artificial-island | OK | 970 km2 Flevopolder
+records-longest-lived-insect | OK | termite queen 50+ years
+records-largest-ancient-city | OK | Rome ~1 million at peak
+records-largest-river-delta | OK | Ganges-Brahmaputra (sources 75k-105k km2)
+records-largest-open-pit | OK | Bingham Canyon 1.2km
+records-deepest-growing-plant | FIXED | 269 -> 295m (Littler survey, Smithsonian, Bahamas 1984)
+records-largest-insect-wingspan | OK | 71cm Meganeuropsis permiana
+records-longest-pipeline | OK | 8704km West-East Gas Pipeline
+records-longest-undersea-tunnel | OK | 37.9km Channel Tunnel undersea section
+records-deepest-land-animal | OK | 1980m springtail, Krubera 2010
+records-largest-marathon-field | OK | 55646 finishers NYC 2024
+records-deepest-shipwreck | OK | 6895m USS Samuel B Roberts 2022
+records-longest-running-play | FIXED | 29500 -> 30000 (30,000th performance March 2025)
+records-largest-orchestra | FIXED-SOURCE | 8573 is Venezuela 2021, not Frankfurt 2023 (Frankfurt was 7548 in 2016)
+records-longest-tusks | FIXED-SOURCE | 5.02m is a MASTODON from Greece; the longest mammoth tusk is 4.9m. Hint and source corrected.
+records-largest-crustacean | OK | 3.7m Japanese spider crab
+records-largest-flying-animal | OK | 10-11m Quetzalcoatlus northropi
+records-largest-arthropod | OK | 2.6m Arthropleura
+records-longest-transplant-chain | FIXED-PROMPT | 70 is the number of SURGERIES (35 transplants); the prompt asked for transplants
+records-longest-sperm | OK | 58.29mm Drosophila bifurca
+records-longest-fjord | OK | 350km Scoresby Sund
+records-largest-atoll | OK | 388 km2 Kiritimati
+records-deepest-swimming-pool | OK | 60m Deep Dive Dubai
+records-longest-rail-journey | OK | 10214 km Moscow-Pyongyang
+records-largest-swimming-pool | OK | San Alfonso del Mar, 80-82k m2 depending on source
+records-tallest-wooden-building | OK | 87m Ascent MKE
+records-largest-telescope-array-antennas | OK | 131072 log-periodic antennas, SKA-Low
+records-deepest-plant-roots | OK | 68m Boscia albitrunca
+records-longest-hibernation | OK | 11 months is the documented maximum for Glis glis (typical 7-8); prompt says "can"
+records-largest-flower | OK | 1.11m largest measured specimen (2020, Sumatra); species may be R. tuan-mudae
+records-largest-cruise-passenger-count | OK | 7600 pax + 2350 crew = 9950
+records-largest-helicopter-lift | OK | 40 tonnes, Mil V-12 1969
+records-longest-serving-aircraft | OK | B-52 in service since 1955 = 71 years in 2026
+records-longest-scientific-experiment-plants | OK | Beal seed experiment, buried 1879
+records-largest-recorded-sediment-flow | OK | >1130 km Congo Canyon (bank 1100)
+records-oldest-seed-bank-holding | OK | 1.3M samples, Svalbard
+records-largest-genome-sequenced | OK | 43bn base pairs, Australian lungfish
+records-longest-continuous-radio-broadcast | OK | The Archers, first broadcast Jan 1951 = 75 years in 2026
+records-longest-tunnel-any-kind | OK | 137km Delaware Aqueduct
+records-highest-pressure-achieved | OK | ~1 TPa diamond anvil, Bayreuth (bank 1.1)
+records-largest-banknote-denomination | OK | Zimbabwe 100 trillion dollars, 2008
+records-largest-river-island | OK | 880 km2 Majuli
+records-highest-airport | OK | 4411m Daocheng Yading
+records-largest-wildfire | OK | 24M hectares = 240000 km2 (bank 243000)
+records-highest-railway | OK | 5072m Tanggula Pass
+records-highest-flying-bird | OK | 11300m Ruppell's vulture
+records-longest-train | OK | 7.353km, 682 wagons, BHP 2001
+records-heaviest-train | OK | 99732 tonnes, same train
+records-tallest-statue | OK | 182m Statue of Unity
+records-largest-bell | OK | 201924 kg Tsar Bell
+records-largest-conventional-explosion | OK | 2.9 kt Halifax 1917
+records-largest-test-crater | OK | 390m diameter Sedan crater 1962
+records-most-accurate-clock | OK | ~1s in 30bn years (JILA 2024; USTC reached the same level 2026)
+records-most-powerful-laser | OK | 10 PW ELI-NP
+records-fastest-camera | OK | 70 trillion fps, Caltech CUSP
+records-largest-empire | OK | 35.5M km2 British Empire 1920-21
+records-longest-war | OK | 781 years Reconquista
+records-most-translated-document | OK | 501 languages UDHR, OHCHR
+records-longest-surgery | OK | 96 hours = 5760 min, Chicago 1951
+records-largest-tumour-removed | FIXED | 137 -> 138.7 kg (Stanford 1991)
+records-longest-coma | FIXED | 37 years was Elaine Esposito; the record is Edwarda O'Bara at 42 years (15,663 days)
+records-longest-zip-line | OK | 2831.88m Jebel Jais Flight
+records-longest-sea-crossing | OK | 55km Hong Kong-Zhuhai-Macau
+records-tallest-rocket | OK | 121m Starship stack
+records-largest-dome-span | OK | 310m Singapore National Stadium
+records-longest-cantilever-span | OK | 549m Quebec Bridge
+records-longest-continuous-eruption | OK | 800+ years Mount Yasur
+records-largest-sand-dune | OK | 1230m Duna Federico Kirbus
+records-largest-beaver-dam | OK | 850m Wood Buffalo NP
+records-largest-virus | OK | 1.5um Pithovirus sibericum
