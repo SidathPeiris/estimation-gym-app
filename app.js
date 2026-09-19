@@ -43,6 +43,7 @@
              "arch", "arch-headline", "arch-rows", "arch-note",
              "practice", "practice-toggle", "practice-chev", "practice-body", "practice-intro",
              "practice-prompt", "practice-asof", "practice-form", "practice-input", "practice-exp",
+             "practice-date-input", "practice-era",
              "practice-go", "practice-error", "practice-result", "practice-band", "practice-points",
              "practice-guess-line", "practice-actual-line", "practice-decades",
              "practice-decades-ruler", "practice-decades-fill",
@@ -129,6 +130,12 @@
     el["date-input"].value = ""
     bcMode = false
     show(el.error, false)
+
+    // The practice card belongs to a bank too, and now every live game has one
+    // of its own. Leaving the previous game's question on screen would offer a
+    // Fermi prompt scored against World Records' bank, and would write that
+    // question's id into the wrong game's practised list on submit.
+    clearPractice()
   }
 
   // --- Debug reset -------------------------------------------------------
@@ -178,10 +185,26 @@
   // A separate pool and a separate verb. Nothing here is recorded against the
   // streak, the stats or the shared distribution - it exists so a new player
   // is not limited to one go a day while deciding whether they like this.
+  //
+  // One key per game, and Fermi keeps the unnamespaced one it has always had.
+  // That is the same deliberate irregularity as its state key, for the same
+  // reason: renaming it would throw away every player's record of what they
+  // have already practised, and a downgrade to a cached build would then find
+  // nothing where it expects a list.
   var PRACTICE_KEY = "estimation-gym-practised"
+  function practiceKey() {
+    return game.id === "fermi" ? PRACTICE_KEY : PRACTICE_KEY + ":" + game.id
+  }
+
   var practiceOpen = false
   var practiceQuestion = null
   var practiceResult = null
+
+  // The era toggle beside the practice year field, kept apart from the daily's
+  // for the same reason the fields are: both forms can be on screen at once,
+  // and one flag shared between them would let an era set on the daily silently
+  // move a practice answer four thousand years.
+  var practiceBcMode = false
 
   // --- Shared distribution ------------------------------------------------
   //
@@ -1079,7 +1102,7 @@
 
   function practisedIds() {
     try {
-      var raw = window.localStorage.getItem(PRACTICE_KEY)
+      var raw = window.localStorage.getItem(practiceKey())
       var parsed = raw ? JSON.parse(raw) : []
       return Array.isArray(parsed) ? parsed : []
     } catch (e) {
@@ -1091,26 +1114,61 @@
     try {
       var list = practisedIds()
       if (list.indexOf(id) < 0) list.push(id)
-      window.localStorage.setItem(PRACTICE_KEY, JSON.stringify(list))
+      window.localStorage.setItem(practiceKey(), JSON.stringify(list))
     } catch (e) {
       // Not being able to remember only means a question may come round again.
     }
   }
 
-  function nextPractice() {
+  // Which answer control the practice question wants. The daily's inputMode()
+  // reads today's question; this reads the practice one, and the two can
+  // legitimately disagree - today's Historical Dates puzzle may be a year while
+  // the practice question is dated to the day.
+  function practiceInputMode() {
+    if (!game || game.engine !== "date") return "number"
+    return Model.inputForPrecision(practiceQuestion && practiceQuestion.precision)
+  }
+
+  function readPracticeAnswer() {
+    var mode = practiceInputMode()
+    if (mode === "date") return validateDate(el["practice-date-input"].value, Model)
+    if (mode === "year") return validateYear(el["practice-input"].value, practiceBcMode, Model)
+    return validateGuess(el["practice-input"].value)
+  }
+
+  // Everything the practice card holds about the current question. Called when
+  // a new one is drawn and when the game changes underneath it, because a
+  // question from one bank must never be left on screen over another's.
+  function clearPractice() {
+    practiceQuestion = null
     practiceResult = null
-    // today is passed so the reserve applies: practice must not offer a
-    // question the daily puzzle is about to use.
-    practiceQuestion = Model.pickPractice(bank, state, practisedIds(), today)
+    practiceBcMode = false
     el["practice-input"].value = ""
+    el["practice-date-input"].value = ""
     show(el["practice-error"], false)
+  }
+
+  function drawPractice() {
+    clearPractice()
+    // today and the game's own schedule origin are both passed so the reserve
+    // applies to the right rotation: practice must not offer a question this
+    // game's daily puzzle is about to use, and each game rotates differently.
+    practiceQuestion = Model.pickPractice(
+      bank, state, practisedIds(), today, undefined, game.scheduleOrigin)
+  }
+
+  function nextPractice() {
+    drawPractice()
     renderPractice()
-    if (practiceQuestion) el["practice-input"].focus()
+    if (practiceQuestion) {
+      var field = practiceInputMode() === "date" ? "practice-date-input" : "practice-input"
+      if (el[field].focus) el[field].focus()
+    }
   }
 
   function submitPractice() {
     if (!practiceQuestion) return
-    var check = validateGuess(el["practice-input"].value)
+    var check = readPracticeAnswer()
     if (!check.ok) {
       setText(el["practice-error"], check.message)
       show(el["practice-error"], true)
@@ -1120,17 +1178,25 @@
 
     // Scored the same way, recorded nowhere. The only thing kept is that this
     // question has now been seen, so it does not come round again.
-    practiceResult = Model.scoreGuess(check.value, practiceQuestion.answerValue)
+    //
+    // Not assisted, ever: the practice card shows the hint after the answer
+    // rather than offering it before, so there is no half-points case here.
+    practiceResult = game.engine === "date"
+      ? Model.scoreDate(check.value, practiceQuestion, false)
+      : Model.scoreGuess(check.value, practiceQuestion.answerValue)
     practiceResult.guess = check.value
+    // dateResultView reads errorUnit, which is what recordDateAnswer stores a
+    // scoreDate result under. Practice never stores anything, so the rename
+    // happens here instead.
+    if (practiceResult.unit !== undefined) practiceResult.errorUnit = practiceResult.unit
     rememberPractised(practiceQuestion.id)
     renderPractice()
   }
 
   function renderPractice() {
-    // Practice draws from Fermi's bank and from Fermi's played history, so a
-    // game without a pool has nothing to render. Returning early rather than
-    // rendering into a hidden section keeps nextPractice off a bank it was
-    // never written for.
+    // A game may still decline a practice pool - Crossword Clues will need a
+    // different card entirely. Returning early rather than rendering into a
+    // hidden section keeps nextPractice off a bank it was never written for.
     if (game.practice !== true) return
 
     el["practice-chev"].dataset.open = practiceOpen ? "true" : "false"
@@ -1138,18 +1204,21 @@
     show(el["practice-body"], practiceOpen)
     if (!practiceOpen) return
 
-    var exhausted = !practiceQuestion
-    var answered = !!practiceResult
+    // An open card with nothing in it needs a question. Drawing it here covers
+    // both ways that happens - opening the card, and switching to a game while
+    // it is already open - with one path instead of two that can disagree.
+    if (!practiceQuestion && !practiceResult) drawPractice()
 
-    setText(el["practice-intro"], exhausted
-      ? "You have worked through every question the daily puzzle has not used yet. Nothing left to practise on — which is quite the achievement."
-      : "A question the daily puzzle has not given you. Scored the same way, but it does not touch your streak, your stats, or what other players see.")
+    // Every string below comes from here. renderPractice used to derive its own
+    // and they drifted from the daily's; see the note above practiceView.
+    var vm = practiceView(Model, game, practiceQuestion, practiceResult)
 
-    show(el["practice-prompt"], !exhausted)
-    show(el["practice-form"], !exhausted && !answered)
-    show(el["practice-next"], !exhausted && answered)
+    setText(el["practice-intro"], vm.intro)
+    show(el["practice-prompt"], !vm.exhausted)
+    show(el["practice-form"], !vm.exhausted && !vm.answered)
+    show(el["practice-next"], !vm.exhausted && vm.answered)
 
-    if (exhausted) {
+    if (vm.exhausted) {
       show(el["practice-asof"], false)
       show(el["practice-result"], false)
       show(el["practice-approach"], false)
@@ -1158,40 +1227,55 @@
       return
     }
 
-    setText(el["practice-prompt"], practiceQuestion.prompt)
-    el["practice-input"].placeholder = "Guess (" + practiceQuestion.unit + ")"
+    setText(el["practice-prompt"], vm.prompt)
 
-    var dated = practiceQuestion.asOf !== undefined
-    show(el["practice-asof"], dated)
-    if (dated) setText(el["practice-asof"], "as of " + Model.formatAsOf(practiceQuestion.asOf))
+    // The answer row, in the same three configurations as the daily's, and
+    // chosen the same way. Exactly one input and at most one modifier button.
+    show(el["practice-input"], vm.input !== "date")
+    show(el["practice-date-input"], vm.input === "date")
+    show(el["practice-exp"], vm.input === "number")
+    show(el["practice-era"], vm.input === "year")
 
-    show(el["practice-result"], answered)
-    show(el["practice-approach"], answered)
-    show(el["practice-hint"], answered)
-    show(el["practice-source"], answered && Boolean(practiceQuestion.source))
+    el["practice-input"].placeholder = vm.placeholder
+    el["practice-input"].inputMode = vm.input === "year" ? "numeric" : "decimal"
+    el["practice-input"].setAttribute(
+      "aria-label", vm.input === "year" ? "The year it happened" : "Your practice estimate")
 
-    if (!answered) return
+    if (vm.input === "year") {
+      setText(el["practice-era"], practiceBcMode ? "BC" : "AD")
+      el["practice-era"].dataset.bc = String(practiceBcMode)
+      el["practice-era"].setAttribute("title", practiceBcMode ? "Switch to AD" : "Switch to BC")
+      el["practice-era"].setAttribute(
+        "aria-label",
+        practiceBcMode ? "Era: BC. Activate to switch to AD." : "Era: AD. Activate to switch to BC.")
+    }
 
-    var tone = toneForBand(practiceResult.band)
-    el["practice-result"].className = "result tone-" + tone
+    show(el["practice-asof"], Boolean(vm.asOfLabel))
+    if (vm.asOfLabel) setText(el["practice-asof"], vm.asOfLabel)
+
+    show(el["practice-result"], vm.answered)
+    show(el["practice-approach"], vm.answered && Boolean(vm.strategyLabel))
+    show(el["practice-hint"], vm.answered)
+    show(el["practice-source"], vm.answered && Boolean(vm.source))
+
+    if (!vm.answered) return
+
+    var r = vm.result
+    el["practice-result"].className = "result tone-" + r.tone
     // Same as the daily: a styling hook for the per-band colour, nothing more.
-    el["practice-result"].dataset.band = practiceResult.band
-    setText(el["practice-band"], practiceResult.band)
-    // Deliberately not points: practice earns none, and showing a number would
-    // suggest otherwise.
-    setText(el["practice-points"], "practice")
-    setText(el["practice-guess-line"], "Your guess: " + Model.formatCompact(practiceResult.guess) + " " + practiceQuestion.unit)
-    setText(el["practice-actual-line"], "Actual: " + Model.formatCompact(practiceQuestion.answerValue) + " " + practiceQuestion.unit)
-    setText(el["practice-decades"], "Off by " +
-      (practiceResult.distanceDecades !== null ? practiceResult.distanceDecades.toFixed(2) : "?") +
-      " orders of magnitude")
-    drawRuler(el["practice-decades-ruler"], el["practice-decades-fill"],
-      practiceResult.distanceDecades)
+    el["practice-result"].dataset.band = r.band
+    setText(el["practice-band"], r.band)
+    setText(el["practice-points"], r.pointsLabel)
+    setText(el["practice-guess-line"], r.guessLine)
+    setText(el["practice-actual-line"], r.actualLine)
+    setText(el["practice-decades"], r.decadesLine)
+    // Null on the date engine, where the distance is not a ratio and there is
+    // nothing to draw on a log scale. drawRuler hides the strip for that.
+    drawRuler(el["practice-decades-ruler"], el["practice-decades-fill"], r.decades)
 
-    var strategy = Model.strategyFor(practiceQuestion)
-    setText(el["practice-approach"], "Approach: " + strategy.label)
-    setText(el["practice-hint"], "How to think about it: " + practiceQuestion.decompositionHint)
-    if (practiceQuestion.source) setText(el["practice-source"], "Source: " + practiceQuestion.source)
+    if (vm.strategyLabel) setText(el["practice-approach"], vm.strategyLabel)
+    setText(el["practice-hint"], vm.hint)
+    if (vm.source) setText(el["practice-source"], vm.source)
   }
 
   function renderHistory(history) {
@@ -1797,6 +1881,14 @@
 
   el["practice-exp"].addEventListener("click", function () {
     insertExponent(el["practice-input"])
+  })
+
+  el["practice-era"].addEventListener("click", function () {
+    practiceBcMode = !practiceBcMode
+    renderPractice()
+    // Back to the field, so switching era mid-answer does not cost the player
+    // their place in it.
+    if (el["practice-input"].focus) el["practice-input"].focus()
   })
 
   el["restore-toggle"].addEventListener("click", function () {

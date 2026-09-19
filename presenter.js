@@ -411,6 +411,76 @@ function statsView(Model, stats) {
   }
 }
 
+// The practice card: the same question, drawn from a pool instead of from the
+// calendar.
+//
+// This function exists to end a duplication the comment below has been
+// complaining about for two releases. renderPractice used to re-derive the
+// band tone, the points label and both result lines by hand, and the copies
+// had already drifted from the daily's. Now practice and the daily build their
+// result from the same two functions - resultView on the log engine,
+// dateResultView on the date engine - and the renderer writes the same
+// elements for both.
+//
+// `result` is what scoreGuess or scoreDate returned, with the guess attached.
+// It is not a stored history entry and never becomes one: practice is scored
+// and then forgotten, so nothing here reads or writes state.
+var PRACTICE_POINTS_LABEL = "practice"
+
+function practiceView(Model, game, question, result) {
+  var isDate = !!game && game.engine === "date"
+
+  if (!question) {
+    return {
+      exhausted: true,
+      intro: "You have worked through every question the daily puzzle has not used yet. " +
+        "Nothing left to practise on — which is quite the achievement.",
+      prompt: null,
+      asOfLabel: null,
+      input: "number",
+      placeholder: "",
+      answered: false,
+      result: null,
+      strategyLabel: null,
+      hint: null,
+      source: null
+    }
+  }
+
+  // Which of the three answer controls this question wants. The log engine has
+  // one; the date engine chooses between a year and a calendar date the same
+  // way the daily does, from the question's own precision.
+  var input = isDate ? Model.inputForPrecision(question.precision) : "number"
+
+  var view = null
+  if (result) {
+    view = isDate
+      ? dateResultView(Model, result, question)
+      : resultView(Model, result, question)
+    // The one string practice does not share. Practice earns nothing, and a
+    // number in this slot would say otherwise.
+    view.pointsLabel = PRACTICE_POINTS_LABEL
+  }
+
+  return {
+    exhausted: false,
+    intro: "A question the daily puzzle has not given you. Scored the same way, " +
+      "but it does not touch your streak, your stats, or what other players see.",
+    prompt: question.prompt,
+    // Only the log engine has one. A historical date does not go stale.
+    asOfLabel: question.asOf !== undefined ? "as of " + Model.formatAsOf(question.asOf) : null,
+    input: input,
+    placeholder: isDate ? (input === "date" ? "" : "Year") : "Guess (" + question.unit + ")",
+    answered: !!result,
+    result: view,
+    // The archetype taxonomy is about ways to estimate a quantity, so the date
+    // engine has nothing to name here.
+    strategyLabel: isDate ? null : "Approach: " + Model.strategyFor(question).label,
+    hint: "How to think about it: " + question.decompositionHint,
+    source: question.source ? "Source: " + question.source : null
+  }
+}
+
 // `hintShown` is the live UI flag for today, not persisted state: once the day
 // is answered the entry's own `assisted` flag is what counts.
 // The home screen: one card per game.
@@ -666,6 +736,7 @@ if (typeof module !== "undefined") {
     validateYear: validateYear,
     validateDate: validateDate,
     dateResultView: dateResultView,
+    practiceView: practiceView,
     viewModel: viewModel,
     historyView: historyView,
     distributionView: distributionView,

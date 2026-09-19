@@ -534,7 +534,15 @@ var PRACTICE_RESERVE_DAYS = 365
 // The questions the daily puzzle is about to use, which practice must leave
 // alone. Derived from the same deterministic rotation the daily uses, so it
 // needs no stored state.
-function reservedForDaily(bank, todayIdx, reserveDays) {
+//
+// `origin` is each game's own schedule origin, and it is the whole reason this
+// works for more than one game: the rotation is a function of the day index
+// AND the origin, so reserving World Records' next year off Fermi's origin
+// would protect a set of questions no day will actually serve, while leaving
+// the real ones free to be practised. It is a trailing optional defaulting to
+// Fermi's, which is what every call site that predates the second game passes
+// by saying nothing.
+function reservedForDaily(bank, todayIdx, reserveDays, origin) {
   var days = typeof reserveDays === "number" ? reserveDays : PRACTICE_RESERVE_DAYS
   var reserved = {}
   if (!bank.length || days <= 0 || typeof todayIdx !== "number") return reserved
@@ -542,13 +550,13 @@ function reservedForDaily(bank, todayIdx, reserveDays) {
   // Never reserve the whole bank, or there would be nothing left to practise.
   var span = Math.min(days, bank.length - 1)
   for (var offset = 0; offset < span; offset++) {
-    var q = questionForDay(todayIdx + offset, bank)
+    var q = questionForDay(todayIdx + offset, bank, origin)
     if (q) reserved[q.id] = true
   }
   return reserved
 }
 
-function practicePool(bank, state, alreadyPractised, todayIdx, reserveDays) {
+function practicePool(bank, state, alreadyPractised, todayIdx, reserveDays, origin) {
   var answered = {}
   var days = historyDays(state)
   for (var i = 0; i < days.length; i++) {
@@ -561,7 +569,7 @@ function practicePool(bank, state, alreadyPractised, todayIdx, reserveDays) {
     for (var p = 0; p < alreadyPractised.length; p++) practised[alreadyPractised[p]] = true
   }
 
-  var reserved = reservedForDaily(bank, todayIdx, reserveDays)
+  var reserved = reservedForDaily(bank, todayIdx, reserveDays, origin)
 
   var pool = []
   for (var b = 0; b < bank.length; b++) {
@@ -586,8 +594,8 @@ function practicePool(bank, state, alreadyPractised, todayIdx, reserveDays) {
 // Picks one at random. `random` is injectable so a test can be deterministic.
 // Returns null once the pool is empty, which the caller should present as
 // having worked through everything rather than as a failure.
-function pickPractice(bank, state, alreadyPractised, todayIdx, random) {
-  var pool = practicePool(bank, state, alreadyPractised, todayIdx)
+function pickPractice(bank, state, alreadyPractised, todayIdx, random, origin) {
+  var pool = practicePool(bank, state, alreadyPractised, todayIdx, undefined, origin)
   if (!pool.length) return null
   var r = typeof random === "function" ? random() : Math.random()
   var index = Math.floor(r * pool.length)

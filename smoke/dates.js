@@ -127,11 +127,14 @@ console.log("today              -> " + todays.id + " (" + todays.precision + ", 
   // it would insert an "e" into a field that rejects anything but digits.
   if (!els.exp.hidden) throw new Error("the exponent button is showing on the date engine");
 
-  // Fermi's three, all absent.
-  if (!els.practice.hidden) throw new Error("Practice is showing on Historical Dates");
+  // Practice is no longer Fermi's: every live game has a pool of its own now,
+  // drawn from its own bank and reserved off its own schedule origin.
+  if (els.practice.hidden) throw new Error("Practice is missing on Historical Dates");
+  // Suggest still is Fermi's, because submissions land in one D1 table with no
+  // game column and would arrive unattributable.
   if (!els.suggest.hidden) throw new Error("Suggest is showing on Historical Dates");
   if (!els.asof.hidden) throw new Error("an 'as of' line is showing - a date does not drift");
-  console.log("answer row         -> one input, the right modifier, nothing from Fermi");
+  console.log("answer row         -> one input, the right modifier, no Suggest form");
 }
 
 // 2. A correct answer scores a hundred and starts a streak, in the right key.
@@ -155,9 +158,10 @@ console.log("today              -> " + todays.id + " (" + todays.precision + ", 
 
   // The marker that tells every reader which engine wrote this row.
   // The capsule in the card's corner, which is a different control from the
-  // Practice disclosure checked above and was gated on a different thing.
-  if (!r.els["practice-offer"].hidden) {
-    throw new Error("the Practice capsule is offered on Historical Dates, which has no practice pool");
+  // Practice disclosure checked above and is gated on a different thing: the
+  // day being answered as well as the game having a pool.
+  if (r.els["practice-offer"].hidden) {
+    throw new Error("the Practice capsule is not offered after a scored day on Historical Dates");
   }
 
   if (!entry.errorUnit) throw new Error("the entry carries no errorUnit, so history cannot format it");
@@ -321,6 +325,107 @@ console.log("today              -> " + todays.id + " (" + todays.precision + ", 
   const fermiSteps = r.els["howto-steps"].children.map((c) => c.textContent).join(" ");
   if (!/scientific notation/i.test(fermiSteps)) throw new Error("the guide did not change back on Fermi");
   console.log("how to play        -> the dates guide here, the Fermi one there");
+}
+
+// 10. Practice on the date engine.
+//
+// The practice card was written for one game and one engine: a number, a log
+// distance, an "orders of magnitude" line. Pointing it at this bank without
+// giving it the other two controls would leave a year question with a decimal
+// keypad and no era button - and the failure is the silent one this whole file
+// is written against, because a year typed into the numeric path scores as a
+// log distance and a log distance calls 1969 and 1970 perfect.
+{
+  const r = run();
+  r.fire("practice-toggle", "click");
+
+  const q = r.els["practice-prompt"].textContent;
+  if (!q) throw new Error("no practice question was offered on Historical Dates");
+  if (!DATES.some((d) => d.prompt === q)) {
+    throw new Error("the practice question did not come from the dates bank: " + q);
+  }
+  if (q === todays.prompt) throw new Error("practice served today's own daily question");
+
+  // Exactly one control, and the right modifier beside it.
+  const asked = DATES.find((d) => d.prompt === q);
+  const want = M.inputForPrecision(asked.precision);
+  if (want === "date") {
+    if (r.els["practice-date-input"].hidden) throw new Error("no date field on a day-precision practice question");
+    if (!r.els["practice-input"].hidden) throw new Error("the text field is showing alongside the practice date field");
+    if (!r.els["practice-era"].hidden) throw new Error("the era toggle is showing on a practice date question");
+  } else {
+    if (r.els["practice-input"].hidden) throw new Error("no text field on a year practice question");
+    if (!r.els["practice-date-input"].hidden) throw new Error("the date field is showing on a year practice question");
+    if (r.els["practice-era"].hidden) throw new Error("no era toggle on a year practice question");
+    if (r.els["practice-input"].inputMode !== "numeric") {
+      throw new Error("the practice year field asks for a decimal keypad");
+    }
+  }
+  if (!r.els["practice-exp"].hidden) throw new Error("the exponent button is showing on the date engine");
+
+  // The exact answer, given the way a player would give it.
+  const answer = M.answerForQuestion(asked);
+  if (want === "date") {
+    r.els["practice-date-input"].value = String(answer);
+  } else {
+    if (answer < 0) r.fire("practice-era", "click");
+    r.els["practice-input"].value = String(Math.abs(answer));
+  }
+  r.fire("practice-form", "submit");
+
+  if (r.els["practice-result"].hidden) throw new Error("the practice answer was not scored");
+  if (r.els["practice-band"].textContent !== "Bullseye") {
+    throw new Error("the exact answer scored " + r.els["practice-band"].textContent);
+  }
+  if (r.els["practice-points"].textContent !== "practice") {
+    throw new Error("practice awarded points: " + r.els["practice-points"].textContent);
+  }
+  // The wording has to be the date engine's, not the log engine's.
+  if (/orders of magnitude/.test(r.els["practice-decades"].textContent)) {
+    throw new Error("the practice result talks about orders of magnitude on the date engine");
+  }
+  // Nothing to draw on a log scale, so the strip stays down.
+  if (!r.els["practice-decades-ruler"].hidden) {
+    throw new Error("the decades ruler is drawn for a date result, which has no ratio to show");
+  }
+  // The approach line names an estimation archetype, which this engine has none of.
+  if (!r.els["practice-approach"].hidden) {
+    throw new Error("an approach line is shown on the date engine, which has no archetypes");
+  }
+
+  // Scored and forgotten: the daily state is untouched, and the only thing
+  // written is this game's own practised list.
+  if (r.store[KEY] !== undefined) throw new Error("practice wrote to the daily state");
+  const practised = JSON.parse(r.store["estimation-gym-practised:dates"] || "[]");
+  if (practised[0] !== asked.id) throw new Error("the practised id was not recorded under the dates key");
+  if (r.store["estimation-gym-practised"] !== undefined) {
+    throw new Error("a dates practice question was written into Fermi's practised list");
+  }
+  console.log("practice           -> " + want + " input, Bullseye, no points, " +
+              practised.length + " id under its own key");
+}
+
+// 11. The practice card does not carry a question between games.
+//
+// Same class of bug as the answer row above, and worse: a Fermi prompt left on
+// screen under World Records would be scored against the wrong bank, and its
+// id written into the wrong game's practised list.
+{
+  const r = run({ hash: "#fermi" });
+  r.fire("practice-toggle", "click");
+  const fermiPrompt = r.els["practice-prompt"].textContent;
+  if (!fermiPrompt) throw new Error("no practice question on Fermi");
+
+  r.loc.hash = "#dates";
+  r.fire("window", "hashchange");
+  const after = r.els["practice-prompt"].textContent;
+  if (after === fermiPrompt) throw new Error("Fermi's practice question survived the move to Historical Dates");
+  if (!DATES.some((d) => d.prompt === after)) {
+    throw new Error("the practice card is not showing a dates question after the move: " + after);
+  }
+  if (r.els["practice-date-input"].value !== "") throw new Error("the practice date field was not cleared");
+  if (r.els["practice-input"].value !== "") throw new Error("the practice text field was not cleared");
+  console.log("practice switch    -> a fresh question from the game you moved to");
 }
 
 console.log("\ndates passed");

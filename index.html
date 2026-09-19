@@ -338,10 +338,19 @@
         <p class="practice-prompt" id="practice-prompt" hidden></p>
         <p class="asof" id="practice-asof" hidden></p>
 
+        <!-- The same three configurations as the daily's answer row above, for
+             the same reason: practice now runs on every live game, and on
+             Historical Dates a question dated to the day wants a calendar
+             field while everything else wants a year and an era. The ids are
+             separate from the daily's because both forms can be on screen at
+             once - the daily is only hidden once the day is answered. -->
         <form class="guess" id="practice-form" novalidate hidden>
           <input id="practice-input" type="text" inputmode="decimal" autocomplete="off"
                  autocapitalize="off" spellcheck="false" aria-label="Your practice estimate">
+          <input id="practice-date-input" type="date" hidden aria-label="The date it happened">
           <button type="button" class="exp" id="practice-exp" aria-label="Insert scientific notation">&times;10<sup>n</sup></button>
+          <button type="button" class="era" id="practice-era" hidden data-bc="false"
+                  aria-label="Era: AD. Activate to switch to BC." title="Switch to BC">AD</button>
           <button type="submit" id="practice-go">Go</button>
         </form>
         <p class="error" id="practice-error" role="alert" hidden></p>

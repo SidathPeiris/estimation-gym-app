@@ -192,28 +192,32 @@ console.log("keys               -> " + FERMI_KEY + "  |  " + RECORDS_KEY);
   const onRecords = run({ hash: "#records" });
   const onFermi = run({ hash: "#fermi" });
 
-  for (const [id, flag] of [["practice", "practice"], ["suggest", "suggest"]]) {
-    if (fermi[flag] !== true) throw new Error("fermi should declare " + flag);
-    if (records[flag] === true) throw new Error("records should not declare " + flag);
-    if (!onRecords.els[id].hidden) {
-      throw new Error("#" + id + " is showing on World Records, which does not claim " + flag);
-    }
+  // Suggest is the one part that is still Fermi's alone: submissions land in
+  // one D1 table with no game column, so a suggestion made anywhere else would
+  // arrive unattributable.
+  if (fermi.suggest !== true) throw new Error("fermi should declare suggest");
+  if (records.suggest === true) throw new Error("records should not declare suggest");
+  if (!onRecords.els.suggest.hidden) {
+    throw new Error("#suggest is showing on World Records, which does not claim it");
   }
-  // The capsule in the card's corner, not the disclosure further down. It was
-  // gated on "the day is answered" alone, so it appeared on World Records from
-  // the day that game shipped - and it opens the panel that draws from Fermi's
-  // bank, so it offered one game's question as more of another's.
+
+  // Practice is no longer one of them. Every live game has a pool of its own,
+  // drawn from its own bank and reserved off its own schedule origin.
+  for (const g of [fermi, records]) {
+    if (g.practice !== true) throw new Error(g.id + " is live but has no practice pool");
+  }
+  if (onRecords.els.practice.hidden) throw new Error("Practice is missing on World Records");
   {
     const answered = run({ hash: "#records" });
     answered.answer(1);
-    if (!answered.els["practice-offer"].hidden) {
-      throw new Error("the Practice capsule is offered on World Records, which has no practice pool");
+    if (answered.els["practice-offer"].hidden) {
+      throw new Error("the Practice capsule is not offered after a scored day on World Records");
     }
   }
 
   if (onFermi.els.practice.hidden) throw new Error("Practice should still show on Fermi");
   if (onFermi.els.suggest.hidden) throw new Error("Suggest should still show on Fermi");
-  console.log("fermi-only parts   -> practice and suggest, hidden on World Records");
+  console.log("fermi-only parts   -> suggest alone; practice now runs on both");
 
   // Every live game is named in the daily reminder. A game added as live and
   // left out of this would be a game nobody is ever told about in the morning.
@@ -279,6 +283,61 @@ console.log("keys               -> " + FERMI_KEY + "  |  " + RECORDS_KEY);
   r2.fireWindow("hashchange");
   if (r2.els["guess-input"].value !== "") throw new Error("a submitted guess survived the switch");
   console.log("answer box         -> cleared on every game switch, both directions");
+}
+
+// Practice on World Records: its own bank, its own practised list.
+//
+// The list is the part worth pinning. It is one localStorage key per game for
+// the same reason the state is: a single shared list would mean practising a
+// Fermi question marked a World Records question as seen, and the id collision
+// would be silent because both banks are just arrays of ids.
+{
+  const store = {};
+  const r = run({ hash: "#records", store });
+  r.fire("practice-toggle", "click");
+
+  const prompt = r.els["practice-prompt"].textContent;
+  if (!prompt) throw new Error("no practice question was offered on World Records");
+  if (!RECORDS.some((q) => q.prompt === prompt)) {
+    throw new Error("the practice question did not come from the records bank: " + prompt);
+  }
+  if (QUESTIONS.some((q) => q.prompt === prompt)) {
+    throw new Error("the practice question came from Fermi's bank");
+  }
+
+  const asked = RECORDS.find((q) => q.prompt === prompt);
+  r.els["practice-input"].value = String(asked.answerValue);
+  r.fire("practice-form", "submit");
+  if (r.els["practice-band"].textContent !== "Bullseye") {
+    throw new Error("the exact answer scored " + r.els["practice-band"].textContent);
+  }
+  if (r.els["practice-points"].textContent !== "practice") {
+    throw new Error("practice awarded points: " + r.els["practice-points"].textContent);
+  }
+
+  if (store[records.storageKey] !== undefined) throw new Error("practice wrote to the daily state");
+  const own = JSON.parse(store["estimation-gym-practised:records"] || "[]");
+  if (own[0] !== asked.id) throw new Error("the practised id was not written under the records key");
+  if (store["estimation-gym-practised"] !== undefined) {
+    throw new Error("a World Records practice question was written into Fermi's practised list");
+  }
+
+  // Fermi keeps the unnamespaced key it has always had, which is the same
+  // deliberate irregularity as its state key: renaming it would throw away
+  // every existing player's record of what they have already practised.
+  r.loc.hash = "#fermi";
+  r.fireWindow("hashchange");
+  const fermiPrompt = r.els["practice-prompt"].textContent;
+  const fermiQ = QUESTIONS.find((q) => q.prompt === fermiPrompt);
+  if (!fermiQ) throw new Error("the practice card is not showing a Fermi question after the move");
+  r.els["practice-input"].value = String(fermiQ.answerValue);
+  r.fire("practice-form", "submit");
+  const legacy = JSON.parse(store["estimation-gym-practised"] || "[]");
+  if (legacy[0] !== fermiQ.id) throw new Error("Fermi's practised list is no longer the legacy key");
+  if (JSON.parse(store["estimation-gym-practised:records"]).length !== 1) {
+    throw new Error("a Fermi practice answer was written into the records list");
+  }
+  console.log("practice lists     -> estimation-gym-practised  |  estimation-gym-practised:records");
 }
 
 console.log("\nsmoke passed: two games, two banks, two streaks, one screen");

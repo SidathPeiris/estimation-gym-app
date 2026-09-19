@@ -576,6 +576,54 @@ assert.equal(Model.historyDays(withId)[0].entry.questionId, "piano-tuners-chicag
   )
   assert.equal(Model.questionForDay(midReturns, bank).id, mid)
 }
+
+// --- the reserve has to follow the game's OWN rotation ---------------------
+//
+// Practice now runs on every live game, and each one rotates its bank from its
+// own schedule origin. So the reserve has to be computed from that origin too.
+//
+// This is the failure the test exists for, and it is the quiet kind. Reserving
+// a second game's next year off Fermi's origin does not throw and does not
+// leave the pool empty: it protects a set of questions no day will actually
+// serve, and leaves the real upcoming ones sitting in the practice pool. The
+// player practises tomorrow's puzzle, gets it tomorrow, and nothing anywhere
+// reports a problem.
+{
+  const bank = questionBank
+  const today = 1000
+  const OTHER = Model.SCHEDULE_ORIGIN + 9   // any origin that is not Fermi's
+
+  const dueOn = (origin) => {
+    const due = new Set()
+    for (let d = today; d < today + Model.PRACTICE_RESERVE_DAYS; d++) {
+      due.add(Model.questionForDay(d, bank, origin).id)
+    }
+    return due
+  }
+
+  const due = dueOn(OTHER)
+  const pool = Model.practicePool(bank, Model.emptyState(), [], today, undefined, OTHER)
+  assert.ok(pool.length > 0, "a second game still has something to practise on")
+  assert.equal(
+    pool.filter((q) => due.has(q.id)).length, 0,
+    "practice offered a question this game's own daily is about to serve"
+  )
+
+  // And the two rotations really are different, or the above would pass on a
+  // build that ignored the origin entirely.
+  const mine = dueOn(OTHER)
+  const fermis = dueOn(Model.SCHEDULE_ORIGIN)
+  assert.notEqual(
+    [...mine].filter((id) => !fermis.has(id)).length, 0,
+    "the two origins reserve the same questions, so this test proves nothing"
+  )
+
+  // pickPractice takes the origin too - it is the last trailing optional, after
+  // `random`, so a caller that passes neither still gets Fermi's schedule.
+  const picked = Model.pickPractice(bank, Model.emptyState(), [], today, () => 0, OTHER)
+  assert.ok(picked && !due.has(picked.id), "the picked question is due on this game's own schedule")
+}
+
 // --- Historical Dates: the date engine ------------------------------------
 //
 // The first game that does not score on log distance, so none of the

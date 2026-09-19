@@ -106,12 +106,16 @@ var GAMES = [
     // Crossword Clues, names a different one here.
     rootId: "game-screen",
 
-    // The two things that belong to Fermi Questions rather than to the engine,
-    // each hidden on any game that does not claim it.
+    // Two optional parts of the screen, each hidden on any game that does not
+    // claim it.
     //
-    // practice: the practice pool is drawn from this bank.
+    // practice: this game offers a practice pool, drawn from its own bank and
+    //           reserved off its own scheduleOrigin. Every live game has one.
+    //           It was Fermi's alone for as long as Fermi was the only bank
+    //           big enough for a year's reserve to leave anything over.
     // suggest:  submissions land in one D1 table with no game column, so a
     //           suggestion made from another game would arrive unattributable.
+    //           This one really is Fermi's alone.
     practice: true,
     suggest: true,
 
@@ -162,9 +166,11 @@ var GAMES = [
 
     rootId: "game-screen",
 
-    // No practice pool and no suggestion form - see Fermi's entry for why
-    // each of those belongs to Fermi rather than to the engine.
-    practice: false,
+    // A practice pool of its own, drawn from this bank and reserved off this
+    // game's own schedule origin. No suggestion form: submissions land in one
+    // D1 table with no game column, so a suggestion made here would arrive
+    // unattributable - see Fermi's entry.
+    practice: true,
     suggest: false,
 
     // Named in the daily reminder alongside Fermi. It was left out while the
@@ -197,9 +203,12 @@ var GAMES = [
     // question's precision rather than from a second copy of the markup.
     rootId: "game-screen",
 
-    // No practice pool and no suggestion form, for the reasons in Fermi's
-    // entry. Named in the daily reminder alongside the other two live games.
-    practice: false,
+    // A practice pool of its own, which on this game means the practice card
+    // has to offer the same three answer controls the daily does - a question
+    // dated to the day wants a date, everything else wants a year and an era.
+    // No suggestion form, for the reason in Fermi's entry. Named in the daily
+    // reminder alongside the other two live games.
+    practice: true,
     suggest: false,
     reminder: true
   },
