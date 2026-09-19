@@ -340,7 +340,195 @@ records-largest-recorded-swarm-of-bees | FIXED | 60000 -> 25000 (a healthy prime
 
 ## Status after the risk-targeted pass
 
-All 173 questions flagged as risky have been checked. 353 of 463 verified
-against a source. The 110 that remain unchecked all scored zero on the risk
-model: they are historical records pinned to a dated event, held by a
-certifying body, or both - the categories that have produced almost no errors.
+All 173 questions flagged as risky have been checked. The count of how many
+questions that left unchecked is corrected in the section below; the number
+first written here was arrived at by subtraction and was wrong.
+
+## Second pass: the questions the risk model scored at zero
+
+The closing note below this section used to say 110 questions were unchecked.
+That was wrong: the log held 309 ids, four of which named questions since
+removed, so 158 of the 463 had never been checked at all. The count came from
+subtracting a remembered figure rather than from reading the file. It has been
+recounted here rather than trusted.
+
+All 158 are now checked. Ten corrections, listed first.
+
+records-saturn-moons | FIXED | 285 -> 293; 285 was the count after the March 2026 additions, 293 confirmed since June 2026 (IAU MPC)
+records-longest-solar-eclipse | FIXED-SOURCE | 428s is the 20 June 1955 eclipse (7m07.74s); the source named 30 June 1973, which ran 7m03.5s
+records-strongest-material | FIXED-SOURCE | 63 GPa is Yu et al., Science 2000 (Washington University in St Louis), not Singapore
+records-fastest-atlantic-ship-crossing | FIXED | 82h is the SS United States in 1952; the fastest ever is Destriero, 58h34m50s in 1992, which is what asOf already said
+records-fastest-atlantic-ship-crossing | FIXED-SOURCE | Destriero was refused the Hales Trophy for being a private yacht, so that body could never have certified it
+records-most-species-named-by-one-person | FIXED | 2500 -> 12000; Linnaeus described roughly 7700 plants and 4400 animals
+records-most-species-named-by-one-person | FIXED-PROMPT | now names Linnaeus rather than claiming "most prolific taxonomist", which is contested and probably belongs to Francis Walker
+records-longest-rover-mission | FIXED-ASOF | 2018 -> 2019; 5352 sols runs to the end-of-mission declaration in Feb 2019, not to last contact in June 2018
+records-largest-telescope-baseline | FIXED-PROMPT | now says "on Earth"; space VLBI has reached baselines of hundreds of thousands of km and has produced images
+records-fastest-supercomputer | OK | 2.198 exaflops, LineShine, Shenzhen, June 2026 TOP500 - checked because a current claim on a movable title is the riskiest kind
+
+records-largest-prime-digits | OK | 41024320 digits, M136279841, Oct 2024
+records-most-pi-digits | OK | 202 trillion digits, StorageReview, June 2024
+records-largest-impact-crater | OK | Vredefort, 250-300 km original diameter
+records-longest-submarine-cable | OK | 2Africa, ~45000 km
+records-heaviest-seed | OK | coco de mer, up to ~25 kg
+records-black-hole-m87-mass | OK | 6.5e9 solar masses, EHT 2019
+records-largest-galaxy | OK | Alcyoneus, 16.3 million ly across (radio lobes), 2022
+records-largest-cosmic-structure | OK | Sloan Great Wall, ~1.37 billion ly; the prompt says "confirmed", which is what excludes the disputed Hercules-Corona Borealis wall
+records-largest-volcano-base | OK | Olympus Mons, ~600 km base
+records-longest-planetary-day | OK | Venus, 243.02 Earth days = 5832 hours
+records-largest-radio-dish | OK | FAST, 500 m
+records-most-satellites-one-launch | OK | Transporter-1, 143, Jan 2021
+records-continuous-human-presence-in-space | OK | ISS continuously crewed since 2 Nov 2000, ~9400 days by 2026
+records-longest-lunar-eclipse | OK | 27 July 2018, 103 minutes of totality
+records-most-moons-found-at-once | OK | 128 Saturnian moons, March 2025
+records-highest-jet-altitude | OK | 37650 m, Fedotov, MiG-25, 1977
+records-largest-optical-mirror | OK | GTC, 10.4 m segmented; the prompt says "in operation", which is what separates it from planned ones
+records-largest-lake-by-volume | OK | Baikal, 23615 km3; the prompt says fresh water, which is what excludes the Caspian
+records-greatest-river-discharge | OK | Amazon, ~209000 m3/s
+records-greatest-waterfall-flow | OK | Inga Falls, ~25768 m3/s
+records-highest-waterfall | OK | Angel Falls, 979 m
+records-longest-glacier | OK | Lambert, ~400 km
+records-thickest-ice | OK | 4776 m, Astrolabe Subglacial Basin
+records-largest-hailstone-diameter | OK | 20.3 cm, Vivian South Dakota, 2010
+records-largest-volcanic-eruption | OK | Toba, ~2800 km3 dense rock equivalent
+records-largest-coral-reef | OK | Great Barrier Reef, 344400 km2
+records-oldest-ice-core | OK | Beyond EPICA, 1.2 million years, 2025
+records-longest-animal | OK | bootlace worm, ~55 m
+records-most-teeth | OK | garden snail radula, ~25000
+records-largest-eye | OK | colossal squid, ~27 cm
+records-largest-jellyfish | OK | lion's mane, 36.6 m including tentacles
+records-heaviest-organism | OK | Pando aspen clone, ~6000 tonnes
+records-smallest-flowering-plant | OK | Wolffia, 0.6 mm
+records-largest-reservoir | OK | Kariba, 180 km3
+records-largest-power-station | OK | Three Gorges, 22500 MW
+records-largest-battery-storage | OK | Moss Landing, 3000 MWh
+records-largest-land-vehicle | OK | Bagger 293, 14200 tonnes
+records-heaviest-aircraft | OK | An-225, 640 tonnes maximum take-off weight
+records-largest-cruise-ship | OK | Icon of the Seas, 248663 GT, 2024
+records-largest-building-by-volume | OK | Boeing Everett, 13.3 million m3
+records-largest-airport-area | OK | King Fahd International, 776 km2
+records-oldest-company | OK | Kongo Gumi founded 578, so 1446 years in 2024
+records-canal-excavation-volume | OK | Panama, ~205 million m3 total
+records-longest-glider-flight | OK | Ohlmann, 3009 km, Jan 2003
+records-longest-balloon-flight | OK | Fossett and Branson, Pacific, 7672 km, 1991
+records-human-powered-flight | OK | Daedalus, 115.11 km, April 1988
+records-fastest-sailing-speed | OK | Vestas Sailrocket 2, 65.45 knots = 121.2 km/h
+records-fastest-freefall | OK | Baumgartner, 1357.6 km/h, 2012
+records-fastest-bicycle-speed | OK | Mueller-Korenek, 296 km/h, 2018
+records-fastest-skiing-speed | OK | Origone, 254.958 km/h, 2016
+records-longest-ski-jump | OK | Kraft, 253.5 m, Vikersund 2017
+records-farthest-wingsuit-flight | OK | 32.094 km, 2017
+records-longest-glider-endurance | OK | Atger, 56h15m, 1952
+records-longest-six-day-run | OK | Kouros, 1036.8 km, set 1984 and still standing in 2005
+records-longest-48-hour-run | OK | Kouros, 473.5 km, 1996
+records-greatest-fall-survived | OK | Vesna Vulovic, 10160 m, 1972
+records-fastest-sailing-circumnavigation | OK | Joyon, IDEC Sport, 40d23h30m, 2017
+records-longest-solo-sailing-voyage | OK | Knox-Johnston, 312 days, 1969
+records-coldest-temperature-achieved | OK | 38 picokelvin, Bremen drop tower, 2021
+records-best-vacuum | OK | ~1e-11 Pa extreme high vacuum
+records-shortest-time-measured | OK | 247 zeptoseconds, Goethe University, 2020
+records-shortest-laser-pulse | OK | 43 attoseconds, ETH Zurich, 2017
+records-strongest-pulsed-magnetic-field | OK | 1200 T, destructive, University of Tokyo, 2018
+records-heaviest-magnet | OK | CMS solenoid, 12500 tonnes
+records-highest-resolution-camera | OK | LSST camera, 3200 megapixels
+records-most-transistors | OK | Cerebras WSE-3, 4 trillion, 2024
+records-densest-data-storage | OK | 215 petabytes per gram of DNA, 2017
+records-oldest-cave-painting | OK | Sulawesi, 51200 years, Nature 2024
+records-oldest-musical-instrument | OK | Geissenkloesterle flutes, ~42000 years
+records-oldest-writing | OK | Uruk tablets, ~3400-3200 BC
+records-oldest-monument | OK | Goebekli Tepe, ~9600 BC
+records-oldest-board-game | OK | Royal Game of Ur, ~2600 BC
+records-oldest-printed-book | OK | Diamond Sutra, 868 AD, so 1157 years in 2025
+records-oldest-shipwreck | OK | Uluburun, ~1300 BC
+records-oldest-surviving-composition | OK | Hurrian Hymn no. 6, ~1400 BC
+records-blocks-in-the-great-pyramid | OK | ~2.3 million, the standard estimate
+records-largest-pyramid-by-volume | OK | Cholula, 4.45 million m3
+records-longest-wall | OK | 21196.18 km, 2012 Chinese state survey
+records-oldest-tattoos | OK | Oetzi, ~5300 years
+records-highest-grossing-film | OK | Avatar, $2.92bn
+records-most-expensive-manuscript | OK | Codex Leicester, $30.8m, 1994
+records-fastest-inflation | OK | Hungary 1946, prices doubling every 15 hours
+records-oldest-inhabited-city | OK | Jericho, ~11000 years
+records-heaviest-bird | OK | Vorombe titan, ~650 kg; the prompt says "ever lived", which is what excludes the ostrich
+records-smallest-fish | OK | Paedocypris progenetica, 7.9 mm
+records-smallest-reptile | OK | Brookesia nana, 21.6 mm total length
+records-fastest-animal-movement | OK | trap-jaw ant mandibles, ~0.13 ms
+records-greatest-animal-acceleration | OK | mantis shrimp strike, ~10400 g
+records-highest-jumper-for-its-size | OK | ~115 body lengths
+records-deepest-reptile-dive | OK | leatherback turtle, 1280 m
+records-oldest-animal-fossil | OK | 890 million years, sponge-like, Nature 2021 (contested but published)
+records-oldest-germinated-seed | OK | Silene stenophylla, 32000 years, 2012
+records-heaviest-fruit | OK | pumpkin, 1247 kg, Gienger 2023
+records-tallest-cactus | OK | Pachycereus pringlei, 19.2 m
+records-shortest-exoplanet-year | OK | ~4.25 hours
+records-fastest-rotating-asteroid | OK | 2010 JL88, 24.5 s
+records-loudest-sound-heard-distance | OK | Krakatoa heard at Rodrigues, 4800 km
+records-largest-ozone-hole | OK | 29.9 million km2, September 2000
+records-largest-salt-flat | OK | Salar de Uyuni, 10582 km2
+records-largest-mangrove-forest | OK | Sundarbans, ~10000 km2
+records-heaviest-stone-moved | OK | Thunder Stone, ~1500 tonnes, moved 1770
+records-most-exoplanets-known | OK | ~5900 confirmed, 2025
+records-hottest-exoplanet | OK | KELT-9b, ~4600 K dayside
+records-highest-wave-measured-at-sea | OK | 19 m buoy measurement, North Atlantic, Feb 2013, WMO
+records-largest-oil-spill | OK | Gulf War 1991, ~1.5 million tonnes
+records-tallest-chimney | OK | GRES-2 Ekibastuz, 419.7 m
+records-longest-airliner-glide | OK | Air Transat 236, ~120 km
+records-fastest-crewed-aircraft | OK | X-15, 7274 km/h, 1967
+records-longest-aircraft-flight-distance | OK | Rutan Voyager, 40212 km, 1986
+records-largest-submarine | OK | Typhoon class, 48000 tonnes submerged
+records-largest-mining-truck-payload | OK | BelAZ 75710, 450 tonnes
+records-largest-pipe-organ | OK | Boardwalk Hall, 33112 pipes
+records-longest-tapestry | OK | Bayeux, 68.38 m
+records-largest-carbon-capture-plant | OK | Mammoth, Iceland, 36000 t/yr capacity
+records-largest-geomagnetic-storm | OK | Carrington 1859, Dst estimated around -850 nT
+records-deepest-earthquake | OK | Bonin Islands 2015, 751 km
+records-lunar-craters-counted | OK | ~1.3 million craters over 1 km catalogued
+records-chicxulub-impact-energy | OK | ~1e23 J, within the published range
+records-largest-ring-system | OK | Saturn's Phoebe ring, ~13 million km across, 2009
+records-coldest-place-solar-system | OK | ~25 K, lunar polar crater floors, LRO 2009
+records-coldest-place-in-universe | OK | Boomerang Nebula, ~1 K
+records-highest-rocket-plane-altitude | OK | X-15 flight 91, 107960 m, 1963
+records-largest-typhoon | OK | Tip, 2220 km diameter, 1979
+records-oldest-impact-crater | OK | Yarrabubba, 2.229 billion years, 2020
+records-most-lightning-per-year | OK | Lake Maracaibo, ~297 nights
+records-longest-animal-fast | OK | male emperor penguin, ~120 days
+records-smallest-genome | OK | Carsonella ruddii, 159662 base pairs
+records-largest-bird-nest | OK | bald eagle nest, ~2700 kg, St Petersburg Florida, 1963
+records-oldest-wild-bird | OK | Wisdom the Laysan albatross, ~74
+records-fastest-plant-movement | OK | bunchberry dogwood, 0.5 ms
+records-fastest-motorcycle | OK | Top Oil-Ack Attack, 605.697 km/h, 2010
+records-fastest-100km-run | OK | Nao Kazami, 6h09m14s, 2018
+records-largest-planned-telescope | OK | ELT primary, 798 segments
+records-oldest-human-footprints | OK | White Sands, 21000-23000 years
+records-oldest-university | OK | al-Qarawiyyin, founded 859
+records-oldest-parliament | OK | Althing, 930
+records-oldest-star-map | OK | Nebra sky disc, ~1600 BC
+records-most-expensive-watch | OK | Patek Philippe Grandmaster Chime, $31.19m, 2019
+records-most-expensive-violin | OK | Lady Blunt Stradivarius, $15.9m, 2011
+records-longest-flight-by-a-model-aircraft | OK | TAM-5, transatlantic, 3030 km, 2003
+records-fastest-passenger-aircraft | OK | Concorde, Mach 2.04 = 2179 km/h
+records-most-digits-memorised | OK | Rajveer Meena, 70030 digits, 2015
+records-most-languages-spoken-by-one-person | OK | Mezzofanti, credited with up to 59
+records-largest-recorded-tide-range | OK | Bay of Fundy, 16.3 m
+records-most-powerful-recorded-solar-flare | OK | X45, 4 Nov 2003, 4.5e-3 W/m2
+records-largest-recorded-aurora-extent | OK | Carrington aurora seen to ~23 degrees geomagnetic latitude
+records-largest-recorded-fish-catch | OK | Peruvian anchoveta, 13 million tonnes, 1970
+records-largest-recorded-crop-yield | OK | wheat, ~17.96 t/ha, 2022
+records-loudest-recorded-volcanic-eruption-pressure | OK | Krakatoa pressure wave, ~2100 Pa at Batavia
+records-largest-museum-visitor-count | OK | Louvre, 10.2 million visitors in 2018
+
+## Status after the second pass
+
+All 463 questions in the bank have now been checked against a source.
+
+The risk model held up. Of the 158 questions it scored at zero, ten needed a
+correction and only two of those changed an answer a player would be scored
+against - the Atlantic crossing, which quoted a 1952 liner as the fastest ever
+crossing, and Linnaeus, who was out by a factor of five. The rest were sources
+naming the wrong thing, or prompts claiming a title somebody else could argue
+for.
+
+Both real errors were the same pattern the first pass kept finding: a number
+that belonged to something adjacent to the thing being asked about. 82 hours is
+a real crossing time, by the wrong ship. The lesson is that a figure being
+plausible, well-sourced and about the right subject still does not mean it
+answers the question printed above it.

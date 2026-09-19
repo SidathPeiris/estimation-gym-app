@@ -117,20 +117,20 @@ for (const q of RECORDS) {
 // The 49 that were live before the extension are the first 49 entries and
 // their order is unchanged - which is what made the rest of the bank safe to
 // edit, cull and rewrite right up until this line was changed.
-// Deliberately still 365 while the bank holds 465.
+// The whole bank, since September 2026.
 //
-// The pin covers ids, not values, so a wrong answer inside it can always be
-// corrected - only reordering and removal are blocked. That is the right
-// trade for days already promised, but the hundred added most recently have
-// not been verified yet, and verification has twice found a question that had
-// to be removed outright rather than repriced.
+// It sat at 365 while the tail was unverified, because the pin blocks removal
+// as well as reordering and verification had twice turned up a question that
+// had to come out rather than be repriced. Every question in the bank has now
+// been checked against a source - see VERIFICATION.md - so the reason for
+// holding the span short has gone.
 //
-// Those hundred are not served until September 2027, so there is a year to
-// check them and extend this number. Until then they stay editable, which is
-// the whole reason the pin is a number rather than "all of it".
-const SCHEDULED_SPAN = 365
+// The pin still covers ids and not values, so a wrong answer found later can
+// always be corrected in place. Only reordering and removal are blocked, and
+// both of those re-date questions that people have already been promised.
+const SCHEDULED_SPAN = 463
 const SCHEDULE_FINGERPRINT =
-  "850121691a459f9b7e79c10c8e792ab856a678db821f00c9f011bbaf249abfe8"
+  "df138aec3753f3df78521dd36cec11c2a6f8f380ed8c5205d21a06d826d4d414"
 
 assert.ok(
   RECORDS.length >= SCHEDULED_SPAN,

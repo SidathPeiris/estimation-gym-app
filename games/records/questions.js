@@ -66,10 +66,10 @@ var RECORDS = [
     "id": "records-saturn-moons",
     "prompt": "How many confirmed moons does Saturn have?",
     "unit": "moons",
-    "answerValue": 285,
+    "answerValue": 293,
     "decompositionHint": "Almost all of them are irregular captures a few kilometres across, found in survey batches rather than one at a time, so the count jumps.",
     "strategy": "recall-sanity",
-    "source": "International Astronomical Union Minor Planet Center",
+    "source": "International Astronomical Union Minor Planet Center, June 2026",
     "asOf": 2026
   },
   {
@@ -799,7 +799,7 @@ var RECORDS = [
     "answerValue": 428,
     "decompositionHint": "The Moon's shadow races across the ground at about 1,700 km/h, and its dark core is only a couple of hundred kilometres wide at best.",
     "strategy": "rate-time",
-    "source": "NASA eclipse catalogue for the 30 June 1973 total solar eclipse",
+    "source": "NASA five millennium canon of solar eclipses, 20 June 1955",
     "asOf": 1973
   },
   {
@@ -2259,7 +2259,7 @@ var RECORDS = [
     "answerValue": 63000000000,
     "decompositionHint": "A carbon nanotube, where the bonds are being tested directly with no flaws to start a crack. Structural steel manages about 400 million.",
     "strategy": "anchor-scale",
-    "source": "Published nanotube tensile testing, National University of Singapore",
+    "source": "Yu et al., Science 2000, multi-walled carbon nanotube tensile testing",
     "asOf": 2025
   },
   {
@@ -3074,7 +3074,7 @@ var RECORDS = [
   },
   {
     "id": "records-largest-telescope-baseline",
-    "prompt": "How many kilometres apart were the most widely separated telescopes ever combined into one image?",
+    "prompt": "How many kilometres apart were the most widely separated telescopes on Earth ever combined into one image?",
     "unit": "kilometres",
     "answerValue": 10700,
     "decompositionHint": "Dishes on several continents observing together, so the effective aperture is limited by the size of the planet itself.",
@@ -3426,10 +3426,10 @@ var RECORDS = [
     "id": "records-fastest-atlantic-ship-crossing",
     "prompt": "How many hours did the fastest ever ship crossing of the Atlantic take?",
     "unit": "hours",
-    "answerValue": 82,
+    "answerValue": 58.6,
     "decompositionHint": "The route is about 5,300 km, so divide that by a plausible sustained speed for a fast ocean liner or powerboat.",
     "strategy": "rate-time",
-    "source": "Hales Trophy records, Blue Riband of the Atlantic",
+    "source": "Virgin Atlantic Challenge Trophy and Columbus Atlantic Trophy, Destriero 1992",
     "asOf": 1992
   },
   {
@@ -3749,8 +3749,8 @@ var RECORDS = [
     "answerValue": 5352,
     "decompositionHint": "Designed for ninety days and killed in the end by a dust storm coating its solar panels. That is roughly fifteen Earth years.",
     "strategy": "unit-conversion",
-    "source": "NASA Jet Propulsion Laboratory Opportunity mission records",
-    "asOf": 2018
+    "source": "NASA Jet Propulsion Laboratory Opportunity end-of-mission record",
+    "asOf": 2019
   },
   {
     "id": "records-largest-ring-system",
@@ -4604,9 +4604,9 @@ var RECORDS = [
   },
   {
     "id": "records-most-species-named-by-one-person",
-    "prompt": "How many species did the most prolific taxonomist formally describe?",
+    "prompt": "How many species did Carl Linnaeus formally describe?",
     "unit": "species",
-    "answerValue": 2500,
+    "answerValue": 12000,
     "decompositionHint": "The founder of modern naming conventions, working through a career of about fifty years. Divide to check the rate sounds achievable.",
     "strategy": "rate-time",
     "source": "International Plant Names Index attribution records for Carl Linnaeus",
