@@ -576,4 +576,212 @@ assert.equal(Model.historyDays(withId)[0].entry.questionId, "piano-tuners-chicag
   )
   assert.equal(Model.questionForDay(midReturns, bank).id, mid)
 }
+// --- Historical Dates: the date engine ------------------------------------
+//
+// The first game that does not score on log distance, so none of the
+// assertions above cover any of this.
+
+// The tolerance table is the game's design, so it is pinned rather than
+// described. Changing a number here changes how every question in the bank
+// plays, which is a decision and should read like one in a diff.
+assert.deepEqual(
+  Object.keys(Model.PRECISIONS).sort(),
+  ["century", "day", "decade", "year"],
+  "a precision was added or removed - every question in the bank declares one"
+)
+assert.deepEqual(Model.PRECISIONS.day.bands, [3, 31, 366])
+assert.deepEqual(Model.PRECISIONS.year.bands, [2, 10, 50])
+assert.deepEqual(Model.PRECISIONS.decade.bands, [10, 50, 250])
+assert.deepEqual(Model.PRECISIONS.century.bands, [50, 250, 1000])
+
+// Every precision must widen on the one before it. A table where "decade" was
+// stricter than "year" would silently punish the questions whose sources are
+// least certain, which is the opposite of the point.
+{
+  const order = ["year", "decade", "century"]
+  for (let i = 1; i < order.length; i++) {
+    const tighter = Model.PRECISIONS[order[i - 1]].bands
+    const looser = Model.PRECISIONS[order[i]].bands
+    for (let b = 0; b < 3; b++) {
+      assert.ok(
+        looser[b] > tighter[b],
+        `${order[i]} band ${b} (${looser[b]}) is not wider than ${order[i - 1]} (${tighter[b]})`
+      )
+    }
+  }
+}
+
+// Why this engine exists at all: log distance cannot tell two adjacent years
+// apart. If this ever stops being true the date game can go back to
+// scoreGuess, and until then it cannot.
+assert.ok(
+  Model.log10Distance(1970, 1969) < 0.3,
+  "1969 and 1970 are no longer a Bullseye apart on the log scale"
+)
+assert.equal(
+  Model.bandForDistance(Model.log10Distance(1970, 1969)), "Bullseye",
+  "the log engine would score a year-out guess as a Bullseye, which is the " +
+  "whole reason Historical Dates has its own scoring"
+)
+
+// --- years ---------------------------------------------------------------
+
+// There is no year zero: 1 BC is followed directly by AD 1. Stored the way a
+// historian writes it, so the span across the boundary is one year and not two.
+assert.equal(Model.yearsBetween(-1, 1), 1, "1 BC to AD 1 must be one year")
+assert.equal(Model.yearsBetween(-1, -1), 0)
+assert.equal(Model.yearsBetween(-753, -700), 53)
+assert.equal(Model.yearsBetween(1989, 1989), 0)
+assert.equal(Model.yearsBetween(2000, 1900), 100)
+
+// Symmetric, and unbothered by which side is later.
+assert.equal(Model.yearsBetween(-44, 476), Model.yearsBetween(476, -44))
+
+// Nothing usable in, nothing claimed out.
+for (const bad of [null, undefined, NaN, Infinity, "1989"]) {
+  assert.equal(Model.yearsBetween(bad, 1989), null, `yearsBetween accepted ${String(bad)}`)
+}
+
+// A year-precision question, played the way it would actually be played. 1989
+// is the worked example in the PRECISIONS comment, so it is the one pinned.
+{
+  const q = { precision: "year", answerYear: 1989 }
+  const band = (guess) => Model.scoreDate(guess, q, false).band
+  assert.equal(band(1989), "Bullseye")
+  assert.equal(band(1987), "Bullseye", "two years out is still a Bullseye")
+  assert.equal(band(1991), "Bullseye")
+  assert.equal(band(1986), "Close", "three years out has left the Bullseye")
+  assert.equal(band(1979), "Close", "ten years out is the edge of Close")
+  assert.equal(band(1978), "Ballpark")
+  assert.equal(band(1939), "Ballpark", "fifty years out is the edge of Ballpark")
+  assert.equal(band(1938), "Off")
+  assert.equal(band(1066), "Off")
+}
+
+// The same guess against a question whose source is vaguer. Being twenty years
+// out on a date nobody can place to the decade is a real answer, and the table
+// is what says so.
+{
+  const vague = { precision: "century", answerYear: -2560 }
+  assert.equal(Model.scoreDate(-2600, vague, false).band, "Bullseye")
+  assert.equal(Model.scoreDate(-2400, vague, false).band, "Close")
+  assert.equal(Model.scoreDate(-2000, vague, false).band, "Ballpark")
+  assert.equal(Model.scoreDate(-1000, vague, false).band, "Off")
+
+  const precise = { precision: "year", answerYear: -2560 }
+  assert.equal(
+    Model.scoreDate(-2600, precise, false).band, "Ballpark",
+    "the same forty-year miss must be scored differently by the two precisions"
+  )
+}
+
+// --- dates ---------------------------------------------------------------
+
+assert.equal(Model.dayNumberForDate("2024-01-01"), 0, "the epoch is 2024-01-01")
+assert.equal(Model.dayNumberForDate("2024-01-02"), 1)
+assert.equal(Model.dayNumberForDate("2023-12-31"), -1)
+
+// A two-digit year is a real year, not 1969. Date.UTC would have moved every
+// question about antiquity forward by nineteen centuries.
+assert.equal(
+  Model.dayNumberForDate("0079-08-24") < Model.dayNumberForDate("1000-01-01"), true,
+  "a year in the seventies AD was read as the 1970s"
+)
+
+// A date that never existed is rejected rather than rounded into the next
+// month, which is what a bare Date would do with it.
+for (const bad of ["1969-02-30", "1969-13-01", "1969-00-10", "1969-07-32",
+                   "1969-7-20", "20-07-1969", "", null, undefined, "yesterday"]) {
+  assert.equal(Model.dayNumberForDate(bad), null, `accepted "${String(bad)}" as a date`)
+}
+assert.equal(Model.dayNumberForDate("2024-02-29"), Model.dayNumberForDate("2024-02-29"))
+assert.ok(Model.dayNumberForDate("2024-02-29") !== null, "2024 was a leap year")
+assert.equal(Model.dayNumberForDate("2023-02-29"), null, "2023 was not a leap year")
+
+assert.equal(Model.daysBetween("1969-07-20", "1969-07-20"), 0)
+assert.equal(Model.daysBetween("1969-07-20", "1969-07-21"), 1)
+assert.equal(Model.daysBetween("1969-07-20", "1970-07-20"), 365)
+assert.equal(Model.daysBetween("1969-07-20", "not a date"), null)
+
+// A day-precision question. The bands are days, so a month out is Close and
+// the right year is Ballpark - including a guess exactly one year wrong, which
+// is the commonest way to be nearly right about a date.
+{
+  const q = { precision: "day", answerDate: "1969-07-20" }
+  const band = (guess) => Model.scoreDate(guess, q, false).band
+  assert.equal(band("1969-07-20"), "Bullseye")
+  assert.equal(band("1969-07-23"), "Bullseye", "three days out is still a Bullseye")
+  assert.equal(band("1969-07-24"), "Close")
+  assert.equal(band("1969-08-20"), "Close", "a month out is Close")
+  assert.equal(band("1969-01-01"), "Ballpark", "the right year is Ballpark")
+  assert.equal(band("1970-07-20"), "Ballpark", "exactly one year out is Ballpark")
+  assert.equal(band("1969-07-19"), "Bullseye", "a day early is as good as a day late")
+  // 366 rather than 365 so that a one-year miss across a leap year is scored
+  // the same as one that is not. The day after that is Off.
+  assert.equal(band("1970-07-21"), "Ballpark", "366 days is the edge of Ballpark")
+  assert.equal(band("1970-07-22"), "Off")
+  assert.equal(band("nonsense"), "Off", "an unparseable guess cannot score")
+}
+
+// --- the shape the rest of the app reads ----------------------------------
+//
+// scoreDate has to hand back what scoreGuess hands back, or the streak rule,
+// the stats, the share card and the D1 distribution all need to know which
+// game they are looking at.
+{
+  const r = Model.scoreDate(1989, { precision: "year", answerYear: 1989 }, false)
+  assert.deepEqual(
+    Object.keys(r).sort(), ["assisted", "band", "error", "points", "unit"],
+    "scoreDate changed shape - resultView and recordAnswer both read this"
+  )
+  assert.ok(Model.BANDS.includes(r.band), "scoreDate returned a band nothing else knows")
+  assert.equal(r.points, Model.BAND_POINTS.Bullseye)
+  assert.equal(
+    Model.scoreDate(1989, { precision: "year", answerYear: 1989 }, true).points,
+    Math.round(Model.BAND_POINTS.Bullseye * Model.HINT_MULTIPLIER),
+    "a hint must halve a date's points exactly as it halves a quantity's"
+  )
+  assert.equal(
+    Model.extendsStreak({ band: "Ballpark" }), true,
+    "the streak rule is shared - a date result keeps a run alive on the same terms"
+  )
+  assert.equal(Model.extendsStreak({ band: "Off" }), false)
+}
+
+// An unknown precision must not silently become a free hundred points.
+assert.equal(Model.scoreDate(1989, { precision: "millennium", answerYear: 1989 }, false).band, "Off")
+assert.equal(Model.scoreDate(1989, {}, false).band, "Off")
+assert.equal(Model.bandForDateError(0, "nonsense"), "Off")
+
+// --- how a date reads on screen -------------------------------------------
+
+assert.equal(Model.formatYear(1989), "1989")
+assert.equal(Model.formatYear(-753), "753 BC")
+assert.equal(Model.formatYear(1), "1")
+assert.equal(Model.formatYear(null), "")
+
+// formatAsOf is the same rule under the name the "as of" line uses. One copy,
+// so the two cannot come to disagree about how 250 BC is written.
+assert.equal(Model.formatAsOf(-250), "250 BC")
+assert.equal(Model.formatAsOf(-250), Model.formatYear(-250))
+assert.equal(Model.formatAsOf(2026), Model.formatYear(2026))
+
+// The month is spelled out: 7/20 and 20/7 are the same four characters to two
+// different halves of the world.
+assert.equal(Model.formatFullDate("1969-07-20"), "20 July 1969")
+assert.equal(Model.formatFullDate("1969-02-30"), "", "an impossible date must not render")
+assert.equal(Model.formatFullDate("0079-08-24"), "24 August 79")
+
+assert.equal(Model.inputForPrecision("day"), "date")
+assert.equal(Model.inputForPrecision("year"), "year")
+assert.equal(Model.inputForPrecision("century"), "year")
+assert.equal(Model.inputForPrecision("who knows"), "year", "an unknown precision must still be answerable")
+
+assert.equal(Model.answerForQuestion({ precision: "day", answerDate: "1969-07-20" }), "1969-07-20")
+assert.equal(Model.answerForQuestion({ precision: "year", answerYear: 1989 }), 1989)
+assert.equal(Model.formatAnswer({ precision: "day", answerDate: "1969-07-20" }), "20 July 1969")
+assert.equal(Model.formatAnswer({ precision: "century", answerYear: -2560 }), "2560 BC")
+
+console.log("date engine       -> years, dates, four precisions, same four bands")
+
 console.log("All Model.js tests passed.")

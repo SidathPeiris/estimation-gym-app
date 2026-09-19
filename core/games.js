@@ -28,6 +28,20 @@ var ENGINES = {
     // Scored by Model.scoreGuess: distance in powers of ten, four bands,
     // 100/70/40/10 points, halved when a hint was taken.
     scoring: "bands"
+  },
+
+  // Historical Dates. Same four bands and the same points, so a result card, a
+  // streak and a share line all read the same as the other two games - but the
+  // distance underneath is absolute rather than logarithmic.
+  //
+  // It has to be. 1969 and 1970 are a thousandth of a decade apart, so the
+  // numeric-log engine would hand a hundred points to any guess in the right
+  // century. Model.scoreDate measures years, or days on a question whose
+  // source pins it to the day, and Model.PRECISIONS is where each question
+  // says which of those it is and how much of a miss is forgivable.
+  date: {
+    label: "Place it in time",
+    scoring: "bands"
   }
 }
 
@@ -159,7 +173,15 @@ var GAMES = [
     name: "Historical Dates",
     tagline: "When did it happen? Scored on how close you get.",
     status: "coming-soon",
-    icon: "landmark"
+    icon: "landmark",
+
+    // Declared before the game is playable, which is the one field a
+    // coming-soon entry may carry beyond its name: everything else here would
+    // be a promise that nothing can honour yet, and games.test.js says so.
+    // The engine is different - it names a scoring model that already exists
+    // and is already tested, so declaring it costs nothing and makes the
+    // registry the place that records what this game will be.
+    engine: "date"
   },
   {
     id: "crossword",

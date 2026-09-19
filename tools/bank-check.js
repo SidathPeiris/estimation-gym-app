@@ -17,6 +17,15 @@
 
 const CURRENT_YEAR = new Date().getFullYear()
 
+// The default shape: a question whose answer is a quantity. Fermi Questions
+// and World Records both use it. Historical Dates does not - its answer is a
+// point on the calendar, with no unit and nothing to take a logarithm of - so
+// a bank may pass its own pair instead.
+//
+// What stays shared either way is everything that is not about the answer: id
+// uniqueness and namespacing, the hint floor, the source, plain text, and
+// near-duplicate detection. Those are the rules that took three banks to get
+// right and there is no version of a question that should escape them.
 const REQUIRED = ["id", "prompt", "unit", "answerValue", "decompositionHint", "strategy", "source"]
 const OPTIONAL = ["asOf"]
 
@@ -28,10 +37,11 @@ const STOP = new Set(["how", "many", "much", "the", "a", "an", "are", "is", "the
                       "what", "roughly", "approximately", "about", "per", "you", "your",
                       "it", "take", "as", "single", "average", "typical"])
 
-function tokens(prompt) {
+function tokens(prompt, stop) {
+  const ignored = stop || STOP
   return new Set(
     prompt.toLowerCase().replace(/[^a-z0-9\s]/g, " ").split(/\s+/)
-      .filter((w) => w.length > 2 && !STOP.has(w))
+      .filter((w) => w.length > 2 && !ignored.has(w))
   )
 }
 
@@ -50,11 +60,22 @@ function jaccard(a, b) {
 //   idPrefix     string    every id must start with this ("" for Fermi)
 //   requireAsOf  boolean   asOf is mandatory rather than optional
 //   forbidden    [{pattern, why}]  text that must not appear anywhere
+//   required     string[]  fields every question must carry (default REQUIRED)
+//   optional     string[]  fields a question may carry (default OPTIONAL)
+//   answer       (q, fail) => void   checks whatever this bank calls an answer,
+//                          for a bank whose answer is not a positive number
+//   stopWords    string[]  extra tokens to ignore when comparing prompts. A
+//                          bank whose every prompt says "in what year" needs
+//                          these or it looks like one question 365 times.
 function checkBank(questions, options) {
   const opts = options || {}
   const strategies = opts.strategies || []
   const idPrefix = opts.idPrefix || ""
   const forbidden = opts.forbidden || []
+  const required = opts.required || REQUIRED
+  const optional = opts.optional || OPTIONAL
+  const numeric = required.includes("answerValue")
+  const stop = new Set([...STOP, ...(opts.stopWords || [])])
 
   const problems = []
   const fail = (id, message) => problems.push(`${id}: ${message}`)
@@ -63,13 +84,13 @@ function checkBank(questions, options) {
   for (const q of questions) {
     const id = q && q.id ? q.id : "(missing id)"
 
-    for (const field of REQUIRED) {
+    for (const field of required) {
       if (!(field in q)) { fail(id, `missing required field "${field}"`); continue }
       if (typeof q[field] === "string" && q[field].trim() === "") fail(id, `empty "${field}"`)
     }
 
     for (const field of Object.keys(q)) {
-      if (!REQUIRED.includes(field) && !OPTIONAL.includes(field)) fail(id, `unknown field "${field}"`)
+      if (!required.includes(field) && !optional.includes(field)) fail(id, `unknown field "${field}"`)
     }
 
     if (typeof q.id === "string") {
@@ -86,17 +107,22 @@ function checkBank(questions, options) {
       }
     }
 
-    if (typeof q.answerValue !== "number" || !isFinite(q.answerValue)) {
-      fail(id, "answerValue must be a finite number")
-    } else if (q.answerValue <= 0) {
-      // Scoring is log based, so a non-positive answer can never be scored.
-      fail(id, "answerValue must be positive")
-    } else if (q.answerValue < 1e-40 || q.answerValue > 1e100) {
-      // Loose enough for real physics at both ends - one fission event is
-      // 3.2e-11 joules, and the observable universe holds ~10^80 atoms - while
-      // still catching a stray exponent.
-      fail(id, `answerValue ${q.answerValue} is outside the plausible range`)
+    if (numeric) {
+      if (typeof q.answerValue !== "number" || !isFinite(q.answerValue)) {
+        fail(id, "answerValue must be a finite number")
+      } else if (q.answerValue <= 0) {
+        // Scoring is log based, so a non-positive answer can never be scored.
+        fail(id, "answerValue must be positive")
+      } else if (q.answerValue < 1e-40 || q.answerValue > 1e100) {
+        // Loose enough for real physics at both ends - one fission event is
+        // 3.2e-11 joules, and the observable universe holds ~10^80 atoms -
+        // while still catching a stray exponent.
+        fail(id, `answerValue ${q.answerValue} is outside the plausible range`)
+      }
     }
+
+    // Whatever this bank calls an answer, checked by the bank that knows.
+    if (opts.answer) opts.answer(q, (message) => fail(id, message))
 
     if ("asOf" in q) {
       if (!Number.isInteger(q.asOf)) fail(id, "asOf must be a whole year")
@@ -147,7 +173,7 @@ function checkBank(questions, options) {
   // --- near-duplicate prompts ---
   // Two prompts about the same quantity in different years are legitimate and
   // intended, so only flag overlap when the questions share a period.
-  const prepared = questions.map((q) => ({ id: q.id, asOf: q.asOf, tokens: tokens(q.prompt || "") }))
+  const prepared = questions.map((q) => ({ id: q.id, asOf: q.asOf, tokens: tokens(q.prompt || "", stop) }))
   for (let i = 0; i < prepared.length; i++) {
     for (let j = i + 1; j < prepared.length; j++) {
       if (prepared[i].asOf !== prepared[j].asOf) continue
@@ -158,25 +184,31 @@ function checkBank(questions, options) {
     }
   }
 
-  const magnitudes = questions
-    .map((q) => Math.floor(Math.log10(q.answerValue)))
-    .filter((m) => isFinite(m))
+  const magnitudes = numeric
+    ? questions.map((q) => Math.floor(Math.log10(q.answerValue))).filter((m) => isFinite(m))
+    : []
 
   return {
     problems,
+    numeric,
     dated: questions.filter((q) => "asOf" in q).length,
     magnitudes,
-    units: new Set(questions.map((q) => q.unit)).size
+    units: numeric ? new Set(questions.map((q) => q.unit)).size : 0
   }
 }
 
 // Every bank prints the same summary, so two banks are read the same way.
-function report(questions, result) {
+function report(questions, result, extra) {
   console.log(`questions:        ${questions.length}`)
-  console.log(`dated (asOf):     ${result.dated}`)
-  console.log(`timeless:         ${questions.length - result.dated}`)
-  console.log(`magnitude range:  10^${Math.min(...result.magnitudes)} .. 10^${Math.max(...result.magnitudes)}`)
-  console.log(`distinct units:   ${result.units}`)
+  if (result.numeric !== false) {
+    console.log(`dated (asOf):     ${result.dated}`)
+    console.log(`timeless:         ${questions.length - result.dated}`)
+    console.log(`magnitude range:  10^${Math.min(...result.magnitudes)} .. 10^${Math.max(...result.magnitudes)}`)
+    console.log(`distinct units:   ${result.units}`)
+  }
+  // A bank whose answers are not quantities has nothing to say about
+  // magnitudes or units, and its own summary to print instead.
+  for (const line of extra || []) console.log(line)
 
   if (result.problems.length) {
     console.error(`\n${result.problems.length} problem(s):`)

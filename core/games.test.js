@@ -111,6 +111,54 @@ for (const g of games) {
   )
 }
 
+// An entry in ENGINES is a claim that something can score this game. Until
+// now there was one engine and the claim was trivially true; there are two
+// now, and a third game naming an engine with no scorer behind it would route,
+// render and then fail at the moment a player pressed Go.
+{
+  const SCORERS = { "numeric-log": "scoreGuess", date: "scoreDate" }
+
+  for (const name of Object.keys(Games.ENGINES)) {
+    const scorer = SCORERS[name]
+    assert.ok(
+      scorer,
+      `ENGINES declares "${name}" but this test does not know what scores it - ` +
+      `add it here at the same time as adding the scorer to Model.js`
+    )
+    assert.equal(
+      typeof Model[scorer], "function",
+      `engine "${name}" is scored by Model.${scorer}, which does not exist`
+    )
+
+    // The brand rule, in the one place it can be checked: every game is scored
+    // out of 100, on the same four bands, with a hint costing half. A game
+    // that scored differently would not be a different game in this app, it
+    // would be a different app.
+    assert.equal(
+      Games.ENGINES[name].scoring, "bands",
+      `engine "${name}" does not score in bands - every game in this app is ` +
+      `scored out of 100 on the same four`
+    )
+    assert.ok(
+      Games.ENGINES[name].label && Games.ENGINES[name].label.trim(),
+      `engine "${name}" has no label`
+    )
+  }
+
+  // Both scorers must agree on what a hundred points looks like, and on what a
+  // hint costs. They are separate functions over different kinds of distance,
+  // which is exactly how two games end up scored out of different numbers.
+  const perfectQuantity = Model.scoreGuess(100, 100, false)
+  const perfectDate = Model.scoreDate(1989, { precision: "year", answerYear: 1989 }, false)
+  assert.equal(perfectDate.band, perfectQuantity.band)
+  assert.equal(perfectDate.points, perfectQuantity.points)
+  assert.equal(
+    Model.scoreDate(1989, { precision: "year", answerYear: 1989 }, true).points,
+    Model.scoreGuess(100, 100, true).points,
+    "a hint costs a different amount in the two engines"
+  )
+}
+
 // --- every live game's bank is reachable from app.js ----------------------
 //
 // The registry names a bank's global rather than holding the bank, so that

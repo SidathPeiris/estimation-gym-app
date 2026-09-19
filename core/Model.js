@@ -121,6 +121,194 @@ function scoreGuess(guess, answerValue, assisted) {
   }
 }
 
+// --- Historical Dates -----------------------------------------------------
+//
+// The third game, and the first that does not run on log distance.
+//
+// Fermi Questions and World Records both ask for a magnitude, where being out
+// by a factor of two is the same failure whether the answer is 40 or 40
+// billion. A date is not a magnitude. 1969 and 1970 are a thousandth of a
+// decade apart, so scoring a year the way those two games score a quantity
+// would hand out a hundred points for any guess in the right century.
+//
+// So the distance here is absolute - a number of years, or of days - and what
+// varies from question to question is how much of it is forgivable.
+
+// How precisely the answer is actually known, which is a fact about the
+// SOURCE rather than about the era.
+//
+// The Apollo 11 landing is known to the day. The fall of the Berlin Wall is
+// known to the day as well but asked to the year, because the year is the
+// part worth reasoning about. Rome's founding is given as 753 BC by
+// convention and is genuinely uncertain by centuries. Stonehenge's sarsen
+// circle is radiocarbon dated to within about a hundred years.
+//
+// A question that claimed more precision than its source supports would be
+// marking a correct answer wrong, so each one declares what it can defend and
+// the bands follow from that.
+//
+//   input  which control the player answers with, and therefore what the
+//          error is measured in: "date" scores in days, "year" in years.
+//   bands  the upper bound of Bullseye, Close and Ballpark, in that unit.
+//          Anything past the third is Off, exactly as bandForDistance works.
+var PRECISIONS = {
+  // Known to the day and asked that way. A month out is Close and the right
+  // year is Ballpark - which is also where a guess exactly one year wrong
+  // lands, deliberately, since that is the commonest way to be nearly right.
+  day: { input: "date", unit: "days", bands: [3, 31, 366] },
+
+  // A documented year. Two is tight enough that it cannot be reached by
+  // knowing only the decade, and loose enough to reward "the very end of the
+  // eighties" on a question whose answer is 1989.
+  year: { input: "year", unit: "years", bands: [2, 10, 50] },
+
+  // Sources place it within a decade or so: a reign, a war's beginning, a
+  // technology that arrived over several years rather than on a date.
+  decade: { input: "year", unit: "years", bands: [10, 50, 250] },
+
+  // Archaeological or traditional dating, uncertain by a century. The widest
+  // band is a millennium, which sounds absurd until you try to place the
+  // building of the Great Pyramid without already knowing the answer.
+  century: { input: "year", unit: "years", bands: [50, 250, 1000] }
+}
+
+// Years as historians write them, with no year zero: 1 BC is -1 and is
+// followed directly by AD 1. That is what the bank stores and what formatYear
+// renders, because "0 BC" is not a date anybody has ever written down.
+//
+// Arithmetic wants the other convention, where 1 BC is 0. Without this every
+// span crossing the boundary comes out a year too long - which only ever
+// pushes a guess into a worse band, so it would have been invisible.
+function astronomicalYear(year) {
+  return year < 0 ? year + 1 : year
+}
+
+function yearsBetween(a, b) {
+  if (typeof a !== "number" || typeof b !== "number") return null
+  if (!isFinite(a) || !isFinite(b)) return null
+  return Math.abs(astronomicalYear(a) - astronomicalYear(b))
+}
+
+var MONTHS_FULL = ["January", "February", "March", "April", "May", "June",
+                   "July", "August", "September", "October", "November", "December"]
+
+// "YYYY-MM-DD" to a day number on the same scale as dayIndex, so two dates can
+// simply be subtracted. Returns null for anything that is not a real date,
+// which makes this the validator as well as the parser.
+//
+// Parsed by hand rather than with Date.parse, for the reason formatDay and
+// formatCompact are hand-rolled: this file also has to run in a JS engine that
+// does not implement the whole of Date reliably.
+function dayNumberForDate(text) {
+  var raw = (text === undefined || text === null) ? "" : String(text)
+  var m = /^(\d{1,6})-(\d{2})-(\d{2})$/.exec(raw.trim())
+  if (!m) return null
+  var y = Number(m[1]), mo = Number(m[2]), d = Number(m[3])
+  if (mo < 1 || mo > 12 || d < 1 || d > 31) return null
+
+  // setUTCFullYear rather than Date.UTC, which maps a two-digit year into the
+  // 1900s and would quietly move every question about the first century.
+  var dt = new Date(0)
+  dt.setUTCFullYear(y, mo - 1, d)
+  dt.setUTCHours(0, 0, 0, 0)
+
+  // A date that does not survive the round trip never existed: 30 February
+  // becomes 2 March rather than failing, so a typo in the bank would be scored
+  // against a day nobody meant.
+  if (dt.getUTCFullYear() !== y) return null
+  if (dt.getUTCMonth() !== mo - 1) return null
+  if (dt.getUTCDate() !== d) return null
+
+  return Math.floor((dt.getTime() - EPOCH_MS) / DAY_MS)
+}
+
+function daysBetween(a, b) {
+  var x = dayNumberForDate(a), y = dayNumberForDate(b)
+  if (x === null || y === null) return null
+  return Math.abs(x - y)
+}
+
+// A year as it would be written down. Negative years are BCE, which is right
+// for arithmetic and wrong on screen: the Library of Alexandria question was
+// rendering as "as of -250" rather than "as of 250 BC".
+function formatYear(year) {
+  if (typeof year !== "number" || !isFinite(year)) return ""
+  return year < 0 ? Math.abs(year) + " BC" : String(year)
+}
+
+// "20 July 1969". The month is spelled out because 7/20 and 20/7 are the same
+// four characters to two different halves of the world.
+function formatFullDate(text) {
+  if (dayNumberForDate(text) === null) return ""
+  var m = /^(\d{1,6})-(\d{2})-(\d{2})$/.exec(String(text).trim())
+  return Number(m[3]) + " " + MONTHS_FULL[Number(m[2]) - 1] + " " + formatYear(Number(m[1]))
+}
+
+function bandForDateError(error, precision) {
+  var p = PRECISIONS[precision]
+  if (!p) return "Off"
+  if (error === null || error === undefined || !isFinite(error)) return "Off"
+  var e = Math.abs(error)
+  if (e <= p.bands[0]) return "Bullseye"
+  if (e <= p.bands[1]) return "Close"
+  if (e <= p.bands[2]) return "Ballpark"
+  return "Off"
+}
+
+// The date engine's counterpart to scoreGuess, and deliberately the same shape
+// on the way out: a band, the points for it, and whether a hint was taken. So
+// everything downstream that reads a result - the streak rule, the stats, the
+// share card, the D1 distribution - keeps working without knowing which engine
+// produced it.
+//
+// What differs is `error` and `unit` in place of `distanceDecades`. A number of
+// years is not an order of magnitude, and calling it one would have put "Off by
+// 4.00 orders of magnitude" underneath a question about 1989.
+function scoreDate(guess, question, assisted) {
+  var precision = question && question.precision
+  var p = PRECISIONS[precision]
+  var error = null
+
+  if (p && p.input === "date") error = daysBetween(guess, question.answerDate)
+  else if (p) error = yearsBetween(guess, question.answerYear)
+
+  var band = bandForDateError(error, precision)
+  return {
+    error: error,
+    unit: p ? p.unit : null,
+    band: band,
+    points: pointsForBand(band, assisted),
+    assisted: !!assisted
+  }
+}
+
+// Which control a question is answered with, for a renderer that has to pick
+// one. An unknown precision falls back to the year field rather than to
+// nothing, because a question answered in the wrong units is still better than
+// a question that cannot be answered at all.
+function inputForPrecision(precision) {
+  var p = PRECISIONS[precision]
+  return p ? p.input : "year"
+}
+
+// The answer a question is scored against, in the form the player entered it.
+// Used by the result card and by the bank's own tests, so there is one place
+// that knows a day-precision question keeps its answer in a different field.
+function answerForQuestion(question) {
+  if (!question) return null
+  return inputForPrecision(question.precision) === "date"
+    ? question.answerDate
+    : question.answerYear
+}
+
+// How that answer reads on screen.
+function formatAnswer(question) {
+  if (!question) return ""
+  return inputForPrecision(question.precision) === "date"
+    ? formatFullDate(question.answerDate)
+    : formatYear(question.answerYear)
+}
+
 // state shape: { history: {"<dayIndex>": {guess, answerValue, band, distanceDecades}},
 //                streak: number, bestStreak: number, lastCompletedDay: number }
 function emptyState() {
@@ -264,12 +452,12 @@ function historyDays(state) {
   return days
 }
 
-// Dates a question for display. Years before the common era are stored
-// negative, which is right for arithmetic and wrong on screen: the Library of
-// Alexandria question was rendering as "as of -250" rather than "as of 250 BC".
+// Dates a question for display. Kept as its own name because that is what the
+// "as of" line means and what every caller reads, but it is formatYear's rule
+// and there is only one copy of it now - two spellings of "render a year, BC
+// and all" is exactly how a rule drifts.
 function formatAsOf(year) {
-  if (typeof year !== "number" || !isFinite(year)) return ""
-  return year < 0 ? Math.abs(year) + " BC" : String(year)
+  return formatYear(year)
 }
 
 // Practice: questions to attempt outside the daily puzzle.
@@ -615,6 +803,22 @@ var ModelAPI = {
   PRACTICE_RESERVE_DAYS: PRACTICE_RESERVE_DAYS,
   pickPractice: pickPractice,
   formatAsOf: formatAsOf,
+
+  // Historical Dates. The date engine's surface, alongside the log engine's
+  // above: scoreDate answers scoreGuess, bandForDateError answers
+  // bandForDistance, and PRECISIONS is the table both of them come from.
+  PRECISIONS: PRECISIONS,
+  astronomicalYear: astronomicalYear,
+  yearsBetween: yearsBetween,
+  daysBetween: daysBetween,
+  dayNumberForDate: dayNumberForDate,
+  bandForDateError: bandForDateError,
+  scoreDate: scoreDate,
+  inputForPrecision: inputForPrecision,
+  answerForQuestion: answerForQuestion,
+  formatYear: formatYear,
+  formatFullDate: formatFullDate,
+  formatAnswer: formatAnswer,
   computeStats: computeStats,
   calibrationLabel: calibrationLabel,
   CALIBRATION_MIN_PLAYS: CALIBRATION_MIN_PLAYS,
