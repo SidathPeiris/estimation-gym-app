@@ -123,6 +123,113 @@ for (const q of DATES) {
   )
 }
 
+// --- a source must not name a year its answer contradicts ----------------
+//
+// This is the check that would have caught the one error a whole verification
+// pass missed in World Records: the longest eclipse of the twentieth century
+// had the right duration, 428 seconds, sourced to the 30 June 1973 eclipse -
+// which ran four seconds shorter. The number was 1955's. Nothing about the
+// entry looked wrong, because both halves were true about different things.
+//
+// So wherever a source names a year, that year has to fall inside the
+// question's own Bullseye band. It will not catch a source that names no year,
+// but a mismatched one is exactly the shape of that failure.
+//
+// The exceptions are real and there are four: a document written about an
+// earlier event carries its own later date, which is not a contradiction.
+{
+  const LATER_DOCUMENT = new Set([
+    "dates-jenner-vaccination",        // the 1796 inoculation, in Jenner's 1798 book
+    "dates-little-bighorn",            // the 1876 battle, in the 1879 Army inquiry
+    "dates-norse-reach-north-america", // a c.1000 settlement, dated by a 2021 paper
+    "dates-greek-independence-war"     // the 1821 outbreak, in the 1832 treaty ending it
+  ])
+
+  for (const q of DATES) {
+    if (LATER_DOCUMENT.has(q.id)) continue
+
+    const answer = q.precision === "day"
+      ? Number(q.answerDate.slice(0, 4))
+      : q.answerYear
+
+    // Sources for antiquity rarely carry a year at all, and when they do it is
+    // the modern edition's.
+    if (answer < 1000) continue
+
+    const named = [...String(q.source).matchAll(/\b(1[0-9]{3}|20[0-2][0-9])\b/g)].map((m) => Number(m[1]))
+    if (!named.length) continue
+
+    // A day-precision question is pinned to its year; everything else gets the
+    // band it is actually scored on.
+    const tolerance = q.precision === "day" ? 1 : Model.PRECISIONS[q.precision].bands[0]
+
+    assert.ok(
+      named.some((y) => Math.abs(y - answer) <= tolerance),
+      `"${q.id}" answers ${Model.formatAnswer(q)} but its source names ` +
+      `${named.join(", ")}: ${q.source}\n  Either the answer belongs to a ` +
+      `different event from the one the source describes, or the source is ` +
+      `a later document about it - in which case add the id to LATER_DOCUMENT ` +
+      `with the reason.`
+    )
+  }
+}
+
+// --- a hint must not hand over its own answer -----------------------------
+//
+// The prompt is already checked for this. Hints are the easier place to do it
+// by accident, because they are built out of other dates on purpose: "two
+// years before X", "the same year as Y". Naming the year itself turns a
+// half-points hint into a full answer.
+//
+// The second half catches a hint that has drifted onto a different subject.
+// Every bracket in this bank is within a few centuries of what it brackets, so
+// anything further is a hint that was written for another question.
+for (const q of DATES) {
+  const answer = q.precision === "day"
+    ? Number(q.answerDate.slice(0, 4))
+    : q.answerYear
+
+  for (const m of q.decompositionHint.matchAll(/\b(1[0-9]{3}|20[0-2][0-9])\b/g)) {
+    const named = Number(m[1])
+    assert.notEqual(
+      named, answer,
+      `"${q.id}" prints ${named} in its hint, which is its own answer`
+    )
+    assert.ok(
+      Math.abs(named - answer) <= 300,
+      `"${q.id}" answers ${Model.formatAnswer(q)} and its hint names ${named}, ` +
+      `${Math.abs(named - answer)} years away. A bracket that far off is a hint ` +
+      `written for a different question.`
+    )
+  }
+}
+
+// --- the wording and the scoring must agree -------------------------------
+//
+// "Around what year" promises the player that an approximate answer is wanted,
+// and the precision is what decides whether that promise is kept. A hedged
+// prompt scored to the year would punish exactly the player who read it
+// carefully.
+{
+  // Asks for a specific year but is scored to the decade. Allowed, and the one
+  // case where the mismatch favours the player: the traditional date is exact,
+  // the history behind it is not.
+  const ALLOWED = new Set(["dates-rome-founded-traditional"])
+
+  for (const q of DATES) {
+    if (ALLOWED.has(q.id)) continue
+    const hedged = /^(around|roughly) what year/i.test(q.prompt)
+    const loose = q.precision === "decade" || q.precision === "century"
+    assert.equal(
+      hedged, loose,
+      hedged
+        ? `"${q.id}" says "around what year" but is scored to the ${q.precision}`
+        : `"${q.id}" asks for an exact year but is scored to the ${q.precision}, ` +
+          `so the prompt should say "around what year"`
+    )
+  }
+}
+
 // --- the game is triangulation, so the hint has to teach it ---------------
 //
 // The shared checker enforces a floor of 30 characters, which catches an empty
