@@ -179,6 +179,52 @@ assert.equal(
   )
 }
 
+// --- the append-only rule, now that the game is live ----------------------
+//
+// The bank's array order IS the calendar: day N serves the entry at N minus
+// the schedule origin. While the game was coming-soon this bank could be
+// reordered, rewritten and culled freely, because nobody had been promised
+// anything. From the day it went live that stopped being true - inserting or
+// removing anything inside the pinned span silently re-dates every question
+// after it, which once changed the puzzle mid-day on Fermi for anyone playing.
+//
+// So the ids are pinned by checksum. Appending to the END leaves this
+// untouched and needs no change here, which is why the span is a literal
+// rather than DATES.length: every question added pushes the wrap date out by
+// a day without disturbing a single day already scheduled. If this fails, the
+// bank was edited in place - put it back and append instead.
+//
+// Covers ids only, deliberately. Fixing a wrong answer, a precision, a hint or
+// a source on a question already scheduled is fine and should stay fine; none
+// of that moves anything.
+//
+// The whole bank, unlike World Records, which pins a span shorter than its
+// length because it has a year of unverified questions at the end that might
+// still need removing outright. Everything here is served within ten weeks, so
+// there is nothing in this bank that is not already promised.
+const SCHEDULED_SPAN = 71
+const SCHEDULE_FINGERPRINT =
+  "277175dcb3842a0bfbdcf42cb9ea76d821872b8508064dadaf6336b6787baef5"
+
+assert.ok(
+  DATES.length >= SCHEDULED_SPAN,
+  `bank shrank to ${DATES.length}: questions may be appended but never removed`
+)
+
+{
+  const fingerprint = require("node:crypto")
+    .createHash("sha256")
+    .update(DATES.slice(0, SCHEDULED_SPAN).map((q) => q.id).join(","))
+    .digest("hex")
+
+  assert.equal(
+    fingerprint, SCHEDULE_FINGERPRINT,
+    `the first ${SCHEDULED_SPAN} questions changed order or were renamed. The ` +
+    "bank is append-only: new questions go at the end, so days already " +
+    "scheduled keep the question they were promised."
+  )
+}
+
 // --- the schedule must serve every day it claims to cover ------------------
 
 {
