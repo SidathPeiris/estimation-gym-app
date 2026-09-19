@@ -181,24 +181,34 @@ console.log("keys               -> " + FERMI_KEY + "  |  " + RECORDS_KEY);
 }
 
 // 5. The parts of the screen that belong to Fermi rather than to the engine.
-//    Each is hidden on World Records for a reason written down in the
-//    registry; a bell here would turn on a reminder about a different game.
+//    Each is hidden on World Records for a reason written down in the registry.
+//
+//    The bell used to be one of them, and is not any more: it moved to the home
+//    screen and the push now names both games, so it belongs to the app. What
+//    is still per-game is whether the notification MENTIONS a game, which both
+//    live games claim - and the day either of them starts on, which is why the
+//    service worker keeps its own copy of the registry and sw.test.js pins it.
 {
   const onRecords = run({ hash: "#records" });
   const onFermi = run({ hash: "#fermi" });
 
-  for (const [id, flag] of [["practice", "practice"], ["suggest", "suggest"], ["remind", "reminder"]]) {
+  for (const [id, flag] of [["practice", "practice"], ["suggest", "suggest"]]) {
     if (fermi[flag] !== true) throw new Error("fermi should declare " + flag);
     if (records[flag] === true) throw new Error("records should not declare " + flag);
     if (!onRecords.els[id].hidden) {
       throw new Error("#" + id + " is showing on World Records, which does not claim " + flag);
     }
   }
-  // Practice and Suggest are shown on Fermi. The bell is not asserted here:
-  // it also depends on push support, which this sandbox does not have.
   if (onFermi.els.practice.hidden) throw new Error("Practice should still show on Fermi");
   if (onFermi.els.suggest.hidden) throw new Error("Suggest should still show on Fermi");
-  console.log("fermi-only parts   -> practice, suggest and the bell, hidden on World Records");
+  console.log("fermi-only parts   -> practice and suggest, hidden on World Records");
+
+  // Every live game is named in the daily reminder. A game added as live and
+  // left out of this would be a game nobody is ever told about in the morning.
+  for (const g of [fermi, records]) {
+    if (g.reminder !== true) throw new Error(g.id + " is live but not named in the reminder");
+  }
+  console.log("daily reminder     -> names both live games, one bell for the app");
 }
 
 // 6. Switching games mid-session must not carry state across. A hint taken on

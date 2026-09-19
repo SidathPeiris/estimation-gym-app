@@ -13,7 +13,7 @@
 // Note this caches code only. Play history lives in localStorage, which the
 // cache never touches, so a version bump can never cost anyone their streak.
 
-var CACHE = "estimation-gym-v1.22.0"
+var CACHE = "estimation-gym-v1.23.0"
 
 // A second cache, deliberately unversioned, holding one small record the
 // service worker needs but cannot otherwise reach: the streak.
@@ -148,13 +148,28 @@ self.addEventListener("fetch", function (event) {
 // sent over the wire. That keeps the subscription record down to an endpoint
 // and a timezone, with no message content in transit and no encryption keys
 // stored server-side.
-// The day the schedule was frozen, and the arithmetic that turns a date into
-// a day number. Both are duplicated from Model.js because a service worker
-// cannot import it - importScripts would run on every worker startup and take
-// the fetch handler down with it if it ever failed, which would cost offline
-// play to save a notification. sw.test.mjs pins these to Model.js so the copy
-// cannot drift.
-var SCHEDULE_ORIGIN = 982
+
+// Which games the reminder speaks for, and where each one's bank and calendar
+// are.
+//
+// It used to be Fermi's reminder: one bank, one question named, and a bell
+// that appeared on Fermi's screen alone because a nudge about a question you
+// could not reach from there would have been a lie. With a second game live
+// that shape leaves the second game unadvertised, and silences the nudge for
+// both of them the moment either one is answered. So it is the app's reminder
+// now, and this is the list it is about.
+//
+// Duplicated from core/games.js for the same reason the day arithmetic below
+// is duplicated from Model.js: a service worker cannot importScripts either
+// without running it on every worker startup and taking the fetch handler down
+// with it if it ever fails, which would cost offline play to save a
+// notification. sw.test.js pins this table to the registry entry by entry, so
+// a third live game cannot quietly ship outside the reminder.
+var REMINDER_GAMES = [
+  { name: "Fermi Questions", bank: "./core/questions.js", origin: 982 },
+  { name: "World Records", bank: "./games/records/questions.js", origin: 991 }
+]
+
 var EPOCH_MS = Date.UTC(2024, 0, 1)
 var DAY_MS = 24 * 60 * 60 * 1000
 
@@ -163,20 +178,20 @@ function todayIndex() {
   return Math.floor((Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) - EPOCH_MS) / DAY_MS)
 }
 
-// Today's question, read out of the cached bank.
+// One game's question for one day, read out of its cached bank.
 //
 // The push carries no payload - that is deliberate, and it is why no
 // encryption keys are stored for any subscriber - so the text has to be built
 // here. Naming the actual question turns the reminder from an errand into a
 // hook, and it gives nothing away: seeing the question early is no help,
 // because the whole game is working the number out.
-function todaysQuestion() {
+function questionFor(game, day) {
   return caches.open(CACHE)
-    .then(function (cache) { return cache.match("./core/questions.js") })
+    .then(function (cache) { return cache.match(game.bank) })
     .then(function (res) { return res ? res.text() : null })
     .then(function (text) {
       if (!text) return null
-      // The bank is written as `var QUESTIONS = [ ...json... ]`, so the array
+      // Every bank is written as `var NAME = [ ...json... ]`, so the array
       // slices out as valid JSON. Parsed, never evaluated - this is untrusted
       // in principle and eval in a service worker is not worth the risk.
       var start = text.indexOf("[")
@@ -184,7 +199,7 @@ function todaysQuestion() {
       if (start < 0 || end <= start) return null
       var bank = JSON.parse(text.slice(start, end + 1))
       if (!bank.length) return null
-      var offset = todayIndex() - SCHEDULE_ORIGIN
+      var offset = day - game.origin
       var i = (offset >= 0 && offset < bank.length)
         ? offset
         : ((offset % bank.length) + bank.length) % bank.length
@@ -203,7 +218,34 @@ function progress() {
     .catch(function () { return null })
 }
 
-// The title carries where they are, the body carries the question.
+// One line per game, each naming that game's question for today.
+//
+// The prompt goes in the body rather than the title because the median one is
+// 61 characters and Android truncates a title at roughly 40, while a body
+// wraps to two lines and expands on a tap. With more than one game each line
+// has to say which game it belongs to, or the body reads as a single run-on
+// prompt and neither question is legible.
+//
+// A bank that is missing from the cache or has stopped slicing out as JSON
+// drops its line rather than the whole notification: a nudge naming one game
+// is still worth sending, and one naming none is still better than silence on
+// a day the player meant to play.
+function reminderBody() {
+  var day = todayIndex()
+  return Promise.all(REMINDER_GAMES.map(function (game) {
+    return questionFor(game, day).then(function (q) {
+      return q ? game.name + ": " + q.prompt : null
+    })
+  })).then(function (lines) {
+    var named = lines.filter(Boolean)
+    if (named.length) return named.join("\n")
+    return REMINDER_GAMES.length > 1
+      ? "One question in each game, about a minute each."
+      : "One question, about a minute."
+  })
+}
+
+// The title carries where they are, the body carries the questions.
 //
 // A reminder that treats day 1 and day 30 identically wastes the strongest
 // reason anyone has to come back. Only claimed from two days onward, because
@@ -217,25 +259,26 @@ function progress() {
 // "Today's question" came through as "Today's questi...". That truncation is
 // still readable; "Day 12 of your streak" would have arrived as "Day 12 of
 // your..." and lost the only word carrying the meaning.
+// Plural since the reminder covers every live game. The streak it names is
+// the longest run still alive across them, which is what the app writes into
+// the progress record - see saveProgress in app.js, and why it refuses to pair
+// one game's streak with another game's last-played day.
 function reminderTitle(state, today) {
   if (!state || typeof state.streak !== "number" || state.streak < 2) {
-    return "Today's question"
+    return "Today's questions"
   }
-  if (state.lastPlayedDay !== today - 1) return "Today's question"
+  if (state.lastPlayedDay !== today - 1) return "Today's questions"
   return "Day " + (state.streak + 1)
 }
 
 self.addEventListener("push", function (event) {
   event.waitUntil(
-    Promise.all([todaysQuestion(), progress()]).then(function (both) {
-      var q = both[0]
+    Promise.all([reminderBody(), progress()]).then(function (both) {
+      // The title stays short and is not the app name, which Android already
+      // prints in the header above it.
       var title = reminderTitle(both[1], todayIndex())
-      // The question goes in the body rather than the title: the median prompt
-      // is 61 characters and Android truncates a title at roughly 40, while a
-      // body wraps to two lines and expands. The title stays short and is not
-      // the app name, which Android already prints in the header above it.
       return self.registration.showNotification(title, {
-        body: q ? q.prompt : "One question, about a minute.",
+        body: both[0],
         icon: "./icons/icon-192.png",
         // Monochrome silhouette on transparency. Android masks this to its
         // alpha and fills it white, so the full-colour icon rendered as a
@@ -250,25 +293,26 @@ self.addEventListener("push", function (event) {
   )
 })
 
-// Where a tapped reminder lands.
+// Where a tapped reminder lands: the destination has to match what the body
+// just said, and the body decides it.
 //
-// The app used to be one game, so "./" was the question and this needed no
-// thought. It is now a chooser: "./" with no fragment is the home screen, and
-// for a while this reminder named a specific question and then dropped the
-// player on a list of games to go and find it in. Worse for anyone with the app
-// already open, because focus() does not navigate - they landed on whichever
-// screen they had left it on.
+// Three shapes, in order. When the app was one game, "./" WAS the question.
+// When the home screen shipped, "./" silently became a chooser while the body
+// still named one Fermi question - so the notification advertised a question
+// and handed over a list of games to find it in, which is why this became
+// "./#fermi". The body now names every live game's question, and the screen
+// that lists exactly those games with their streaks is the home screen, so the
+// fragment goes away again and for the first time the tap and the text agree.
 //
-// The fragment is safe to add. It never reaches the network, so the navigation
-// URL is still exactly "./" and the precached entry still matches - which is
-// the reason the app routes on a hash rather than a path or a query in the
-// first place.
+// Still a constant rather than something read from the registry: a service
+// worker cannot importScripts core/games.js without risking the fetch handler
+// on every startup. sw.test.js pins this against REMINDER_GAMES, so naming one
+// game in the body and opening another - in either direction - fails there.
 //
-// Hardcoded rather than read from the registry: a service worker cannot
-// importScripts core/games.js without risking the fetch handler on every
-// startup. sw.test.js pins this to a game that is actually live, so it cannot
-// come to name something the router would bounce to home.
-var REMINDER_ROUTE = "./#fermi"
+// The path must stay exactly the precached start URL. A fragment costs
+// nothing because it never reaches the network, which is why the app routes on
+// a hash at all; a path or a query would miss the cache while offline.
+var REMINDER_ROUTE = "./"
 
 self.addEventListener("notificationclick", function (event) {
   event.notification.close()
@@ -285,7 +329,8 @@ self.addEventListener("notificationclick", function (event) {
         var client = windows[i]
         if (client.url.indexOf(self.registration.scope) !== 0 || !("focus" in client)) continue
 
-        // Move it to the question before showing it. navigate() is not on every
+        // Move it to the reminder's destination before showing it, rather
+        // than showing whatever screen it was last left on. navigate() is not on every
         // WindowClient and can reject on its own, so a failure falls back to
         // the old behaviour rather than leaving the tap doing nothing at all.
         if (typeof client.navigate === "function") {

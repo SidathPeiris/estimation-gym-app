@@ -386,15 +386,16 @@ function howToPlayView(Model) {
     // describing something it cannot do.
     reminder: {
       title: "The daily reminder",
-      intro: "Tap the 🔔 in the top right to get one nudge a day. Tap it again to stop.",
+      intro: "Tap the 🔔 on the games list to get one nudge a day, naming every game's question. Tap it again to stop.",
       steps: [
         "Install the app to your home screen first. On iPhone this is required — Apple only allows notifications for web apps that have been added to the Home Screen, so a browser tab will never get one.",
-        "Open it from the home screen and tap the 🔔 in the top right.",
+        "Open it from the home screen and tap the 🔔 in the top right of the games list.",
         "Say yes when your browser asks permission. The bell turns blue and reads On."
       ],
       notes: [
         "It arrives around 9am your time, wherever you are — the app remembers your timezone, not your location.",
-        "You will not be nudged on a day you have already played. It is a reminder, not a nag.",
+        "One nudge covers every game, and it names each day's question so you know what is waiting.",
+        "You will not be nudged on a day you have already finished every game. It is a reminder, not a nag.",
         "If you say no by accident, your browser will not ask twice. You would have to allow notifications for this site in your browser settings, then tap the bell again.",
         "Turning it off deletes the subscription. Nothing about your guesses, scores or streak is ever sent with it."
       ]

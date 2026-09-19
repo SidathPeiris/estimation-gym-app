@@ -71,6 +71,10 @@ function run({ permission = "granted", supported = true, store = {}, workerOk = 
 
 const settle = async () => { for (let i = 0; i < 8; i++) await new Promise((r) => setImmediate(r)); };
 
+const M2 = require(root + "core/Model.js");
+const TODAY = M2.dayIndex(new Date());
+const answeredToday = () => JSON.stringify(M2.recordAnswer(M2.emptyState(), TODAY, 100, 100, false, "q"));
+
 (async () => {
   // 1. Off by default; the toggle is offered where push is supported.
   let r = run();
@@ -93,11 +97,27 @@ const settle = async () => { for (let i = 0; i < 8; i++) await new Promise((r) =
   if (keyCall.userVisibleOnly !== true) throw new Error("userVisibleOnly must be true");
   console.log("                      key decodes to 65 bytes, userVisibleOnly true");
 
-  // 3. Answering reports the day so the nudge can be skipped.
+  // 3. The day is only reported once there is nothing left to play.
+  //
+  //    /played is what suppresses tomorrow morning's nudge, and the nudge now
+  //    names every live game. Reporting the day because one of them was
+  //    answered would silence a reminder about a game the player never opened,
+  //    which is the failure the old Fermi-only reminder had in reverse: it was
+  //    the only game it could speak for, so answering it was the whole day.
   r.submit("1000"); await settle();
-  const played = r.calls.find((c) => c.url && c.url.includes("/played"));
-  if (!played) throw new Error("no /played call after answering");
-  console.log("answered           -> reported day " + JSON.parse(played.body).day);
+  if (r.calls.some((c) => c.url && c.url.includes("/played"))) {
+    throw new Error("reported the day after one game, with another still unplayed");
+  }
+  console.log("one game answered  -> nothing reported, a game is still waiting");
+
+  {
+    const done = run({ store: { "estimation-gym-state:records": answeredToday() } });
+    done.tap(); await settle();
+    done.submit("1000"); await settle();
+    const played = done.calls.find((c) => c.url && c.url.includes("/played"));
+    if (!played) throw new Error("no /played call once every game was answered");
+    console.log("both answered      -> reported day " + JSON.parse(played.body).day);
+  }
 
   // 4. Turning it off unsubscribes and tells the Worker.
   r.tap(); await settle();
@@ -144,15 +164,23 @@ const settle = async () => { for (let i = 0; i < 8; i++) await new Promise((r) =
   if (secondSubs !== 0) throw new Error("minted a second endpoint for a device that already had one");
   if (!r2.calls.some((c) => c.url && c.url.includes("/subscribe"))) throw new Error("the existing endpoint was not re-registered");
 
-  // 9. Turning it on after already playing tells the Worker so, so no nudge
-  //    arrives for a day that is already done.
-  const M2 = require(root + "core/Model.js");
-  const todayIdx = M2.dayIndex(new Date());
-  const alreadyPlayed = M2.recordAnswer(M2.emptyState(), todayIdx, 100, 100, false, "q");
-  r = run({ store: { "estimation-gym-state": JSON.stringify(alreadyPlayed) } });
+  // 9. Turning it on after a day is already finished tells the Worker so, so
+  //    no nudge arrives for a day with nothing left in it. Every live game has
+  //    to be done, for the same reason step 3 does.
+  r = run({ store: { "estimation-gym-state": answeredToday() } });
+  r.tap(); await settle();
+  if (r.calls.some((c) => c.url && c.url.includes("/played"))) {
+    throw new Error("subscribing reported the day with a game still unplayed");
+  }
+  console.log("subscribe mid-day  -> nothing reported, a game is still waiting");
+
+  r = run({ store: {
+    "estimation-gym-state": answeredToday(),
+    "estimation-gym-state:records": answeredToday()
+  } });
   r.tap(); await settle();
   const playedCall = r.calls.find((c) => c.url && c.url.includes("/played"));
-  if (!playedCall) throw new Error("subscribing after playing did not report the day");
+  if (!playedCall) throw new Error("subscribing after finishing the day did not report it");
   console.log("subscribe after play -> reported day " + JSON.parse(playedCall.body).day);
 
   console.log("\nsmoke9 passed");

@@ -57,7 +57,26 @@
       <span class="mark" aria-hidden="true"><i class="m1"></i><i class="m2"></i><i class="m3"></i></span>
       <h1>Estimation <span class="gym">Gym</span></h1>
     </div>
+    <button type="button" class="remind" id="remind"
+            aria-label="Daily reminder" title="Daily reminder" hidden>
+      <span class="remind-bell" aria-hidden="true">
+        <svg class="bell-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10.268 21a2 2 0 0 0 3.464 0"></path>
+          <path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"></path>
+        </svg>
+        <svg class="bell-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10.268 21a2 2 0 0 0 3.464 0"></path>
+          <path d="M17 17H4a1 1 0 0 1-.74-1.673C4.59 13.956 6 12.499 6 8a6 6 0 0 1 .258-1.742"></path>
+          <path d="m2 2 20 20"></path>
+          <path d="M8.668 3.01A6 6 0 0 1 18 8c0 2.687.77 4.653 1.707 6.05"></path>
+        </svg>
+      </span>
+      <span class="remind-state" id="remind-state">Off</span>
+    </button>
   </header>
+  <p class="remind-note" id="remind-note" hidden></p>
   <p class="home-intro" id="home-intro">One question a day in each, the same one for everyone.</p>
   <ul class="home-list" id="home-list"></ul>
 </main>
@@ -112,26 +131,7 @@
       <h1>Estimation <span class="gym">Gym</span></h1>
       <span class="puzzle" id="puzzle">—</span>
     </div>
-    <button type="button" class="remind" id="remind"
-            aria-label="Daily reminder" title="Daily reminder" hidden>
-      <span class="remind-bell" aria-hidden="true">
-        <svg class="bell-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-             stroke-linecap="round" stroke-linejoin="round">
-          <path d="M10.268 21a2 2 0 0 0 3.464 0"></path>
-          <path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"></path>
-        </svg>
-        <svg class="bell-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-             stroke-linecap="round" stroke-linejoin="round">
-          <path d="M10.268 21a2 2 0 0 0 3.464 0"></path>
-          <path d="M17 17H4a1 1 0 0 1-.74-1.673C4.59 13.956 6 12.499 6 8a6 6 0 0 1 .258-1.742"></path>
-          <path d="m2 2 20 20"></path>
-          <path d="M8.668 3.01A6 6 0 0 1 18 8c0 2.687.77 4.653 1.707 6.05"></path>
-        </svg>
-      </span>
-      <span class="remind-state" id="remind-state">Off</span>
-    </button>
   </header>
-  <p class="remind-note" id="remind-note" hidden></p>
   <p class="streak" id="streak">Streak 0 · Best 0</p>
 
   <!-- The question and the row you answer it in are one card, with the mode's

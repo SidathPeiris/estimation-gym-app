@@ -262,6 +262,20 @@
       .catch(function () { return null })
   }
 
+  // Every live game's state, reusing the one already in hand rather than
+  // re-reading it. The reminder covers the app, so both facts it depends on -
+  // whether the day is finished and how long the run is - are questions about
+  // all the games rather than about Fermi.
+  function liveStates() {
+    return GamesAPI.liveGames().map(function (g) {
+      return g.id === game.id ? state : loadState(Model, window.localStorage, g)
+    })
+  }
+
+  function allGamesAnswered(day) {
+    return liveStates().every(function (s) { return Model.hasAnsweredDay(s, day) })
+  }
+
   function setRemindNote(text) {
     setText(el["remind-note"], text)
     show(el["remind-note"], !!text)
@@ -269,12 +283,15 @@
 
   function renderRemind() {
     var on = remindEnabled()
-    // Offered only on the game the reminder can actually be about. The push
-    // carries no payload, so the service worker builds the text itself by
-    // reading core/questions.js - it can only ever name a Fermi question. A
-    // bell on World Records would turn on a reminder for a different game.
-    show(el.remind, game.reminder === true && pushSupported())
-    if (game.reminder !== true) { show(el["remind-note"], false); return }
+    // One bell for the whole app, on the screen that is about the whole app.
+    //
+    // It used to sit in the Fermi header and be hidden everywhere else,
+    // because the push named a Fermi question and a bell on World Records
+    // would have promised a reminder about a different game. The push now
+    // names every live game, so the setting stopped being a property of
+    // whichever screen you were on - and the screen that is about the app
+    // rather than about one game is the one listing them.
+    show(el.remind, pushSupported())
     setText(el["remind-state"], on ? "On" : "Off")
     // Drives the accent styling, so "On" is visible at a glance in the corner.
     el.remind.setAttribute("data-on", String(on))
@@ -311,7 +328,7 @@
           // Turning the reminder on after already playing should not earn a
           // nudge for a day that is done. The Worker only learns this when a
           // day is answered, which has already happened by now.
-          if (ok && Model.hasAnsweredDay(state, today)) {
+          if (ok && allGamesAnswered(today)) {
             return tellWorker("/played", { endpoint: sub.endpoint, day: today }).then(function () { return ok })
           }
           return ok
@@ -372,7 +389,7 @@
         tzOffset: new Date().getTimezoneOffset()
       }).then(function (ok) {
         // A healed subscription must not earn a nudge for a day already done.
-        if (ok && Model.hasAnsweredDay(state, today)) {
+        if (ok && allGamesAnswered(today)) {
           return tellWorker("/played", { endpoint: sub.endpoint, day: today })
         }
       })
@@ -398,6 +415,10 @@
   // device that asked to be reminded in the first place.
   function reportPlayed(day) {
     if (!remindEnabled()) return
+    // Only once there is nothing left to play. Telling the Worker the day was
+    // done because one game was answered would silence a nudge about a game
+    // the player has not opened.
+    if (!allGamesAnswered(day)) return
     currentSubscription().then(function (sub) {
       if (sub) tellWorker("/played", { endpoint: sub.endpoint, day: day })
     })
@@ -569,13 +590,31 @@
   // title is a much smaller loss than a failed submission.
   function saveProgress() {
     if (!(window.caches && window.caches.open)) return
+
+    // The longest run still alive, across every live game.
+    //
+    // The service worker pairs these two numbers to decide whether to say
+    // "Day 12" instead of "Today's questions", so they have to come from the
+    // same game: one game's streak beside another game's last-played day
+    // would claim a run that had already been broken. A game last played
+    // before yesterday is out of the running for exactly that reason - its
+    // streak number is a fact about the past, not about a run to protect.
+    var best = null
+    liveStates().forEach(function (s) {
+      var days = Model.historyDays(s)
+      if (!days.length) return
+      var latest = Math.max.apply(null, days.map(function (d) { return d.day }))
+      if (latest < today - 1) return
+      if (!best || s.streak > best.streak) {
+        best = { streak: s.streak, lastPlayedDay: latest }
+      }
+    })
+
     try {
       window.caches.open("estimation-gym-progress").then(function (cache) {
         return cache.put("./progress", new Response(JSON.stringify({
-          streak: state.streak,
-          lastPlayedDay: Model.historyDays(state).length
-            ? Math.max.apply(null, Model.historyDays(state).map(function (d) { return d.day }))
-            : null
+          streak: best ? best.streak : 0,
+          lastPlayedDay: best ? best.lastPlayedDay : null
         }), { headers: { "Content-Type": "application/json" } }))
       }).catch(function () {})
     } catch (e) {}
@@ -1260,12 +1299,21 @@
       render()
     }
 
-    // Outside the route guard on purpose. The move banner is about which
-    // ADDRESS the app was opened at, not which game is on screen - someone on
-    // the old host needs telling whether they are looking at the home screen or
-    // a puzzle. It lives in the Fermi screen's markup for now, which is where
-    // the old build had it, so moving hosts does not also move the banner.
+    // Both outside the route guard, for related reasons.
+    //
+    // The move banner is about which ADDRESS the app was opened at, not which
+    // game is on screen - someone on the old host needs telling whether they
+    // are looking at the home screen or a puzzle. It lives in the Fermi
+    // screen's markup for now, which is where the old build had it, so moving
+    // hosts does not also move the banner.
+    //
+    // The bell is about the app rather than about a game too. It is only
+    // visible on the home screen, so renderHome() would be enough - but this
+    // is the function that knows which screen is up, and rendering a control
+    // from the one place that owns the screens is what keeps it from being
+    // left stale by a path that forgot to ask.
     renderMoveBanner()
+    renderRemind()
   }
 
   function goTo(id) {
@@ -1450,7 +1498,6 @@
     if (vm.source) setText(el.source, vm.source)
 
     renderBuild()
-    renderRemind()
 
     el["suggest-chev"].dataset.open = suggestOpen ? "true" : "false"
     el["suggest-toggle"].setAttribute("aria-expanded", String(suggestOpen))
@@ -1506,14 +1553,12 @@
     // with a Fermi id and the distributions stay separate on their own.
     if (entry) submitResult(entry.questionId, entry.band, decadesOff(entry))
 
-    // Both of these are about the daily reminder, which only ever names a
-    // Fermi question - see the registry. Telling the Worker that a World
-    // Records day was played would suppress a reminder for a game the player
-    // has not touched.
-    if (game.reminder === true) {
-      reportPlayed(today)
-      saveProgress()
-    }
+    // Both of these are about the daily reminder, and the reminder is about
+    // the app. Every live game answered feeds it: reportPlayed only suppresses
+    // the nudge once none of them are left, and saveProgress recomputes the
+    // longest surviving run across all of them.
+    reportPlayed(today)
+    saveProgress()
 
     maybeAskAboutCheating(check.value, question)
   }

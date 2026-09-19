@@ -88,18 +88,26 @@ var GAMES = [
     // Crossword Clues, names a different one here.
     rootId: "game-screen",
 
-    // The three things that belong to Fermi Questions rather than to the
-    // engine, each hidden on any game that does not claim it.
+    // The two things that belong to Fermi Questions rather than to the engine,
+    // each hidden on any game that does not claim it.
     //
     // practice: the practice pool is drawn from this bank.
     // suggest:  submissions land in one D1 table with no game column, so a
     //           suggestion made from another game would arrive unattributable.
-    // reminder: the push names today's question and the service worker builds
-    //           that text by reading core/questions.js. It can only ever be
-    //           about Fermi, so offering the bell elsewhere would promise a
-    //           reminder that never mentions the game it was turned on from.
     practice: true,
     suggest: true,
+
+    // Whether the daily reminder names this game.
+    //
+    // Not a screen flag - the bell is app-wide and lives on the home screen.
+    // This is about the notification's CONTENT: the service worker builds the
+    // text itself, with no payload to read, by slicing this game's bank out of
+    // its asset and indexing it by scheduleOrigin. sw.test.js pins its copy of
+    // that table to every entry marked here, so a game cannot join the
+    // reminder in the registry without the worker learning how to read it.
+    //
+    // A game can be live and sit this out - one whose answer is not a number,
+    // or whose bank is too thin to promise a question every morning.
     reminder: true
   },
 
@@ -136,11 +144,15 @@ var GAMES = [
 
     rootId: "game-screen",
 
-    // No practice pool, no suggestion form and no reminder bell - see Fermi's
-    // entry for why each of those belongs to Fermi rather than to the engine.
+    // No practice pool and no suggestion form - see Fermi's entry for why
+    // each of those belongs to Fermi rather than to the engine.
     practice: false,
     suggest: false,
-    reminder: false
+
+    // Named in the daily reminder alongside Fermi. It was left out while the
+    // reminder was Fermi's alone, which meant the second game was never
+    // advertised and answering either one silenced the nudge for both.
+    reminder: true
   },
   {
     id: "dates",
