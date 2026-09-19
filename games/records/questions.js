@@ -1916,11 +1916,11 @@ var RECORDS = [
     "id": "records-longest-tour-de-france-stage",
     "prompt": "How many kilometres was the longest stage ever raced in the Tour de France?",
     "unit": "kilometres",
-    "answerValue": 486,
+    "answerValue": 482,
     "decompositionHint": "Ridden in a single day on unpaved roads, starting before dawn. A modern long stage is about 240 km.",
     "strategy": "anchor-scale",
     "source": "Amaury Sport Organisation historical Tour de France records",
-    "asOf": 1920
+    "asOf": 1919
   },
   {
     "id": "records-longest-glider-flight",

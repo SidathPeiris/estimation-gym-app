@@ -231,3 +231,29 @@ records-longest-continuous-eruption | OK | 800+ years Mount Yasur
 records-largest-sand-dune | OK | 1230m Duna Federico Kirbus
 records-largest-beaver-dam | OK | 850m Wood Buffalo NP
 records-largest-virus | OK | 1.5um Pithovirus sibericum
+records-longest-fast | OK | 382 days Angus Barbieri 1965-66
+records-longest-survival-without-water | OK | 18 days Mihavecz 1979
+records-deepest-scuba-dive | OK | 332.35m Ahmed Gabr 2014
+records-longest-open-water-swim | OK | 225km Rogosic 2006
+records-longest-time-adrift | OK | 438 days Alvarenga 2012-14
+records-longest-suspension-bridge-towers | OK | 343m Millau Viaduct
+records-longest-winning-streak | OK | 555 matches Jahangir Khan
+records-longest-unbeaten-football-run | OK | 104 matches Steaua 1986-89
+records-longest-tour-de-france-stage | FIXED | 486 -> 482 km, Les Sables-d'Olonne to Bayonne, from 1919
+records-longest-boxing-match | OK | 110 rounds, Bowen-Burke 1893
+records-longest-cricket-match | OK | Timeless Test Durban 1939, ~43h play over 9 playing days
+records-highest-cricket-innings | OK | 1107 Victoria v NSW 1926
+records-largest-coin-hoard | OK | 52503 coins, Frome Hoard 2010
+records-largest-insect-swarm | OK | up to 12.5 trillion, Albert's swarm 1875
+records-hottest-temperature-for-life | OK | 122C Methanopyrus kandleri strain 116
+records-longest-comet-tail | OK | 570M km Hyakutake
+records-largest-airburst | OK | 12-15 Mt Tunguska (bank 12)
+records-highest-g-force-survived | OK | 46.2g Stapp 1954
+records-largest-aircraft-wingspan | OK | 117m Stratolaunch Roc
+records-highest-transmission-voltage | OK | 1100 kV Changji-Guquan UHVDC, 2018
+records-largest-recorded-sunspot | OK | 6132 millionths of a hemisphere, 8 April 1947, RGO
+records-strongest-magnetic-field-known | OK | ~1e11 T, SGR 1806-20 magnetar
+records-densest-matter | OK | ~4e17 kg/m3 nuclear density (standard textbook value)
+records-tallest-cliff | OK | ~20km Verona Rupes, Miranda
+records-largest-impact-basin | OK | 2500km South Pole-Aitken
+records-longest-lived-storm | OK | Great Red Spot observed continuously since 1830-31
